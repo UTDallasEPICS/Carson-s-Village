@@ -1,0 +1,26 @@
+head
+	title Client Pages
+	link(rel='stylesheet' type='text/css' href='https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css')
+.container
+	.well
+		b List of family pages and current status
+	table.table.table-striped
+		thead 
+			tr
+				each field in headers 
+					th=field
+		each row in body 
+			tr 
+				- var count = 1
+				- var id = ""
+				each item in row 
+					if count == 1
+						- id = item
+						td=item
+					else if count == 2
+						td
+							a(href="review/"+id+"/"+item)=item
+					else 
+						td=item
+					- count++
+		

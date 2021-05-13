@@ -1,0 +1,71 @@
+doctype html
+head
+	title=title
+	link(rel='stylesheet' href='https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css')
+body
+	.container
+		//.row
+			.col-md-12
+				h1.text-center Donation Page Creation Form
+		.well.well-sm
+			h1.text-center Donation Page Creation Form
+		br
+		form.form-horizontal(method='post' action=userAction)
+			fieldset
+				legend.text-center Enter information regarding family member: 
+				.form-group
+					label.col-md-4.control-label(for='page_name') page_name
+					.col-md-8
+						input#page_name.form-control.input-md(name='page_name' type='text' placeholder='name of client')
+				.form-group
+					label.col-md-4.control-label(for='visitation_date') visitation_date
+					.col-md-8
+						input#visitation_date.form-control.input-md(name='visitation_date' type='date')
+				.form-group
+					label.col-md-4.control-label(for='visitation_time') visitation_time
+					.col-md-8
+						input#visitation_time.form-control.input-md(name='visitation_time' type='time')
+				.form-group
+					label.col-md-4.control-label(for='visitation_location') visitation_location
+					.col-md-8
+						input#visitation_location.form-control.input-md(name='visitation_location' type='text' placeholder='location of visitation')
+				.form-group 
+					label.col-md-4.control-label(for='visitation_description') visitation_description 
+					.col-md-8
+						textarea#visitation_description.form-control.input-md(name='visitation_description' rows='3' placeholder='user provides description of visitation')
+				.form-group
+					label.col-md-4.control-label(for='funeral_date') funeral_date
+					.col-md-8
+						input#funeral_date.form-control.input-md(name='funeral_date' type='date')
+				.form-group
+					label.col-md-4.control-label(for='funeral_time') funeral_time
+					.col-md-8
+						input#funeral_time.form-control.input-md(name='funeral_time' type='time')
+				.form-group
+					label.col-md-4.control-label(for='funeral_location') funeral_location
+					.col-md-8
+						input#funeral_location.form-control.input-md(name='funeral_location' type='text' placeholder='location of funeral')
+				.form-group 
+					label.col-md-4.control-label(for='funeral_description') funeral_description 
+					.col-md-8
+						textarea#funeral_description.form-control.input-md(name='funeral_description' rows='3' placeholder='user provides description of funeral')
+				.form-group 
+					label.col-md-4.control-label(for='obituary') obituary 
+					.col-md-8 
+						textarea#obituary.form-control.input-md(name='obituary', rows='12' placeholder='enter obituary here')
+				.form-group 
+					label.col-md-4.control-label(for='images') images
+					.col-md-8 
+						input#images.form-control.input-md(name='images' type='file' multiple)
+				.form-group 
+					label.col-md-4.control-label(for='donation_goal') donation_goal 
+					.col-md-8 
+						input#donation_goal.form-control.input-md(name='donation_goal' type='number' placeholder='how much money user expects to raise')
+				.form-group 
+					label.col-md-4.control-label(for='deadline') donation_deadline 
+					.col-md-8 
+						input#deadline.form-control.input-md(name='deadline' type='date')
+				.form-group
+					label.col-md-2.control-label(for='submit')
+					.col-md-10
+						button#submit.btn.btn-primary(name='submit') Simulate page creation

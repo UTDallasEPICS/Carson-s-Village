@@ -1,0 +1,33 @@
+doctype html
+head
+	title Login
+	link(rel='stylesheet' href='https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css')
+body
+	.container
+		h1.text-center Example Login Page
+		h2.text-center Not applicable outside prototype demonstration
+		h3.text-center(style='color:red')=error
+		br
+		form.form-horizontal(method='post' action='/login')
+			fieldset
+				legend.text-center Enter credentials here: 
+				.form-group
+					label.col-md-4.control-label(for='email') Email
+					.col-md-4
+						input#email.form-control.input-md(name='email' type='text' placeholder='user enters email to log in')
+				.form-group
+					label.col-md-4.control-label(for='password') Password
+					.col-md-4
+						input#password.form-control.input-md(name='password' type='password' placeholder='password required, not used in prototype')
+				.form-group
+					label.col-md-4.control-label(for='user_role') User Role
+					.col-md-4
+						select#user_role.form-control.input-md(name='user_role' type='number')
+							option(value='' disabled='true' selected='true' hidden='true') prototype only
+							option(value='1') family
+							option(value='2') advocate/administrator
+							option(value='3') disabled
+				.form-group
+					label.col-md-4.control-label(for='submit')
+					.col-md-4
+						button#submit.btn.btn-primary(name='submit') Simulate login

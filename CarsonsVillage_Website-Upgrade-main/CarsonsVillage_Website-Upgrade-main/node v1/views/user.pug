@@ -1,0 +1,25 @@
+html 
+	head 
+		title= title 
+		<link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+	body 
+		div(class = "container")
+			<div class='well'><b>User Details</b></div>
+				table(class='table table-striped')
+					thead 
+						tr 
+							th email
+							th user_role 
+							th first_name 
+							th middle_name
+							th last_name 
+							th phone
+						each item in items 
+							tr 
+								td=item.email 
+								td=item.user_role 
+								td=item.first_name 
+								td=item.middle_name
+								td=item.last_name 
+								td=item.phone
+			a(href = url) Go back to the index

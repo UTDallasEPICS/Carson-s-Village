@@ -1,0 +1,24 @@
+doctype html 
+head 
+	title=title
+	link(rel='stylesheet' href='https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css')
+.container
+	.row
+	.col-md-12
+		h1.text-center=header
+	.row
+		.col-md-4
+			h3 Email:
+		.col-md-8
+			h3=email
+	.row
+		.col-md-4
+			h3 Phone:
+		.col-md-8
+			h3=phone
+	br
+	.row 
+		.col-md-6
+			a.btn.btn-info(href=insert_link role='button') Insert new page
+		.col-md-6
+			a.btn.btn-info(href=list_link role='button') View existing pages

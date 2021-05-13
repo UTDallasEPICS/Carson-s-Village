@@ -1,0 +1,20 @@
+head
+	title Page Search
+	link(rel='stylesheet' type='text/css' href='https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css')
+.container
+	.well
+		b Search Results
+	table.table.table-striped
+		thead
+			tr
+				th page_name
+				th donation_goal
+				th deadline
+				th status
+			each item in items
+				tr 
+					td
+						a(href="edit/"+item.page_name)=item.page_name
+					td=item.donation_goal
+					td=item.deadline
+					td=item.status
