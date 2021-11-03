@@ -14,11 +14,11 @@ const {Client} = require('pg');
 *		for security reasons, set these to a different value in the final product
 */
 const client = new Client({
-	user: 'postgres', 
-	host: 'localhost', 
-	database: 'EPICS_Project', 
-	password: 'postgres', 
-	port: 5432
+	user: 'edvtjzpq', 
+    host: 'fanny.db.elephantsql.com', 
+    database: 'edvtjzpq', 
+    password: 'WnwdnhLpZXu_6pidJHSoD9vTwg-ZAsfG', 
+    port: 5432
 });
 //export modules for user in server.js
 module.exports = client;

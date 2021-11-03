@@ -122,11 +122,11 @@ router.post('/pages/page-search', function(req, res) {
 *	function:	GET
 *	return specific family page based on family ID and page name
 */
-router.get('/pages/:user_id([0-9]+)/:page_name', function(req, res) {
+router.get('/pages/:user_id([0-9]+)/test', function(req, res) {
 	//build select query
-	var text = 'SELECT * FROM Page_Details WHERE family_id = $1 AND page_name = $2';
+	var text = 'SELECT * FROM Page_Details WHERE family_id = $1';
 	//set condition values
-	var values = [req.params.user_id, req.params.page_name];
+	var values = [req.params.user_id];
 	/*
 	*	query database
 	*		if successful, use query result to generate family-page.pug template
@@ -137,6 +137,7 @@ router.get('/pages/:user_id([0-9]+)/:page_name', function(req, res) {
 			res.render('family-page', {
 				title: req.params.page_name, 
 				page_name: req.params.page_name,
+				name: queryRes.rows[0].name,
 				visitation_date: queryRes.rows[0].visitation_date, 
 				visitation_location: queryRes.rows[0].visitation_location, 
 				vistitation_description: queryRes.rows[0].visitation_description, 
