@@ -167,5 +167,40 @@ router.get('/:user_id([0-9]+)/edit/:page_name', function(req, res) {
 			res.send(queryErr);
 		});
 });
+
+router.get('/:user_id([0-9]+)/test', function(req, res) {
+	console.log("here");
+	//build select query
+	var text = 'SELECT * FROM page_details WHERE family_id = $1';
+	//set condition values
+	var values = [req.params.user_id];
+	/*
+	*	query database
+	*		if successful, use query result to generate family-page.pug template
+	*		if failed, print error to console
+	*/
+	client.query(text, values)
+		.then(queryRes => {
+			//load all details of existing page to edit page, separate field underneath for edits
+			res.render('family-page', {
+				title: req.params.page_name, 
+				page_name: req.params.page_name,
+				name: queryRes.rows[0].page_name,
+				visitation_date: queryRes.rows[0].visitation_date, 
+				visitation_location: queryRes.rows[0].visitation_location, 
+				vistitation_description: queryRes.rows[0].visitation_description, 
+				funeral_date: queryRes.rows[0].funeral_date, 
+				funeral_location: queryRes.rows[0].funeral_location, 
+				funeral_description: queryRes.rows[0].funeral_description, 
+				donation_goal: queryRes.rows[0].donation_goal, 
+				deadline: queryRes.rows[0].deadline, 
+				obituary: queryRes.rows[0].obituary
+			})
+		})
+		.catch(queryErr => {
+			res.send(queryErr);
+		});
+});
+
 //export modules for user in server.js
 module.exports = router;

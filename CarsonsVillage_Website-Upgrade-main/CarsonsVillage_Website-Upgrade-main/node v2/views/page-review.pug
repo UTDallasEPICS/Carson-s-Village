@@ -88,4 +88,9 @@ head
 				.form-group
 					label.col-md-4.control-label(for='submit')
 					.col-md-8
-						button#submit.btn.btn-primary(name='submit') Simulate page creation
+						button#submit.btn.btn-primary(onPressed="simulate()", name='submit') Simulate page creation
+
+
+function simulate() {
+    window.location.href='/general/pages/'+item.family_id+'/'+item.page_name)=item.page_name
+}

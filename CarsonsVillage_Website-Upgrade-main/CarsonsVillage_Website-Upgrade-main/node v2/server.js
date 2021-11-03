@@ -12,6 +12,8 @@ const port = 3000;													//set port to 3000
 
 const client = require('./database.js');							//load database connection
 
+app.use(express.static('./views'));
+
 const routeLogin = require('./routes/login.js');					//load login route
 const routeGeneral = require('./routes/general.js');				//load general route
 const routeAdvocateAdmin = require('./routes/advocate-admin.js');	//load advocate-admin route

@@ -1,0 +1,79 @@
+.header{
+    margin-bottom: 0;
+    background-image: url("/images/cloud.jpg");
+    color: white;
+    width: 100%;
+    height: 90px;
+    text-align: center;
+}
+
+.center {
+    text-align: center;
+    margin: auto;
+    width: 70%;
+}
+
+.text-header{
+    text-decoration: underline;
+    font-weight: bold;
+    text-align: left;
+}
+
+.information{
+    text-align: left;
+}
+
+.image{
+    border-radius: 5%;
+}
+
+.donate{
+    width: 10em;
+    height: 3em;
+    background-color: rgba(122, 201, 98, 0.767);
+    color: white;
+    border-radius: 12px;
+    border: none;
+}
+
+.share{
+    width: 10em;
+    height: 3em;
+    background-color: blue;
+    color: white;
+    border-radius: 12px;
+    border: none;
+    margin-top: 10px;
+}
+
+.bar {
+    background-color: rgb(192, 192, 192);
+    width: 100%;
+    border-radius: 15px;
+    margin: auto;
+}
+
+.progress {
+    background-color: rgba(122, 201, 98, 0.767);
+    width: 75%;
+    color: white;
+    padding: 1%;
+    text-align: right;
+    font-size: 20px;
+    border-radius: 15px;
+}
+
+.current-donations{
+    color: rgba(122, 201, 98, 0.767);
+    text-decoration-color: blue;
+    text-align: left;
+}
+
+.goal{
+    bottom: 0%;
+}
+
+.donations{
+    display: flex;
+    bottom: 0;
+}

@@ -2,60 +2,91 @@ doctype html
 head 
 	title=title
 	link(rel='stylesheet' href='https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css')
+<<<<<<< HEAD
 .container
 	.well.well-sm 
 		h1.text-center=name
+=======
+	link(href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/fontawesome.min.css" rel="stylesheet")
+	link(rel='stylesheet', href='/stylesheets/family-page.css')
+
+.header
+		h1.text-center=name
+
+.center
+>>>>>>> 2423c3c (routing and starting ui)
 	.row 
-		.col-md-12 
-			h2 This section denotes a header
-	.row
-		.col-sm-4
-			h4 Visitation Date:
-		.col-sm-8
-			h4=visitation_date
-	.row
-		.col-sm-4
-			h4 Visitation Location:
-		.col-sm-8
-			h4=visitation_location
+		.col-md-4 
+			img.image(height=250, width=200, src="/images/pfp.jpg")
+		.col-md-7 
+			.row 
+				.donations
+					h4.current-donations=donation_goal
+					.goal of 2,000,000
+				.bar 
+					.progress
+			.row 
+				.row-md-6
+					.center
+						button.donate() DONATE
+				.row-md-6
+					.center
+						button.share() SHARE
+						
+					
 	.row 
-		.col-sm-12 
-			p.text-center=vistitation_description
-	.row 
-		.col-md-12 
-			h2 This section denotes a header
-	.row
-		.col-sm-4
-			h4 Funeral Date:
-		.col-sm-8
-			h4=funeral_date
-	.row
-		.col-sm-4
-			h4 Funeral Location:
-		.col-sm-8
-			h4=funeral_location
-	.row 
-		.col-sm-12 
-			p.text-center=funeral_description
-	.row 
-		.col-md-12 
-			h2 This section denotes payment information 
-	.row 
-		.col-sm-4 
-			h4 Donation goal 
-		.col-sm-8
-			h4=donation_goal 
-	.row 
-		.col-sm-4 
-			h4 Deadline 
-		.col-sm-8 
-			h4=deadline
-	.row 
-		.col-lg-12 
-			h2 This section denotes an obituary
-	.row 
-		.col-lg-12 
-			p=obituary
+		.col-md-4
+			.information=obituary
+		.col-md-4
+			.row
+				.text-header Visitation
+		.col-md-4 
+			.row 
+				.text-header Funeral Service
+
+
+
+
+
+
+	//- 	.col-sm-8
+	//- 		.row
+	//- 			.col-sm-3
+	//- 				h4 Visitation Date:
+	//- 			.col-sm-6
+	//- 				h4=visitation_date
+	//- 		.row
+	//- 			.col-sm-3
+	//- 				h4 Visitation Location:
+	//- 			.col-sm-6
+	//- 				h4=visitation_location
+	//- 		p.text-center=vistitation_description
+	//- 		h4 Funeral Date:
+	//- 		h4=funeral_date
+	//- 		h4 Funeral Location:
+	//- 		h4=funeral_location
+	//- .row 
+	//- 	.col-sm-12 
+	//- 		p.text-center=funeral_description
+	//- .row 
+	//- 	.col-md-12 
+	//- 		h2 This section denotes payment information 
+	//- .row 
+	//- 	.col-sm-4 
+	//- 		h4 Donation goal 
+	//- 	.col-sm-8
+	//- 		h4=donation_goal 
+	//- .row 
+	//- 	.col-sm-4 
+	//- 		h4 Deadline 
+	//- 	.col-sm-8 
+	//- 		h4=deadline
+	//- .row 
+	//- 	.col-lg-12 
+	//- 		h2 This section denotes an obituary
+	//- .row 
+	//- 	.col-lg-12 
+	//- 		p=obituary
 	.row 
 		.col-md-12
 			a.btn.btn-info(href='/general/pages/page-search' insert_link role='button') Return to page search
