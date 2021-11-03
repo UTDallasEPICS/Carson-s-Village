@@ -2,7 +2,7 @@
 const express = require('express');
 //Import for stripe payment processing
 //Replace "secret key" with secret key found in Stripe profile under development tools
-const stripe = require('stripe')('insert secret key here'); 
+const stripe = require('stripe')('sk_test_51JbwzUCFPKuFjBGBHJRGp5CncVpHj2MiqP9bs1qbA5aCQfXdyfreaA1fFNnRgS4aSYSPqMcXcFl0HsMoLSD4RncT00yH7yyKxJ'); 
 //Import for pathing
 const path = require('path');
 

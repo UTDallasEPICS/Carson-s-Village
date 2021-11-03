@@ -14,7 +14,7 @@ CREATE TABLE Page_Details(
 	funeral_description		TEXT, 
 
 	obituary				TEXT, 
-	images					TEXT[], 
+	images					BYTEA, 
 
 	donation_goal			MONEY		NOT NULL, 
 	deadline				DATE		NOT NULL, 
