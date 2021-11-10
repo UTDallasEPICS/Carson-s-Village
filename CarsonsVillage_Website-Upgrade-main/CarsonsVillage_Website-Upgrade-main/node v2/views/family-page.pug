@@ -1,24 +1,23 @@
 doctype html 
 head 
 	title=title
+	link(rel="stylesheet" href="//fonts.googleapis.com/css?family=Raleway")
 	link(rel='stylesheet' href='https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css')
-<<<<<<< HEAD
 .container
 	.well.well-sm 
 		h1.text-center=name
-=======
 	link(href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/fontawesome.min.css" rel="stylesheet")
 	link(rel='stylesheet', href='/stylesheets/family-page.css')
 
 .header
-		h1.text-center=name
+	img.header-image(src="/images/sky.jpg")
+	.header-name=name
 
 .center
->>>>>>> 2423c3c (routing and starting ui)
-	.row 
+	.row
 		.col-md-4 
 			img.image(height=250, width=200, src="/images/pfp.jpg")
-		.col-md-7 
+		.col-md-7.donation-section
 			.row 
 				.donations
 					h4.current-donations=donation_goal
@@ -29,64 +28,79 @@ head
 				.row-md-6
 					.center
 						button.donate() DONATE
+						i.fa-solid.fa-hand-holding-dollar
 				.row-md-6
 					.center
 						button.share() SHARE
 						
 					
 	.row 
-		.col-md-4
-			.information=obituary
-		.col-md-4
+		.col-md-5
+			.obituary=obituary
+		.col-md-3
 			.row
-				.text-header Visitation
-		.col-md-4 
+				.service-header Visitation
+				.details
+					.service-headers Date: 
+					.service-details=visitation_date
+				.details
+					.service-headers Time:
+					.service-details=visitation_time 
+				.details
+					.service-headers Location:
+					.service-details=visitation_location 
+					
+		.col-md-3 
 			.row 
-				.text-header Funeral Service
+				.service-header Funeral Service
+				.details
+					.service-headers Date: 
+					.service-details=funeral_date
+				.details
+					.service-headers Time:
+					.service-details=funeral_time 
+				.details
+					.service-headers Location:
+					.service-details=funeral_location 
 
+.new-container
+	.center
+		.row
+			.col-md-4
+				.containers
+			.col-md-4
+				.containers 
+			.col-md-4
+				.containers
+		.row
+			.col-md-4
+				.containers
+			.col-md-4
+				.containers 
+			.col-md-4
+				.containers
 
+.view-all
+	.center
+		.row
+			button.see-all-button SEE ALL
 
+.new-container 
+	.center
+		.row 
+			.message-user 
+				.message-user-name GW
+		.row 
+			.message-user GW
+		.row 
+			.message-user GW
+		.row 
+			.message-user GW
 
+.view-all
+	.center
+		.row
+			button.see-all-button SEE ALL
 
-
-	//- 	.col-sm-8
-	//- 		.row
-	//- 			.col-sm-3
-	//- 				h4 Visitation Date:
-	//- 			.col-sm-6
-	//- 				h4=visitation_date
-	//- 		.row
-	//- 			.col-sm-3
-	//- 				h4 Visitation Location:
-	//- 			.col-sm-6
-	//- 				h4=visitation_location
-	//- 		p.text-center=vistitation_description
-	//- 		h4 Funeral Date:
-	//- 		h4=funeral_date
-	//- 		h4 Funeral Location:
-	//- 		h4=funeral_location
-	//- .row 
-	//- 	.col-sm-12 
-	//- 		p.text-center=funeral_description
-	//- .row 
-	//- 	.col-md-12 
-	//- 		h2 This section denotes payment information 
-	//- .row 
-	//- 	.col-sm-4 
-	//- 		h4 Donation goal 
-	//- 	.col-sm-8
-	//- 		h4=donation_goal 
-	//- .row 
-	//- 	.col-sm-4 
-	//- 		h4 Deadline 
-	//- 	.col-sm-8 
-	//- 		h4=deadline
-	//- .row 
-	//- 	.col-lg-12 
-	//- 		h2 This section denotes an obituary
-	//- .row 
-	//- 	.col-lg-12 
-	//- 		p=obituary
-	.row 
-		.col-md-12
-			a.btn.btn-info(href='/general/pages/page-search' insert_link role='button') Return to page search
+.center
+	button.leave-message LEAVE A MESSAGE
