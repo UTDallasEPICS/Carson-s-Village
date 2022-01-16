@@ -7,7 +7,7 @@ CREATE TABLE User_Account(
 	first_name		TEXT			NOT NULL,
 	middle_name		TEXT,
 	last_name		TEXT			NOT NULL,
-	phone			VARCHAR(10),
+	phone			VARCHAR(10)
 );
 
 INSERT INTO User_Account(user_id, email, user_role, password_hash, password_salt, first_name, middle_name, last_name, phone) 
