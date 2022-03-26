@@ -1,2 +1,4 @@
 nodev2/node_modules
 .env
+.DS_Store
+Archival/
