@@ -33,8 +33,8 @@ Current and Planned Prototype Functions:
 	- '/' 
 		- redirects to login page
 	- Login
-- General
-	- '/general/user-search'
+- Search
+	- '/search/user-search'
 		- search users based on name and role
 		- return user id and name
 	- Planned functions

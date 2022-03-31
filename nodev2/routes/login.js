@@ -25,50 +25,34 @@ router.get('/', function(req, res) {
 *				/views/profile-admin.pug
 *	function:	POST
 *	route user to appropriate page based on entered credentials
+*	If a user email is correct, proceed to additional login checks
+*	Otherwise, print an error to console
 */
-router.post('/', function(req, res) {
-	//declare select query
-	var text = 'SELECT user_id FROM User_Account WHERE email = $1 AND user_role = $2';
-	//set condition values
-	var values = [req.body.email, req.body.user_role];
-	/*
-	*	query database
-	*		if successful, use query result to profile page or login error
-	*		if failed, print error to console
-	*/
-	client.query(text, values)
-		.then(queryRes => {
+router.post('/', async(req, res) => {
+	try{
+		const text = 'SELECT user_id FROM User_Account WHERE email = $1 AND user_role = $2';
+		const values = [req.body.email, req.body.user_role];
+		const queryRes = await client.query(text, values)
+		if(queryRes.rows[0] != null){
 			/*
-			*	If a user email is correct, proceed to additional login checks
-			*	Otherwise, print an error to console
+			*	an access level of 1 denotes a family and generates a family profile
+			*	an access level of 2 denotes an advocate/admin and generates an admin profile
+			*	any access level  produces no result
 			*/
-			if(queryRes.rows[0] != null)
-			{
-				/*
-				*	an access level of 1 denotes a family and generates a family profile
-				*	an access level of 2 denotes an advocate/admin and generates an admin profile
-				*	any access level  produces no result
-				*/
-				if(values[1] == 1)
-				{
-					//load family profile based on user id 
-					res.redirect('/family/' + queryRes.rows[0].user_id);
-				}
-				else if(values[1] == 2)
-				{
-					//load admin profile based on user id
-					res.redirect('/advocate-admin/' + queryRes.rows[0].user_id);
-				}
+			if(values[1] == 1){
+				res.redirect('/family/' + queryRes.rows[0].user_id);
 			}
-			else
-			{
-				//redirect to /login/error, which represents and inaccurate credential
-				res.redirect('/login/error');
+			else if(values[1] == 2){
+				res.redirect('/advocate-admin/' + queryRes.rows[0].user_id);
 			}
-		})
-		.catch(queryErr => {
-			res.send(queryErr);
-		});
+		}
+		else{
+			res.redirect('/login/error');
+		}
+	} catch(e){
+		res.send(queryErr);
+	}
+
 });
 /*
 *	/login/error

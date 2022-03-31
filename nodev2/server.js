@@ -15,7 +15,7 @@ const client = require('./database.js');							//load database connection
 app.use(express.static('./views'));
 
 const routeLogin = require('./routes/login.js');					//load login route
-const routeGeneral = require('./routes/general.js');				//load general route
+const routeSearch = require('./routes/search.js');				//load search route
 const routeAdvocateAdmin = require('./routes/advocate-admin.js');	//load advocate-admin route
 const routeFamily = require('./routes/family.js');					//load family route
 
@@ -34,7 +34,7 @@ app.get('/', function(req ,res) {									//redirect root url to login
 
 app.use('/login', routeLogin);										//route login functions
 
-app.use('/general', routeGeneral);									//route general functions
+app.use('/search', routeSearch);									//route search functions
 
 app.use('/advocate-admin', routeAdvocateAdmin);						//route advocate-admin functions
 
