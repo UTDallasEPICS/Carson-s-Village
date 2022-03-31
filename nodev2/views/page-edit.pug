@@ -1,0 +1,122 @@
+doctype html 
+head 
+	title=title
+	link(rel='stylesheet' href='https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css')
+.container
+	.well.well-sm
+		h1.text-center='Review page for ' + page_name
+	br
+	form.form-horizontal(method='post' action='nothing')
+		fieldset 
+			.row 
+				.col-md-12 
+					h2 This section denotes a header1
+			.row
+				.col-sm-4
+					h4 Visitation Date:
+				.col-sm-8
+					h4=visitation_date
+			.row(style="background-color:lightgrey;")
+				legend.text-center Insert new visitation date
+				.form-group
+					label.col-md-2.control-label(for='visitation_date_edit') visitation_date_edit
+					.col-md-10
+						input#page_name.form-control.input-md(name='visitation_date_edit' type='text')
+			.row
+				.col-sm-4
+					h4 Visitation Location:
+				.col-sm-8
+					h4=visitation_location
+			.row(style="background-color:lightgrey;")
+				legend.text-center Insert new visitation location
+				.form-group
+					label.col-md-2.control-label(for='visitation_location_edit') visitation_location_edit
+					.col-md-10
+						input#page_name.form-control.input-md(name='visitation_location_edit' type='text')
+			.row 
+				.col-sm-12 
+					p.text-center=vistitation_description
+			.row(style="background-color:lightgrey;")
+				legend.text-center Insert new visitation description
+				.form-group
+					label.col-md-2.control-label(for='vistitation_description_edit') vistitation_description_edit
+					.col-md-10
+						input#page_name.form-control.input-md(name='vistitation_description_edit' type='text')
+			.row 
+				.col-md-12 
+					h2 This section denotes a header
+			.row
+				.col-sm-4
+					h4 Funeral Date:
+				.col-sm-8
+					h4=funeral_date
+			.row(style="background-color:lightgrey;")
+				legend.text-center Insert new funeral date
+				.form-group
+					label.col-md-2.control-label(for='funeral_date_edit') funeral_date_edit
+					.col-md-10
+						input#page_name.form-control.input-md(name='funeral_date_edit' type='text')
+			.row
+				.col-sm-4
+					h4 Funeral Location:
+				.col-sm-8
+					h4=funeral_location
+			.row(style="background-color:lightgrey;")
+				legend.text-center Insert new funeral location
+				.form-group
+					label.col-md-2.control-label(for='funeral_location_edit') funeral_location_edit
+					.col-md-10
+						input#page_name.form-control.input-md(name='funeral_location_edit' type='text')
+			.row 
+				.col-sm-12 
+					p.text-center=funeral_description
+			.row(style="background-color:lightgrey;")
+				legend.text-center Insert new funeral description
+				.form-group
+					label.col-md-2.control-label(for='funeral_description_edit') funeral_description_edit
+					.col-md-10
+						input#page_name.form-control.input-md(name='funeral_description_edit' type='text')
+			.row 
+				.col-md-12 
+					h2 This section denotes payment information 
+			.row 
+				.col-sm-4 
+					h4 Donation goal 
+				.col-sm-8 
+					h4=donation_goal 
+			.row(style="background-color:lightgrey;")
+				legend.text-center Insert new donation goal
+				.form-group
+					label.col-md-2.control-label(for='donation_goal_edit') donation_goal_edit
+					.col-md-10
+						input#page_name.form-control.input-md(name='donation_goal_edit' type='text')
+			.row 
+				.col-sm-4 
+					h4 Deadline 
+				.col-sm-8 
+					h4=deadline
+			.row(style="background-color:lightgrey;")
+				legend.text-center Insert new deadline
+				.form-group
+					label.col-md-2.control-label(for='deadline_edit') deadline_edit
+					.col-md-10
+						input#page_name.form-control.input-md(name='deadline_edit' type='text')
+			.row 
+				.col-lg-12 
+					h2 This section denotes an obituary
+			.row 
+				.col-lg-12 
+					p=obituary
+			.row(style="background-color:lightgrey;")
+				legend.text-center Insert new obituary
+				.form-group
+					label.col-md-2.control-label(for='obituary_edit') obituary_edit
+					.col-md-10
+						textarea#page_name.form-control.input-md(name='obituary_edit' rows='12')
+			.row 
+				.form-group
+					label.col-md-2.control-label(for='submit')
+					.col-md-10
+						a(href='/test') press this
+							button#submit.btn.btn-primary(name='submit') Simulate page creation
+			
