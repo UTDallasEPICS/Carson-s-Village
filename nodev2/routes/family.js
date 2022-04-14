@@ -173,12 +173,12 @@ function convert(str) {
 	return [mnth, day, date.getFullYear()].join("/");
 }
 
-router.get('/:user_id([0-9]+)/test', async (req, res) => {
+router.get('/:user_id([0-9]+)/family-page/:page_name', async (req, res) => {
 	try{
 		//build select query
-		var text = 'SELECT * FROM page_details WHERE family_id = $1';
+		var text = 'SELECT * FROM page_details WHERE family_id = $1 AND page_name = $2';
 		//set condition values
-		var values = [req.params.user_id];
+		var values = [req.params.user_id, req.params.page_name];
 		/*
 		*	query database
 		*		if successful, use query result to generate family-page.pug template

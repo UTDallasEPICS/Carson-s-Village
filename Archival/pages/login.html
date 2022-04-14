@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Login</title>
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+	</head>
+	<body>
+		<div class="container">
+			<h1 class="text-center">Example Login Page</h1>
+			<h2 class="text-center">Not applicable outside prototype demonstration</h2>
+			<br>
+			<form class="form-horizontal" method="post" action="/login">
+				<fieldset>
+					<legend class="text-center">Enter credentials here: </legend>
+					<div class="form-group">
+						<label class="col-md-4 control-label" for="email">Email</label>
+						<div class="col-md-4">
+							<input id="email" name="email" type="text" placeholder="user enters email to log in" class="form-control input-md">
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-md-4 control-label" for="password">Password</label>
+						<div class="col-md-4">
+							<input id="password" name="password" type="password" placeholder="password required, not used in prototype" class="form-control input-md">
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-md-4 control-label" for="user_role">User Role</label>
+						<div class="col-md-4">
+							<select id="user_role" name="user_role" type="number" class="form-control input-md">
+								<option value="" disabled="true" selected="true" hidden="true">prototype only</option>
+								<option value="1">family</option>
+								<option value="2">advocate/administrator</option>
+								<option value="3">disabled</option>
+							</select>
+						</div>
+					</div>
+					<div class="form-group">
+                        <label class="col-md-4 control-label" for="submit"></label>
+                        <div class="col-md-4">
+                            <Button id="submit" name="submit" class="btn btn-primary">Simulate login</Button>
+                        </div>
+                    </div>
+				</fieldset>
+			</form>
+		</div>>
+	</body>
+</html>
