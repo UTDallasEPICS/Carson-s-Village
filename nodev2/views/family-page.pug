@@ -9,7 +9,7 @@ head
 	link(href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/fontawesome.min.css" rel="stylesheet")
 	link(rel='stylesheet', href='/stylesheets/family-page.css')
 
-.header
+//.header
 	img.header-image(src="/images/sky.jpg")
 	.header-name=name
 
@@ -25,7 +25,7 @@ head
 				.bar 
 					.progress
 			.row 
-				.row-md-6
+				.row-md-6 
 					.center
 						button.donate() DONATE
 						i.fa-solid.fa-hand-holding-dollar
@@ -36,71 +36,39 @@ head
 					
 	.row 
 		.col-md-5
-			.obituary=obituary
+			
 		.col-md-3
 			.row
-				.service-header Visitation
-				.details
-					.service-headers Date: 
-					.service-details=visitation_date
-				.details
-					.service-headers Time:
-					.service-details=visitation_time 
-				.details
-					.service-headers Location:
-					.service-details=visitation_location 
+				.containers
+					.service-header Visitation
+					.details
+						.service-headers Date: 
+						.service-details=visitation_date
+					.details
+						.service-headers Time:
+						.service-details=visitation_time 
+					.details
+						.service-headers Location:
+						.service-details=visitation_location 
 					
 		.col-md-3 
 			.row 
-				.service-header Funeral Service
-				.details
-					.service-headers Date: 
-					.service-details=funeral_date
-				.details
-					.service-headers Time:
-					.service-details=funeral_time 
-				.details
-					.service-headers Location:
-					.service-details=funeral_location 
-
-.new-container
-	.center
-		.row
-			.col-md-4
 				.containers
-			.col-md-4
-				.containers 
-			.col-md-4
-				.containers
-		.row
-			.col-md-4
-				.containers
-			.col-md-4
-				.containers 
-			.col-md-4
-				.containers
-
-.view-all
-	.center
-		.row
-			button.see-all-button SEE ALL
+					.service-header Funeral Service
+					.details
+						.service-headers Date: 
+						.service-details=funeral_date
+					.details
+						.service-headers Time:
+						.service-details=funeral_time 
+					.details
+						.service-headers Location:
+						.service-details=funeral_location 
 
 .new-container 
 	.center
-		.row 
-			.message-user 
-				.message-user-name GW
-		.row 
-			.message-user GW
-		.row 
-			.message-user GW
-		.row 
-			.message-user GW
-
-.view-all
+		button.leave-message LEAVE A COMMENT
+		
+.new-container 
 	.center
-		.row
-			button.see-all-button SEE ALL
-
-.center
-	button.leave-message LEAVE A MESSAGE
+		a.btn.btn-info(href="" + page_name role='button') View Page
