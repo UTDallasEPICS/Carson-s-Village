@@ -9,12 +9,13 @@ head
 	link(href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/fontawesome.min.css" rel="stylesheet")
 	link(rel='stylesheet', href='/stylesheets/family-page.css')
 
-//.header
-	img.header-image(src="/images/sky.jpg")
-	.header-name=name
+
 
 .center
-	.row
+	.row 
+		.col-12
+			.service-header Name of Deceased
+	.row.justify-content-around
 		.col-md-4 
 			img.image(height=250, width=200, src="/images/pfp.jpg")
 		.col-md-7.donation-section
@@ -24,7 +25,7 @@ head
 					.goal of 2,000,000
 				.bar 
 					.progress
-			.row 
+
 				.row-md-6 
 					.center
 						button.donate() DONATE
@@ -32,11 +33,7 @@ head
 				.row-md-6
 					.center
 						button.share() SHARE
-						
-					
-	.row 
-		.col-md-5
-			
+	.row.justify-content-around 
 		.col-md-3
 			.row
 				.containers
@@ -50,8 +47,8 @@ head
 					.details
 						.service-headers Location:
 						.service-details=visitation_location 
-					
-		.col-md-3 
+						
+	.col-md-3 
 			.row 
 				.containers
 					.service-header Funeral Service
@@ -64,6 +61,10 @@ head
 					.details
 						.service-headers Location:
 						.service-details=funeral_location 
+	.col-lg-10
+		.row 
+			.containers
+				.service-header OBITURAY
 
 .new-container 
 	.center
