@@ -16,8 +16,8 @@ const client = require('../database.js');		//load database connection
 *	function:	GET
 *	user interface for account search function
 */
-router.get('/user-search', function(req, res) {
-	res.sendFile('user-search.html', {root: 'pages'});
+router.get('/', function(req, res) {
+	res.render('user-search');
 });
 /*
 *	/search/user-search
@@ -68,8 +68,8 @@ router.post('/user-search', async (req, res) => {
 *	function:	GET
 *	user interface for family page search function
 */
-router.get('/pages/page-search', function(req, res) {
-	res.sendFile('page-search.html', {root: 'pages'});
+router.get('/', function(req, res) {
+	res.render('page-search');
 });
 /*
 *	/search/user-search
@@ -77,6 +77,9 @@ router.get('/pages/page-search', function(req, res) {
 *	function:	POST
 *	return list of applicable pages based on entered fields
 */
+router.get('/', function(req, res) {
+	res.render('user-results');
+});
 router.post('/pages/page-search', async (req, res) =>{
 	try{
 		//declare SELECT query
@@ -123,7 +126,7 @@ router.post('/pages/page-search', async (req, res) =>{
 *	if successful, use query result to generate family-page.pug template
 *	if failed, print error to console
 */
-router.get('/pages/:user_id([0-9]+)/test', async (req, res) =>{
+router.get('/pages/:user_id([0-9]+)/:page_name', async (req, res) =>{
 	try{
 		const text = 'SELECT * FROM Page_Details WHERE family_id = $1';
 		const values = [req.params.user_id];

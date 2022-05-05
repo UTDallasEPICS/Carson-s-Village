@@ -10,7 +10,7 @@ head
 		fieldset 
 			.row 
 				.col-md-12 
-					h2 This section denotes a header1
+					h2 Enter visitation information
 			.row
 				.col-sm-4
 					h4 Visitation Date:
@@ -44,7 +44,7 @@ head
 						input#page_name.form-control.input-md(name='vistitation_description_edit' type='text')
 			.row 
 				.col-md-12 
-					h2 This section denotes a header
+					h2 Enter funeral information
 			.row
 				.col-sm-4
 					h4 Funeral Date:
@@ -78,7 +78,7 @@ head
 						input#page_name.form-control.input-md(name='funeral_description_edit' type='text')
 			.row 
 				.col-md-12 
-					h2 This section denotes payment information 
+					h2 Enter payment information 
 			.row 
 				.col-sm-4 
 					h4 Donation goal 
@@ -103,9 +103,9 @@ head
 						input#page_name.form-control.input-md(name='deadline_edit' type='text')
 			.row 
 				.col-lg-12 
-					h2 This section denotes an obituary
+					h2 Enter an obituary
 			.row 
-				.col-lg-12 
+				//.col-lg-12 
 					p=obituary
 			.row(style="background-color:lightgrey;")
 				legend.text-center Insert new obituary
@@ -117,6 +117,4 @@ head
 				.form-group
 					label.col-md-2.control-label(for='submit')
 					.col-md-10
-						a(href='/test') press this
-							button#submit.btn.btn-primary(name='submit') Simulate page creation
-			
+						a.btn.btn-info(href="../family-page/" + page_name role='button') View Page

@@ -4,7 +4,8 @@ head
 	link(rel='stylesheet' href='https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css')
 .container
 	.well.well-sm
-		h1.text-center='Review page for ' + page_name
+		.background-color
+			h1.text-center='Review page for ' + page_name
 	br
 	form.form-horizontal(method='post' action='nothing')
 		fieldset 
@@ -88,9 +89,4 @@ head
 				.form-group
 					label.col-md-4.control-label(for='submit')
 					.col-md-8
-						button#submit.btn.btn-primary(onPressed="simulate()", name='submit') Simulate page creation
-
-
-function simulate() {
-    window.location.href='/search/pages/'+item.family_id+'/'+item.page_name)=item.page_name
-}
+						a.btn.btn-info(href='/./search/pages/'+family_id+'/'+page_name role='button') Simulate Page Creation

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Index</title>
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+	</head>
+	<body>
+		<div class="container">
+			<h1>General User Search</h1>
+			<br>
+			<legend>Search up list of all users based on name and role</legend>
+			<form action="/search/user-search" method="post" target="_self">
+				<div class="form-group">
+					<label for="first_name">First Name</label>
+					<input class="form-control" type="text" id="first_name" name="first_name">
+				</div>
+				<div class="form-group">
+					<label for="middle_name">Middle Name</label>
+					<input class="form-control" type="text" id="middle_name" name="middle_name">
+				</div>
+				<div class="form-group">
+					<label for="last_name">Last Name</label>
+					<input class="form-control" type="text" id="last_name" name="last_name">
+				</div>
+				<div class="form-group">
+					<label for="status">User Role</label>
+					<select class="form-control" name="status" id="status" type="number">
+						<option value="1">family</option>
+						<option value="2">advocate/admin</option>
+						<option value="3">disabled</option>
+					</select>
+				</div>
+				<div class="form-group">
+					<label for="search"></label>
+					<input type="submit" value="search">
+				</div>
+			</form>
+		</div>
+	</body>
+</html>

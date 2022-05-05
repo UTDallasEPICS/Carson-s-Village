@@ -40,12 +40,22 @@ router.get('/:user_id([0-9]+)', async (req, res) =>{
 			title: 'Profile ' + queryRes.rows[0].user_id, 
 			header: "Advocate/Admin Profile: " + name, 
 			email: queryRes.rows[0].email, 
-			phone: queryRes.rows[0].phone
+			phone: queryRes.rows[0].phone,
+			insert_link: '/advocate-admin/' + req.params.user_id + '/user-insert', 
+			list_link: '/advocate-admin/' + req.params.user_id + '/page-list'
 		});
 		
 	} catch(e) {
 		res.send(queryErr);
 	}
+});
+
+
+router.get('/:user_id([0-9]+)/user-insert', function(req, res) {
+	res.render('user-insert', {
+		title: 'Advocate ' + req.params.user_id + ' client creation', 
+		userAction: '/advocate-admin/' + req.params.user_id + '/user-insert'
+	});
 });
 /*
 *	/user_id/user-insert
@@ -53,7 +63,7 @@ router.get('/:user_id([0-9]+)', async (req, res) =>{
 *	function:	POST
 *	submit user account details to database
 */
-router.post('/user-insert', async (req, res) => {
+router.post('/:user_id([0-9]+)/user-insert', async (req, res) =>{
 	try{
 	var reqFields = Object.keys(req.body);							//get parameter names from previous GET
 	reqFields.pop();												//remove "submit" from parameter list
@@ -84,16 +94,14 @@ router.post('/user-insert', async (req, res) => {
 *	function:	GET
 *	user interface to fill out information to create a new user account
 */
-router.get('/user-insert', function(req,  res) {
-	res.sendFile('user-insert.html', {root: 'pages'});
-});
+
 /*
 *	/user_id/page-list
 *	file:		/views/advocate-pages.pug
 *	function:	GET
 *	return list of all family pages associated with every family account
 */
-router.get('/page-list', async (req, res) =>{
+router.get('/:user_id([0-9]+)/page-list', async (req, res) =>{
 	try{
 		//build select query
 		const queryRes = await client.query('SELECT family_id, page_name, donation_goal, deadline, status FROM Page_Details')
@@ -118,12 +126,12 @@ router.get('/page-list', async (req, res) =>{
 *	function:	GET
 *	attach review to pending family page
 */
-router.get('/review/:user_id([0-9]+)/:page_name', async (req, res) =>{
+router.get('/review/:family_id([0-9]+)/:page_name', async (req, res) =>{
 	try{
 		//build select query
 		var text = 'SELECT * FROM page_details WHERE family_id = $1 AND page_name = $2';
 		//set condition values
-		var values = [req.params.user_id, req.params.page_name];
+		var values = [req.params.family_id, req.params.page_name];
 		/*
 		*	query database
 		*		if successful, use query result to generate page-review.pug template
@@ -131,7 +139,8 @@ router.get('/review/:user_id([0-9]+)/:page_name', async (req, res) =>{
 		*/
 		const queryRes = await client.query(text, values)
 		res.render('page-review', {
-			title: req.params.page_name, 
+			title: req.params.page_name,
+			family_id:req.params.family_id,  
 			page_name: req.params.page_name,
 			visitation_date: queryRes.rows[0].visitation_date, 
 			visitation_location: queryRes.rows[0].visitation_location, 
