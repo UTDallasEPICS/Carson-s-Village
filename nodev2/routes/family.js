@@ -6,12 +6,14 @@
 *		Denotes functions specific to family accounts
 *		Located under "/family/"
 */
+const { query } = require('express');
 const express = require('express');						//load express for front-end and routes
 
 const router = express.Router();						//load express router
 const client = require('./../database.js');				//load database connection
 
 const buildInsert = require('./../query-builder.js');	//load function to build query INSERT statements
+const queryErr = 'An error has occurred'
 /*
 *	/user_id
 *	file:		/views/profile-family.pug
@@ -45,7 +47,8 @@ router.get('/:user_id([0-9]+)', async (req, res) =>{
 			email: queryRes.rows[0].email, 
 			phone: queryRes.rows[0].phone, 
 			insert_link: '/family/' + req.params.user_id + '/page-insert', 
-			list_link: '/family/' + req.params.user_id + '/page-list'
+			list_link: '/family/' + req.params.user_id + '/page-list',
+			logout: '/logout'
 		});
 	} catch(e){
 		res.send(queryErr);
@@ -71,7 +74,8 @@ router.get('/:user_id([0-9]+)/page-list', async (req, res) =>{
 		const queryRes = await client.query(text, values)
 		//list all available pages
 		res.render('client-pages', {
-			items: queryRes.rows
+			items: queryRes.rows,
+			back: '/family/' + req.params.user_id
 		});
 			 
 	} catch(e) {
@@ -88,7 +92,8 @@ router.get('/:user_id([0-9]+)/page-list', async (req, res) =>{
 router.get('/:user_id([0-9]+)/page-insert', function(req, res) {
 	res.render('page-insert', {
 		title: 'Family ' + req.params.user_id + ' client creation', 
-		userAction: '/family/' + req.params.user_id + '/page-insert'
+		userAction: '/family/' + req.params.user_id + '/page-insert',
+		back: '/family/' + req.params.user_id
 	});
 });
 /*
@@ -159,7 +164,8 @@ router.get('/:user_id([0-9]+)/edit/:page_name', async (req, res) => {
 			funeral_description: queryRes.rows[0].funeral_description, 
 			donation_goal: queryRes.rows[0].donation_goal, 
 			deadline: queryRes.rows[0].deadline, 
-			obituary: queryRes.rows[0].obituary
+			obituary: queryRes.rows[0].obituary,
+			back: '/family/' + req.params.user_id + '/page-list'
 		})			
 	} catch(e) {
 		res.send(queryErr);
@@ -200,7 +206,8 @@ router.get('/:user_id([0-9]+)/family-page/:page_name', async (req, res) => {
 			funeral_description: queryRes.rows[0].funeral_description, 
 			donation_goal: queryRes.rows[0].donation_goal, 
 			deadline: queryRes.rows[0].deadline, 
-			obituary: queryRes.rows[0].obituary
+			obituary: queryRes.rows[0].obituary,
+			back: '/family/' + req.params.user_id + '/edit/' + req.params.page_name
 		})
 	} catch(e) {
 		res.send(queryErr);

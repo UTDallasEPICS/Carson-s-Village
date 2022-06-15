@@ -30,6 +30,9 @@ router.get('/:user_id([0-9]+)', async (req, res) =>{
 		*		this page is currently not formatted, requires aesthetic overhaul
 		*/
 		const queryRes = await client.query(text, values)
+
+		console.log(queryRes.rows[0].user_role);
+
 		var name = queryRes.rows[0].first_name;					//attach first name	
 		if(queryRes.rows[0].middle_name != null)				//check for middle name
 		{
@@ -42,7 +45,8 @@ router.get('/:user_id([0-9]+)', async (req, res) =>{
 			email: queryRes.rows[0].email, 
 			phone: queryRes.rows[0].phone,
 			insert_link: '/advocate-admin/' + req.params.user_id + '/user-insert', 
-			list_link: '/advocate-admin/' + req.params.user_id + '/page-list'
+			list_link: '/advocate-admin/' + req.params.user_id + '/page-list',
+			logout: '/logout'
 		});
 		
 	} catch(e) {
@@ -54,7 +58,8 @@ router.get('/:user_id([0-9]+)', async (req, res) =>{
 router.get('/:user_id([0-9]+)/user-insert', function(req, res) {
 	res.render('user-insert', {
 		title: 'Advocate ' + req.params.user_id + ' client creation', 
-		userAction: '/advocate-admin/' + req.params.user_id + '/user-insert'
+		userAction: '/advocate-admin/' + req.params.user_id + '/user-insert',
+		back: '/advocate-admin/' + req.params.user_id
 	});
 });
 /*
@@ -113,7 +118,8 @@ router.get('/:user_id([0-9]+)/page-list', async (req, res) =>{
 		
 		res.render('advocate-pages', {
 			headers: ['family_id', 'page_name', 'donation_goal', 'deadline', 'status'], 
-			body: queryRes.rows
+			body: queryRes.rows,
+			back: '/advocate-admin/' + req.params.user_id
 		});
 		
 	} catch(e) {
@@ -150,7 +156,8 @@ router.get('/review/:family_id([0-9]+)/:page_name', async (req, res) =>{
 			funeral_description: queryRes.rows[0].funeral_description, 
 			donation_goal: queryRes.rows[0].donation_goal, 
 			deadline: queryRes.rows[0].deadline, 
-			obituary: queryRes.rows[0].obituary
+			obituary: queryRes.rows[0].obituary,
+			back: '/advocate-admin/' + req.params.family_id + '/page-list'
 		})
 	} catch(e) {
 		res.send(queryErr);
