@@ -1,0 +1,49 @@
+*{
+    margin: 0;
+    padding: 0;
+    outline: none;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+.unauthorized-page{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0px 5px 10px rgba(0,0,0,0.1);
+    position: absolute;
+    top: 10%;
+    left: 17%;
+    right: 17%;
+    bottom: 20%;
+
+}
+
+.unauthorized-page .content{
+    max-width: 550px;
+    text-align: center;
+}
+
+.content h1{
+    font-size: 5vw;
+    line-height: 1em;
+}
+
+.content h4{
+    margin: 20px;
+    text-transform: uppercase;
+    max-width: 550px;
+    font-size: 1em;
+}
+
+.content p{
+    font-size: 0.9em;
+}
+
+.content .btn {
+    margin: 25px 0;
+    display: inline-block;
+    border: 2px;
+    font-weight: 500;
+    padding: 10px 25px;
+}

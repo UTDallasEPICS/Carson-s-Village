@@ -1,0 +1,16 @@
+doctype html
+html(lang='en')
+  head
+    meta(charset='UTF-8')
+    meta(http-equiv='X-UA-Compatible', content='IE=edge')
+    meta(name='viewport', content='width=device-width, initial-scale=1.0')
+    title Access Denied
+    link(rel='stylesheet', href='/stylesheets/unauthorized-page.css')
+  body
+    .unauthorized-page
+      .content
+        h1 Access Denied
+        h4 The page you&apos;re trying to view has restricted access
+        p Please return to your previous page or contact an administrator
+        .btn
+          input(type='button', value='Go Back', onclick='history.go(-1)')

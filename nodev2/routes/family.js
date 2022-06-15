@@ -8,7 +8,6 @@
 */
 const { query } = require('express');
 const express = require('express');						//load express for front-end and routes
-
 const router = express.Router();						//load express router
 const client = require('./../database.js');				//load database connection
 
