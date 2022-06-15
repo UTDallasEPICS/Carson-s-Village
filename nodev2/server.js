@@ -19,12 +19,6 @@ const { auth } = require('express-openid-connect');
 // make all variables defined in .env available to us under process.env
 require('dotenv').config()
 
-<<<<<<< Updated upstream
-const secured = require('./secured');
-const checkRole = require('./checkRole.js');
-
-=======
->>>>>>> Stashed changes
 // tells us how to connect to auth0 open id provider
 const config = {
 	authRequired: false,
@@ -64,34 +58,19 @@ app.get('/', function(req ,res) {
 		res.redirect('/login');
 	else
 		res.redirect('/roleSelect');
-<<<<<<< Updated upstream
-		// res.redirect('/logout');
-=======
 		//res.redirect('/logout');
->>>>>>> Stashed changes
 
 });
 
 app.use('/roleSelect', secured(), routeLogin);										//route login functions
 
 app.use('/search', secured(), routeSearch);									//route search functions
-<<<<<<< Updated upstream
-
-app.use('/advocate-admin', secured(), routeAdvocateAdmin);						//route advocate-admin functions
-
-app.use('/family', secured(), checkRole(), routeFamily);									//route family functions
-
-app.get('*', (req, res) => {
-	res.redirect('/login');
-});
-=======
 
 app.use('/advocate-admin', secured(), checkRole(), routeAdvocateAdmin);						//route advocate-admin functions
 
 app.use('/family', secured(), routeFamily);									//route family functions
 
 
->>>>>>> Stashed changes
 
 app.listen(port, function() {										//set server to run contiously on port 3000
 	console.log('Listening on port ' + port + '...');

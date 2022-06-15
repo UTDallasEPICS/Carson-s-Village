@@ -13,11 +13,7 @@ module.exports = function () {
         
         if (queryRes.rows[0].user_role == 1){
           console.log(`${userEmail}` + ' is a family account');
-<<<<<<< Updated upstream
-          return next(); 
-=======
           res.render('unauthorized');
->>>>>>> Stashed changes
         }
         else if(queryRes.rows[0].user_role == 2){
           console.log(`${userEmail}` + ' is an admin account');

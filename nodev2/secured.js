@@ -7,19 +7,13 @@
  */
 module.exports = function () {
   return function secured (req, res, next) {
-<<<<<<< Updated upstream
-=======
     
->>>>>>> Stashed changes
     if (req.oidc.isAuthenticated()) { 
       console.log('Secured')
       return next(); 
     }
     // req.session.returnTo = req.originalUrl;
     res.redirect('/login');
-<<<<<<< Updated upstream
-=======
     
->>>>>>> Stashed changes
   };
 };
