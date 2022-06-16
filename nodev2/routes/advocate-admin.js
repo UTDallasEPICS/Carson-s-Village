@@ -17,11 +17,16 @@ const buildInsert = require('./../query-builder.js');	//load function to build q
 *	returns user profile based on id
 */
 router.get('/:user_id([0-9]+)', async (req, res) =>{
+
+	userEmail = (JSON.stringify(req.oidc.user.email)).replace(/"/g, "'");
+	const advocateText = 'SELECT user_id FROM User_Account WHERE email = ' + userEmail;
+	const loggedInUserID = await client.query(advocateText);
+            
 	try{
 		//build select query
-		var text = 'SELECT * FROM User_Account WHERE user_id = $1'; 
+		text = 'SELECT * FROM User_Account WHERE user_id = $1'; 
 		//set condition values
-		var values = [req.params.user_id];
+		const values = [req.params.user_id];
 		/*
 		*	query database
 		*		if successful, use query result to generate profile-admin.pug template
@@ -31,23 +36,26 @@ router.get('/:user_id([0-9]+)', async (req, res) =>{
 		*/
 		const queryRes = await client.query(text, values)
 
-		console.log(queryRes.rows[0].user_role);
-
-		var name = queryRes.rows[0].first_name;					//attach first name	
-		if(queryRes.rows[0].middle_name != null)				//check for middle name
-		{
-			name = name + ' ' + queryRes.rows[0].middle_name;	//attach middle name
+		if(loggedInUserID.rows[0].user_id == queryRes.rows[0].user_id){
+			var name = queryRes.rows[0].first_name;					//attach first name	
+			if(queryRes.rows[0].middle_name != null)				//check for middle name
+			{
+				name = name + ' ' + queryRes.rows[0].middle_name;	//attach middle name
+			}
+			name = name + ' ' + queryRes.rows[0].last_name;			//attach last name
+			res.render('profile-admin', {
+				title: 'Profile ' + queryRes.rows[0].user_id, 
+				header: "Advocate/Admin Profile: " + name, 
+				email: queryRes.rows[0].email, 
+				phone: queryRes.rows[0].phone,
+				insert_link: '/advocate-admin/' + req.params.user_id + '/user-insert', 
+				list_link: '/advocate-admin/' + req.params.user_id + '/page-list',
+				logout: '/logout'
+			});
 		}
-		name = name + ' ' + queryRes.rows[0].last_name;			//attach last name
-		res.render('profile-admin', {
-			title: 'Profile ' + queryRes.rows[0].user_id, 
-			header: "Advocate/Admin Profile: " + name, 
-			email: queryRes.rows[0].email, 
-			phone: queryRes.rows[0].phone,
-			insert_link: '/advocate-admin/' + req.params.user_id + '/user-insert', 
-			list_link: '/advocate-admin/' + req.params.user_id + '/page-list',
-			logout: '/logout'
-		});
+		else{
+			res.render('unauthorized');
+		}		
 		
 	} catch(e) {
 		res.send(queryErr);

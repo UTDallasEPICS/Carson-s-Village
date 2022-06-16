@@ -58,7 +58,6 @@ app.get('/', function(req ,res) {
 		res.redirect('/login');
 	else
 		res.redirect('/roleSelect');
-		//res.redirect('/logout');
 
 });
 

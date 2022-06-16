@@ -26,18 +26,8 @@ router.get("/", async(req, res) =>  {
 	isAuthenticated = req.oidc.isAuthenticated();
 
 	// Parsed email is in the format "evelynkha@yahoo.com" so we replace double quote with single
-	userEmail = (JSON.stringify(req.oidc.user.email)).replace(/"/g, "'");;
+	userEmail = (JSON.stringify(req.oidc.user.email)).replace(/"/g, "'");
 	console.log(userEmail);
-
-/*	! original test was to get the auth0 login page to route to /login2.pug --> passed
-	res.render("login2", {
-		// setting variables in here will make it available in login2.pug
-		isAuthenticated: req.oidc.isAuthenticated(),
-		userEmail: JSON.stringify(req.oidc.user.email)
-	})
-	hypothetically, login2.pug will not be needed anymore.
-	error pages need to be changed
-*/
 
 	// perform a query using the email
 	try{
@@ -59,10 +49,14 @@ router.get("/", async(req, res) =>  {
 				res.redirect('/advocate-admin/' + queryRes.rows[0].user_id);
 			}
 		}
-		// Query Error -> user ID does not exist, redirect and change error message
+		// Query Error -> user email does not exist in database, but does exist in auth0
+		// redirect and change error message
 		else{
 			theErrorMessage = "User ID does not exist";
-			res.redirect('/login2/error');
+			res.render('databaseError', {
+				// Have a var for what to make the below string equal to?
+				error: theErrorMessage
+			}); 
 		}
 	} catch(e){
 		res.send('Error in query');
@@ -70,11 +64,6 @@ router.get("/", async(req, res) =>  {
 	
 });
 
-router.get('/error', function(req, res) {
-	res.render('login2', {
-		// Have a var for what to make the below string equal to?
-		error: theErrorMessage
-	}); 
-});
+
 //export modules for user in server.js
 module.exports = router;
