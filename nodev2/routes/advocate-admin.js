@@ -19,7 +19,7 @@ const buildInsert = require('./../query-builder.js');	//load function to build q
 router.get('/:user_id([0-9]+)', async (req, res) =>{
 
 	userEmail = (JSON.stringify(req.oidc.user.email)).replace(/"/g, "'");
-	const advocateText = 'SELECT user_id FROM User_Account WHERE email = ' + userEmail;
+	const advocateText = 'SELECT user_role, user_id FROM User_Account WHERE email = ' + userEmail;
 	const loggedInUserID = await client.query(advocateText);
             
 	try{
@@ -36,7 +36,7 @@ router.get('/:user_id([0-9]+)', async (req, res) =>{
 		*/
 		const queryRes = await client.query(text, values)
 
-		if(loggedInUserID.rows[0].user_id == queryRes.rows[0].user_id){
+		if(loggedInUserID.rows[0].user_id == queryRes.rows[0].user_id || loggedInUserID.rows[0].user_role == queryRes.rows[0].user_role){
 			var name = queryRes.rows[0].first_name;					//attach first name	
 			if(queryRes.rows[0].middle_name != null)				//check for middle name
 			{
@@ -142,10 +142,6 @@ router.get('/:user_id([0-9]+)/page-list', async (req, res) =>{
 */
 router.get('/review/:family_id([0-9]+)/:page_name', async (req, res) =>{
 	try{
-		// save the id to access when we want to go back to the page list
-		var email = (JSON.stringify(req.oidc.user.email)).replace(/"/g, "'");
-		const idQuery = await client.query('SELECT user_id FROM User_Account WHERE email = ' + email);
-
 		//build select query
 		var text = 'SELECT * FROM page_details WHERE family_id = $1 AND page_name = $2';
 		//set condition values
@@ -169,12 +165,11 @@ router.get('/review/:family_id([0-9]+)/:page_name', async (req, res) =>{
 			donation_goal: queryRes.rows[0].donation_goal, 
 			deadline: queryRes.rows[0].deadline, 
 			obituary: queryRes.rows[0].obituary,
-			back: '/advocate-admin/' + idQuery.rows[0].user_id + '/page-list'
+			back: '/advocate-admin/' + req.params.family_id + '/page-list'
 		})
 	} catch(e) {
-		res.send('Something went wrong!');
+		res.send(queryErr);
 	}
 });
-
 //export modules for user in server.js
 module.exports = router;

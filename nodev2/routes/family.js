@@ -20,6 +20,10 @@ const queryErr = 'An error has occurred'
 *	returns user profile based on id
 */
 router.get('/:user_id([0-9]+)', async (req, res) =>{
+	userEmail = (JSON.stringify(req.oidc.user.email)).replace(/"/g, "'");
+	const advocateText = 'SELECT user_role, user_id FROM User_Account WHERE email = ' + userEmail;
+	const loggedInUserID = await client.query(advocateText);
+            
 	try{
 		//build select query
 		const text = 'SELECT * FROM User_Account WHERE user_id = $1';
@@ -33,22 +37,29 @@ router.get('/:user_id([0-9]+)', async (req, res) =>{
 		*		this page is currently not formatted, requires aesthetic overhaul
 		*/
 		const queryRes = await client.query(text, values)
-		//build name
-		var name = queryRes.rows[0].first_name;					//attach first name	
-		if(queryRes.rows[0].middle_name != null)				//check for middle name
-		{
-			name = name + ' ' + queryRes.rows[0].middle_name;	//attach middle name
+
+		if(loggedInUserID.rows[0].user_id == queryRes.rows[0].user_id || loggedInUserID.rows[0].user_role == 2){
+
+			//build name
+			var name = queryRes.rows[0].first_name;					//attach first name	
+			if(queryRes.rows[0].middle_name != null)				//check for middle name
+			{
+				name = name + ' ' + queryRes.rows[0].middle_name;	//attach middle name
+			}
+			name = name + ' ' + queryRes.rows[0].last_name;			//attach last name
+			res.render('profile-family', {
+				title: 'Profile' + queryRes.rows[0].user_id, 
+				header: 'Family Profile: ' + name, 
+				email: queryRes.rows[0].email, 
+				phone: queryRes.rows[0].phone, 
+				insert_link: '/family/' + req.params.user_id + '/page-insert', 
+				list_link: '/family/' + req.params.user_id + '/page-list',
+				logout: '/logout'
+			});
 		}
-		name = name + ' ' + queryRes.rows[0].last_name;			//attach last name
-		res.render('profile-family', {
-			title: 'Profile' + queryRes.rows[0].user_id, 
-			header: 'Family Profile: ' + name, 
-			email: queryRes.rows[0].email, 
-			phone: queryRes.rows[0].phone, 
-			insert_link: '/family/' + req.params.user_id + '/page-insert', 
-			list_link: '/family/' + req.params.user_id + '/page-list',
-			logout: '/logout'
-		});
+		else{
+			res.render('unauthorized');
+		}	
 	} catch(e){
 		res.send(queryErr);
 	}
