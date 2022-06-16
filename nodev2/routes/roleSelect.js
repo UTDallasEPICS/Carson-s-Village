@@ -26,7 +26,7 @@ router.get("/", async(req, res) =>  {
 	isAuthenticated = req.oidc.isAuthenticated();
 
 	// Parsed email is in the format "evelynkha@yahoo.com" so we replace double quote with single
-	userEmail = (JSON.stringify(req.oidc.user.email)).replace(/"/g, "'");;
+	userEmail = (JSON.stringify(req.oidc.user.email)).replace(/"/g, "'");
 	console.log(userEmail);
 
 /*	! original test was to get the auth0 login page to route to /login2.pug --> passed

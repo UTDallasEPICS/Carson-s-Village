@@ -128,6 +128,10 @@ router.post('/pages/page-search', async (req, res) =>{
 */
 router.get('/pages/:user_id([0-9]+)/:page_name', async (req, res) =>{
 	try{
+		// save the id to access when we want to go back to the page list
+		var email = (JSON.stringify(req.oidc.user.email)).replace(/"/g, "'");
+		const idQuery = await client.query('SELECT user_id FROM User_Account WHERE email = ' + email);
+
 		const text = 'SELECT * FROM Page_Details WHERE family_id = $1';
 		const values = [req.params.user_id];
 		const queryRes = await client.query(text, values)
@@ -143,7 +147,8 @@ router.get('/pages/:user_id([0-9]+)/:page_name', async (req, res) =>{
 			funeral_description: queryRes.rows[0].funeral_description, 
 			donation_goal: queryRes.rows[0].donation_goal, 
 			deadline: queryRes.rows[0].deadline, 
-			obituary: queryRes.rows[0].obituary
+			obituary: queryRes.rows[0].obituary,
+			back: '/advocate-admin/' + idQuery.rows[0].user_id + '/page-list'
 		})
 	} catch(e) {
 		res.send(queryErr);

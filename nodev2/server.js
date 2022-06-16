@@ -58,8 +58,6 @@ app.get('/', function(req ,res) {
 		res.redirect('/login');
 	else
 		res.redirect('/roleSelect');
-		//res.redirect('/logout');
-
 });
 
 app.use('/roleSelect', secured(), routeLogin);										//route login functions

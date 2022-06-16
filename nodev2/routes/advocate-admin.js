@@ -134,6 +134,10 @@ router.get('/:user_id([0-9]+)/page-list', async (req, res) =>{
 */
 router.get('/review/:family_id([0-9]+)/:page_name', async (req, res) =>{
 	try{
+		// save the id to access when we want to go back to the page list
+		var email = (JSON.stringify(req.oidc.user.email)).replace(/"/g, "'");
+		const idQuery = await client.query('SELECT user_id FROM User_Account WHERE email = ' + email);
+
 		//build select query
 		var text = 'SELECT * FROM page_details WHERE family_id = $1 AND page_name = $2';
 		//set condition values
@@ -157,11 +161,12 @@ router.get('/review/:family_id([0-9]+)/:page_name', async (req, res) =>{
 			donation_goal: queryRes.rows[0].donation_goal, 
 			deadline: queryRes.rows[0].deadline, 
 			obituary: queryRes.rows[0].obituary,
-			back: '/advocate-admin/' + req.params.family_id + '/page-list'
+			back: '/advocate-admin/' + idQuery.rows[0].user_id + '/page-list'
 		})
 	} catch(e) {
-		res.send(queryErr);
+		res.send('Something went wrong!');
 	}
 });
+
 //export modules for user in server.js
 module.exports = router;
