@@ -9,7 +9,7 @@ CREATE TABLE User_Account(
 );
 
 INSERT INTO User_Account(user_id, email, user_role, first_name, middle_name, last_name, phone) 
-	VALUES(1, 'evelynkha@yahoo.com', 1, 'first1', 'middle1', 'last1', '1000001000');
+	VALUES(1, 'user_id1', 1, 'first1', 'middle1', 'last1', '1000001000');
 INSERT INTO User_Account(user_id, email, user_role, first_name, middle_name, last_name, phone) 
 	VALUES(2, 'user_id2', 1, 'first2', 'middle2', 'last2', '1000000001');
 INSERT INTO User_Account(user_id, email, user_role, first_name, middle_name, last_name, phone) 
@@ -84,6 +84,8 @@ INSERT INTO Page_Details(family_id, page_name, status, visitation_date, visitati
 	VALUES(6, 'page3', 1, '2000-06-01 00:00', 'visitation_location1', 'visitation_description1', '2000-06-01 00:01', 'funeral_location1', 'funeral_description`', 'obituary1', ARRAY['image1', 'image2', 'image3'], 1000, '2000-01-01 00:02');
 INSERT INTO Page_Details(family_id, page_name, status, visitation_date, visitation_location, visitation_description, funeral_date, funeral_location, funeral_description, obituary, images, donation_goal, deadline) 
 	VALUES(6, 'page4', 1, '2000-06-01 00:00', 'visitation_location1', 'visitation_description1', '2000-06-01 00:01', 'funeral_location1', 'funeral_description`', 'obituary1', ARRAY['image1', 'image2', 'image3'], 1000, '2000-01-01 00:02');
+
+DELETE FROM User_Account WHERE email = 'evelynkha@yahoo.com';
 
 CREATE TABLE Page_Donations(
 	family_id		INT,
