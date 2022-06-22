@@ -1,5 +1,5 @@
 CREATE TABLE User_Account(
-	user_id			INT 			PRIMARY KEY, 
+	user_id			 			SERIAL PRIMARY KEY, 
 	email			TEXT			NOT NULL 		UNIQUE,
 	user_role		INT				NOT NULL		CHECK(user_role >= 1 AND user_role <= 3),
 	first_name		TEXT			NOT NULL,
@@ -8,24 +8,24 @@ CREATE TABLE User_Account(
 	phone			VARCHAR(10)
 );
 
-INSERT INTO User_Account(user_id, email, user_role, first_name, middle_name, last_name, phone) 
-	VALUES(1, 'user_id1', 1, 'first1', 'middle1', 'last1', '1000001000');
-INSERT INTO User_Account(user_id, email, user_role, first_name, middle_name, last_name, phone) 
-	VALUES(2, 'user_id2', 1, 'first2', 'middle2', 'last2', '1000000001');
-INSERT INTO User_Account(user_id, email, user_role, first_name, middle_name, last_name, phone) 
-	VALUES(3, 'user_id3', 1, 'first3', 'middle3', 'last3', '1000000010');
-INSERT INTO User_Account(user_id, email, user_role, first_name, middle_name, last_name, phone) 
-	VALUES(4, 'user_id4', 2, 'first4', 'middle4', 'last4', '1000000011');
-INSERT INTO User_Account(user_id, email, user_role, first_name, middle_name, last_name, phone)
-	VALUES(5, 'user_id5', 2, 'first5', 'middle5', 'last5', '1000000100');
-INSERT INTO User_Account(user_id, email, user_role, first_name, middle_name, last_name, phone) 
-	VALUES(6, 'user_id6', 3, 'first6', 'middle6', 'last6', '1000000101');
-INSERT INTO User_Account(user_id, email, user_role, first_name, middle_name, last_name, phone)
-	VALUES(7, 'user_id7', 3, 'first7', 'middle7', 'last7', '1000000110');
-INSERT INTO User_Account(user_id, email, user_role, first_name, middle_name, last_name, phone)
-	VALUES(8, 'user_id8', 1, 'first8', 'middle8', 'last8', '1000000111');
-INSERT INTO User_Account(user_id, email, user_role, first_name, middle_name, last_name, phone)
-	VALUES(9, 'user_id9', 1, 'first9', 'middle9', 'last9', '1000001000');
+INSERT INTO User_Account(email, user_role, first_name, middle_name, last_name, phone) 
+	VALUES('user_id1', 1, 'first1', 'middle1', 'last1', '1000001000');
+INSERT INTO User_Account(email, user_role, first_name, middle_name, last_name, phone) 
+	VALUES('user_id2', 1, 'first2', 'middle2', 'last2', '1000000001');
+INSERT INTO User_Account( email, user_role, first_name, middle_name, last_name, phone) 
+	VALUES('user_id3', 1, 'first3', 'middle3', 'last3', '1000000010');
+INSERT INTO User_Account(email, user_role, first_name, middle_name, last_name, phone) 
+	VALUES('user_id4', 2, 'first4', 'middle4', 'last4', '1000000011');
+INSERT INTO User_Account(email, user_role, first_name, middle_name, last_name, phone)
+	VALUES('user_id5', 2, 'first5', 'middle5', 'last5', '1000000100');
+INSERT INTO User_Account(email, user_role, first_name, middle_name, last_name, phone) 
+	VALUES('user_id6', 3, 'first6', 'middle6', 'last6', '1000000101');
+INSERT INTO User_Account( email, user_role, first_name, middle_name, last_name, phone)
+	VALUES('user_id7', 3, 'first7', 'middle7', 'last7', '1000000110');
+INSERT INTO User_Account(email, user_role, first_name, middle_name, last_name, phone)
+	VALUES('user_id8', 1, 'first8', 'middle8', 'last8', '1000000111');
+INSERT INTO User_Account(email, user_role, first_name, middle_name, last_name, phone)
+	VALUES('user_id9', 1, 'first9', 'middle9', 'last9', '1000001000');
 
 CREATE TABLE Page_Details(
 	family_id				INT,
@@ -68,6 +68,8 @@ INSERT INTO Page_Details(family_id, page_name, status, visitation_date, visitati
 	VALUES(2, 'page3', 1, '2000-02-01 01:00', 'visitation_location1', 'visitation_description1', '2000-02-01 01:01', 'funeral_location1', 'funeral_description`', 'obituary1', ARRAY['image1', 'image2', 'image3'], 1000, '2000-01-01 00:02');
 INSERT INTO Page_Details(family_id, page_name, status, visitation_date, visitation_location, visitation_description, funeral_date, funeral_location, funeral_description, obituary, images, donation_goal, deadline) 
 	VALUES(2, 'page4', 1, '2000-02-01 01:00', 'visitation_location1', 'visitation_description1', '2000-02-01 01:01', 'funeral_location1', 'funeral_description`', 'obituary1', ARRAY['image1', 'image2', 'image3'], 1000, '2000-01-01 00:02');
+INSERT INTO Page_Details(family_id, page_name, status, visitation_date, visitation_location, visitation_description, funeral_date, funeral_location, funeral_description, obituary, images, donation_goal, deadline) 
+	VALUES(3, 'page1', 1, '2000-04-01 00:00', 'visitation_location1', 'visitation_description1', '2000-04-01 00:01', 'funeral_location1', 'funeral_description`', 'obituary1', ARRAY['image1', 'image2', 'image3'], 1000, '2000-01-01 00:02');
 INSERT INTO Page_Details(family_id, page_name, status, visitation_date, visitation_location, visitation_description, funeral_date, funeral_location, funeral_description, obituary, images, donation_goal, deadline) 
 	VALUES(4, 'page1', 1, '2000-04-01 00:00', 'visitation_location1', 'visitation_description1', '2000-04-01 00:01', 'funeral_location1', 'funeral_description`', 'obituary1', ARRAY['image1', 'image2', 'image3'], 1000, '2000-01-01 00:02');
 INSERT INTO Page_Details(family_id, page_name, status, visitation_date, visitation_location, visitation_description, funeral_date, funeral_location, funeral_description, obituary, images, donation_goal, deadline) 
@@ -119,7 +121,7 @@ INSERT INTO Page_Donations(family_id, page_name, link ,status, description)
 
 CREATE TABLE Edit_Review_Log(
 	editor_id		INT,
-	family_id		TEXT,
+	family_id		INT,
 	page_name		TEXT,
 	edit_date		TIMESTAMP,
 	edit_code		VARCHAR(16)		NOT NULL, 

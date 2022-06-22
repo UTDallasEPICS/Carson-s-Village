@@ -75,16 +75,16 @@ router.get("/", async(req, res) =>  {
 router.post('/user-info', async (req, res) =>{
 	try{
 
-		// INSERT INTO User_Account (user_id, email, user_role, first_name, middle_name, last_name, phone) VALUES ($1, $2, $3, $4, $5, $6, $7)
+		// INSERT INTO User_Account (email, user_role, first_name, middle_name, last_name, phone) VALUES ($1, $2, $3, $4, $5, $6, $7)
+		// user_id is auto-incremented
 
 		// Build INSERT parameters
-		var reqFields = ["user_id", "email", "user_role"];					// initial parameters
+		var reqFields = ["email", "user_role"];								// initial parameters
 		reqFields = reqFields.concat(Object.keys(req.body));				// parameters the users will need to type into
 		console.log(reqFields);
 		reqFields.pop();													// remove "submit" from parameter list
 
 		// Build VALUE parameters
-		id = 10;															// will not work if id = 0, future problem: needs to be auto generated
 		email = (JSON.stringify(req.oidc.user.email)).replace(/"/g, "");	// authorized email
 		// choosing role based on email
 		if(email.toLowerCase().includes("@carsonsvillage.org")){			
@@ -93,7 +93,7 @@ router.post('/user-info', async (req, res) =>{
 		else{
 			role = 1;
 		}
-		var reqValues = [id, email, role];									// initial parameters 
+		var reqValues = [email, role];										// initial parameters 
 		reqValues = reqValues.concat(Object.values(req.body));			    // get first_name, middle_name, last_name, and phone from user
 		console.log(reqValues);
 		reqValues.pop();													// remove "submit" from values list
@@ -108,12 +108,22 @@ router.post('/user-info', async (req, res) =>{
 		*		if failed, print error 
 		*/
 		const insertRes = await client.query(query)
+
+		const userIdText = 'SELECT user_id FROM User_Account WHERE email = ' + userEmail;
+		const userIdFromDatabase = await client.query(userIdText);
+
+		// display all the users in the database 
+		const allUsersText = 'SELECT * FROM User_Account';
+		const allUsers = await client.query(allUsersText);
+		console.log(allUsers.rows);
+
+		// redirect the user to their designated home page
 		console.log('New account created successfully!')
 		if (role == 1){
-			res.redirect('/family/' + id);
+			res.redirect('/family/' + userIdFromDatabase.rows[0].user_id);
 		}
 		else if(role == 2){
-			res.redirect('/advocate-admin/' + id);
+			res.redirect('/advocate-admin/' + userIdFromDatabase.rows[0].user_id);
 		}
 	
 	} catch(e) {
