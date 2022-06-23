@@ -29,6 +29,7 @@ router.get('/:user_id([0-9]+)', async (req, res) =>{
 		//build select query
 		const text = 'SELECT * FROM User_Account WHERE user_id = $1';
 		//set condition values
+		console.log(req.params.user_id);
 		const values = [req.params.user_id];
 		/*
 		*	query database

@@ -1,0 +1,31 @@
+doctype html
+head
+	title New User Account Creation
+	link(rel='stylesheet' href='https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css')
+.container
+	form.form-horizontal(method='post' action=userAction)
+		fieldset
+			// form name
+			legend New User Account Creation
+			// Text input
+			.form-group
+				label.col-md-4.control-label(for='first_name') First Name
+				.col-md-4
+					input#first_name.form-control.input-md(name='first_name' type='text' placeholder='(user defined)')
+			.form-group
+				label.col-md-4.control-label(for='middle_name') Middle Name
+				.col-md-4
+					input#middle_name.form-control.input-md(name='middle_name' type='text' placeholder='(user defined, optional)')
+			.form-group
+				label.col-md-4.control-label(for='last_name') Last Name
+				.col-md-4
+					input#last_name.form-control.input-md(name='last_name' type='text' placeholder='(user defined)')
+			.form-group
+				label.col-md-4.control-label(for='phone') Phone
+				.col-md-4
+					input#phone.form-control.input-md(minlength='10' maxlength='10' name='phone' type='text' placeholder='(user defined, optional)')
+			//	button
+			.form-group
+				label.col-md-4.control-label(for='submit')
+				.col-md-4
+				button#submit.btn.btn-primary(name='submit') Save
