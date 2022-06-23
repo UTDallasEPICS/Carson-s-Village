@@ -9,12 +9,11 @@
 const express = require('express');									//load express for front-end and routes
 const app = express();												//set application as express
 const port = 3000;													//set port to 3000
-const secured = require('./secured.js');								// check if the user is secure
 const checkRole = require('./checkRole.js');	
 const client = require('./database.js');							//load database connection
 
 // import openid-connect module
-const { auth } = require('express-openid-connect');
+const { auth, requiresAuth } = require('express-openid-connect');
 
 // make all variables defined in .env available to us under process.env
 require('dotenv').config()
@@ -53,22 +52,20 @@ client.query('SELECT NOW()')										//check database connectivity
 // redirect root url to auth0 login page if the user is not logged in yet
 // otherwise, let them go to their role page
 app.get('/', function(req ,res) {	
-	console.log(req.oidc.isAuthenticated());	
+	console.log("Authenticated status: " + req.oidc.isAuthenticated());	
 	if(req.oidc.isAuthenticated() == false)							
 		res.redirect('/login');
 	else
 		res.redirect('/roleSelect');
 });
 
-app.use('/roleSelect', secured(), routeLogin);										//route login functions
+app.use('/roleSelect', routeLogin);										//route login functions
 
-app.use('/search', secured(), routeSearch);									//route search functions
+app.use('/search', routeSearch);									//route search functions
 
-app.use('/advocate-admin', secured(), checkRole(), routeAdvocateAdmin);						//route advocate-admin functions
+app.use('/advocate-admin', requiresAuth(), checkRole(), routeAdvocateAdmin);						//route advocate-admin functions
 
-app.use('/family', secured(), routeFamily);									//route family functions
-
-
+app.use('/family', requiresAuth(), routeFamily);									//route family functions
 
 app.listen(port, function() {										//set server to run contiously on port 3000
 	console.log('Listening on port ' + port + '...');

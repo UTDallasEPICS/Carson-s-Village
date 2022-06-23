@@ -10,6 +10,7 @@
 const express = require('express');				//load express for front-end and routes
 const router = express.Router();				//load express router
 const client = require('../database.js');		//load database connection
+const queryErr = 'An error has occurred'
 /*
 *	/search/user-search
 *	file:		/pages/user-search.html
@@ -60,6 +61,7 @@ router.post('/user-search', async (req, res) => {
 		});
 	} catch(e) {
 		console.error(queryErr.stack);
+		console.log(e);
 	}
 });
 /*
@@ -115,6 +117,7 @@ router.post('/pages/page-search', async (req, res) =>{
 		});
 	} catch(e) {
 		res.send(queryErr);
+		console.log(e);
 	}
 });
 /*
@@ -128,30 +131,79 @@ router.post('/pages/page-search', async (req, res) =>{
 */
 router.get('/pages/:user_id([0-9]+)/:page_name', async (req, res) =>{
 	try{
-		// save the id to access when we want to go back to the page list
-		var email = (JSON.stringify(req.oidc.user.email)).replace(/"/g, "'");
-		const idQuery = await client.query('SELECT user_id FROM User_Account WHERE email = ' + email);
+		if (req.oidc.isAuthenticated() == true)
+		{
+			// save the id to access when we want to go back to the page list
+			var email = (JSON.stringify(req.oidc.user.email)).replace(/"/g, "'");
+			const idQuery = await client.query('SELECT user_id FROM User_Account WHERE email = ' + email);
+			const roleQuery = await client.query('SELECT user_role FROM User_Account WHERE email = ' + email);
 
-		const text = 'SELECT * FROM Page_Details WHERE family_id = $1';
-		const values = [req.params.user_id];
-		const queryRes = await client.query(text, values)
-		res.render('family-page', {
-			title: req.params.page_name, 
-			page_name: req.params.page_name,
-			name: queryRes.rows[0].name,
-			visitation_date: queryRes.rows[0].visitation_date, 
-			visitation_location: queryRes.rows[0].visitation_location, 
-			vistitation_description: queryRes.rows[0].visitation_description, 
-			funeral_date: queryRes.rows[0].funeral_date, 
-			funeral_location: queryRes.rows[0].funeral_location, 
-			funeral_description: queryRes.rows[0].funeral_description, 
-			donation_goal: queryRes.rows[0].donation_goal, 
-			deadline: queryRes.rows[0].deadline, 
-			obituary: queryRes.rows[0].obituary,
-			back: '/advocate-admin/' + idQuery.rows[0].user_id + '/page-list'
-		})
+			if (roleQuery == 2)
+			{
+				const text = 'SELECT * FROM Page_Details WHERE family_id = $1';
+				const values = [req.params.user_id];
+				const queryRes = await client.query(text, values);
+				res.render('family-page', {
+					title: req.params.page_name, 
+					page_name: req.params.page_name,
+					name: queryRes.rows[0].name,
+					visitation_date: queryRes.rows[0].visitation_date, 
+					visitation_location: queryRes.rows[0].visitation_location, 
+					vistitation_description: queryRes.rows[0].visitation_description, 
+					funeral_date: queryRes.rows[0].funeral_date, 
+					funeral_location: queryRes.rows[0].funeral_location, 
+					funeral_description: queryRes.rows[0].funeral_description, 
+					donation_goal: queryRes.rows[0].donation_goal, 
+					deadline: queryRes.rows[0].deadline, 
+					obituary: queryRes.rows[0].obituary,
+					back: '/advocate-admin/' + idQuery.rows[0].user_id + '/page-list'
+				})
+			}
+			else
+			{
+				const text = 'SELECT * FROM Page_Details WHERE family_id = $1';
+				const values = [req.params.user_id];
+				const queryRes = await client.query(text, values);
+				res.render('family-page', {
+					title: req.params.page_name, 
+					page_name: req.params.page_name,
+					name: queryRes.rows[0].name,
+					visitation_date: queryRes.rows[0].visitation_date, 
+					visitation_location: queryRes.rows[0].visitation_location, 
+					vistitation_description: queryRes.rows[0].visitation_description, 
+					funeral_date: queryRes.rows[0].funeral_date, 
+					funeral_location: queryRes.rows[0].funeral_location, 
+					funeral_description: queryRes.rows[0].funeral_description, 
+					donation_goal: queryRes.rows[0].donation_goal, 
+					deadline: queryRes.rows[0].deadline, 
+					obituary: queryRes.rows[0].obituary,
+					back: '/family/' + idQuery.rows[0].user_id
+				})
+			}
+		}
+		else
+		{
+			const text = 'SELECT * FROM Page_Details WHERE family_id = $1';
+			const values = [req.params.user_id];
+			const queryRes = await client.query(text, values);
+			res.render('family-page-public', {
+				title: req.params.page_name, 
+				page_name: req.params.page_name,
+				name: queryRes.rows[0].name,
+				visitation_date: queryRes.rows[0].visitation_date, 
+				visitation_location: queryRes.rows[0].visitation_location, 
+				vistitation_description: queryRes.rows[0].visitation_description, 
+				funeral_date: queryRes.rows[0].funeral_date, 
+				funeral_location: queryRes.rows[0].funeral_location, 
+				funeral_description: queryRes.rows[0].funeral_description, 
+				donation_goal: queryRes.rows[0].donation_goal, 
+				deadline: queryRes.rows[0].deadline, 
+				obituary: queryRes.rows[0].obituary
+			})
+		}
 	} catch(e) {
 		res.send(queryErr);
+		console.log(e);
 	}
 })
 //export modules for user in server.js

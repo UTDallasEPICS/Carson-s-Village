@@ -10,6 +10,7 @@ const express = require('express');						//load express for front-end and routes
 const router = express.Router();						//load express router
 const client = require('./../database.js'); 			//load database connection
 const buildInsert = require('./../query-builder.js');	//load function to build query INSERT statements
+const queryErr = 'An error has occurred'
 /*
 *	/user_id
 *	file:		/views/profile-family.pug
