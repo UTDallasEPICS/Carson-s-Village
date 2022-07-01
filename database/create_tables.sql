@@ -87,7 +87,7 @@ INSERT INTO Page_Details(family_id, page_name, status, visitation_date, visitati
 INSERT INTO Page_Details(family_id, page_name, status, visitation_date, visitation_location, visitation_description, funeral_date, funeral_location, funeral_description, obituary, images, donation_goal, deadline) 
 	VALUES(6, 'page4', 1, '2000-06-01 00:00', 'visitation_location1', 'visitation_description1', '2000-06-01 00:01', 'funeral_location1', 'funeral_description`', 'obituary1', ARRAY['image1', 'image2', 'image3'], 1000, '2000-01-01 00:02');
 
-DELETE FROM User_Account WHERE email = 'evelynkha@yahoo.com';
+DELETE FROM User_Account WHERE email = 'evelynkha0697@gmail.com';
 
 CREATE TABLE Page_Donations(
 	family_id		INT,

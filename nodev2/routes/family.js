@@ -134,14 +134,6 @@ router.get('/:user_id([0-9]+)/page-insert', async(req, res) =>{
 		// Can access account only if user_id matches OR user is an admin
 
 		if(loggedInUserID.rows[0].user_id == urlRoleFind.rows[0].user_id || (loggedInUserID.rows[0].user_role == 2 && urlRoleFind.rows[0].user_role == 1)){
-			//build select query
-			text = 'SELECT page_name, donation_goal, deadline, status FROM Page_Details WHERE family_id = $1';
-			/*
-			*	query database
-			*		if successful, use query result to generate family-page.pug template
-			*		if failed, print error to console
-			*/
-			const queryRes = await client.query(text, values)
 			res.render('page-insert', {
 				title: 'Family ' + req.params.user_id + ' client creation', 
 				userAction: '/family/' + req.params.user_id + '/page-insert',
@@ -164,10 +156,10 @@ router.get('/:user_id([0-9]+)/page-insert', async(req, res) =>{
 *	submit family page details to database
 */
 router.post('/:user_id([0-9]+)/page-insert', async (req, res) =>{
-	
 	try{
 		var reqFields = Object.keys(req.body);							//get parameter names from previous GET
 		reqFields.pop();												//remove "submit" from parameter list
+		console.log(reqFields);
 		reqFields.unshift('status');									//add "status" to head of parameter list
 		reqFields.unshift('family_id');									//add "family_id" to head of parameter list
 
