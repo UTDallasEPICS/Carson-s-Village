@@ -2,6 +2,9 @@ doctype html
 head 
 	title=title
 	link(rel='stylesheet' href='https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css')
+html
+	head  
+		include header.html
 .container
 	.row
 		.col-md-6
@@ -25,3 +28,6 @@ head
 			a.btn.btn-info(href=insert_link role='button') Insert new page
 		.col-md-6
 			a.btn.btn-info(href=list_link role='button') View existing pages
+html
+	head
+		include footer.html

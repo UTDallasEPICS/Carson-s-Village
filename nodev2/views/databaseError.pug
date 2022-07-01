@@ -1,4 +1,7 @@
 doctype html
+html
+	head 
+		include header.html
 head
 	title Login
 	link(rel='stylesheet' href='https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css')
@@ -9,3 +12,6 @@ body
 		h3.text-center(style='color:red')=error
 		br
 		a.btn.btn-info(href='/logout/') Go back to login page
+html
+	head
+		include footer.html

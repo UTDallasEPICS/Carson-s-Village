@@ -1,3 +1,6 @@
+html
+	head 
+		include header.html
 head
 	title Page Search
 	link(rel='stylesheet' type='text/css' href='https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css')
@@ -18,3 +21,6 @@ head
 						a(href='/search/pages/'+item.family_id+'/'+item.page_name)=item.page_name
 					td=item.donation_goal
 					td=item.deadline
+html
+	head
+		include footer.html

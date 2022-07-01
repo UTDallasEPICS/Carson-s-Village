@@ -11,6 +11,7 @@ const express = require('express');			//load express for front-end and routes
 const router = express.Router();			//load express router
 const client = require('../database.js');	//load database connection
 const buildInsert = require('./../query-builder.js');	//load function to build query INSERT statements
+const checkRole = require('../checkRole.js');
 
 let theErrorMessage = ''
 
@@ -20,12 +21,6 @@ let theErrorMessage = ''
 * 	based on their role, lead them to their role-specific page
 */
 router.get("/", async(req, res) =>  {
-	console.log(req.oidc.isAuthenticated());
-	console.log(JSON.stringify(req.oidc.user.email));
-
-	// universal variable to determine if the user was authenticated or not
-	isAuthenticated = req.oidc.isAuthenticated();
-
 	// Parsed email is in the format "evelynkha@yahoo.com" so we replace double quote with single
 	userEmail = (JSON.stringify(req.oidc.user.email)).replace(/"/g, "'");
 	console.log(userEmail);
@@ -72,7 +67,7 @@ router.get("/", async(req, res) =>  {
 *	function:	POST
 *	submit user account details to database using query-builder.js
 */
-router.post('/user-info', async (req, res) =>{
+router.post('/user-info', checkRole(), async (req, res) =>{
 	try{
 
 		// INSERT INTO User_Account (email, user_role, first_name, middle_name, last_name, phone) VALUES ($1, $2, $3, $4, $5, $6, $7)
