@@ -23,7 +23,7 @@ module.exports = function () {
       // Query Error -> user ID does not exist, redirect and change error message
       else{
         theErrorMessage = "User ID does not exist";
-        res.redirect('/login2/error');
+        res.send(theErrorMessage);
       }
     } catch(e){
       res.send('Error in query');

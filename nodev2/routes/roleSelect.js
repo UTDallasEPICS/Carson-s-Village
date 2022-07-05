@@ -67,7 +67,7 @@ router.get("/", async(req, res) =>  {
 *	function:	POST
 *	submit user account details to database using query-builder.js
 */
-router.post('/user-info', checkRole(), async (req, res) =>{
+router.post('/user-info', async (req, res) =>{
 	try{
 
 		// INSERT INTO User_Account (email, user_role, first_name, middle_name, last_name, phone) VALUES ($1, $2, $3, $4, $5, $6, $7)
