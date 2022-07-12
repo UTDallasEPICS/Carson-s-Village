@@ -1,24 +1,24 @@
 doctype html 
 head 
 	title=title
-	link(rel='stylesheet' href='https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css')
-html
-	head
-		include header.html
+	html
+		head
+			include header.html
+	link(rel='stylesheet' href='/stylesheets/main.css')
 .container
 	.row
 	.col-md-12
-		h1.text-center=header
+		h1.text-6xl=header
 	.row
 		.col-md-4
-			h3 Email:
+			h4.mt-20.text-blue Email:
 		.col-md-8
-			h3=email
+			h4=email
 	.row
 		.col-md-4
-			h3 Phone:
+			h4.mt-20 Phone:
 		.col-md-8
-			h3=phone
+			h4=phone
 	br
 	.row 
 		.col-md-6

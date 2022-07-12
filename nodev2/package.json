@@ -3,9 +3,12 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "node server.js"
+    "start": "node server.js",
+    "build": "postcss views/stylesheets/input.css -o views/stylesheets/main.css",
+    "watch": "tailwindcss -i views/stylesheets/input.css -o views/stylesheets/main.css --watch"
   },
   "dependencies": {
+    "autoprefixer": "^10.4.7",
     "cookie-parser": "~1.4.4",
     "debug": "~2.6.9",
     "dotenv": "^10.0.0",
@@ -16,6 +19,11 @@
     "morgan": "~1.9.1",
     "multer": "^1.4.3",
     "pg": "^8.7.1",
+    "postcss": "^8.4.14",
+    "postcss-cli": "^10.0.0",
     "pug": "^3.0.2"
+  },
+  "devDependencies": {
+    "tailwindcss": "^3.1.6"
   }
 }

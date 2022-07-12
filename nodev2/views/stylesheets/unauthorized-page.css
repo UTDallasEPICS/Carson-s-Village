@@ -4,6 +4,7 @@
     outline: none;
     box-sizing: border-box;
     font-family: 'Poppins', sans-serif;
+    font-size: 12px;
 }
 
 .unauthorized-page{
@@ -25,7 +26,6 @@
 }
 
 .content h1{
-    font-size: 5vw;
     line-height: 1em;
 }
 
@@ -33,11 +33,10 @@
     margin: 20px;
     text-transform: uppercase;
     max-width: 550px;
-    font-size: 1em;
 }
 
 .content p{
-    font-size: 0.9em;
+    font-size: small;
 }
 
 .content .btn {

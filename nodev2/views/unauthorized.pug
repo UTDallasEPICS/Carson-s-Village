@@ -1,7 +1,4 @@
 doctype html
-html
-  head
-    include header.html
 html(lang='en')
   head
     meta(charset='UTF-8')
@@ -9,6 +6,9 @@ html(lang='en')
     meta(name='viewport', content='width=device-width, initial-scale=1.0')
     title Access Denied
     link(rel='stylesheet', href='/stylesheets/unauthorized-page.css')
+html
+  head
+    include header.html
   body
     .unauthorized-page
       .content
