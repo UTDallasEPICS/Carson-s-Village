@@ -9,12 +9,12 @@ head
 	link(rel='stylesheet' href='/stylesheets/main.css')
 .container.bg-white.mx-auto.mt-1(style="width: 1000px; height: 650px; box-shadow: 0px 3px 6px 3px rgba(0, 0, 0, 0.15), 0px 3px 3px rgba(0, 0, 0, 0.3); border-radius: 60px;")
 	.text-9xl.font-poppins.text-blue.text-center.pt-10 ×
-	.text-gray-dark.font-bold.font-poppins.text-6xl.text-center.pt-20 Access denied
+	.text-gray-dark.font-bold.font-poppins.text-6xl.text-center.pt-20 Submission failed
 	.img.mx-auto.saturate-125.hue-rotate-15.opacity-80(style="background-image: url('/images/blue_image.png'); width: 1000px; position: absolute; height: 325px; top: 522px; border-radius: 0px 0px 60px 60px;")
 	.triangle(style="position: absolute; border-left: 70px solid transparent; border-right: 70px solid transparent; border-top: 80px solid #ffffff; left: 650px;")
-	.btn.text-blue.bg-white.w-fit.rounded-full(style="position: relative; z-index: 2; left: 370px; top: 155px;")
-		input(type='button', value='Return to previous page', onclick='history.go(-1)')
-	.text-gray-dark.font-bold.font-poppins.text-md.text-center.pt-16(style="position: relative; z-index: 2;") The page you&apos;re trying to view has restricted access or does not exist.
+	.btn.text-blue.bg-white.w-fit.rounded-full(style="position: relative; z-index: 2; left: 394px; top: 155px;")
+		input(type='button', value='Return to profile', onclick='history.go(-2)')
+	.text-gray-dark.font-bold.font-poppins.text-md.text-center.pt-16(style="position: relative; z-index: 2;") Please submit the form again.
 html
 	head
 		include footer.html

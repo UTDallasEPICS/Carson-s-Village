@@ -50,13 +50,11 @@ router.get('/:user_id([0-9]+)', async (req, res) =>{
 			}
 			name = name + ' ' + queryRes.rows[0].last_name;			//attach last name
 			res.render('profile-family', {
-				title: 'Profile' + queryRes.rows[0].user_id, 
-				header: 'Family Profile: ' + name, 
+				profileName: name, 
 				email: queryRes.rows[0].email, 
 				phone: queryRes.rows[0].phone, 
 				insert_link: '/family/' + req.params.user_id + '/page-insert', 
 				list_link: '/family/' + req.params.user_id + '/page-list',
-				logout: '/logout'
 			});
 		}
 		else{
@@ -176,16 +174,10 @@ router.post('/:user_id([0-9]+)/page-insert', async (req, res) =>{
 		*		if failed, print error to console
 		*/
 		const queryRes = await client.query(query)
-		res.render('confirm', {
-			message: 'Data submitted successfully', 
-			status: queryRes
-		});
+		res.render('confirm', {});
 		
 	} catch(e) {
-		res.render('confirm', {
-			message: 'Error, submission failed', 
-			status: queryErr
-		});
+		res.render('failed', {});
 	}
 });
 

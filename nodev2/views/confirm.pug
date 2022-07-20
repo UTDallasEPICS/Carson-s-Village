@@ -1,13 +1,19 @@
 doctype html 
-html
-    head 
-        include header.html
 head 
-    title= title 
-body 
-    h1= message
-    p=status
-    a(href='.') Return to previous page
+	link(rel='preconnect' href='https://fonts.googleapis.com')
+	link(rel='preconnect' href='https://fonts.gstatic.com' crossorigin='')
+	link(href='https://fonts.googleapis.com/css2?family=Poppins:ital@0;1&display=swap' rel='stylesheet')
+	html
+		head
+			include header.html
+	link(rel='stylesheet' href='/stylesheets/main.css')
+.container.bg-white.mx-auto.mt-1(style="width: 1000px; height: 650px; box-shadow: 0px 3px 6px 3px rgba(0, 0, 0, 0.15), 0px 3px 3px rgba(0, 0, 0, 0.3); border-radius: 60px;")
+	.text-7xl.text-center.text-blue.pt-20 ✔
+	.text-gray-dark.font-bold.font-poppins.text-6xl.text-center.pt-24 Submitted successfully!
+	.img.mx-auto.saturate-125.hue-rotate-15.opacity-80(style="background-image: url('/images/blue_image.png'); width: 1000px; position: absolute; height: 325px; top: 522px; border-radius: 0px 0px 60px 60px;")
+	.triangle(style="position: absolute; border-left: 70px solid transparent; border-right: 70px solid transparent; border-top: 80px solid #ffffff; left: 650px;")
+	.btn.text-blue.bg-white.w-fit.rounded-full(style="position: relative; z-index: 2; left: 394px; top: 155px;")
+		input(type='button', value='Return to profile', onclick='history.go(-2)')
 html
-    head
-        include footer.html
+	head
+		include footer.html

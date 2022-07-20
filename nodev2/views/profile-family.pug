@@ -1,30 +1,24 @@
 doctype html 
 head 
-	title=title
+	link(rel='preconnect' href='https://fonts.googleapis.com')
+	link(rel='preconnect' href='https://fonts.gstatic.com' crossorigin='')
+	link(href='https://fonts.googleapis.com/css2?family=Poppins:ital@0;1&display=swap' rel='stylesheet')
 	html
 		head
 			include header.html
 	link(rel='stylesheet' href='/stylesheets/main.css')
-.container
-	.row
-	.col-md-12
-		h1.text-6xl=header
-	.row
-		.col-md-4
-			h4.mt-20.text-blue Email:
-		.col-md-8
-			h4=email
-	.row
-		.col-md-4
-			h4.mt-20 Phone:
-		.col-md-8
-			h4=phone
-	br
-	.row 
-		.col-md-6
-			a.btn.btn-info(href=insert_link role='button') Insert new page
-		.col-md-6
-			a.btn.btn-info(href=list_link role='button') View existing pages
+.container.bg-white.mx-auto.mt-1(style="width: 1000px; height: 650px; box-shadow: 0px 3px 6px 3px rgba(0, 0, 0, 0.15), 0px 3px 3px rgba(0, 0, 0, 0.3); border-radius: 60px;")
+	.container.bg-blue.mx-auto.mt-1(class="sm:width:350px;" style="width: 1000px; height: 140px; border-radius: 60px 60px 0px 0px;")
+		.text-white.text-5xl.font-poppins.font-bold.text-center.px-auto.pt-12.drop-shadow-sm(style="text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") Family Profile
+		.grid.gap-10.grid-rows-3.grid-cols-2.my-24
+			.text-gray-dark.font-poppins.font-bold.mx-auto(style="font-size: 32px;") Name:
+			.text-gray-dark.font-poppins.font-bold(style="font-size: 32px;")=profileName
+			.text-gray-dark.font-poppins.font-bold.mx-auto(style="font-size: 32px;") Email:
+			.text-gray-dark.font-poppins.font-bold(style="font-size: 32px;")=email
+			.text-gray-dark.font-poppins.font-bold.mx-auto(style="font-size: 32px;") Phone:
+			.text-gray-dark.font-poppins.font-bold(style="font-size: 32px;")=phone
+			a.mx-auto.text-white.font-poppins.font-bold.bg-orange.rounded-full.w-fit(style="display: flex; flex-direction: row; padding: 14px 24px; gap: 10px;")(href=insert_link role='button') Insert new page
+			a.mx-auto.text-white.font-poppins.font-bold.bg-orange.rounded-full.w-fit(style="display: flex; flex-direction: row; padding: 14px 24px; gap: 10px;")(href=list_link role='button') View existing pages
 html
 	head
 		include footer.html

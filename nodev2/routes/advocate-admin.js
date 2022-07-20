@@ -45,11 +45,10 @@ router.get('/:user_id([0-9]+)', async (req, res) =>{
 			}
 			name = name + ' ' + queryRes.rows[0].last_name;			//attach last name
 			res.render('profile-admin', {
-				title: 'Profile ' + queryRes.rows[0].user_id, 
-				header: "Advocate/Admin Profile: " + name, 
+				profileName: name, 
 				email: queryRes.rows[0].email, 
 				phone: queryRes.rows[0].phone,
-				insert_link: '/advocate-admin/' + req.params.user_id + '/user-insert', 
+				// insert_link: '/advocate-admin/' + req.params.user_id + '/user-insert', 
 				list_link: '/advocate-admin/' + req.params.user_id + '/page-list',
 				logout: '/logout'
 			});
@@ -91,15 +90,9 @@ router.post('/:user_id([0-9]+)/user-insert', async (req, res) =>{
 	*		if failed, print error to console
 	*/
 	const queryRes = await client.query(query)
-		res.render('confirm', {
-			message: 'Data submitted successfully', 
-			status: queryRes
-		});
+		res.render('confirm', {});
 	} catch(e) {
-		res.render('confirm', {
-			message: 'Error, submission failed', 
-			status: queryErr
-		});
+		res.render('failed', {});
 	}
 }); 
 /*
@@ -126,8 +119,7 @@ router.get('/:user_id([0-9]+)/page-list', async (req, res) =>{
 		*/
 		
 		res.render('advocate-pages', {
-			headers: ['family_id', 'page_name', 'donation_goal', 'deadline', 'status'], 
-			body: queryRes.rows,
+			items: queryRes.rows,
 			back: '/advocate-admin/' + req.params.user_id
 		});
 		
