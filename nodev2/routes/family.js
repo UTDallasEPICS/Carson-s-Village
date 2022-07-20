@@ -217,14 +217,16 @@ router.get('/:user_id([0-9]+)/edit/:page_name', async (req, res) => {
 			res.render('page-edit', {
 				title: req.params.page_name, 
 				page_name: req.params.page_name,
-				visitation_date: queryRes.rows[0].visitation_date, 
+				visitation_date: convertDate(queryRes.rows[0].visitation_date), 
+				visitation_time: convertTime(queryRes.rows[0].visitation_time),
 				visitation_location: queryRes.rows[0].visitation_location, 
-				vistitation_description: queryRes.rows[0].visitation_description, 
-				funeral_date: queryRes.rows[0].funeral_date, 
+				visitation_description: queryRes.rows[0].visitation_description, 
+				funeral_date: convertDate(queryRes.rows[0].funeral_date), 
+				funeral_time: convertTime(queryRes.rows[0].funeral_time),
 				funeral_location: queryRes.rows[0].funeral_location, 
 				funeral_description: queryRes.rows[0].funeral_description, 
-				donation_goal: queryRes.rows[0].donation_goal, 
-				deadline: queryRes.rows[0].deadline, 
+				donation_goal: queryRes.rows[0].donation_goal.replace("$",""), 
+				deadline: convertDateTime(queryRes.rows[0].deadline), 
 				obituary: queryRes.rows[0].obituary,
 				back: '/family/' + req.params.user_id + '/page-list'
 			})
@@ -237,11 +239,63 @@ router.get('/:user_id([0-9]+)/edit/:page_name', async (req, res) => {
 	}
 });
 
-function convert(str) {
-	var date = new Date(str),
-	  mnth = ("0" + (date.getMonth() + 1)).slice(-2),
-	  day = ("0" + date.getDate()).slice(-2);
-	return [mnth, day, date.getFullYear()].join("/");
+/*
+	Change date from this format: Tue Jul 26 2022 00:00:00 GMT-0500 (Central Daylight Time)
+	to this format: 07/28/2022
+*/
+function convertDate(str) {
+	mnth = ("0" + (str.getMonth() + 1)).slice(-2),
+	day = ("0" + str.getDate()).slice(-2);
+	return [mnth, day, str.getFullYear()].join("/");
+}
+
+/*
+	Change datetime-local from this format: 2022-07-22T18:05:00.000Z
+	to this format: 07/28/2022
+*/
+function convertDateTime(str) {
+
+	// UTC to Fri Jul 22 2022 13:05:00 GMT-0500 (Central Daylight Time)
+	const reformmatedDate = new Date(str);
+
+	// change date format to 07/22/2022
+	const date = convertDate(reformmatedDate);
+
+	// get 13:05:00 and convert it to 01:05 PM
+	time = reformmatedDate.toTimeString().split(" ");
+	time = convertTime(time[0]);
+
+	str = date + " " + time;
+	return str;
+}
+
+
+
+/*
+	Change date from military format: 14:50:00
+	to standard format: 2:50 PM
+*/
+function convertTime(time){
+	// convert 00:00:00 to an array 
+	time = time.split(':'); 
+	var hours = Number(time[0]);
+	var minutes = Number(time[1]);
+
+	var standardTime;
+	if (hours > 0 && hours <= 12) {
+		standardTime = "" + hours;
+	} else if (hours > 12) {
+		standardTime = "" + (hours - 12);
+	} else if (hours == 0) {
+		standardTime = "12";
+	}
+	
+	// get minutes
+	standardTime += (minutes < 10) ? ":0" + minutes : ":" + minutes; 
+
+	// AM or PM
+	standardTime += (hours >= 12) ? " PM" : " AM";
+	return standardTime;
 }
 
 router.get('/:user_id([0-9]+)/family-page/:page_name', async (req, res) => {
@@ -274,12 +328,12 @@ router.get('/:user_id([0-9]+)/family-page/:page_name', async (req, res) => {
 				title: req.params.page_name, 
 				page_name: req.params.page_name,
 				name: queryRes.rows[0].page_name,
-				visitation_date: convert(queryRes.rows[0].visitation_date), 
+				visitation_date: convertDate(queryRes.rows[0].visitation_date), 
 				visitation_location: queryRes.rows[0].visitation_location, 
 				vistitation_description: queryRes.rows[0].visitation_description, 
-				visitation_time: queryRes.rows[0].visitation_time,
-				funeral_date: convert(queryRes.rows[0].funeral_date), 
-				funeral_time: queryRes.rows[0].funeral_time,
+				visitation_time: convertTime(queryRes.rows[0].visitation_time),
+				funeral_date: convertDate(queryRes.rows[0].funeral_date), 
+				funeral_time: convertTime(queryRes.rows[0].funeral_time),
 				funeral_location: queryRes.rows[0].funeral_location, 
 				funeral_description: queryRes.rows[0].funeral_description, 
 				donation_goal: queryRes.rows[0].donation_goal, 

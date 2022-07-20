@@ -46,7 +46,7 @@ CREATE TABLE Page_Details(
 	images					TEXT[], 
 
 	donation_goal			MONEY		NOT NULL, 
-	deadline				DATE		NOT NULL, 
+	deadline				TIMESTAMP	NOT NULL, 
 
 	PRIMARY KEY (family_id, page_name),
 	FOREIGN KEY (family_id) REFERENCES User_Account(user_id)
