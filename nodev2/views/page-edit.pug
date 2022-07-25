@@ -13,7 +13,7 @@ body
 		.well.well-sm
 			h1.text-center.pt-9.text-xl(class="sm:text-3xl" style="text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25); font-weight: 700;") Edit Family Page 
 		br
-		form.form-horizontal(method='post' action='nothing')
+		form.form-horizontal(method='post' action=editPage)
 			fieldset 
 				.information.bg-gray-light.rounded-md.mx-9.my-2.text-center(class="sm:text-start")
 					legend.ml-2(class="sm:py-1" style="font-weight: 700; text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") Personal Information 				
@@ -25,6 +25,14 @@ body
 					label.ml-10.pt-1(for='images' style="text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") Images
 					.col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
 						input#images.rounded-md.outline-0.border-box.w-full.p-2(class="sm:ml-2" style="border: 1px solid #c4c4c4;" name='images' type='file' multiple)
+				.form-group.py-4.grid(class="sm:grid-cols-3")
+					label.ml-10.pt-1(for='visitation_date' style="text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") Day of Birth
+					.col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
+						input#visitation_date.rounded-md.outline-0.border-box.w-full.p-2(class="sm:ml-2" style="border: 1px solid #c4c4c4;" value=day_of_birth placeholder=day_of_birth name='day_of_birth_edit' type="text" onblur="(this.type='date')" onfocus="this.type='date'")
+				.form-group.py-4.grid(class="sm:grid-cols-3")
+					label.ml-10.pt-1(for='visitation_date' style="text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") Day of Passing
+					.col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
+						input#visitation_date.rounded-md.outline-0.border-box.w-full.p-2(class="sm:ml-2" style="border: 1px solid #c4c4c4;" value=day_of_passing placeholder=day_of_passing name='day_of_passing_edit' type="text" onblur="(this.type='date')" onfocus="this.type='date'")
 				.information.bg-gray-light.rounded-md.mx-9.my-2.text-center(class="sm:text-start")
 					legend.ml-2(class="sm:py-1" style="font-weight: 700; text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") Visitation Information 				
 				.form-group.py-4.grid(class="sm:grid-cols-3")
@@ -79,10 +87,10 @@ body
 				.form-group.ml-9.mb-9.py-7.flex.flex-wrap.gap-2
 					label.control-label(for='submit')
 					.col-md-10.py-2
-						a.p-3.px-6.pt-2.bg-orange(style="color: white; font-weight: 700; border-radius: 32px;" href="#" + page_name role='button') Save
-					.col-md-10.py-2
+						button#submit.p-3.px-6.pt-2.bg-orange(style="color: white; font-weight: 700; border-radius: 32px;" name='submit') Save
+					.col-md-10.py-2.mt-2
 						a.p-3.px-6.pt-2.bg-orange(style="color: white; font-weight: 700; border-radius: 32px;" href="../family-page/" + page_name role='button') View Page
-					.col-md-10.p-2.pt-6(class="sm:pt-2 sm:ml-auto sm:mr-6")
+					.col-md-10.p-2.pt-6.mt-2(class="sm:pt-2 sm:ml-auto sm:mr-6")
 						a.p-3.px-6.pt-2.bg-orange(style="color: white; font-weight: 700; border-radius: 32px;" href="#" + page_name role='button') Delete Page
 .row
 	.col-md-6

@@ -29,7 +29,6 @@ router.get('/:user_id([0-9]+)', async (req, res) =>{
 		//build select query
 		const text = 'SELECT * FROM User_Account WHERE user_id = $1';
 		//set condition values
-		console.log(req.params.user_id);
 		const values = [req.params.user_id];
 		/*
 		*	query database
@@ -157,7 +156,6 @@ router.post('/:user_id([0-9]+)/page-insert', async (req, res) =>{
 	try{
 		var reqFields = Object.keys(req.body);							//get parameter names from previous GET
 		reqFields.pop();												//remove "submit" from parameter list
-		console.log(reqFields);
 		reqFields.unshift('status');									//add "status" to head of parameter list
 		reqFields.unshift('family_id');									//add "family_id" to head of parameter list
 
@@ -165,7 +163,6 @@ router.post('/:user_id([0-9]+)/page-insert', async (req, res) =>{
 		reqValues.pop();												//remove "submit" from values list
 		reqValues.unshift(1);											//add 1 as status to head of values list
 		reqValues.unshift(req.params.user_id);							//add user_id as user_id to head of values list
-		
 		var query = buildInsert(reqFields, reqValues, 'Page_Details');	//generate insert statement
 		/*
 		*	query database
@@ -217,6 +214,8 @@ router.get('/:user_id([0-9]+)/edit/:page_name', async (req, res) => {
 			res.render('page-edit', {
 				title: req.params.page_name, 
 				page_name: req.params.page_name,
+				day_of_birth: convertDate(queryRes.rows[0].day_of_birth),
+				day_of_passing: convertDate(queryRes.rows[0].day_of_passing),
 				visitation_date: convertDate(queryRes.rows[0].visitation_date), 
 				visitation_time: convertTime(queryRes.rows[0].visitation_time),
 				visitation_location: queryRes.rows[0].visitation_location, 
@@ -228,6 +227,7 @@ router.get('/:user_id([0-9]+)/edit/:page_name', async (req, res) => {
 				donation_goal: queryRes.rows[0].donation_goal.replace("$",""), 
 				deadline: convertDateTime(queryRes.rows[0].deadline), 
 				obituary: queryRes.rows[0].obituary,
+				editPage: '/family/' + req.params.user_id + '/edit/' + req.params.page_name,
 				back: '/family/' + req.params.user_id + '/page-list'
 			})
 		}
@@ -236,6 +236,68 @@ router.get('/:user_id([0-9]+)/edit/:page_name', async (req, res) => {
 		}			
 	} catch(e) {
 		res.send(queryErr);
+	}
+});
+
+/*
+*	/user_id/page-insert
+*	file:		/views/confirm.pug
+*	function:	POST
+*	submit family page details to database
+*/
+router.post('/:user_id([0-9]+)/edit/:page_name', async (req, res) => {
+	try{
+		var reqFields = Object.keys(req.body);							//get parameter names from previous GET
+		reqFields.pop();												//remove "submit" from parameter list
+
+		var reqValues = Object.values(req.body);						//get parameter values from pervious GET
+		reqValues.pop();												//remove "submit" from values list
+		
+		// Convert dates to YYY-MM-DD format and time to military format
+		for (var i = 0; i < reqValues.length - 1; i++){
+			if(reqValues[i].toString().includes("/")){
+				var date = new Date(reqValues[i]);
+				reqValues[i] = date.toISOString().split("T")[0];
+			}
+			else if(reqValues[i].toString().includes(":")){
+				var[time, period] = reqValues[i].split(" ");
+				var [hours, minutes] = time.split(":");
+				if(period == "PM" && hours != 12){
+					hours = Number(hours) + 12;
+					reqValues[i] = (hours + ":" + minutes);
+				}
+				else if (period == "AM") {
+					var date = new Date(null, null, null, hours, minutes);
+					reqValues[i] = (date.getHours() + ":" + date.getMinutes());
+				}
+			}
+
+		}		
+		
+
+		// Convert deadline to UTC format
+		var date = new Date(reqValues[14]);
+		var now_utc = Date.UTC(date.getUTCFullYear(), date.getUTCMonth(),
+							   date.getUTCDate(), date.getUTCHours(),
+							   date.getUTCMinutes(), date.getUTCSeconds());
+
+		reqValues[14] = date.toISOString().split(":00.")[0];
+
+
+		var fields = [];
+		for(var i = 0; i < reqValues.length; i++){
+			if(reqValues[i] != '') {
+				fields.push(reqValues[i]);			//add to end of fields
+				
+			}	
+		}
+
+		var text = 'UPDATE page_details SET page_name = $1, day_of_birth = $2, day_of_passing = $3, visitation_date = $4, visitation_time = $5, visitation_location = $6, visitation_description = $7, funeral_date = $8, funeral_time = $9, funeral_location = $10, funeral_description = $11, obituary = $12, donation_goal = $13, deadline = $14 WHERE page_name = \'' +  req.params.page_name + "\'";
+		const queryRes = await client.query(text, fields)
+		res.render('confirm', {});
+		
+	} catch(e) {
+		res.render('failed', {});
 	}
 });
 
@@ -328,6 +390,8 @@ router.get('/:user_id([0-9]+)/family-page/:page_name', async (req, res) => {
 				title: req.params.page_name, 
 				page_name: req.params.page_name,
 				name: queryRes.rows[0].page_name,
+				day_of_birth: convertDate(queryRes.rows[0].day_of_birth),
+				day_of_passing: convertDate(queryRes.rows[0].day_of_passing),
 				visitation_date: convertDate(queryRes.rows[0].visitation_date), 
 				visitation_location: queryRes.rows[0].visitation_location, 
 				vistitation_description: queryRes.rows[0].visitation_description, 

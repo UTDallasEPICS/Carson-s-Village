@@ -7,14 +7,14 @@ head
 		head
 			include header.html
 	link(rel='stylesheet' href='/stylesheets/main.css')
-.container.bg-white.mx-auto.mt-1(style="width: 1000px; height: 650px; box-shadow: 0px 3px 6px 3px rgba(0, 0, 0, 0.15), 0px 3px 3px rgba(0, 0, 0, 0.3); border-radius: 60px;")
-	.text-9xl.font-poppins.text-blue.text-center.pt-10 ×
-	.text-gray-dark.font-bold.font-poppins.text-6xl.text-center.pt-20 Submission failed
-	.img.mx-auto.saturate-125.hue-rotate-15.opacity-80(style="background-image: url('/images/blue_image.png'); width: 1000px; position: absolute; height: 325px; top: 522px; border-radius: 0px 0px 60px 60px;")
-	.triangle(style="position: absolute; border-left: 70px solid transparent; border-right: 70px solid transparent; border-top: 80px solid #ffffff; left: 650px;")
-	.btn.text-blue.bg-white.w-fit.rounded-full(style="position: relative; z-index: 2; left: 394px; top: 155px;")
-		input(type='button', value='Return to profile', onclick='history.go(-2)')
-	.text-gray-dark.font-bold.font-poppins.text-md.text-center.pt-16(style="position: relative; z-index: 2;") Please submit the form again.
+	.container.overflow-hidden.bg-white.mx-auto.mt-8(class="w-5/6" style="height: 650px; box-shadow: 0px 3px 6px 3px rgba(0, 0, 0, 0.15), 0px 3px 3px rgba(0, 0, 0, 0.3); border-radius: 60px;")
+		.text-7xl.text-center.pt-20(style="color: transparent; text-shadow: 0 0 0 #6eabbf") ×
+		.text-gray-dark.font-bold.font-poppins.text-4xl.text-center.pt-14(class="sm:text-6xl") Submission failed
+		.text-gray-dark.font-bold.font-poppins.text-md.text-center.pt-5.pb-14(style="z-index: 2;") Please submit the form again.
+		.images(style="position:relative;")
+			img.pt-7.mx-auto.bg-no-repeat.w-full.object-cover(style="height: 650px; position:absolute" src="/images/blue_image2.jpg")
+			.btn.text-blue.bg-white.rounded-full(style="top: 175px; z-index: 2; position: absolute; left: 50%; transform: translate(-50%, -50%); -ms-transform: translate(-50%, -50%); border: none; cursor: pointer;")
+				input(type='button', value='Return to profile', onclick='history.go(-2)')
 html
 	head
 		include footer.html
