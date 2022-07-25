@@ -1,23 +1,23 @@
 doctype html 
 head 
-	link(rel='preconnect' href='https://fonts.googleapis.com')
-	link(rel='preconnect' href='https://fonts.gstatic.com' crossorigin='')
-	link(href='https://fonts.googleapis.com/css2?family=Poppins:ital@0;1&display=swap' rel='stylesheet')
-	html
-		head
-			include header.html
-	link(rel='stylesheet' href='/stylesheets/main.css')
-.container.bg-white.mx-auto.mt-1(style="width: 1000px; height: 650px; box-shadow: 0px 3px 6px 3px rgba(0, 0, 0, 0.15), 0px 3px 3px rgba(0, 0, 0, 0.3); border-radius: 60px;")
-	.container.bg-blue.mx-auto.mt-1(style="width: 1000px; height: 140px; border-radius: 60px 60px 0px 0px;")
-		.text-white.text-5xl.font-poppins.font-bold.text-center.px-auto.pt-12.drop-shadow-sm(style="text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") Admin Profile
-		.grid.gap-10.grid-rows-3.grid-cols-2.my-24
-			.text-gray-dark.font-poppins.font-bold.mx-auto(style="font-size: 32px;") Name:
-			.text-gray-dark.font-poppins.font-bold(style="font-size: 32px;")=profileName
-			.text-gray-dark.font-poppins.font-bold.mx-auto(style="font-size: 32px;") Email:
-			.text-gray-dark.font-poppins.font-bold(style="font-size: 32px;")=email
-			.text-gray-dark.font-poppins.font-bold.mx-auto(style="font-size: 32px;") Phone:
-			.text-gray-dark.font-poppins.font-bold(style="font-size: 32px;")=phone
-			a.mx-auto.text-white.font-poppins.font-bold.bg-orange.rounded-full.w-fit(style="display: flex; flex-direction: row; padding: 14px 24px; gap: 10px;")(href=list_link role='button') List of client pages
+    link(rel='preconnect' href='https://fonts.googleapis.com/')
+    link(rel='preconnect' href='https://fonts.gstatic.com/' crossorigin='')
+    link(href='https://fonts.googleapis.com/css2?family=Poppins:ital@0;1&display=swap' rel='stylesheet')
+    html
+        head
+            include header.html
+    link(rel='stylesheet' href='/stylesheets/main.css')
+    .container.overflow-hidden.mt-4.mx-auto(class="w-5/6 sm:w-[1000px] sm:h-[650px]" style="height: 600px; box-shadow: 0px 3px 6px 3px rgba(0, 0, 0, 0.15), 0px 3px 3px rgba(0, 0, 0, 0.3); border-radius: 60px;")
+        .text-white.bg-blue.w-full.m-0.text-3xl.font-poppins.font-bold.text-center.drop-shadow-sm.p-10(class="sm:text-5xl" style="text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") Admin Profile
+        .flex.flex-col.justify-start.gap-6(class="sm:grid sm:gap-10 sm:grid-rows-3 sm:grid-cols-2 sm:my-16")
+            .text-gray-dark.font-poppins.font-bold.pt-4.text-xl.ml-8(class="sm:mx-auto sm:text-3xl") Name:
+            .text-gray-dark.font-poppins.font-bold.text-xl.ml-8(class="sm:text-3xl")=profileName
+            .text-gray-dark.font-poppins.font-bold.text-xl.ml-8(class="sm:mx-auto sm:text-3xl")   Email:
+            .text-gray-dark.font-poppins.font-bold.text-xl.ml-8(class="sm:text-3xl")=email
+            .text-gray-dark.font-poppins.font-bold.text-xl.ml-8(class="sm:mx-auto sm:text-3xl")   Phone:
+            .text-gray-dark.font-poppins.font-bold.text-xl.ml-8(class="sm:text-3xl")=phone
+        .buttons.flex.flex-col.gap-3(class="sm:grid sm:gap-10 sm:grid-cols-2 sm:my-24" )
+            a.p-4.mx-auto.text-white.font-poppins.font-bold.bg-orange.rounded-full.w-fit(href=list_link role='button') List of client pages
 html
-	head
-		include footer.html
+    head
+        include footer.html

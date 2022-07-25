@@ -8,27 +8,25 @@ head
 	link(rel='stylesheet' href='/stylesheets/main.css')
 .row.p-3
 	a.p-3.px-6.pt-2.text-white.bg-orange.font-poppins(style="font-weight: 700; border-radius: 32px;" href=back role='button') Back
-.container.bg-white.mx-auto.mt-1(style="width: 1000px; height: 650px; box-shadow: 0px 3px 6px 3px rgba(0, 0, 0, 0.15), 0px 3px 3px rgba(0, 0, 0, 0.3); border-radius: 60px;")
+.container.bg-white.mx-auto.mt-1(class="w-11/12 sm:w-[1000px]" style="height: auto; box-shadow: 0px 3px 6px 3px rgba(0, 0, 0, 0.15), 0px 3px 3px rgba(0, 0, 0, 0.3); border-radius: 60px;")
 	table.table-auto
 		thead
 			tr
-				th.font-poppins.font-bold.bg-blue(style="border-radius: 60px 0px 0px 0px; width:30%;") Page Name
-				th.font-poppins.font-bold.bg-blue(style="width:15%") User ID
-				th.font-poppins.font-bold.bg-blue(style="width:20%;") Donation Goal
+				th.font-poppins.font-bold.bg-blue.overflow-hidden(style="border-radius: 60px 0px 0px 0px; width:30%;")  Page Name
+				th.font-poppins.font-bold.bg-blue.overflow-hidden(style="width:15%") User ID
 				th.font-poppins.font-bold.bg-blue Donation Deadline
-				th.font-poppins.font-bold.bg-blue(style="width:10%;") Edit
-				th.font-poppins.font-bold.bg-blue(style="border-radius: 0px 60px 0px 0px; width:10%;") View
+				th.font-poppins.font-bold.bg-blue(style="width:10%;") 
+				th.font-poppins.font-bold.bg-blue(style="border-radius: 0px 60px 0px 0px; width:10%;") 
 			each item in items
 				tr 
 					td.font-poppins.text-gray-dark.font-bold=item.page_name
 					td.font-poppins.text-gray-dark.font-bold=item.family_id
-					td.font-poppin.text-gray-dark.font-bold=item.donation_goal
 					td.font-poppins.text-gray-dark.font-bold=item.deadline
 					td
-						a.mx-auto.my-2.text-white.font-poppins.font-bold.bg-blue.rounded-full.w-fit(style="display: flex; flex-direction: row; padding: 14px 24px; gap: 10px;" href="edit/"+item.page_name role='button') Edit
+						a.text-white.font-poppins.font-bold.bg-blue.rounded-full(class="sm:mx-auto sm:my-2 sm:w-fit" style="white-space: nowrap; display: flex; flex-direction: row; padding: 14px 24px; gap: 10px;" href="edit/"+item.page_name role='button') Edit
 					td
-						a.mx-auto.my-2.text-white.font-poppins.font-bold.bg-blue.rounded-full.w-fit(style="display: flex; flex-direction: row; padding: 14px 24px; gap: 10px;" href="/search/pages/" + item.family_id + "/" + item.page_name role='button') View
-	.container.bg-blue.mx-auto(style="width: 1000px; height: 50px; border-radius: 0px 0px 60px 60px;")
+						a.text-white.font-poppins.font-bold.bg-blue.rounded-full(class="sm:mx-auto sm:my-2 sm:w-fit" style="white-space: nowrap; display: flex; flex-direction: row; padding: 14px 24px; gap: 10px;" href="/search/pages/" + item.family_id + "/" + item.page_name role='button') View
+	.container.bg-blue.mx-auto(class="w-auto sm:w-[1000px]" style="height: 50px; border-radius: 0px 0px 60px 60px;")
 html
 	head
 		include footer.html
