@@ -23,14 +23,11 @@ let theErrorMessage = ''
 router.get("/", async(req, res) =>  {
 	// Parsed email is in the format "evelynkha@yahoo.com" so we replace double quote with single
 	userEmail = (JSON.stringify(req.oidc.user.email)).replace(/"/g, "'");
-	console.log(userEmail);
 
 	// perform a query using the email
 	try{
 		const text = 'SELECT user_role, user_id FROM User_Account WHERE email = ' + userEmail;
 		const queryRes = await client.query(text)
-
-		console.log(queryRes.rows[0]);
 		
 		if(queryRes.rows[0] != null){
 			/*
@@ -47,7 +44,6 @@ router.get("/", async(req, res) =>  {
 		}
 		// Query Error -> user email does not exist in database, but does exist in auth0
 		else{
-			console.log('trying to insert new user into database...');
 
 			// generate user-info.pug
 			res.render('user-info', {
@@ -76,7 +72,6 @@ router.post('/user-info', async (req, res) =>{
 		// Build INSERT parameters
 		var reqFields = ["email", "user_role"];								// initial parameters
 		reqFields = reqFields.concat(Object.keys(req.body));				// parameters the users will need to type into
-		console.log(reqFields);
 		reqFields.pop();													// remove "submit" from parameter list
 
 		// Build VALUE parameters
@@ -90,12 +85,10 @@ router.post('/user-info', async (req, res) =>{
 		}
 		var reqValues = [email, role];										// initial parameters 
 		reqValues = reqValues.concat(Object.values(req.body));			    // get first_name, middle_name, last_name, and phone from user
-		console.log(reqValues);
 		reqValues.pop();													// remove "submit" from values list
 
 		// generate insert statement
 		var query = buildInsert(reqFields, reqValues, 'User_Account');		
-		console.log(query);
 
 		/*
 		*	query database
@@ -110,10 +103,8 @@ router.post('/user-info', async (req, res) =>{
 		// display all the users in the database 
 		const allUsersText = 'SELECT * FROM User_Account';
 		const allUsers = await client.query(allUsersText);
-		console.log(allUsers.rows);
 
 		// redirect the user to their designated home page
-		console.log('New account created successfully!')
 		if (role == 1){
 			res.redirect('/family/' + userIdFromDatabase.rows[0].user_id);
 		}
@@ -123,7 +114,6 @@ router.post('/user-info', async (req, res) =>{
 	
 	} catch(e) {
 
-		console.log("An error occurred! ");
 		res.render('confirm', {
 			message: 'Error, submission failed. Please fill in the required fields', 
 		});

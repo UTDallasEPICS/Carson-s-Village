@@ -85,13 +85,25 @@ router.get('/:user_id([0-9]+)/page-list', async (req, res) =>{
 		// Can access account only if user_id matches OR user is an admin
 		if(loggedInUserID.rows[0].user_id == urlRoleFind.rows[0].user_id || (loggedInUserID.rows[0].user_role == 2 && urlRoleFind.rows[0].user_role == 1)){
 			//build select query
-			text = 'SELECT family_id, page_name, donation_goal, deadline, status FROM Page_Details WHERE family_id = $1';
+			text = 'SELECT family_id, page_name, donation_goal, deadline, status, timezone FROM Page_Details WHERE family_id = $1';
 			/*
 			*	query database
 			*		if successful, use query result to generate family-page.pug template
 			*		if failed, print error to console
 			*/
 			const queryRes = await client.query(text, values)
+			
+
+			for(var i = 0; i < queryRes.rowCount; i++){
+				var reformmatedDate = queryRes.rows[i].deadline;
+				var setupTime = new Date(reformmatedDate);
+				var time = setupTime.getUTCHours() + ":" + setupTime.getUTCMinutes() + ":00";
+				time = convertTime(time);
+				date = reformmatedDate.toString().split(" ");
+				date = date[0] + " " + date[1] + " " + date[2];
+				queryRes.rows[i].deadline = date + " " + time
+				
+			}
 
 			//list all available pages
 			res.render('client-pages', {
@@ -158,11 +170,11 @@ router.post('/:user_id([0-9]+)/page-insert', async (req, res) =>{
 		reqFields.pop();												//remove "submit" from parameter list
 		reqFields.unshift('status');									//add "status" to head of parameter list
 		reqFields.unshift('family_id');									//add "family_id" to head of parameter list
-
 		var reqValues = Object.values(req.body);						//get parameter values from pervious GET
 		reqValues.pop();												//remove "submit" from values list
 		reqValues.unshift(1);											//add 1 as status to head of values list
 		reqValues.unshift(req.params.user_id);							//add user_id as user_id to head of values list
+
 		var query = buildInsert(reqFields, reqValues, 'Page_Details');	//generate insert statement
 		/*
 		*	query database
@@ -227,6 +239,7 @@ router.get('/:user_id([0-9]+)/edit/:page_name', async (req, res) => {
 				donation_goal: queryRes.rows[0].donation_goal.replace("$",""), 
 				deadline: convertDateTime(queryRes.rows[0].deadline), 
 				obituary: queryRes.rows[0].obituary,
+				timezone: queryRes.rows[0].timezone, 
 				editPage: '/family/' + req.params.user_id + '/edit/' + req.params.page_name,
 				back: '/family/' + req.params.user_id + '/page-list'
 			})
@@ -306,9 +319,9 @@ router.post('/:user_id([0-9]+)/edit/:page_name', async (req, res) => {
 	to this format: 07/28/2022
 */
 function convertDate(str) {
-	mnth = ("0" + (str.getMonth() + 1)).slice(-2),
-	day = ("0" + str.getDate()).slice(-2);
-	return [mnth, day, str.getFullYear()].join("/");
+	str = str.toLocaleString();
+	str = str.split(",")[0];
+	return str;
 }
 
 /*
@@ -316,7 +329,6 @@ function convertDate(str) {
 	to this format: 07/28/2022
 */
 function convertDateTime(str) {
-
 	// UTC to Fri Jul 22 2022 13:05:00 GMT-0500 (Central Daylight Time)
 	const reformmatedDate = new Date(str);
 
@@ -324,8 +336,8 @@ function convertDateTime(str) {
 	const date = convertDate(reformmatedDate);
 
 	// get 13:05:00 and convert it to 01:05 PM
-	time = reformmatedDate.toTimeString().split(" ");
-	time = convertTime(time[0]);
+	time = reformmatedDate.toUTCString().split(" ");
+	time = convertTime(time[4]);
 
 	str = date + " " + time;
 	return str;
@@ -402,6 +414,7 @@ router.get('/:user_id([0-9]+)/family-page/:page_name', async (req, res) => {
 				funeral_description: queryRes.rows[0].funeral_description, 
 				donation_goal: queryRes.rows[0].donation_goal, 
 				deadline: queryRes.rows[0].deadline, 
+				timezone: queryRes.rows[0].timezone, 
 				obituary: queryRes.rows[0].obituary,
 				back: '/family/' + req.params.user_id + '/edit/' + req.params.page_name
 			})

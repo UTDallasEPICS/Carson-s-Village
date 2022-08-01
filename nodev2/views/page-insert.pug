@@ -88,10 +88,22 @@ body
 					label.ml-10.pt-1(for='deadline' style="text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") Deadline Date
 					.col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
 						input#deadline.rounded-md.outline-0.border-box.w-full.p-2(class="sm:ml-2" style="border: 1px solid #c4c4c4;" name='deadline' type='datetime-local' required)
+						input.opacity-0(id="timezone" name='timezone' type='text')
 				.form-group.ml-9.mb-9
 					label.control-label(for='submit')
 					.col-md-10
-						button#submit.p-3.px-6.pt-2.bg-orange(style="color: white; font-weight: 700; border-radius: 32px;" name='submit') Save
+						button#submit.p-3.px-6.pt-2.bg-orange(onclick="getTimezone()" style="color: white; font-weight: 700; border-radius: 32px;" name='submit') Save
+script.
+	function seconds_with_leading_zeros(dt) 
+	{ 
+	return /\((.*)\)/.exec(new Date().toString())[1];
+	}
+
+	const getTimezone = () =>{
+		dt = new Date(); 
+		document.getElementById("timezone").value = seconds_with_leading_zeros(dt); 
+	}
+
 html
 	head
 		include footer.html
