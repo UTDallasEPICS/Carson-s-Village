@@ -1,6 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  content: ["./views/**/*.pug"],
+  content: ['./views/**/*.pug'],
   theme: {
     colors: {
       'gray-dark': '#383838', // used for titles, labels
@@ -8,15 +8,17 @@ module.exports = {
       'gray-light': '#dfdfdf', // used for backgrounds and highlights
       'white': '#ffffff',
       'blue': '#6eabbf',
+      'dark-blue':' #718797',
       'orange': '#cd6636',
       'green-light': '#90d918', // used for donation bar
       'green-dark': '568f53'
     },
     fontFamily: {
-      poppins: ['Poppins', 'sans-serif']
+      poppins: ['Poppins', 'sans-serif'],
+      outfit: ['Outfit', 'sans-serif']
     },
     separator: '_',
     extend: {},
   },
-  plugins: [],
+  plugins: []
 }

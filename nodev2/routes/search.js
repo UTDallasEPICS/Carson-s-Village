@@ -147,10 +147,14 @@ router.get('/pages/:user_id([0-9]+)/:page_name', async (req, res) =>{
 					title: req.params.page_name, 
 					page_name: req.params.page_name,
 					name: queryRes.rows[0].name,
-					visitation_date: queryRes.rows[0].visitation_date, 
-					visitation_location: queryRes.rows[0].visitation_location, 
-					vistitation_description: queryRes.rows[0].visitation_description, 
-					funeral_date: queryRes.rows[0].funeral_date, 
+					day_of_birth: convertDate(queryRes.rows[0].day_of_birth),
+					day_of_passing: convertDate(queryRes.rows[0].day_of_passing),
+					visitation_date: convertDate(queryRes.rows[0].visitation_date),
+					visitation_time: convertTime(queryRes.rows[0].visitation_time),
+					visitation_location: queryRes.rows[0].visitation_location,
+					vistitation_description: queryRes.rows[0].visitation_description,
+					funeral_date: convertDate(queryRes.rows[0].funeral_date),
+					funeral_time: convertTime(queryRes.rows[0].funeral_time), 
 					funeral_location: queryRes.rows[0].funeral_location, 
 					funeral_description: queryRes.rows[0].funeral_description, 
 					donation_goal: queryRes.rows[0].donation_goal, 
@@ -168,10 +172,14 @@ router.get('/pages/:user_id([0-9]+)/:page_name', async (req, res) =>{
 					title: req.params.page_name, 
 					page_name: req.params.page_name,
 					name: queryRes.rows[0].name,
-					visitation_date: queryRes.rows[0].visitation_date, 
-					visitation_location: queryRes.rows[0].visitation_location, 
-					vistitation_description: queryRes.rows[0].visitation_description, 
-					funeral_date: queryRes.rows[0].funeral_date, 
+					day_of_birth: convertDate(queryRes.rows[0].day_of_birth),
+					day_of_passing: convertDate(queryRes.rows[0].day_of_passing),
+					visitation_date: convertDate(queryRes.rows[0].visitation_date),
+					visitation_time: convertTime(queryRes.rows[0].visitation_time),
+					visitation_location: queryRes.rows[0].visitation_location,
+					vistitation_description: queryRes.rows[0].visitation_description,
+					funeral_date: convertDate(queryRes.rows[0].funeral_date),
+					funeral_time: convertTime(queryRes.rows[0].funeral_time), 
 					funeral_location: queryRes.rows[0].funeral_location, 
 					funeral_description: queryRes.rows[0].funeral_description, 
 					donation_goal: queryRes.rows[0].donation_goal, 
@@ -190,10 +198,14 @@ router.get('/pages/:user_id([0-9]+)/:page_name', async (req, res) =>{
 				title: req.params.page_name, 
 				page_name: req.params.page_name,
 				name: queryRes.rows[0].name,
-				visitation_date: queryRes.rows[0].visitation_date, 
-				visitation_location: queryRes.rows[0].visitation_location, 
-				vistitation_description: queryRes.rows[0].visitation_description, 
-				funeral_date: queryRes.rows[0].funeral_date, 
+				day_of_birth: convertDate(queryRes.rows[0].day_of_birth),
+				day_of_passing: convertDate(queryRes.rows[0].day_of_passing),
+				visitation_date: convertDate(queryRes.rows[0].visitation_date),
+				visitation_time: convertTime(queryRes.rows[0].visitation_time),
+				visitation_location: queryRes.rows[0].visitation_location,
+				vistitation_description: queryRes.rows[0].visitation_description,
+				funeral_date: convertDate(queryRes.rows[0].funeral_date),
+				funeral_time: convertTime(queryRes.rows[0].funeral_time),
 				funeral_location: queryRes.rows[0].funeral_location, 
 				funeral_description: queryRes.rows[0].funeral_description, 
 				donation_goal: queryRes.rows[0].donation_goal, 
@@ -206,5 +218,39 @@ router.get('/pages/:user_id([0-9]+)/:page_name', async (req, res) =>{
 		console.log(e);
 	}
 })
+
+function convertDate(str) {
+	str = str.toLocaleString();
+	str = str.split(",")[0];
+	return str;
+}
+
+/*
+	Change date from military format: 14:50:00
+	to standard format: 2:50 PM
+*/
+function convertTime(time){
+	// convert 00:00:00 to an array 
+	time = time.split(':'); 
+	var hours = Number(time[0]);
+	var minutes = Number(time[1]);
+
+	var standardTime;
+	if (hours > 0 && hours <= 12) {
+		standardTime = "" + hours;
+	} else if (hours > 12) {
+		standardTime = "" + (hours - 12);
+	} else if (hours == 0) {
+		standardTime = "12";
+	}
+	
+	// get minutes
+	standardTime += (minutes < 10) ? ":0" + minutes : ":" + minutes; 
+
+	// AM or PM
+	standardTime += (hours >= 12) ? " PM" : " AM";
+	return standardTime;
+}
+
 //export modules for user in server.js
 module.exports = router;

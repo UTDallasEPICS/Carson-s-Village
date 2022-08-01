@@ -1,85 +1,80 @@
 doctype html 
-html
-	head 
-		include header.html
 head 
-	title=title
-	link(rel="stylesheet" href="//fonts.googleapis.com/css?family=Raleway")
-	link(rel='stylesheet' href='https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css')
-.container
-	.well.well-sm 
-		h1.text-center=name
-	link(href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/fontawesome.min.css" rel="stylesheet")
-	link(rel='stylesheet', href='/stylesheets/family-page.css')
+	link(rel='preconnect' href='https://fonts.googleapis.com/')
+	link(rel='preconnect' href='https://fonts.gstatic.com/' crossorigin='')
+	link(href='https://fonts.googleapis.com/css2?family=Poppins:ital@0;1&display=swap' rel='stylesheet')
+	link(href='https://fonts.googleapis.com/css2?family=Outfit:wght@600&display=swap' rel='stylesheet')
+html
+	head
+		include header.html
+		link(rel='stylesheet' href='/stylesheets/main.css')
+	.bg-blue.w-screen(class="h-[80px]")
+	.img.bg-orange.-mt-16.mx-auto(class="w-[122px] h-[122px] rounded-[8px]")
+	.text-gray-dark.font-poppins.text-2xl.text-center.font-semibold(style="text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.25);")=page_name
+	.row.text-center
+		.text-gray-dark.font-poppins.text-md.inline-block.text-center=day_of_birth
+		.text-gray-dark.font-poppins.text-md.inline-block.whitespace-pre  - 
+		.text-gray-dark.font-poppins.text-md.inline-block=day_of_passing
+	.row.p-3
+		a.mx-16.p-3.px-6.pt-2.text-white.bg-orange.font-poppins(style="font-weight: 700; border-radius: 32px;" href=back role='button') Back
+	.container.bg-gray-light.mx-auto.h-auto.font-poppins(class="w-11/12 rounded-[8px]" style="box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);")
+		ul.inline-flex.py-1.px-1.w-full(id="tabs")
+			li.bg-white.text-xs.text-center.px-auto.py-2(class="rounded-[8px] w-1/4")
+				a.font-poppins.text-center.font-semibold(style="color:#383838; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.25);" id="default-tab" href="#obituary") Obituary
+			li.text-xs.text-center.px-auto.py-2(class="w-1/4")
+				a.font-poppins.text-center.font-semibold(style="color:#383838; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.25);" href="#services") Services
+			li.text-xs.text-center.px-auto.py-2(class="w-1/4")
+				a.font-poppins.text-center.font-semibold(style="color:#383838; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.25);" href="#donations") Donations
+			li.text-xs.text-center.px-auto.py-2(class="w-1/4")
+				a.font-poppins.text-center.font-semibold(style="color:#383838; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.25);" href="#media") Media
 
+		.div(style="background: #F8F8F8;" id="tab-contents")
+			.div.px-8.py-4(style="color: #6E6E6E; font-weight: 500; font-size: 14px; line-height: 28px; letter-spacing: -0.078px;" id="obituary")=obituary
+			.div.hidden.p-4(id="services")
+				.px-5.py-4.text-gray-dark.font-poppins.text-2xl.text-left.font-bold(style="line-height: 36px; text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") Visitation
+				.px-5.pt-2.pb-8.font-outfit.text-dark-blue(style="font-size: 20px; line-height: 30px;")=vistitation_description
+				.grid.gap-x-3.gap-y-0.grid-cols-5.grid-rows-2
+					img.px-4(src="/images/clock_icon.png")
+					.py-1.font-outfit.text-dark-blue.col-span-4(style="font-size: 20px; line-height: 30px;")=visitation_date + ", " + visitation_time
+					img.px-2(src="/images/location_icon.png")
+					.py-2.font-outfit.text-dark-blue.col-span-4.whitespace-normal(style="font-size: 20px; line-height: 30px;")=visitation_location
+				.px-5.py-4.text-gray-dark.font-poppins.text-2xl.text-left.font-bold(style="line-height: 36px; text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") Funeral
+				.px-5.pt-2.pb-8.font-outfit.text-dark-blue(style="font-size: 20px; line-height: 30px;")=funeral_description
+				.grid.gap-x-3.gap-y-0.grid-cols-5.grid-rows-2
+					img.px-4(src="/images/clock_icon.png")
+					.py-1.font-outfit.text-dark-blue.col-span-4(style="font-size: 20px; line-height: 30px;")=funeral_date + ", " + funeral_time
+					img.px-2(src="/images/location_icon.png")
+					.py-2.font-outfit.text-dark-blue.col-span-4.whitespace-normal.leading-loose(style="font-size: 20px; line-height: 30px;")=funeral_location
+			.div.hidden.p-4(id="donations")
+			.div.hidden.p-4(id="media") Media here
+script.
+	let tabsContainer = document.querySelector("#tabs");
 
+	let tabTogglers = tabsContainer.querySelectorAll("#tabs a");
 
-.center
-	.row 
-		.col-12
-			.service-header Name of Deceased
-	.row.justify-content-around
-		.col-md-4 
-			img.image(height=250, width=200, src="/images/pfp.jpg")
-		.col-md-7.donation-section
-			.row 
-				.donations
-					h4.current-donations=donation_goal
-					.goal of 2,000,000
-				.bar 
-					.progress
+	console.log(tabTogglers);
 
-				.row-md-6 
-					.center
-						button.donate() DONATE
-						i.fa-solid.fa-hand-holding-dollar
-				.row-md-6
-					.center
-						button.share() SHARE
-	.row.justify-content-around 
-		.col-md-3
-			.row
-				.containers
-					.service-header Visitation
-					.details
-						.service-headers Date: 
-						.service-details=visitation_date
-					.details
-						.service-headers Time:
-						.service-details=visitation_time 
-					.details
-						.service-headers Location:
-						.service-details=visitation_location 
-						
-	.col-md-3 
-			.row 
-				.containers
-					.service-header Funeral Service
-					.details
-						.service-headers Date: 
-						.service-details=funeral_date
-					.details
-						.service-headers Time:
-						.service-details=funeral_time 
-					.details
-						.service-headers Location:
-						.service-details=funeral_location 
-	.col-lg-10
-		.row 
-			.containers
-				.service-header OBITURAY
+	tabTogglers.forEach(function(toggler) {
+	toggler.addEventListener("click", function(e) {
+		e.preventDefault();
 
-.new-container 
-	.center
-		button.leave-message LEAVE A COMMENT
+		let tabName = this.getAttribute("href");
+
+		let tabContents = document.querySelector("#tab-contents");
+
+		for (let i = 0; i < tabContents.children.length; i++) {
 		
-.new-container 
-	.center
-		a.btn.btn-info(href="" + page_name role='button') View Page
-
-.row
-	.col-md-6
-			a.btn.btn-info(href=back role='button') Back
+		tabTogglers[i].parentElement.classList.remove("bg-white", "rounded-[8px]"); 
+		tabContents.children[i].classList.remove("hidden");
+		if ("#" + tabContents.children[i].id === tabName) {
+			continue;
+		}
+		tabContents.children[i].classList.add("hidden");
+		
+		}
+		e.target.parentElement.classList.add("bg-white", "rounded-[8px]");
+	});
+	});
 html
 	head
 		include footer.html
