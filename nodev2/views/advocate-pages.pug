@@ -12,7 +12,7 @@ head
 	table.table-auto
 		thead
 			tr
-				th.font-poppins.font-bold.bg-blue.overflow-hidden(style="border-radius: 60px 0px 0px 0px; width:30%;")  Page Name
+				th.p-2.font-poppins.font-bold.bg-blue.overflow-hidden(style="border-radius: 60px 0px 0px 0px; width:30%;")  Page Name
 				th.font-poppins.font-bold.bg-blue.overflow-hidden(style="width:15%") User ID
 				th.font-poppins.font-bold.bg-blue Donation Deadline
 				th.font-poppins.font-bold.bg-blue(style="width:10%;") 
@@ -21,7 +21,7 @@ head
 				tr 
 					td.font-poppins.text-gray-dark.font-bold=item.page_name
 					td.font-poppins.text-gray-dark.font-bold=item.family_id
-					td.font-poppins.text-gray-dark.font-bold=item.deadline
+					td.font-poppins.text-gray-dark.font-bold=item.deadline + " " + item.timezone
 					td
 						a.text-white.font-poppins.font-bold.bg-blue.rounded-full(class="sm:mx-auto sm:my-2 sm:w-fit" style="white-space: nowrap; display: flex; flex-direction: row; padding: 14px 24px; gap: 10px;" href="edit/"+item.page_name role='button') Edit
 					td

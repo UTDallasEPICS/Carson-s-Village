@@ -111,13 +111,24 @@ router.post('/:user_id([0-9]+)/user-insert', async (req, res) =>{
 router.get('/:user_id([0-9]+)/page-list', async (req, res) =>{
 	try{
 		//build select query
-		const queryRes = await client.query('SELECT family_id, page_name, donation_goal, deadline, status FROM Page_Details')
+		const queryRes = await client.query('SELECT family_id, page_name, donation_goal, deadline, status, timezone FROM Page_Details')
 		/*
 		*	query database
 		*		if successful, use query result to generate advocate-pages.pug template
 		*		if failed, print error to console
 		*/
 		
+		for(var i = 0; i < queryRes.rowCount; i++){
+			var reformmatedDate = queryRes.rows[i].deadline;
+			var setupTime = new Date(reformmatedDate);
+			var time = setupTime.getUTCHours() + ":" + setupTime.getUTCMinutes() + ":00";
+			time = convertTime(time);
+			date = reformmatedDate.toString().split(" ");
+			date = date[0] + " " + date[1] + " " + date[2];
+			queryRes.rows[i].deadline = date + " " + time
+			
+		}
+
 		res.render('advocate-pages', {
 			items: queryRes.rows,
 			back: '/advocate-admin/' + req.params.user_id
@@ -133,7 +144,7 @@ router.get('/:user_id([0-9]+)/page-list', async (req, res) =>{
 *	function:	GET
 *	attach review to pending family page
 */
-router.get('/review/:family_id([0-9]+)/:page_name', async (req, res) =>{
+router.get('/:family_id([0-9]+)/edit/:page_name', async (req, res) =>{
 	try{
 		// save the id to access when we want to go back to the page list
 		var email = (JSON.stringify(req.oidc.user.email)).replace(/"/g, "'");
@@ -168,5 +179,34 @@ router.get('/review/:family_id([0-9]+)/:page_name', async (req, res) =>{
 		res.send('Something went wrong!');
 	}
 });
+
+
+/*
+	Change date from military format: 14:50:00
+	to standard format: 2:50 PM
+*/
+function convertTime(time){
+	// convert 00:00:00 to an array 
+	time = time.split(':'); 
+	var hours = Number(time[0]);
+	var minutes = Number(time[1]);
+
+	var standardTime;
+	if (hours > 0 && hours <= 12) {
+		standardTime = "" + hours;
+	} else if (hours > 12) {
+		standardTime = "" + (hours - 12);
+	} else if (hours == 0) {
+		standardTime = "12";
+	}
+	
+	// get minutes
+	standardTime += (minutes < 10) ? ":0" + minutes : ":" + minutes; 
+
+	// AM or PM
+	standardTime += (hours >= 12) ? " PM" : " AM";
+	return standardTime;
+}
+
 //export modules for user in server.js
 module.exports = router;
