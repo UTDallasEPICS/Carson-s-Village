@@ -13,8 +13,7 @@ head
 		.text-gray-dark.font-bold.font-poppins.text-4xl.text-center.py-16(class="sm:text-6xl") Submitted successfully!
 		.images(style="position:relative;")
 			img.pt-7.mx-auto.bg-no-repeat.w-full.object-cover(style="height: 650px; position:absolute" src="/images/blue_image2.jpg")
-			.btn.text-blue.bg-white.rounded-full(style="top: 175px; z-index: 2; position: absolute; left: 50%; transform: translate(-50%, -50%); -ms-transform: translate(-50%, -50%); border: none; cursor: pointer;")
-				input(type='button', value='Return to profile', onclick='history.go(-2)')
-html
+			a.p-3.px-8.pt-3.bg-white.rounded-full.font-poppins(style="text-transform: uppercase; color: #6eabbf; font-weight: 600; top: 175px; z-index: 2; position: absolute; left: 50%; transform: translate(-50%, -50%); -ms-transform: translate(-50%, -50%); border: none; cursor: pointer;" href=back role='button') Return to Profile
+htmla
 	head
 		include footer.html

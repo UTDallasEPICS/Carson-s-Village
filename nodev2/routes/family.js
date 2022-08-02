@@ -183,7 +183,9 @@ router.post('/:user_id([0-9]+)/page-insert', async (req, res) =>{
 		*		if failed, print error to console
 		*/
 		const queryRes = await client.query(query)
-		res.render('confirm', {});
+		res.render('confirm', {
+			back: '/family/' + req.params.user_id
+		});
 		
 	} catch(e) {
 		res.render('failed', {});
@@ -307,7 +309,10 @@ router.post('/:user_id([0-9]+)/edit/:page_name', async (req, res) => {
 
 		var text = 'UPDATE page_details SET page_name = $1, day_of_birth = $2, day_of_passing = $3, visitation_date = $4, visitation_time = $5, visitation_location = $6, visitation_description = $7, funeral_date = $8, funeral_time = $9, funeral_location = $10, funeral_description = $11, obituary = $12, donation_goal = $13, deadline = $14 WHERE page_name = \'' +  req.params.page_name + "\'";
 		const queryRes = await client.query(text, fields)
-		res.render('confirm', {});
+		res.render('confirm', {
+			back: '/family/' + req.params.user_id
+
+		});
 		
 	} catch(e) {
 		res.render('failed', {});
