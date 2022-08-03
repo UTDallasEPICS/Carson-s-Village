@@ -139,30 +139,7 @@ router.get('/pages/:user_id([0-9]+)/:page_name', async (req, res) =>{
 			if (roleQuery == 2)
 			{
 				const text = 'SELECT * FROM Page_Details WHERE family_id = $1 AND page_name = $2';
-				const values = [req.params.user_id, req.params.page_name];
-				const queryRes = await client.query(text, values);
-				res.render('family-page', {
-					title: req.params.page_name, 
-					page_name: req.params.page_name,
-					name: queryRes.rows[0].name,
-					day_of_birth: convertDate(queryRes.rows[0].day_of_birth),
-					day_of_passing: convertDate(queryRes.rows[0].day_of_passing),
-					visitation_date: queryRes.rows[0].visitation_date, 
-					visitation_location: queryRes.rows[0].visitation_location, 
-					vistitation_description: queryRes.rows[0].visitation_description, 
-					funeral_date: queryRes.rows[0].funeral_date, 
-					funeral_location: queryRes.rows[0].funeral_location, 
-					funeral_description: queryRes.rows[0].funeral_description, 
-					donation_goal: queryRes.rows[0].donation_goal, 
-					deadline: queryRes.rows[0].deadline, 
-					timezone: queryRes.rows[0].timezone, 
-					obituary: queryRes.rows[0].obituary,
-					back: '/advocate-admin/' + idQuery.rows[0].user_id + '/page-list'
-				})
-			}
-			else
-			{
-				const text = 'SELECT * FROM Page_Details WHERE family_id = $1 AND page_name = $2';
+
 				const values = [req.params.user_id, req.params.page_name];
 				const queryRes = await client.query(text, values);
 
@@ -178,10 +155,48 @@ router.get('/pages/:user_id([0-9]+)/:page_name', async (req, res) =>{
 					name: queryRes.rows[0].name,
 					day_of_birth: convertDate(queryRes.rows[0].day_of_birth),
 					day_of_passing: convertDate(queryRes.rows[0].day_of_passing),
-					visitation_date: queryRes.rows[0].visitation_date, 
-					visitation_location: queryRes.rows[0].visitation_location, 
-					vistitation_description: queryRes.rows[0].visitation_description, 
-					funeral_date: queryRes.rows[0].funeral_date, 
+					visitation_date: convertDate(queryRes.rows[0].visitation_date),
+					visitation_time: convertTime(queryRes.rows[0].visitation_time),
+					visitation_location: queryRes.rows[0].visitation_location,
+					vistitation_description: queryRes.rows[0].visitation_description,
+					funeral_date: convertDate(queryRes.rows[0].funeral_date),
+					funeral_time: convertTime(queryRes.rows[0].funeral_time),
+					funeral_location: queryRes.rows[0].funeral_location, 
+					funeral_description: queryRes.rows[0].funeral_description, 
+					donation_goal: queryRes.rows[0].donation_goal, 
+					donated_amount: convertDonationAmount(donated_amount),
+					donated_percentage: donated_percentage,
+					deadline: queryRes.rows[0].deadline, 
+					timezone: queryRes.rows[0].timezone, 
+					obituary: queryRes.rows[0].obituary,
+					back: '/advocate-admin/' + idQuery.rows[0].user_id + '/page-list'
+				})
+			}
+			else
+			{
+				const text = 'SELECT * FROM Page_Details WHERE family_id = $1 AND page_name = $2';
+
+				const values = [req.params.user_id, req.params.page_name];
+				const queryRes = await client.query(text, values);
+
+				donation_goal = queryRes.rows[0].donation_goal;
+				donation_goal = Number(donation_goal.replace(/[^0-9.-]+/g,""));
+				// set donated amount here; sample is $500
+				donated_amount = 500;
+				donated_percentage = ((donated_amount/donation_goal)*100).toFixed(1);
+
+				res.render('family-page', {
+					title: req.params.page_name, 
+					page_name: req.params.page_name,
+					name: queryRes.rows[0].name,
+					day_of_birth: convertDate(queryRes.rows[0].day_of_birth),
+					day_of_passing: convertDate(queryRes.rows[0].day_of_passing),
+					visitation_date: convertDate(queryRes.rows[0].visitation_date),
+					visitation_time: convertTime(queryRes.rows[0].visitation_time),
+					visitation_location: queryRes.rows[0].visitation_location,
+					vistitation_description: queryRes.rows[0].visitation_description,
+					funeral_date: convertDate(queryRes.rows[0].funeral_date),
+					funeral_time: convertTime(queryRes.rows[0].funeral_time),
 					funeral_location: queryRes.rows[0].funeral_location, 
 					funeral_description: queryRes.rows[0].funeral_description, 
 					donation_goal: queryRes.rows[0].donation_goal, 
@@ -197,21 +212,32 @@ router.get('/pages/:user_id([0-9]+)/:page_name', async (req, res) =>{
 		else
 		{
 			const text = 'SELECT * FROM Page_Details WHERE family_id = $1 AND page_name = $2';
+
 			const values = [req.params.user_id, req.params.page_name];
 			const queryRes = await client.query(text, values);
+
+			donation_goal = queryRes.rows[0].donation_goal;
+			donation_goal = Number(donation_goal.replace(/[^0-9.-]+/g,""));
+			// set donated amount here; sample is $500
+			donated_amount = 500;
+			donated_percentage = ((donated_amount/donation_goal)*100).toFixed(1);
 			res.render('family-page-public', {
 				title: req.params.page_name, 
 				page_name: req.params.page_name,
 				name: queryRes.rows[0].name,
 				day_of_birth: convertDate(queryRes.rows[0].day_of_birth),
 				day_of_passing: convertDate(queryRes.rows[0].day_of_passing),
-				visitation_date: queryRes.rows[0].visitation_date, 
-				visitation_location: queryRes.rows[0].visitation_location, 
-				vistitation_description: queryRes.rows[0].visitation_description, 
-				funeral_date: queryRes.rows[0].funeral_date, 
+				visitation_date: convertDate(queryRes.rows[0].visitation_date),
+				visitation_time: convertTime(queryRes.rows[0].visitation_time),
+				visitation_location: queryRes.rows[0].visitation_location,
+				vistitation_description: queryRes.rows[0].visitation_description,
+				funeral_date: convertDate(queryRes.rows[0].funeral_date),
+				funeral_time: convertTime(queryRes.rows[0].funeral_time),
 				funeral_location: queryRes.rows[0].funeral_location, 
 				funeral_description: queryRes.rows[0].funeral_description, 
 				donation_goal: queryRes.rows[0].donation_goal, 
+				donated_amount: convertDonationAmount(donated_amount),
+				donated_percentage: donated_percentage,
 				deadline: queryRes.rows[0].deadline, 
 				timezone: queryRes.rows[0].timezone, 
 				obituary: queryRes.rows[0].obituary
@@ -234,6 +260,33 @@ function convertDonationAmount(amount){
 		currency: 'USD',
 	});
 	return formatter.format(amount);
+}
+
+/*
+	Change date from military format: 14:50:00
+	to standard format: 2:50 PM
+*/
+function convertTime(time){
+	// convert 00:00:00 to an array 
+	time = time.split(':'); 
+	var hours = Number(time[0]);
+	var minutes = Number(time[1]);
+
+	var standardTime;
+	if (hours > 0 && hours <= 12) {
+		standardTime = "" + hours;
+	} else if (hours > 12) {
+		standardTime = "" + (hours - 12);
+	} else if (hours == 0) {
+		standardTime = "12";
+	}
+
+	// get minutes
+	standardTime += (minutes < 10) ? ":0" + minutes : ":" + minutes; 
+
+	// AM or PM
+	standardTime += (hours >= 12) ? " PM" : " AM";
+	return standardTime;
 }
 
 //export modules for user in server.js
