@@ -1,120 +1,100 @@
 doctype html 
 head 
 	title=title
-	link(rel='stylesheet' href='https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css')
-.container
-	.well.well-sm
-		h1.text-center='Review page for ' + page_name
-	br
-	form.form-horizontal(method='post' action='nothing')
-		fieldset 
-			.row 
-				.col-md-12 
-					h2 Enter visitation information
-			.row
-				.col-sm-4
-					h4 Visitation Date:
-				.col-sm-8
-					h4=visitation_date
-			.row(style="background-color:lightgrey;")
-				legend.text-center Insert new visitation date
-				.form-group
-					label.col-md-2.control-label(for='visitation_date_edit') visitation_date_edit
-					.col-md-10
-						input#page_name.form-control.input-md(name='visitation_date_edit' type='text')
-			.row
-				.col-sm-4
-					h4 Visitation Location:
-				.col-sm-8
-					h4=visitation_location
-			.row(style="background-color:lightgrey;")
-				legend.text-center Insert new visitation location
-				.form-group
-					label.col-md-2.control-label(for='visitation_location_edit') visitation_location_edit
-					.col-md-10
-						input#page_name.form-control.input-md(name='visitation_location_edit' type='text')
-			.row 
-				.col-sm-12 
-					p.text-center=vistitation_description
-			.row(style="background-color:lightgrey;")
-				legend.text-center Insert new visitation description
-				.form-group
-					label.col-md-2.control-label(for='vistitation_description_edit') vistitation_description_edit
-					.col-md-10
-						input#page_name.form-control.input-md(name='vistitation_description_edit' type='text')
-			.row 
-				.col-md-12 
-					h2 Enter funeral information
-			.row
-				.col-sm-4
-					h4 Funeral Date:
-				.col-sm-8
-					h4=funeral_date
-			.row(style="background-color:lightgrey;")
-				legend.text-center Insert new funeral date
-				.form-group
-					label.col-md-2.control-label(for='funeral_date_edit') funeral_date_edit
-					.col-md-10
-						input#page_name.form-control.input-md(name='funeral_date_edit' type='text')
-			.row
-				.col-sm-4
-					h4 Funeral Location:
-				.col-sm-8
-					h4=funeral_location
-			.row(style="background-color:lightgrey;")
-				legend.text-center Insert new funeral location
-				.form-group
-					label.col-md-2.control-label(for='funeral_location_edit') funeral_location_edit
-					.col-md-10
-						input#page_name.form-control.input-md(name='funeral_location_edit' type='text')
-			.row 
-				.col-sm-12 
-					p.text-center=funeral_description
-			.row(style="background-color:lightgrey;")
-				legend.text-center Insert new funeral description
-				.form-group
-					label.col-md-2.control-label(for='funeral_description_edit') funeral_description_edit
-					.col-md-10
-						input#page_name.form-control.input-md(name='funeral_description_edit' type='text')
-			.row 
-				.col-md-12 
-					h2 Enter payment information 
-			.row 
-				.col-sm-4 
-					h4 Donation goal 
-				.col-sm-8 
-					h4=donation_goal 
-			.row(style="background-color:lightgrey;")
-				legend.text-center Insert new donation goal
-				.form-group
-					label.col-md-2.control-label(for='donation_goal_edit') donation_goal_edit
-					.col-md-10
-						input#page_name.form-control.input-md(name='donation_goal_edit' type='text')
-			.row 
-				.col-sm-4 
-					h4 Deadline 
-				.col-sm-8 
-					h4=deadline
-			.row(style="background-color:lightgrey;")
-				legend.text-center Insert new deadline
-				.form-group
-					label.col-md-2.control-label(for='deadline_edit') deadline_edit
-					.col-md-10
-						input#page_name.form-control.input-md(name='deadline_edit' type='text')
-			.row 
-				.col-lg-12 
-					h2 Enter an obituary
-			.row 
-				//.col-lg-12 
-					p=obituary
-			.row(style="background-color:lightgrey;")
-				legend.text-center Insert new obituary
-				.form-group
-					label.col-md-2.control-label(for='obituary_edit') obituary_edit
-					.col-md-10
-						textarea#page_name.form-control.input-md(name='obituary_edit' rows='12')
-			.row 
-				.form-group
-					label.col-md-2.control-label(for='submit')
-					.col-md-10
-						a.btn.btn-info(href="../family-page/" + page_name role='button') View Page
+	link(rel='stylesheet' href='/stylesheets/main.css')
+	link(href='https://fonts.googleapis.com/css2?family=Poppins:ital@0;1&display=swap' rel='stylesheet')
+html
+	head
+		include header.html
+body
+	.row.p-3
+		a.p-3.px-6.pt-2.text-white.bg-orange.font-poppins(style="font-weight: 700; border-radius: 32px;" href=back role='button') Back
+	.container.overflow-hidden.mt-4.mx-auto.place-content-center.font-poppins(class="w-5/6 sm:max-w-xl sm:p-6" style="box-shadow: 0px 3px 6px 3px rgba(0, 0, 0, 0.15), 0px 3px 3px rgba(0, 0, 0, 0.3); border-radius: 60px;")
+		.well.well-sm
+			h1.text-center.pt-9.text-xl(class="sm:text-3xl" style="text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25); font-weight: 700;") Edit Family Page 
+		br
+		form.form-horizontal(method='post' action=editPage)
+			fieldset 
+				.information.bg-gray-light.rounded-md.mx-9.my-2.text-center(class="sm:text-start")
+					legend.ml-2(class="sm:py-1" style="font-weight: 700; text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") Personal Information 				
+				.form-group.py-4.grid(class="sm:grid-cols-3")
+					label.ml-10.pt-1(class="sm:ml-11" for='page_name' style="text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") Page Name
+					.col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
+						input#page_name.rounded-md.outline-0.border-box.w-full.p-2(class="sm:ml-2" style="border: 1px solid #c4c4c4;" name='page_name' type='text' value=page_name placeholder=page_name)
+				.form-group.py-4.grid(class="sm:grid-cols-3")
+					label.ml-10.pt-1(for='images' style="text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") Images
+					.col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
+						input#images.rounded-md.outline-0.border-box.w-full.p-2(class="sm:ml-2" style="border: 1px solid #c4c4c4;" name='images' type='file' multiple)
+				.form-group.py-4.grid(class="sm:grid-cols-3")
+					label.ml-10.pt-1(for='visitation_date' style="text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") Day of Birth
+					.col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
+						input#visitation_date.rounded-md.outline-0.border-box.w-full.p-2(class="sm:ml-2" style="border: 1px solid #c4c4c4;" value=day_of_birth placeholder=day_of_birth name='day_of_birth_edit' type="text" onblur="(this.type='date')" onfocus="this.type='date'")
+				.form-group.py-4.grid(class="sm:grid-cols-3")
+					label.ml-10.pt-1(for='visitation_date' style="text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") Day of Passing
+					.col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
+						input#visitation_date.rounded-md.outline-0.border-box.w-full.p-2(class="sm:ml-2" style="border: 1px solid #c4c4c4;" value=day_of_passing placeholder=day_of_passing name='day_of_passing_edit' type="text" onblur="(this.type='date')" onfocus="this.type='date'")
+				.information.bg-gray-light.rounded-md.mx-9.my-2.text-center(class="sm:text-start")
+					legend.ml-2(class="sm:py-1" style="font-weight: 700; text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") Visitation Information 				
+				.form-group.py-4.grid(class="sm:grid-cols-3")
+					label.ml-10.pt-1(for='visitation_date' style="text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") Date
+					.col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
+						input#visitation_date.rounded-md.outline-0.border-box.w-full.p-2(class="sm:ml-2" style="border: 1px solid #c4c4c4;" value=visitation_date placeholder=visitation_date name='visitation_date_edit' type="text" onblur="(this.type='date')" onfocus="this.type='date'")
+				.form-group.py-4.grid(class="sm:grid-cols-3")
+					label.ml-10.pt-1(for='visitation_time' style="text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") Time
+					.col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
+						input#visitation_time.rounded-md.outline-0.border-box.w-full.p-2(class="sm:ml-2" style="border: 1px solid #c4c4c4;" value=visitation_time placeholder=visitation_time name='visitation_time_edit' type='text' onblur="(this.type='time')" onfocus="this.type='time'")
+				.form-group.py-4.grid(class="sm:grid-cols-3")
+					label.ml-10.pt-1(for='visitation_location' style="text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") Location
+					.col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
+						input#visitation_location.rounded-md.outline-0.border-box.w-full.p-2(class="sm:ml-2" style="border: 1px solid #c4c4c4;" value=visitation_location placeholder=visitation_location name='visitation_location_edit' type='text')
+				.form-group.py-4.grid(class="sm:grid-cols-3")
+					label.ml-10.pt-1(for='visitation_description' style="text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") Description
+					.col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
+						textarea#visitation_description.rounded-md.outline-0.border-box.w-full.p-2(class="sm:ml-2" style="border: 1px solid #c4c4c4;" rows='3' placeholder=visitation_description name='vistitation_description_edit' type='text')=visitation_description
+				.information.bg-gray-light.rounded-md.mx-9.my-2.text-center(class="sm:text-start")
+					legend.ml-2(class="sm:py-1" style="font-weight: 700; text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") Funeral Information 					
+				.form-group.py-4.grid(class="sm:grid-cols-3")
+					label.ml-10.pt-1(for='funeral_date' style="text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") Date
+					.col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
+						input#funeral_date.rounded-md.outline-0.border-box.w-full.p-2(class="sm:ml-2" style="border: 1px solid #c4c4c4;" value=funeral_date placeholder=funeral_date name='funeral_date_edit' type="text" onblur="(this.type='date')" onfocus="this.type='date'")
+				.form-group.py-4.grid(class="sm:grid-cols-3")
+					label.ml-10.pt-1(for='funeral_time' style="text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") Time
+					.col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
+						input#funeral_time.rounded-md.outline-0.border-box.w-full.p-2(class="sm:ml-2" style="border: 1px solid #c4c4c4;" value=funeral_time placeholder=funeral_time name='funeral_time_edit' type='text' onblur="(this.type='time')" onfocus="this.type='time'")
+				.form-group.py-4.grid(class="sm:grid-cols-3")
+					label.ml-10.pt-1(for='funeral_location' style="text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") Location
+					.col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
+						input#funeral_location.rounded-md.outline-0.border-box.w-full.p-2(class="sm:ml-2" style="border: 1px solid #c4c4c4;" value=funeral_location placeholder=funeral_location name='funeral_location_edit' type='text')
+				.form-group.py-4.grid(class="sm:grid-cols-3")
+					label.ml-10.pt-1(for='funeral_description' style="text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") Description
+					.col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
+						textarea#funeral_description.rounded-md.outline-0.border-box.w-full.p-2(class="sm:ml-2" style="border: 1px solid #c4c4c4;"  rows='3' placeholder=funeral_description name='funeral_description_edit' type='text')=funeral_description
+				.form-group.py-4.grid(class="sm:grid-cols-3")
+					label.ml-10.pt-1(for='obituary' style="text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") Obituary 
+					.col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
+						textarea#obituary.rounded-md.outline-0.border-box.w-full.p-2(class="sm:ml-2" style="border: 1px solid #c4c4c4;" placeholder=obituary name='obituary_edit' rows='12')=obituary
+				.information.bg-gray-light.rounded-md.mx-9.my-2.text-center(class="sm:text-start")
+					legend.ml-2(class="sm:py-1" style="font-weight: 700; text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") Fundraising Information 		
+				.form-group.py-4.grid(class="sm:grid-cols-3")
+					label.ml-10.pt-1(for='donation_goal' style="text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") Goal
+					.col-md-8.flex.mx-9(class="sm:col-span-2 sm:ml-11 sm:mr-9")
+						span.rounded-l-md.bg-gray-light.text-lg.p-2(style="text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25); border: 1px solid #c4c4c4;") $
+						input#donation_goal.outline-0.rounded-r-md.border-box.w-full.p-2(style="border: 1px solid #c4c4c4;" value=donation_goal placeholder=donation_goal name='donation_goal_edit' type='text' onblur="(this.type='number')" onfocus="(this.type='number')")
+				.form-group.py-4.grid(class="sm:grid-cols-3")
+					label.ml-10.pt-1(for='deadline' style="text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") Deadline Date
+					.col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
+						input#deadline.rounded-md.outline-0.border-box.w-full.p-2(class="sm:ml-2" style="border: 1px solid #c4c4c4;" value=deadline placeholder=deadline name='deadline_edit' type="text" onblur="(this.type='datetime-local')" onfocus="this.type='datetime-local'")
+				.form-group.ml-9.mb-9.py-7.flex.flex-wrap.gap-2
+					label.control-label(for='submit')
+					.col-md-10.py-2
+						button#submit.p-3.px-6.pt-2.bg-orange(style="color: white; font-weight: 700; border-radius: 32px;" name='submit') Save
+					.col-md-10.py-2.mt-2
+						a.p-3.px-6.pt-2.bg-orange(style="color: white; font-weight: 700; border-radius: 32px;" href="../family-page/" + page_name role='button') View Page
+					.col-md-10.p-2.pt-6.mt-2(class="sm:pt-2 sm:ml-auto sm:mr-6")
+						a.p-3.px-6.pt-2.bg-orange(style="color: white; font-weight: 700; border-radius: 32px;" href="#" + page_name role='button') Delete Page
+.row
+	.col-md-6
+			a.btn.btn-info(href=back role='button') Back
+html
+	head
+		include footer.html

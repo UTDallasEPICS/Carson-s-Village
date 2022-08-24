@@ -2,6 +2,9 @@ doctype html
 head
   title Index
   link(rel='stylesheet' href='https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css')
+html
+  head
+    include header.html
 .container
   h1 General User Search
   br
@@ -25,3 +28,6 @@ head
     .form-group
       label(for='search')
       input(type='submit' value='search')
+html
+  head
+    include footer.html

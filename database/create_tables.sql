@@ -1,39 +1,38 @@
 CREATE TABLE User_Account(
-	user_id			INT 			PRIMARY KEY, 
+	user_id			 			SERIAL PRIMARY KEY, 
 	email			TEXT			NOT NULL 		UNIQUE,
 	user_role		INT				NOT NULL		CHECK(user_role >= 1 AND user_role <= 3),
-	password_hash	TEXT			NOT NULL,
-	password_salt	TEXT			NOT NULL,
 	first_name		TEXT			NOT NULL,
 	middle_name		TEXT,
 	last_name		TEXT			NOT NULL,
 	phone			VARCHAR(10)
 );
 
-INSERT INTO User_Account(user_id, email, user_role, password_hash, password_salt, first_name, middle_name, last_name, phone) 
-	VALUES(1, 'user_id1', 1, 'password1', 'secret1', 'first1', 'middle1', 'last1', '1000001000');
-INSERT INTO User_Account(user_id, email, user_role, password_hash, password_salt, first_name, middle_name, last_name, phone) 
-	VALUES(2, 'user_id2', 1, 'password2', 'secret2', 'first2', 'middle2', 'last2', '1000000001');
-INSERT INTO User_Account(user_id, email, user_role, password_hash, password_salt, first_name, middle_name, last_name, phone) 
-	VALUES(3, 'user_id3', 1, 'password3', 'secret3', 'first3', 'middle3', 'last3', '1000000010');
-INSERT INTO User_Account(user_id, email, user_role, password_hash, password_salt, first_name, middle_name, last_name, phone) 
-	VALUES(4, 'user_id4', 2, 'password4', 'secret4', 'first4', 'middle4', 'last4', '1000000011');
-INSERT INTO User_Account(user_id, email, user_role, password_hash, password_salt, first_name, middle_name, last_name, phone) 
-	VALUES(5, 'user_id5', 2, 'password5', 'secret5', 'first5', 'middle5', 'last5', '1000000100');
-INSERT INTO User_Account(user_id, email, user_role, password_hash, password_salt, first_name, middle_name, last_name, phone) 
-	VALUES(6, 'user_id6', 3, 'password6', 'secret6', 'first6', 'middle6', 'last6', '1000000101');
-INSERT INTO User_Account(user_id, email, user_role, password_hash, password_salt, first_name, middle_name, last_name, phone) 
-	VALUES(7, 'user_id7', 3, 'password7', 'secret7', 'first7', 'middle7', 'last7', '1000000110');
-INSERT INTO User_Account(user_id, email, user_role, password_hash, password_salt, first_name, middle_name, last_name, phone) 
-	VALUES(8, 'user_id8', 1, 'password8', 'secret8', 'first8', 'middle8', 'last8', '1000000111');
-INSERT INTO User_Account(user_id, email, user_role, password_hash, password_salt, first_name, middle_name, last_name, phone) 
-	VALUES(9, 'user_id9', 1, 'password9', 'secret9', 'first9', 'middle9', 'last9', '1000001000');
+INSERT INTO User_Account(email, user_role, first_name, middle_name, last_name, phone) 
+	VALUES('user_id1', 1, 'first1', 'middle1', 'last1', '1000001000');
+INSERT INTO User_Account(email, user_role, first_name, middle_name, last_name, phone) 
+	VALUES('user_id2', 1, 'first2', 'middle2', 'last2', '1000000001');
+INSERT INTO User_Account( email, user_role, first_name, middle_name, last_name, phone) 
+	VALUES('user_id3', 1, 'first3', 'middle3', 'last3', '1000000010');
+INSERT INTO User_Account(email, user_role, first_name, middle_name, last_name, phone) 
+	VALUES('user_id4', 2, 'first4', 'middle4', 'last4', '1000000011');
+INSERT INTO User_Account(email, user_role, first_name, middle_name, last_name, phone)
+	VALUES('user_id5', 2, 'first5', 'middle5', 'last5', '1000000100');
+INSERT INTO User_Account(email, user_role, first_name, middle_name, last_name, phone) 
+	VALUES('user_id6', 3, 'first6', 'middle6', 'last6', '1000000101');
+INSERT INTO User_Account( email, user_role, first_name, middle_name, last_name, phone)
+	VALUES('user_id7', 3, 'first7', 'middle7', 'last7', '1000000110');
+INSERT INTO User_Account(email, user_role, first_name, middle_name, last_name, phone)
+	VALUES('user_id8', 1, 'first8', 'middle8', 'last8', '1000000111');
+INSERT INTO User_Account(email, user_role, first_name, middle_name, last_name, phone)
+	VALUES('user_id9', 1, 'first9', 'middle9', 'last9', '1000001000');
 
 CREATE TABLE Page_Details(
 	family_id				INT,
 	page_name				TEXT,
 	status					INT			NOT NULL	CHECK(status >= 1 AND status <= 4), 
-
+	day_of_birth			DATE,
+	day_of_passing			DATE,
 	visitation_date			DATE, 
 	visitation_time			TIME, 
 	visitation_location		TEXT, 
@@ -48,44 +47,47 @@ CREATE TABLE Page_Details(
 	images					TEXT[], 
 
 	donation_goal			MONEY		NOT NULL, 
-	deadline				DATE		NOT NULL, 
+	deadline				TIMESTAMPTZ	NOT NULL, 
+	timezone				TEXT,
 
 	PRIMARY KEY (family_id, page_name),
 	FOREIGN KEY (family_id) REFERENCES User_Account(user_id)
 );
 
-INSERT INTO Page_Details(family_id, page_name, status, visitation_date, visitation_location, visitation_description, funeral_date, funeral_location, funeral_description, obituary, images, donation_goal, deadline) 
-	VALUES(1, 'page1', 1, '2000-01-01 00:00', 'visitation_location1', 'visitation_description1', '2000-01-01 00:01', 'funeral_location1', 'funeral_description`', 'obituary1', ARRAY['image1', 'image2', 'image3'], 1000, '2000-01-01 00:02');
-INSERT INTO Page_Details(family_id, page_name, status, visitation_date, visitation_location, visitation_description, funeral_date, funeral_location, funeral_description, obituary, images, donation_goal, deadline) 
-	VALUES(1, 'page2', 1, '2000-01-01 00:00', 'visitation_location1', 'visitation_description1', '2000-01-01 00:01', 'funeral_location1', 'funeral_description`', 'obituary1', ARRAY['image1', 'image2', 'image3'], 1000, '2000-01-01 00:02');
-INSERT INTO Page_Details(family_id, page_name, status, visitation_date, visitation_location, visitation_description, funeral_date, funeral_location, funeral_description, obituary, images, donation_goal, deadline) 
-	VALUES(1, 'page3', 1, '2000-01-01 00:00', 'visitation_location1', 'visitation_description1', '2000-01-01 00:01', 'funeral_location1', 'funeral_description`', 'obituary1', ARRAY['image1', 'image2', 'image3'], 1000, '2000-01-01 00:02');
-INSERT INTO Page_Details(family_id, page_name, status, visitation_date, visitation_location, visitation_description, funeral_date, funeral_location, funeral_description, obituary, images, donation_goal, deadline) 
-	VALUES(1, 'page4', 1, '2000-01-01 00:00', 'visitation_location1', 'visitation_description1', '2000-01-01 00:01', 'funeral_location1', 'funeral_description`', 'obituary1', ARRAY['image1', 'image2', 'image3'], 1000, '2000-01-01 00:02');
-INSERT INTO Page_Details(family_id, page_name, status, visitation_date, visitation_location, visitation_description, funeral_date, funeral_location, funeral_description, obituary, images, donation_goal, deadline) 
-	VALUES(2, 'page1', 1, '2000-02-01 01:00', 'visitation_location1', 'visitation_description1', '2000-02-01 01:01', 'funeral_location1', 'funeral_description`', 'obituary1', ARRAY['image1', 'image2', 'image3'], 1000, '2000-01-01 00:02');
-INSERT INTO Page_Details(family_id, page_name, status, visitation_date, visitation_location, visitation_description, funeral_date, funeral_location, funeral_description, obituary, images, donation_goal, deadline) 
-	VALUES(2, 'page2', 1, '2000-02-01 01:00', 'visitation_location1', 'visitation_description1', '2000-02-01 01:01', 'funeral_location1', 'funeral_description`', 'obituary1', ARRAY['image1', 'image2', 'image3'], 1000, '2000-01-01 00:02');
-INSERT INTO Page_Details(family_id, page_name, status, visitation_date, visitation_location, visitation_description, funeral_date, funeral_location, funeral_description, obituary, images, donation_goal, deadline) 
-	VALUES(2, 'page3', 1, '2000-02-01 01:00', 'visitation_location1', 'visitation_description1', '2000-02-01 01:01', 'funeral_location1', 'funeral_description`', 'obituary1', ARRAY['image1', 'image2', 'image3'], 1000, '2000-01-01 00:02');
-INSERT INTO Page_Details(family_id, page_name, status, visitation_date, visitation_location, visitation_description, funeral_date, funeral_location, funeral_description, obituary, images, donation_goal, deadline) 
-	VALUES(2, 'page4', 1, '2000-02-01 01:00', 'visitation_location1', 'visitation_description1', '2000-02-01 01:01', 'funeral_location1', 'funeral_description`', 'obituary1', ARRAY['image1', 'image2', 'image3'], 1000, '2000-01-01 00:02');
-INSERT INTO Page_Details(family_id, page_name, status, visitation_date, visitation_location, visitation_description, funeral_date, funeral_location, funeral_description, obituary, images, donation_goal, deadline) 
-	VALUES(4, 'page1', 1, '2000-04-01 00:00', 'visitation_location1', 'visitation_description1', '2000-04-01 00:01', 'funeral_location1', 'funeral_description`', 'obituary1', ARRAY['image1', 'image2', 'image3'], 1000, '2000-01-01 00:02');
-INSERT INTO Page_Details(family_id, page_name, status, visitation_date, visitation_location, visitation_description, funeral_date, funeral_location, funeral_description, obituary, images, donation_goal, deadline) 
-	VALUES(4, 'page2', 1, '2000-04-01 00:00', 'visitation_location1', 'visitation_description1', '2000-04-01 00:01', 'funeral_location1', 'funeral_description`', 'obituary1', ARRAY['image1', 'image2', 'image3'], 1000, '2000-01-01 00:02');
-INSERT INTO Page_Details(family_id, page_name, status, visitation_date, visitation_location, visitation_description, funeral_date, funeral_location, funeral_description, obituary, images, donation_goal, deadline) 
-	VALUES(4, 'page3', 1, '2000-04-01 00:00', 'visitation_location1', 'visitation_description1', '2000-04-01 00:01', 'funeral_location1', 'funeral_description`', 'obituary1', ARRAY['image1', 'image2', 'image3'], 1000, '2000-01-01 00:02');
-INSERT INTO Page_Details(family_id, page_name, status, visitation_date, visitation_location, visitation_description, funeral_date, funeral_location, funeral_description, obituary, images, donation_goal, deadline) 
-	VALUES(4, 'page4', 1, '2000-04-01 00:00', 'visitation_location1', 'visitation_description1', '2000-04-01 00:01', 'funeral_location1', 'funeral_description`', 'obituary1', ARRAY['image1', 'image2', 'image3'], 1000, '2000-01-01 00:02');
-INSERT INTO Page_Details(family_id, page_name, status, visitation_date, visitation_location, visitation_description, funeral_date, funeral_location, funeral_description, obituary, images, donation_goal, deadline) 
-	VALUES(6, 'page1', 1, '2000-06-01 00:00', 'visitation_location1', 'visitation_description1', '2000-06-01 00:01', 'funeral_location1', 'funeral_description`', 'obituary1', ARRAY['image1', 'image2', 'image3'], 1000, '2000-01-01 00:02');
-INSERT INTO Page_Details(family_id, page_name, status, visitation_date, visitation_location, visitation_description, funeral_date, funeral_location, funeral_description, obituary, images, donation_goal, deadline) 
-	VALUES(6, 'page2', 1, '2000-06-01 00:00', 'visitation_location1', 'visitation_description1', '2000-06-01 00:01', 'funeral_location1', 'funeral_description`', 'obituary1', ARRAY['image1', 'image2', 'image3'], 1000, '2000-01-01 00:02');
-INSERT INTO Page_Details(family_id, page_name, status, visitation_date, visitation_location, visitation_description, funeral_date, funeral_location, funeral_description, obituary, images, donation_goal, deadline) 
-	VALUES(6, 'page3', 1, '2000-06-01 00:00', 'visitation_location1', 'visitation_description1', '2000-06-01 00:01', 'funeral_location1', 'funeral_description`', 'obituary1', ARRAY['image1', 'image2', 'image3'], 1000, '2000-01-01 00:02');
-INSERT INTO Page_Details(family_id, page_name, status, visitation_date, visitation_location, visitation_description, funeral_date, funeral_location, funeral_description, obituary, images, donation_goal, deadline) 
-	VALUES(6, 'page4', 1, '2000-06-01 00:00', 'visitation_location1', 'visitation_description1', '2000-06-01 00:01', 'funeral_location1', 'funeral_description`', 'obituary1', ARRAY['image1', 'image2', 'image3'], 1000, '2000-01-01 00:02');
+INSERT INTO Page_Details(family_id, page_name, status, day_of_birth, day_of_passing, visitation_date, visitation_location, visitation_description, funeral_date, funeral_location, funeral_description, obituary, images, donation_goal, deadline, timezone) 
+	VALUES(1, 'page1', 1, '2000-01-01 00:00','2022-01-01 00:00','2000-01-01 00:00', 'visitation_location1', 'visitation_description1', '2000-01-01 00:01', 'funeral_location1', 'funeral_description`', 'obituary1', ARRAY['image1', 'image2', 'image3'], 1000, '2000-01-01 00:02', 'Central Daylight Time');
+INSERT INTO Page_Details(family_id, page_name, status, day_of_birth, day_of_passing, visitation_date, visitation_location, visitation_description, funeral_date, funeral_location, funeral_description, obituary, images, donation_goal, deadline, timezone) 
+	VALUES(1, 'page2', 1, '2000-01-01 00:00','2022-01-01 00:00','2000-01-01 00:00', 'visitation_location1', 'visitation_description1', '2000-01-01 00:01', 'funeral_location1', 'funeral_description`', 'obituary1', ARRAY['image1', 'image2', 'image3'], 1000, '2000-01-01 00:02', 'Central Daylight Time');
+INSERT INTO Page_Details(family_id, page_name, status, day_of_birth, day_of_passing, visitation_date, visitation_location, visitation_description, funeral_date, funeral_location, funeral_description, obituary, images, donation_goal, deadline, timezone) 
+	VALUES(1, 'page3', 1, '2000-01-01 00:00','2022-01-01 00:00','2000-01-01 00:00', 'visitation_location1', 'visitation_description1', '2000-01-01 00:01', 'funeral_location1', 'funeral_description`', 'obituary1', ARRAY['image1', 'image2', 'image3'], 1000, '2000-01-01 00:02', 'Central Daylight Time');
+INSERT INTO Page_Details(family_id, page_name, status,  day_of_birth, day_of_passing, visitation_date, visitation_location, visitation_description, funeral_date, funeral_location, funeral_description, obituary, images, donation_goal, deadline, timezone) 
+	VALUES(1, 'page4', 1, '2000-01-01 00:00','2022-01-01 00:00','2000-01-01 00:00', 'visitation_location1', 'visitation_description1', '2000-01-01 00:01', 'funeral_location1', 'funeral_description`', 'obituary1', ARRAY['image1', 'image2', 'image3'], 1000, '2000-01-01 00:02', 'Central Daylight Time');
+INSERT INTO Page_Details(family_id, page_name, status,  day_of_birth, day_of_passing,visitation_date, visitation_location, visitation_description, funeral_date, funeral_location, funeral_description, obituary, images, donation_goal, deadline, timezone) 
+	VALUES(2, 'page1', 1, '2000-01-01 00:00','2022-01-01 00:00','2000-02-01 01:00', 'visitation_location1', 'visitation_description1', '2000-02-01 01:01', 'funeral_location1', 'funeral_description`', 'obituary1', ARRAY['image1', 'image2', 'image3'], 1000, '2000-01-01 00:02', 'Central Daylight Time');
+INSERT INTO Page_Details(family_id, page_name, status, day_of_birth, day_of_passing, visitation_date, visitation_location, visitation_description, funeral_date, funeral_location, funeral_description, obituary, images, donation_goal, deadline, timezone) 
+	VALUES(2, 'page2', 1, '2000-01-01 00:00','2022-01-01 00:00','2000-02-01 01:00', 'visitation_location1', 'visitation_description1', '2000-02-01 01:01', 'funeral_location1', 'funeral_description`', 'obituary1', ARRAY['image1', 'image2', 'image3'], 1000, '2000-01-01 00:02', 'Central Daylight Time');
+INSERT INTO Page_Details(family_id, page_name, status, day_of_birth, day_of_passing, visitation_date, visitation_location, visitation_description, funeral_date, funeral_location, funeral_description, obituary, images, donation_goal, deadline, timezone) 
+	VALUES(2, 'page3', 1, '2000-01-01 00:00','2022-01-01 00:00','2000-02-01 01:00', 'visitation_location1', 'visitation_description1', '2000-02-01 01:01', 'funeral_location1', 'funeral_description`', 'obituary1', ARRAY['image1', 'image2', 'image3'], 1000, '2000-01-01 00:02', 'Central Daylight Time');
+INSERT INTO Page_Details(family_id, page_name, status, day_of_birth, day_of_passing, visitation_date, visitation_location, visitation_description, funeral_date, funeral_location, funeral_description, obituary, images, donation_goal, deadline, timezone) 
+	VALUES(2, 'page4', 1, '2000-01-01 00:00','2022-01-01 00:00','2000-02-01 01:00', 'visitation_location1', 'visitation_description1', '2000-02-01 01:01', 'funeral_location1', 'funeral_description`', 'obituary1', ARRAY['image1', 'image2', 'image3'], 1000, '2000-01-01 00:02', 'Central Daylight Time');
+INSERT INTO Page_Details(family_id, page_name, status, day_of_birth, day_of_passing, visitation_date, visitation_location, visitation_description, funeral_date, funeral_location, funeral_description, obituary, images, donation_goal, deadline, timezone) 
+	VALUES(3, 'page1', 1, '2000-01-01 00:00','2022-01-01 00:00','2000-04-01 00:00', 'visitation_location1', 'visitation_description1', '2000-04-01 00:01', 'funeral_location1', 'funeral_description`', 'obituary1', ARRAY['image1', 'image2', 'image3'], 1000, '2000-01-01 00:02', 'Central Daylight Time');
+INSERT INTO Page_Details(family_id, page_name, status, day_of_birth, day_of_passing, visitation_date, visitation_location, visitation_description, funeral_date, funeral_location, funeral_description, obituary, images, donation_goal, deadline, timezone) 
+	VALUES(4, 'page1', 1, '2000-01-01 00:00','2022-01-01 00:00','2000-04-01 00:00', 'visitation_location1', 'visitation_description1', '2000-04-01 00:01', 'funeral_location1', 'funeral_description`', 'obituary1', ARRAY['image1', 'image2', 'image3'], 1000, '2000-01-01 00:02', 'Central Daylight Time');
+INSERT INTO Page_Details(family_id, page_name, status, day_of_birth, day_of_passing, visitation_date, visitation_location, visitation_description, funeral_date, funeral_location, funeral_description, obituary, images, donation_goal, deadline, timezone) 
+	VALUES(4, 'page2', 1, '2000-01-01 00:00','2022-01-01 00:00','2000-04-01 00:00', 'visitation_location1', 'visitation_description1', '2000-04-01 00:01', 'funeral_location1', 'funeral_description`', 'obituary1', ARRAY['image1', 'image2', 'image3'], 1000, '2000-01-01 00:02', 'Central Daylight Time');
+INSERT INTO Page_Details(family_id, page_name, status, day_of_birth, day_of_passing, visitation_date, visitation_location, visitation_description, funeral_date, funeral_location, funeral_description, obituary, images, donation_goal, deadline, timezone) 
+	VALUES(4, 'page3', 1, '2000-01-01 00:00','2022-01-01 00:00','2000-04-01 00:00', 'visitation_location1', 'visitation_description1', '2000-04-01 00:01', 'funeral_location1', 'funeral_description`', 'obituary1', ARRAY['image1', 'image2', 'image3'], 1000, '2000-01-01 00:02', 'Central Daylight Time');
+INSERT INTO Page_Details(family_id, page_name, status, day_of_birth, day_of_passing, visitation_date, visitation_location, visitation_description, funeral_date, funeral_location, funeral_description, obituary, images, donation_goal, deadline, timezone) 
+	VALUES(4, 'page4', 1, '2000-01-01 00:00','2022-01-01 00:00','2000-04-01 00:00', 'visitation_location1', 'visitation_description1', '2000-04-01 00:01', 'funeral_location1', 'funeral_description`', 'obituary1', ARRAY['image1', 'image2', 'image3'], 1000, '2000-01-01 00:02', 'Central Daylight Time');
+INSERT INTO Page_Details(family_id, page_name, status, day_of_birth, day_of_passing, visitation_date, visitation_location, visitation_description, funeral_date, funeral_location, funeral_description, obituary, images, donation_goal, deadline, timezone) 
+	VALUES(6, 'page1', 1, '2000-01-01 00:00','2022-01-01 00:00','2000-06-01 00:00', 'visitation_location1', 'visitation_description1', '2000-06-01 00:01', 'funeral_location1', 'funeral_description`', 'obituary1', ARRAY['image1', 'image2', 'image3'], 1000, '2000-01-01 00:02', 'Central Daylight Time');
+INSERT INTO Page_Details(family_id, page_name, status, day_of_birth, day_of_passing, visitation_date, visitation_location, visitation_description, funeral_date, funeral_location, funeral_description, obituary, images, donation_goal, deadline, timezone) 
+	VALUES(6, 'page2', 1, '2000-01-01 00:00','2022-01-01 00:00','2000-06-01 00:00', 'visitation_location1', 'visitation_description1', '2000-06-01 00:01', 'funeral_location1', 'funeral_description`', 'obituary1', ARRAY['image1', 'image2', 'image3'], 1000, '2000-01-01 00:02', 'Central Daylight Time');
+INSERT INTO Page_Details(family_id, page_name, status, day_of_birth, day_of_passing, visitation_date, visitation_location, visitation_description, funeral_date, funeral_location, funeral_description, obituary, images, donation_goal, deadline, timezone) 
+	VALUES(6, 'page3', 1, '2000-01-01 00:00','2022-01-01 00:00','2000-06-01 00:00', 'visitation_location1', 'visitation_description1', '2000-06-01 00:01', 'funeral_location1', 'funeral_description`', 'obituary1', ARRAY['image1', 'image2', 'image3'], 1000, '2000-01-01 00:02', 'Central Daylight Time');
+INSERT INTO Page_Details(family_id, page_name, status, day_of_birth, day_of_passing, visitation_date, visitation_location, visitation_description, funeral_date, funeral_location, funeral_description, obituary, images, donation_goal, deadline, timezone) 
+	VALUES(6, 'page4', 1, '2000-01-01 00:00','2022-01-01 00:00','2000-06-01 00:00', 'visitation_location1', 'visitation_description1', '2000-06-01 00:01', 'funeral_location1', 'funeral_description`', 'obituary1', ARRAY['image1', 'image2', 'image3'], 1000, '2000-01-01 00:02', 'Central Daylight Time');
 
 CREATE TABLE Page_Donations(
 	family_id		INT,
@@ -119,7 +121,7 @@ INSERT INTO Page_Donations(family_id, page_name, link ,status, description)
 
 CREATE TABLE Edit_Review_Log(
 	editor_id		INT,
-	family_id		TEXT,
+	family_id		INT,
 	page_name		TEXT,
 	edit_date		TIMESTAMP,
 	edit_code		VARCHAR(16)		NOT NULL, 

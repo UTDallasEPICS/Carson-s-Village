@@ -1,0 +1,121 @@
+doctype html 
+head 
+	link(rel='preconnect' href='https://fonts.googleapis.com/')
+	link(rel='preconnect' href='https://fonts.gstatic.com/' crossorigin='')
+	link(href='https://fonts.googleapis.com/css2?family=Poppins:ital@0;1&display=swap' rel='stylesheet')
+	link(href='https://fonts.googleapis.com/css2?family=Outfit:wght@600&display=swap' rel='stylesheet')
+html
+	head
+		include header.html
+		link(rel='stylesheet' href='/stylesheets/main.css')
+	.bg-blue.w-screen(class="h-[80px]")
+	.img.bg-orange.-mt-16.mx-auto(class="w-[122px] h-[122px] rounded-[8px]")
+	.text-gray-dark.font-poppins.text-2xl.text-center.font-semibold(style="text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.25);")=page_name
+	.row.text-center
+		.text-gray-dark.font-poppins.text-md.inline-block.text-center=day_of_birth
+		.text-gray-dark.font-poppins.text-md.inline-block.whitespace-pre  - 
+		.text-gray-dark.font-poppins.text-md.inline-block=day_of_passing
+	.container.bg-gray-light.mx-auto.h-auto.font-poppins(class="w-11/12 rounded-[8px]" style="box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);")
+		ul.inline-flex.py-1.px-1.w-full(id="tabs")
+			li.bg-white.text-xs.text-center.px-auto.py-2(class="rounded-[8px] w-1/4")
+				a.font-poppins.text-center.font-semibold(style="color:#383838; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.25);" id="default-tab" href="#obituary") Obituary
+			li.text-xs.text-center.px-auto.py-2(class="w-1/4")
+				a.font-poppins.text-center.font-semibold(style="color:#383838; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.25);" href="#services") Services
+			li.text-xs.text-center.px-auto.py-2(class="w-1/4")
+				a.font-poppins.text-center.font-semibold(style="color:#383838; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.25);" href="#donations") Donations
+			li.text-xs.text-center.px-auto.py-2(class="w-1/4")
+				a.font-poppins.text-center.font-semibold(style="color:#383838; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.25);" href="#media") Media
+
+		.div(style="background: #F8F8F8;" id="tab-contents")
+			.div.px-8.py-4(style="color: #6E6E6E; font-weight: 500; font-size: 14px; line-height: 28px; letter-spacing: -0.078px;" id="obituary")=obituary
+			.div.hidden.p-4(id="services")
+				.px-5.py-4.text-gray-dark.font-poppins.text-2xl.text-left.font-bold(style="line-height: 36px; text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") Visitation
+				.px-5.pt-2.pb-8.font-outfit.text-dark-blue(style="font-size: 20px; line-height: 30px;")=vistitation_description
+				.grid.gap-x-3.gap-y-0.grid-cols-5.grid-rows-2
+					img.px-4(src="/images/clock_icon.png")
+					.py-1.font-outfit.text-dark-blue.col-span-4(style="font-size: 20px; line-height: 30px;")=visitation_date + ", " + visitation_time
+					img.px-2(src="/images/location_icon.png")
+					.py-2.font-outfit.text-dark-blue.col-span-4.whitespace-normal(style="font-size: 20px; line-height: 30px;")=visitation_location
+				.px-5.py-4.text-gray-dark.font-poppins.text-2xl.text-left.font-bold(style="line-height: 36px; text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") Funeral
+				.px-5.pt-2.pb-8.font-outfit.text-dark-blue(style="font-size: 20px; line-height: 30px;")=funeral_description
+				.grid.gap-x-3.gap-y-0.grid-cols-5.grid-rows-2
+					img.px-4(src="/images/clock_icon.png")
+					.py-1.font-outfit.text-dark-blue.col-span-4(style="font-size: 20px; line-height: 30px;")=funeral_date + ", " + funeral_time
+					img.px-2(src="/images/location_icon.png")
+					.py-2.font-outfit.text-dark-blue.col-span-4.whitespace-normal.leading-loose(style="font-size: 20px; line-height: 30px;")=funeral_location
+			.div.hidden.p-4(id="donations")
+				.container(class="sm:overflow-hidden sm:w-3/4 sm:mt-4 sm:mx-auto sm:place-content-center sm:max-w-xl sm:p-6 sm:rounded-card sm:shadow-card")
+					.container.m-4.place-content-center.font-poppins(class="w-5/6 sm:m-auto sm:py-3")
+						.text-md.text-center.ml-4.my-3(class="sm:text-xl sm:my-6" style="letter-spacing: 0.35px; font-weight: 600; color: #646464;")=donated_amount + " raised of " + donation_goal + " goal"
+						.progress-bar.overflow-hidden.ml-4.h-5.rounded-full(style="30px; background-color:#b5b5b5;")
+							.progress.rounded-full.text-white.flex.items-center.justify-center(donated-amount=donated_percentage style="background: linear-gradient(90deg, rgba(15,200,0,1) 35%, rgba(203,255,0,1) 100%); box-shadow: 0 3px 3px -5px #1ba710, 0 2px 5px #1ba710; height: 100%; opacity: 0; width:0px;")=donated_percentage + "%"
+						.well.well-sm
+							h1.ml-4.pt-9.text-2xl.text-gray-dark(class="sm:text-3xl" style="font-weight: 600; letter-spacing: 0.35px;") Donor Information
+								.bar(style="border-top: 0.5px solid #646464;")
+						br
+						form.form-horizontal(method='post' action=userAction)
+							fieldset
+								.col-md-8.ml-4.pt-1.pr-5(class="sm:mx-4 sm:w-full sm:py-2")
+									input#first_name.rounded-md.outline-0.border-box.w-full.p-2(style="border: 1px solid #c4c4c4;" name='first_name' type='text' placeholder='First Name' required)
+								.col-md-8.ml-4.pt-1.pr-5(class="sm:mx-4 sm:w-full sm:py-2")
+									input#last_name.rounded-md.outline-0.border-box.w-full.p-2(style="border: 1px solid #c4c4c4;" name='last_name' type='text' placeholder='Last Name' required)
+								.col-md-8.ml-4.pt-4.pr-5.flex
+									input#anonymous(type='checkbox' class="sm:ml-1" name='anonymous' value='Bike')
+									label.mt-4.ml-4.text-md(for='anonymous' class="sm:mt-0" style="letter-spacing: 0.35px;")  Make this an anonymous donation
+								.col-md-8.ml-4.pt-4.pr-5.flex(class="sm:mx-4 sm:w-full sm:py-2")
+									textarea#comments.rounded-md.outline-0.border-box.w-full.p-2(style="border: 1px solid #c4c4c4;" name='comments' rows='3' placeholder='Comments' required)
+								.col-md-8.ml-4.pt-4.pr-5.grid.grid-cols-3(class="sm:mx-4 sm:w-full sm:py-2")
+									span.rounded-l-md.p-3.col-span-2(style="text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25); border: 1px solid #c4c4c4;") Donation Amount
+									.flex
+										span.bg-gray-light.py-2.px-1.text-lg(style="text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25); border: 1px solid #c4c4c4; border-right:none;") $
+										input#donation_amount.bg-gray-light.outline-0.rounded-r-md.border-box.w-full.p-2(style="border: 1px solid #c4c4c4; border-left:none;" name='donation_amount' type="number" min="0.00" step="0.01" required)
+								.col-md-8.ml-4.pt-6.pr-5.flex.items-center.justify-center
+									button#submit.mx-auto.p-3.px-6.pt-2.bg-orange.text-md(style="color: white; font-weight: 700; border-radius: 32px;" name='submit') DONATE NOW
+			.div.hidden.p-4(id="media") 
+				.row.gallery.flex.flex-wrap.gap-1.items-center.justify-center(class="basis-1/2 sm:basis-1/4 sm:gap-3 sm:m-8")
+					img.object-cover.align-middle.rounded-lg(class="w-40 sm:w-64" src="/images/media1.png")
+					img.object-cover.align-middle.rounded-lg(class="w-40 sm:w-64" src="/images/media2.png")
+					img.object-cover.align-middle.rounded-lg(class="w-40 sm:w-64" src="/images/media3.png")
+					img.object-cover.align-middle.rounded-lg(class="w-40 sm:w-64" src="/images/media4.png")
+				.row.gallery.flex.flex-wrap.gap-1.items-center.justify-center(class="basis-1/2 sm:basis-1/4 sm:gap-3 sm:m-8")
+					img.object-cover.align-middle.rounded-lg(class="w-40 sm:w-64" src="/images/media1.png")
+					img.object-cover.align-middle.rounded-lg(class="w-40 sm:w-64" src="/images/media2.png")
+					img.object-cover.align-middle.rounded-lg(class="w-40 sm:w-64" src="/images/media3.png")
+					img.object-cover.align-middle.rounded-lg(class="w-40 sm:w-64" src="/images/media4.png")
+script.
+
+	// update the progress bar based on donation amount
+	const progress=document.querySelector('.progress');
+	progress.style.width=progress.getAttribute('donated-amount') + "%";
+	progress.style.opacity=1;
+
+	let tabsContainer = document.querySelector("#tabs");
+
+	let tabTogglers = tabsContainer.querySelectorAll("#tabs a");
+
+	console.log(tabTogglers);
+
+	tabTogglers.forEach(function(toggler) {
+	toggler.addEventListener("click", function(e) {
+		e.preventDefault();
+
+		let tabName = this.getAttribute("href");
+
+		let tabContents = document.querySelector("#tab-contents");
+
+		for (let i = 0; i < tabContents.children.length; i++) {
+		
+		tabTogglers[i].parentElement.classList.remove("bg-white", "rounded-[8px]"); 
+		tabContents.children[i].classList.remove("hidden");
+		if ("#" + tabContents.children[i].id === tabName) {
+			continue;
+		}
+		tabContents.children[i].classList.add("hidden");
+		
+		}
+		e.target.parentElement.classList.add("bg-white", "rounded-[8px]");
+	});
+	});
+html
+	head
+		include footer.html

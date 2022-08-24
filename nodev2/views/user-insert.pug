@@ -1,4 +1,7 @@
 doctype html
+html
+	head 
+		include header.html
 head
 	title Data Entry Test
 	link(rel='stylesheet' href='https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css')
@@ -24,14 +27,6 @@ head
 						option(value='2') advocate/administrator
 						option(value='3') disabled
 			.form-group
-				label.col-md-4.control-label(for='password_hash') Password Hash
-				.col-md-4
-					input#password_hash.form-control.input-md(name='password_hash' type='text' placeholder='(auto generate)')
-			.form-group
-				label.col-md-4.control-label(for='password_salt') Password Salt
-				.col-md-4
-					input#password_salt.form-control.input-md(name='password_salt' type='text' placeholder='(auto generate)')
-			.form-group
 				label.col-md-4.control-label(for='first_name') First Name
 				.col-md-4
 					input#first_name.form-control.input-md(name='first_name' type='text' placeholder='(user defined)')
@@ -52,3 +47,9 @@ head
 				label.col-md-4.control-label(for='submit')
 				.col-md-4
 				button#submit.btn.btn-primary(name='submit') Save
+.row
+	.col-md-6
+			a.btn.btn-info(href=back role='button') Back
+html
+	head
+		include footer.html

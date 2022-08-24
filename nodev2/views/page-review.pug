@@ -1,7 +1,13 @@
 doctype html 
+html
+	head 
+		include header.html
 head 
 	title=title
 	link(rel='stylesheet' href='https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css')
+html
+	head
+		include header.html
 .container
 	.well.well-sm
 		.background-color
@@ -90,3 +96,9 @@ head
 					label.col-md-4.control-label(for='submit')
 					.col-md-8
 						a.btn.btn-info(href='/./search/pages/'+family_id+'/'+page_name role='button') Simulate Page Creation
+.row
+	.col-md-6
+			a.btn.btn-info(href=back role='button') Back
+html
+	head
+		include footer.html

@@ -1,0 +1,41 @@
+doctype html
+html
+	head 
+		include header.html
+head
+	link(rel='stylesheet' href='/stylesheets/main.css')
+	link(href='https://fonts.googleapis.com/css2?family=Poppins:ital@0;1&display=swap' rel='stylesheet')
+	title New User Account Creation
+body
+	.container.overflow-hidden.mt-4.mx-auto.place-content-center.font-poppins(class="w-5/6 sm:max-w-xl sm:p-6" style="box-shadow: 0px 3px 6px 3px rgba(0, 0, 0, 0.15), 0px 3px 3px rgba(0, 0, 0, 0.3); border-radius: 60px;")
+		// form name
+		h1.text-center.pt-9.text-xl(class="sm:text-3xl" style="text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25); font-weight: 700;") New User Account Creation
+		.bar.mx-9.my-3(style="border-top: 0.5px solid #646464;")
+		
+		form.form-horizontal(method='post' action=userAction)
+			fieldset
+				// Text input
+				.form-group.py-4.grid(class="sm:grid-cols-3")
+					label.ml-10.pt-1(class="sm:ml-11" for='page_name' style="text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") First Name
+					.col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
+						input#first_name.rounded-md.outline-0.border-box.w-full.p-2(class="sm:ml-2" style="border: 1px solid #c4c4c4;" name='first_name' type='text' placeholder='Required' required)
+				.form-group.py-4.grid(class="sm:grid-cols-3")
+					label.ml-10.pt-1(class="sm:ml-11" for='page_name' style="text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") Middle Name
+					.col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
+						input#middle_name.rounded-md.outline-0.border-box.w-full.p-2(class="sm:ml-2" style="border: 1px solid #c4c4c4;" name='middle_name' type='text' placeholder='Optional')
+				.form-group.py-4.grid(class="sm:grid-cols-3")
+					label.ml-10.pt-1(class="sm:ml-11" for='page_name' style="text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") Last Name
+					.col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
+						input#last_name.rounded-md.outline-0.border-box.w-full.p-2(class="sm:ml-2" style="border: 1px solid #c4c4c4;" name='last_name' type='text' placeholder='Required' required)
+				.form-group.py-4.grid(class="sm:grid-cols-3")
+					label.ml-10.pt-1(class="sm:ml-11" for='page_name' style="text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") Phone
+					.col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
+						input#phone.rounded-md.outline-0.border-box.w-full.p-2(class="sm:ml-2" style="border: 1px solid #c4c4c4;" minlength='10' maxlength='10' name='phone' type='text' placeholder='Optional')
+				//	button
+				.form-group.ml-9.mb-9
+					label.col-md-4.control-label(for='submit')
+					.col-md-4
+					button#submit.p-3.px-6.pt-2.bg-orange(style="color: white; font-weight: 700; border-radius: 32px;" name='submit') Save
+html
+	head
+		include footer.html
