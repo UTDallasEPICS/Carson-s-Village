@@ -13,7 +13,7 @@ body
 		.well.well-sm
 			h1.text-center.pt-9.text-xl(class="sm:text-3xl" style="text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25); font-weight: 700;") Edit Family Page 
 		br
-		form.form-horizontal(method='post' action=editPage)
+		form.form-horizontal(method='post' enctype="multipart/form-data" action=editPage)
 			fieldset 
 				.information.bg-gray-light.rounded-md.mx-9.my-2.text-center(class="sm:text-start")
 					legend.ml-2(class="sm:py-1" style="font-weight: 700; text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") Personal Information 				
@@ -24,7 +24,7 @@ body
 				.form-group.py-4.grid(class="sm:grid-cols-3")
 					label.ml-10.pt-1(for='images' style="text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") Images
 					.col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
-						input#images.rounded-md.outline-0.border-box.w-full.p-2(class="sm:ml-2" style="border: 1px solid #c4c4c4;" name='images' type='file' multiple)
+						input#images.rounded-md.outline-0.border-box.w-full.p-2(class="sm:ml-2" style="border: 1px solid #c4c4c4;" name='images' type='file' accept=".png,.jpeg,.jpg,.gif" multiple)
 				.form-group.py-4.grid(class="sm:grid-cols-3")
 					label.ml-10.pt-1(for='visitation_date' style="text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") Day of Birth
 					.col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")

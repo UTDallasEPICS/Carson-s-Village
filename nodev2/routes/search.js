@@ -152,7 +152,9 @@ router.get('/pages/:user_id([0-9]+)/:page_name', async (req, res) =>{
 				res.render('family-page', {
 					title: req.params.page_name, 
 					page_name: req.params.page_name,
+					userImageAction: '/family/' + idQuery.rows[0].user_id + '/remove-image/' + queryRes.rows[0].name,
 					name: queryRes.rows[0].name,
+					media: queryRes.rows[0].images,
 					day_of_birth: convertDate(queryRes.rows[0].day_of_birth),
 					day_of_passing: convertDate(queryRes.rows[0].day_of_passing),
 					visitation_date: convertDate(queryRes.rows[0].visitation_date),
@@ -188,7 +190,9 @@ router.get('/pages/:user_id([0-9]+)/:page_name', async (req, res) =>{
 				res.render('family-page', {
 					title: req.params.page_name, 
 					page_name: req.params.page_name,
+					userImageAction: '/family/' + idQuery.rows[0].user_id + '/remove-image/' + queryRes.rows[0].name,
 					name: queryRes.rows[0].name,
+					media: queryRes.rows[0].images,
 					day_of_birth: convertDate(queryRes.rows[0].day_of_birth),
 					day_of_passing: convertDate(queryRes.rows[0].day_of_passing),
 					visitation_date: convertDate(queryRes.rows[0].visitation_date),
@@ -204,7 +208,7 @@ router.get('/pages/:user_id([0-9]+)/:page_name', async (req, res) =>{
 					donated_percentage: donated_percentage,
 					deadline: queryRes.rows[0].deadline, 
 					timezone: queryRes.rows[0].timezone, 
-					obituary: queryRes.rows[0].obituary,
+					obituary: queryRes.rows[0].obituary,					
 					back: '/family/' + idQuery.rows[0].user_id
 				})
 			}
@@ -225,6 +229,7 @@ router.get('/pages/:user_id([0-9]+)/:page_name', async (req, res) =>{
 				title: req.params.page_name, 
 				page_name: req.params.page_name,
 				name: queryRes.rows[0].name,
+				media: queryRes.rows[0].images,
 				day_of_birth: convertDate(queryRes.rows[0].day_of_birth),
 				day_of_passing: convertDate(queryRes.rows[0].day_of_passing),
 				visitation_date: convertDate(queryRes.rows[0].visitation_date),

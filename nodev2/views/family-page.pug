@@ -75,17 +75,24 @@ html
 									button#submit.mx-auto.p-3.px-6.pt-2.bg-orange.text-md(style="color: white; font-weight: 700; border-radius: 32px;" name='submit') DONATE NOW
 			.div.hidden.p-4(id="media") 
 				.row.gallery.flex.flex-wrap.gap-1.items-center.justify-center(class="basis-1/2 sm:basis-1/4 sm:gap-3 sm:m-8")
-					img.object-cover.align-middle.rounded-lg(class="w-40 sm:w-64" src="/images/media1.png")
-					img.object-cover.align-middle.rounded-lg(class="w-40 sm:w-64" src="/images/media2.png")
-					img.object-cover.align-middle.rounded-lg(class="w-40 sm:w-64" src="/images/media3.png")
-					img.object-cover.align-middle.rounded-lg(class="w-40 sm:w-64" src="/images/media4.png")
-				.row.gallery.flex.flex-wrap.gap-1.items-center.justify-center(class="basis-1/2 sm:basis-1/4 sm:gap-3 sm:m-8")
-					img.object-cover.align-middle.rounded-lg(class="w-40 sm:w-64" src="/images/media1.png")
-					img.object-cover.align-middle.rounded-lg(class="w-40 sm:w-64" src="/images/media2.png")
-					img.object-cover.align-middle.rounded-lg(class="w-40 sm:w-64" src="/images/media3.png")
-					img.object-cover.align-middle.rounded-lg(class="w-40 sm:w-64" src="/images/media4.png")
+					each image in media ? media : []
+						img.object-cover.align-middle.rounded-lg(class="w-40 sm:w-64" src = image)
+						form.form-horizontal(method='post' id="deleteImage" action=userImageAction)
+							fieldset
+								button#remove.p-2.py-2.px-2.bg-red(style="color: white; font-weight: 450; position: relative ; left: -10px ; top:-100px; width: 35px; height: 35px; border-radius: 50%;" form='deleteImage' name='remove' value={page_name,image}) x
+								 
 script.
-
+	// confirmation for each image delete
+	try{
+		document.getElementById('deleteImage').addEventListener('submit', (e) => confirmDialog(e))
+		function confirmDialog(e) {
+			if(!confirm('Are you sure you want to delete this image?'))
+			e.preventDefault()
+	}
+	} catch(e){
+		
+	}
+	
 	// update the progress bar based on donation amount
 	const progress=document.querySelector('.progress');
 	progress.style.width=progress.getAttribute('donated-amount') + "%";
