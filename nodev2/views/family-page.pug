@@ -76,10 +76,11 @@ html
 			.div.hidden.p-4(id="media") 
 				.row.gallery.flex.flex-wrap.gap-1.items-center.justify-center(class="basis-1/2 sm:basis-1/4 sm:gap-3 sm:m-8")
 					each image in media ? media : []
-						img.object-cover.align-middle.rounded-lg(class="w-40 sm:w-64" src = image)
-						form.form-horizontal(method='post' id="deleteImage" action=userImageAction)
-							fieldset
-								button#remove.p-2.py-2.px-2.bg-red(style="color: white; font-weight: 450; position: relative ; left: -10px ; top:-100px; width: 35px; height: 35px; border-radius: 50%;" form='deleteImage' name='remove' value={page_name,image}) x
+						.div(style='position: relative')
+							img.object-cover.align-middle.rounded-lg(class="w-40 sm:w-64" src = image)
+							form.form-horizontal(method='post' id="deleteImage" action=userImageAction style='position: absolute; top: 5px; right: 5px')
+								fieldset
+									button#remove.p-2.py-2.px-2.bg-red(style="color: white; font-weight: 450; positon: absolute; top:0px; left: 0px; width: 35px; height: 35px; border-radius: 50%;" form='deleteImage' name='remove' value={page_name,image}) x
 								 
 script.
 	// confirmation for each image delete
@@ -92,7 +93,7 @@ script.
 	} catch(e){
 		
 	}
-	
+
 	// update the progress bar based on donation amount
 	const progress=document.querySelector('.progress');
 	progress.style.width=progress.getAttribute('donated-amount') + "%";

@@ -152,7 +152,7 @@ router.get('/pages/:user_id([0-9]+)/:page_name', async (req, res) =>{
 				res.render('family-page', {
 					title: req.params.page_name, 
 					page_name: req.params.page_name,
-					userImageAction: '/family/' + idQuery.rows[0].user_id + '/remove-image/' + queryRes.rows[0].name,
+					userImageAction: '/family/' + idQuery.rows[0].user_id + '/remove-image/' + queryRes.rows[0].page_name,
 					name: queryRes.rows[0].name,
 					media: queryRes.rows[0].images,
 					day_of_birth: convertDate(queryRes.rows[0].day_of_birth),
@@ -190,7 +190,7 @@ router.get('/pages/:user_id([0-9]+)/:page_name', async (req, res) =>{
 				res.render('family-page', {
 					title: req.params.page_name, 
 					page_name: req.params.page_name,
-					userImageAction: '/family/' + idQuery.rows[0].user_id + '/remove-image/' + queryRes.rows[0].name,
+					userImageAction: '/family/' + idQuery.rows[0].user_id + '/remove-image/' + queryRes.rows[0].page_name,
 					name: queryRes.rows[0].name,
 					media: queryRes.rows[0].images,
 					day_of_birth: convertDate(queryRes.rows[0].day_of_birth),

@@ -800,6 +800,12 @@ video {
   justify-content: center;
 }
 
+.btn {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+}
+
 .gap-1 {
   gap: 0.25rem;
 }

@@ -391,18 +391,10 @@ router.post('/:user_id([0-9]+)/edit/:page_name', upload.array('images') , async 
 */
 router.post('/:user_id([0-9]+)/remove-image/:page_name' , async (req, res) => {
 	try{
-		var reqValues = Object.values(req.body);
-		var reqDictionary = reqValues[0].split(":");
-		var imageLink = reqDictionary[3];
-		imageLink = imageLink.substring(2, imageLink.length-2);
-		page_name = (reqDictionary[1].split(",")[0]);
-		page_name = page_name.substring(1, page_name.length-1);
-
-		var fields = [];
-		fields.push('https://' + imageLink);
+		const {page_name, image} = JSON.parse(req.body.remove);
 		
 		var text ='UPDATE page_details SET images = ARRAY_REMOVE(images, $1) WHERE page_name = \'' + page_name+ "\'";
-		var queryRes = await client.query(text, fields);
+		var queryRes = await client.query(text, [image]);
 		text = 'SELECT * FROM page_details WHERE family_id = $1 AND page_name = $2';
 		values = [req.params.user_id, page_name];
 			/*
