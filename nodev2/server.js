@@ -22,9 +22,9 @@ require('dotenv').config()
 const config = {
 	authRequired: false,
 	auth0Logout: true,
-	secret: process.env.SECRET,
+	secret: process.env.AUTH0_SECRET,
 	baseURL: process.env.BASEURL,
-	clientID: process.env.CLIENTID,
+	clientID: process.env.AUTH0_CLIENTID,
 	issuerBaseURL: process.env.ISSUER
 };
 
@@ -59,11 +59,29 @@ app.get('/', function(req ,res) {
 		res.redirect('/roleSelect');
 });
 
+
+async function checkEmail(req, res, next) {
+	//check email from req.oidc.user.email
+	//check if email is in our database
+	//if not kick them out
+	//if yes then call next()
+
+	//database is sql, use client object
+	const advocateText = await client.query("SELECT user_id FROM User_Account WHERE email = '" + req.oidc.user.email + "'");
+	if(!advocateText) {
+		console.log("log out");
+		res.redirect(`${process.env.ISSUER}v2/logout?client_id=${process.env.AUTH0_CLIENTID}&returnTo=${encodeURI('https://www.youtube.com/watch?v=bxqLsrlakK8')}`);
+		// never gonna give you up
+	} else {
+		next();
+	}
+}
+
 app.use('/roleSelect', routeLogin);										//route login functions
 
 app.use('/search', routeSearch);									//route search functions
 
-app.use('/advocate-admin', requiresAuth(), checkRole(), routeAdvocateAdmin);						//route advocate-admin functions
+app.use('/advocate-admin', requiresAuth(), checkEmail, checkRole(), routeAdvocateAdmin);						//route advocate-admin functions
 
 app.use('/family', requiresAuth(), routeFamily);									//route family functions
 
