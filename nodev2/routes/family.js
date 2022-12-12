@@ -158,7 +158,7 @@ router.get('/:user_id([0-9]+)/page-list', async (req, res) =>{
 
 /*
 *	/user_id/page-insert
-*	file:		/views/page-inser.pug
+*	file:		/views/page-insert.pug
 *	function:	GET
 *	user interface to fill out information to apply for a family page
 */
