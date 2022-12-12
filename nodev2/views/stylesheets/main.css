@@ -800,6 +800,12 @@ video {
   justify-content: center;
 }
 
+.btn {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+}
+
 .gap-1 {
   gap: 0.25rem;
 }
@@ -875,6 +881,11 @@ video {
 .bg-orange {
   --tw-bg-opacity: 1;
   background-color: rgb(205 102 54 / var(--tw-bg-opacity));
+}
+
+.bg-red {
+  --tw-bg-opacity: 1;
+  background-color: rgb(255 0 0 / var(--tw-bg-opacity));
 }
 
 .bg-white {
