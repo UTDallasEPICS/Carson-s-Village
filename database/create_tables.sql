@@ -47,7 +47,7 @@ CREATE TABLE Page_Details(
 	images					TEXT[], 
 
 	donation_goal			MONEY		NOT NULL, 
-	amount_raised		    MONEY       NOT NULL,
+	amount_raised		    MONEY       NOT NULL	default 0,
 	deadline				TIMESTAMPTZ	NOT NULL, 
 	timezone				TEXT,
 
@@ -159,7 +159,7 @@ INSERT INTO Edit_Review_Log(editor_id, family_id, page_name, edit_date, edit_cod
 
 CREATE TABLE Transactions(
 	transaction_id		TEXT	NOT NULL,
-	transaction_amount	INT		NOT NULL,
+	transaction_amount	MONEY		NOT NULL	default 0,
 	family_id			INT		NOT NULL,
 	page_name			TEXT	NOT NULL,
 	success				BOOL	NOT NULL	default false,

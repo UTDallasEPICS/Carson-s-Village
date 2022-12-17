@@ -403,28 +403,9 @@ router.post('/:user_id([0-9]+)/remove-image/:page_name' , async (req, res) => {
 			*		if failed, print error to console
 			*/
 			 queryRes = await client.query(text, values)
-			//load all details of existing page to edit page, separate field underneath for edits
-			res.render('family-page', {
-				title: page_name, 
-				page_name: page_name,
-				name: page_name,
-				media: queryRes.rows[0].images,
-				day_of_birth: convertDate(queryRes.rows[0].day_of_birth),
-				day_of_passing: convertDate(queryRes.rows[0].day_of_passing),
-				visitation_date: convertDate(queryRes.rows[0].visitation_date), 
-				visitation_location: queryRes.rows[0].visitation_location, 
-				vistitation_description: queryRes.rows[0].visitation_description, 
-				visitation_time: convertTime(queryRes.rows[0].visitation_time),
-				funeral_date: convertDate(queryRes.rows[0].funeral_date), 
-				funeral_time: convertTime(queryRes.rows[0].funeral_time),
-				funeral_location: queryRes.rows[0].funeral_location, 
-				funeral_description: queryRes.rows[0].funeral_description, 
-				donation_goal: queryRes.rows[0].donation_goal, 
-				deadline: queryRes.rows[0].deadline, 
-				timezone: queryRes.rows[0].timezone, 
-				obituary: queryRes.rows[0].obituary,
-				back: '/family/' + req.params.user_id
-			})
+			 res.render('image-delete-successful', {
+				back: '/search' + '/pages/' + req.params.user_id + '/'  + page_name
+			});
 
 	} catch(e) {
 		res.render('failed', {});

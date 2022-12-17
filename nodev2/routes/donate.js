@@ -1,6 +1,6 @@
 /*
 *	Brant Robbins
-*	ECS 3200
+*	ECS 2200
 *	Carson's Village: Stripe Payment Integration
 *	donate.js
 *		Denotes functions specific to donation handling
@@ -44,14 +44,12 @@ router.get('/', function(req, res) {
 	
 router.post('/create-checkout-session/:family_id([0-9]+)/:page_name/',
 	async (req, res) => {
-	
+	try{
 	// convert price to expected cents format
 	const family_id = req.params.family_id
 	const page_name = req.params.page_name
-	const price_in_cents = req.body.donation_amount * 100
-		
+	const price_in_cents = Math.round(req.body.donation_amount * 100)
 	const transaction_id = nanoid.nanoid()
-
 	const session = await stripe.checkout.sessions.create({
 		mode: 'payment',
 		line_items: [
@@ -77,11 +75,15 @@ router.post('/create-checkout-session/:family_id([0-9]+)/:page_name/',
 	});
 		
     var insertStatement = "INSERT INTO Transactions (transaction_id, transaction_amount, family_id, page_name, success) VALUES ($1, $2, $3, $4, $5)"
-    var insertValues = [transaction_id, price_in_cents, family_id, page_name, false]
+    var insertValues = [transaction_id, req.body.donation_amount, family_id, page_name, false]
 
     await client.query(insertStatement, insertValues)
-
 	res.redirect(303, session.url);
+
+	} catch(e){
+		console.log(e);
+		res.render('failed', {});
+	}
 });
 
 /*
@@ -92,7 +94,7 @@ router.post('/create-checkout-session/:family_id([0-9]+)/:page_name/',
 */
 
 router.get('/donation-successful/:transaction_id/', async (req, res) => {
-	
+	try{
 	// get amount donated from transaction
 	const text = 'SELECT * FROM Transactions WHERE transaction_id = $1';
 	const values = [req.params.transaction_id]
@@ -112,8 +114,13 @@ router.get('/donation-successful/:transaction_id/', async (req, res) => {
 	const update_amt = 'UPDATE Page_Details SET amount_raised = amount_raised + $1 WHERE family_id = $2'
 	const update_amt_vals = [transaction_amount, family_id]
 	await client.query(update_amt, update_amt_vals)
+	res.render('donation-successful', {
+		back: '/search' + '/pages/' + family_id + '/'  + page_name
+	})
+	} catch(e){
+		res.render('failed', {});
+	}
 	
-	res.render('donation-successful')
 });
 
 // export modules for user in server.js
