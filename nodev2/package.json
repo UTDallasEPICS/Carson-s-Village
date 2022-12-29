@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "autoprefixer": "^10.4.7",
+    "axios": "^1.2.1",
     "aws-sdk": "^2.1257.0",
     "cookie-parser": "~1.4.4",
     "debug": "~2.6.9",

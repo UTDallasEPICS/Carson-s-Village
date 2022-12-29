@@ -11,6 +11,7 @@ const router = express.Router();						//load express router
 const client = require('./../database.js'); 			//load database connection
 const buildInsert = require('./../query-builder.js');	//load function to build query INSERT statements
 const queryErr = 'An error has occurred'
+var axios = require("axios").default;
 /*
 *	/user_id
 *	file:		/views/profile-family.pug
@@ -76,13 +77,44 @@ router.get('/:user_id([0-9]+)/user-insert', function(req, res) {
 *	function:	POST
 *	submit user account details to database
 */
+
+//"result_url":"",
+const email_verification = () => request(options, function (error, response, body) {
+  if (error) throw new Error(error);
+
+  console.log(body);
+});
+
 router.post('/:user_id([0-9]+)/user-insert', async (req, res) =>{
+	//req.body = {email: "", name: ""}
 	try{
 	var reqFields = Object.keys(req.body);							//get parameter names from previous GET
 	reqFields.pop();												//remove "submit" from parameter list
 	var reqValues = Object.values(req.body);						//get parameter values from pervious GET
 	reqValues.pop();												//remove "submit" from values list
 	var query = buildInsert(reqFields, reqValues, 'User_Account');	//generate insert statement
+	
+	//extract email and use auth0 management api to send email invites
+	const advocateText = await client.query("SELECT user_id FROM User_Account WHERE email = '" + req.oidc.user.email + "'");
+
+	//sets up request for password reset, copied from auth0 website, uses axios (idk what that does)
+	var options = {
+		method: 'POST',
+		url: `https:/${process.env.ISSUER}/dbconnections/change_password`,
+		headers: {'content-type': 'application/json'},
+		data: {
+			client_id: `${process.env.AUTH0_MGMT_CLIENTID}`,
+			email: advocateText,
+			connection: 'Username-Password-Authentication'
+			}
+	};
+	axios.request(options).then(function (response) {
+		console.log(response.data);
+	}).catch(function (error) {
+		console.error(error);
+	});
+	
+
 	/*
 	*	query database
 	*		if successful, results are inserted
