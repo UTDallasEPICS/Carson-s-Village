@@ -1,0 +1,14 @@
+{
+  "0 debug pnpm:scope": {
+    "selected": 1
+  },
+  "1 error pnpm": {
+    "code": "ERR_PNPM_NO_IMPORTER_MANIFEST_FOUND",
+    "err": {
+      "name": "pnpm",
+      "message": "No package.json (or package.yaml, or package.json5) was found in \"/home/pariah/Projects/Code/EPICS/carson-s-village\".",
+      "code": "ERR_PNPM_NO_IMPORTER_MANIFEST_FOUND",
+      "stack": "pnpm: No package.json (or package.yaml, or package.json5) was found in \"/home/pariah/Projects/Code/EPICS/carson-s-village\".\n    at readProjectManifest (/home/pariah/.nvm/versions/node/v14.17.3/pnpm-global/5/node_modules/.pnpm/pnpm@6.32.3/node_modules/pnpm/dist/pnpm.cjs:19818:13)\n    at async Object.readProjectManifestOnly (/home/pariah/.nvm/versions/node/v14.17.3/pnpm-global/5/node_modules/.pnpm/pnpm@6.32.3/node_modules/pnpm/dist/pnpm.cjs:19822:28)\n    at async readProjectManifestOnly (/home/pariah/.nvm/versions/node/v14.17.3/pnpm-global/5/node_modules/.pnpm/pnpm@6.32.3/node_modules/pnpm/dist/pnpm.cjs:43721:24)\n    at async Object.handler (/home/pariah/.nvm/versions/node/v14.17.3/pnpm-global/5/node_modules/.pnpm/pnpm@6.32.3/node_modules/pnpm/dist/pnpm.cjs:177918:24)\n    at async /home/pariah/.nvm/versions/node/v14.17.3/pnpm-global/5/node_modules/.pnpm/pnpm@6.32.3/node_modules/pnpm/dist/pnpm.cjs:182194:21\n    at async run (/home/pariah/.nvm/versions/node/v14.17.3/pnpm-global/5/node_modules/.pnpm/pnpm@6.32.3/node_modules/pnpm/dist/pnpm.cjs:182168:34)\n    at async runPnpm (/home/pariah/.nvm/versions/node/v14.17.3/pnpm-global/5/node_modules/.pnpm/pnpm@6.32.3/node_modules/pnpm/dist/pnpm.cjs:182387:5)\n    at async /home/pariah/.nvm/versions/node/v14.17.3/pnpm-global/5/node_modules/.pnpm/pnpm@6.32.3/node_modules/pnpm/dist/pnpm.cjs:182379:7"
+    }
+  }
+}

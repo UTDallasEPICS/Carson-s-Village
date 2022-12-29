@@ -4,27 +4,41 @@
   "private": true,
   "scripts": {
     "start": "node server.js",
+    "devStart": "nodemon server.js",
     "build": "postcss views/stylesheets/input.css -o views/stylesheets/main.css",
     "watch": "tailwindcss -i views/stylesheets/input.css -o views/stylesheets/main.css --watch"
   },
   "dependencies": {
     "autoprefixer": "^10.4.7",
     "axios": "^1.2.1",
+    "aws-sdk": "^2.1257.0",
     "cookie-parser": "~1.4.4",
     "debug": "~2.6.9",
     "dotenv": "^10.0.0",
     "ejs": "^3.1.8",
     "express": "^4.18.1",
     "express-openid-connect": "^2.7.2",
+    "fetch": "^1.1.0",
+    "fs": "^0.0.1-security",
+    "i": "^0.3.7",
+    "install": "^0.13.0",
     "jsonwebtoken": "^8.5.1",
     "morgan": "~1.9.1",
-    "multer": "^1.4.3",
+    "nanoid": "^3.3.4",
+    "multer": "^1.4.4",
+    "multer-s3": "^3.0.1",
+    "node-fetch": "^3.3.0",
+    "path": "^0.12.7",
     "pg": "^8.7.1",
     "postcss": "^8.4.14",
     "postcss-cli": "^10.0.0",
-    "pug": "^3.0.2"
+    "pug": "^3.0.2",
+    "stripe": "^10.15.0",
+    "shortid": "^2.2.16",
+    "uuid": "^9.0.0"
   },
   "devDependencies": {
+    "nodemon": "^2.0.20",
     "tailwindcss": "^3.1.6"
   }
 }

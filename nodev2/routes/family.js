@@ -6,12 +6,47 @@
 *		Denotes functions specific to family accounts
 *		Located under "/family/"
 */
+const fs = require('fs');
+const multer = require('multer');
+const multerS3 = require('multer-s3');
+const { S3Client } = require('@aws-sdk/client-s3')
+const s3 = new S3Client({region: 'us-east-2'});
+const shortid = require('shortid');
 const { query } = require('express');
 const express = require('express');						//load express for front-end and routes
 const router = express.Router();						//load express router
 const client = require('./../database.js');				//load database connection
+const upload = multer({									//Sets up the parameters to upload an image(s) to S3 via Multer-S3
+	storage: multerS3({
+	s3: s3,
+	bucket: process.env.AWS_S3_BUCKET_NAME,
+	metadata: function (req, file, cb) {
+	cb(null, {fieldName: file.fieldname});
+	},
+})
+,
+  key: function (req, file, cb) {
+	cb(null, shortid.generate() + "-" + file.originalname);			//Sets random key for user uploaded image files.
+},
+	fileFilter: function(req, file, cb) {
+    checkFileType(file, cb);
+}
+})
+
+const checkFileType = (file, cb) => {				//Makes sure that the user uploads an image.
+	const filetypes = /jpeg|jpg|png|gif/;
+	const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
+	const mimetype = filetypes.test(file.mimetype);
+  
+	if (mimetype && extname) {
+	  return cb(null, true);
+	} else {
+	  cb("Please upload images only (a file type of jpeg, jpg, png, or gif.)");
+	}
+}
 
 const buildInsert = require('./../query-builder.js');	//load function to build query INSERT statements
+const path = require('path');
 const queryErr = 'An error has occurred'
 /*
 *	/user_id
@@ -123,7 +158,7 @@ router.get('/:user_id([0-9]+)/page-list', async (req, res) =>{
 
 /*
 *	/user_id/page-insert
-*	file:		/views/page-inser.pug
+*	file:		/views/page-insert.pug
 *	function:	GET
 *	user interface to fill out information to apply for a family page
 */
@@ -164,7 +199,7 @@ router.get('/:user_id([0-9]+)/page-insert', async(req, res) =>{
 *	function:	POST
 *	submit family page details to database
 */
-router.post('/:user_id([0-9]+)/page-insert', async (req, res) =>{
+router.post('/:user_id([0-9]+)/page-insert', upload.array('images'), async (req, res) =>{
 	try{
 		var reqFields = Object.keys(req.body);							//get parameter names from previous GET
 		reqFields.pop();												//remove "submit" from parameter list
@@ -174,7 +209,15 @@ router.post('/:user_id([0-9]+)/page-insert', async (req, res) =>{
 		reqValues.pop();												//remove "submit" from values list
 		reqValues.unshift(1);											//add 1 as status to head of values list
 		reqValues.unshift(req.params.user_id);							//add user_id as user_id to head of values list
-
+		var images = reqValues[3];
+		var imageLinks = [];
+		imageLinks = req.files?.map(f => f.location) || []				//adds the S3 image links to a list
+		
+		if(imageLinks.length != 0){										//Adds image links to database insertion list if there are images uploaded.
+			reqFields.splice(3,0,"images");
+			reqValues.splice(3,0, imageLinks);
+		}
+		
 		var query = buildInsert(reqFields, reqValues, 'Page_Details');	//generate insert statement
 		/*
 		*	query database
@@ -228,6 +271,7 @@ router.get('/:user_id([0-9]+)/edit/:page_name', async (req, res) => {
 			res.render('page-edit', {
 				title: req.params.page_name, 
 				page_name: req.params.page_name,
+				media: queryRes.rows[0].images,
 				day_of_birth: convertDate(queryRes.rows[0].day_of_birth),
 				day_of_passing: convertDate(queryRes.rows[0].day_of_passing),
 				visitation_date: convertDate(queryRes.rows[0].visitation_date), 
@@ -254,19 +298,22 @@ router.get('/:user_id([0-9]+)/edit/:page_name', async (req, res) => {
 	}
 });
 
+
 /*
 *	/user_id/page-insert
 *	file:		/views/confirm.pug
 *	function:	POST
 *	submit family page details to database
 */
-router.post('/:user_id([0-9]+)/edit/:page_name', async (req, res) => {
+router.post('/:user_id([0-9]+)/edit/:page_name', upload.array('images') , async (req, res, next) => {
 	try{
 		var reqFields = Object.keys(req.body);							//get parameter names from previous GET
 		reqFields.pop();												//remove "submit" from parameter list
 
 		var reqValues = Object.values(req.body);						//get parameter values from pervious GET
 		reqValues.pop();												//remove "submit" from values list
+		var imageLinks = [];											// Takes the S3 buckets link of the images to a list.	
+		imageLinks = req.files?.map(f => f.location) || []
 		
 		// Convert dates to YYY-MM-DD format and time to military format
 		for (var i = 0; i < reqValues.length - 1; i++){
@@ -289,31 +336,77 @@ router.post('/:user_id([0-9]+)/edit/:page_name', async (req, res) => {
 
 		}		
 		
-
-		// Convert deadline to UTC format
-		var date = new Date(reqValues[14]);
-		var now_utc = Date.UTC(date.getUTCFullYear(), date.getUTCMonth(),
+		//places the image links into reqValues after the last for loop not to break the links due to the backslashes.
+		//Adds images to the database insertion list if there is an image.
+		if(imageLinks.length != 0) {				   
+			reqValues.splice(1, 0, imageLinks);
+			// Convert deadline to UTC format
+			var date = new Date(reqValues[14]);
+			var now_utc = Date.UTC(date.getUTCFullYear(), date.getUTCMonth(),
 							   date.getUTCDate(), date.getUTCHours(),
 							   date.getUTCMinutes(), date.getUTCSeconds());
 
-		reqValues[14] = date.toISOString().split(":00.")[0];
+			reqValues[14] = date.toISOString().split(":00.")[0];
+		}else{
+			// Convert deadline to UTC format
+			var date = new Date(reqValues[13]);
+			var now_utc = Date.UTC(date.getUTCFullYear(), date.getUTCMonth(),
+							   date.getUTCDate(), date.getUTCHours(),
+							   date.getUTCMinutes(), date.getUTCSeconds());
 
+			reqValues[13] = date.toISOString().split(":00.")[0];
+		}
 
 		var fields = [];
 		for(var i = 0; i < reqValues.length; i++){
-			if(reqValues[i] != '') {
+			if(reqValues[i] != '' && reqValues[i] != []) {
 				fields.push(reqValues[i]);			//add to end of fields
-				
 			}	
 		}
 
-		var text = 'UPDATE page_details SET page_name = $1, day_of_birth = $2, day_of_passing = $3, visitation_date = $4, visitation_time = $5, visitation_location = $6, visitation_description = $7, funeral_date = $8, funeral_time = $9, funeral_location = $10, funeral_description = $11, obituary = $12, donation_goal = $13, deadline = $14 WHERE page_name = \'' +  req.params.page_name + "\'";
-		const queryRes = await client.query(text, fields)
+		var queryRes;
+		var text = 'UPDATE page_details SET page_name = $1, images = array_cat(images, $2), day_of_birth = $3, day_of_passing = $4, visitation_date = $5, visitation_time = $6, visitation_location = $7, visitation_description = $8, funeral_date = $9, funeral_time = $10, funeral_location = $11, funeral_description = $12, obituary = $13, donation_goal = $14, deadline = $15 WHERE page_name = \'' +  req.params.page_name + "\'";
+		var text2 = 'UPDATE page_details SET page_name = $1, day_of_birth = $2, day_of_passing = $3, visitation_date = $4, visitation_time = $5, visitation_location = $6, visitation_description = $7, funeral_date = $8, funeral_time = $9, funeral_location = $10, funeral_description = $11, obituary = $12, donation_goal = $13, deadline = $14 WHERE page_name = \'' +  req.params.page_name + "\'";
+		if(imageLinks.length!=0){
+			queryRes = await client.query(text, fields);
+		} else{
+			queryRes = await client.query(text2, fields);
+		}
+
 		res.render('confirm', {
 			back: '/family/' + req.params.user_id
 
 		});
 		
+	} catch(e) {
+		res.render('failed', {});
+	}
+});
+
+/*
+*	/user_id/remove-image
+*	file:		/views/family-page.pug
+*	function:	POST
+*	Deletes family page image from the database.
+*/
+router.post('/:user_id([0-9]+)/remove-image/:page_name' , async (req, res) => {
+	try{
+		const {page_name, image} = JSON.parse(req.body.remove);
+		
+		var text ='UPDATE page_details SET images = ARRAY_REMOVE(images, $1) WHERE page_name = \'' + page_name+ "\'";
+		var queryRes = await client.query(text, [image]);
+		text = 'SELECT * FROM page_details WHERE family_id = $1 AND page_name = $2';
+		values = [req.params.user_id, page_name];
+			/*
+			*	query database
+			*		if successful, use query result to generate family-page.pug template
+			*		if failed, print error to console
+			*/
+			 queryRes = await client.query(text, values)
+			 res.render('image-delete-successful', {
+				back: '/search' + '/pages/' + req.params.user_id + '/'  + page_name
+			});
+
 	} catch(e) {
 		res.render('failed', {});
 	}
@@ -407,6 +500,7 @@ router.get('/:user_id([0-9]+)/family-page/:page_name', async (req, res) => {
 				title: req.params.page_name, 
 				page_name: req.params.page_name,
 				name: queryRes.rows[0].page_name,
+				media: queryRes.rows[0].images,
 				day_of_birth: convertDate(queryRes.rows[0].day_of_birth),
 				day_of_passing: convertDate(queryRes.rows[0].day_of_passing),
 				visitation_date: convertDate(queryRes.rows[0].visitation_date), 

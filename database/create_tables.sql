@@ -47,6 +47,7 @@ CREATE TABLE Page_Details(
 	images					TEXT[], 
 
 	donation_goal			MONEY		NOT NULL, 
+	amount_raised		    MONEY       NOT NULL	default 0,
 	deadline				TIMESTAMPTZ	NOT NULL, 
 	timezone				TEXT,
 
@@ -155,3 +156,14 @@ INSERT INTO Edit_Review_Log(editor_id, family_id, page_name, edit_date, edit_cod
 	VALUES(6, 3, 'page1', '2000-01-01 00:01', '1000000000000001', 'comment3');
 INSERT INTO Edit_Review_Log(editor_id, family_id, page_name, edit_date, edit_code, edit_comment)
 	VALUES(6, 4, 'page2', '2000-01-01 00:01', '1000000000000000', 'comment4');
+
+CREATE TABLE Transactions(
+	transaction_id		TEXT	NOT NULL,
+	transaction_amount	MONEY		NOT NULL	default 0,
+	family_id			INT		NOT NULL,
+	page_name			TEXT	NOT NULL,
+	success				BOOL	NOT NULL	default false,
+
+	PRIMARY KEY (transaction_id),
+	FOREIGN KEY (family_id) REFERENCES User_Account(user_id)
+);

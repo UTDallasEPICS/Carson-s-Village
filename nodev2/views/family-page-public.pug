@@ -73,15 +73,8 @@ html
 									button#submit.mx-auto.p-3.px-6.pt-2.bg-orange.text-md(style="color: white; font-weight: 700; border-radius: 32px;" name='submit') DONATE NOW
 			.div.hidden.p-4(id="media") 
 				.row.gallery.flex.flex-wrap.gap-1.items-center.justify-center(class="basis-1/2 sm:basis-1/4 sm:gap-3 sm:m-8")
-					img.object-cover.align-middle.rounded-lg(class="w-40 sm:w-64" src="/images/media1.png")
-					img.object-cover.align-middle.rounded-lg(class="w-40 sm:w-64" src="/images/media2.png")
-					img.object-cover.align-middle.rounded-lg(class="w-40 sm:w-64" src="/images/media3.png")
-					img.object-cover.align-middle.rounded-lg(class="w-40 sm:w-64" src="/images/media4.png")
-				.row.gallery.flex.flex-wrap.gap-1.items-center.justify-center(class="basis-1/2 sm:basis-1/4 sm:gap-3 sm:m-8")
-					img.object-cover.align-middle.rounded-lg(class="w-40 sm:w-64" src="/images/media1.png")
-					img.object-cover.align-middle.rounded-lg(class="w-40 sm:w-64" src="/images/media2.png")
-					img.object-cover.align-middle.rounded-lg(class="w-40 sm:w-64" src="/images/media3.png")
-					img.object-cover.align-middle.rounded-lg(class="w-40 sm:w-64" src="/images/media4.png")
+					each image in media ? media : []
+						img.object-cover.align-middle.rounded-lg(class="w-40 sm:w-64" src = image)
 script.
 
 	// update the progress bar based on donation amount

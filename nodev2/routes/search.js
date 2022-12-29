@@ -6,26 +6,31 @@
 *		Denotes functions that do not require family or advocate credentials
 *		Located under "/search/"
 */
+
 //Declare required dependencies
 const express = require('express');				//load express for front-end and routes
 const router = express.Router();				//load express router
 const client = require('../database.js');		//load database connection
 const queryErr = 'An error has occurred'
+
 /*
 *	/search/user-search
 *	file:		/pages/user-search.html
 *	function:	GET
 *	user interface for account search function
 */
+
 router.get('/', function(req, res) {
 	res.render('user-search');
 });
+
 /*
 *	/search/user-search
 *	file:		/views/user-results.pug
 *	function:	POST
 *	return list of applicable accounts based on entered credentials
 */
+
 router.post('/user-search', async (req, res) => {
 	try{
 		//declare SELECT query
@@ -63,24 +68,29 @@ router.post('/user-search', async (req, res) => {
 		console.error(queryErr.stack);
 	}
 });
+
 /*
 *	/search/page-search
 *	file:		/pages/page-search.html
 *	function:	GET
 *	user interface for family page search function
 */
+
 router.get('/', function(req, res) {
 	res.render('page-search');
 });
+
 /*
 *	/search/user-search
 *	file:		/views/user-results.pug
 *	function:	POST
 *	return list of applicable pages based on entered fields
 */
+
 router.get('/', function(req, res) {
 	res.render('user-results');
 });
+
 router.post('/pages/page-search', async (req, res) =>{
 	try{
 		//declare SELECT query
@@ -118,6 +128,7 @@ router.post('/pages/page-search', async (req, res) =>{
 		res.send(queryErr);
 	}
 });
+
 /*
 *	/search/pages/user_id/page_name
 *	file:		/views/family-page.pug
@@ -127,6 +138,7 @@ router.post('/pages/page-search', async (req, res) =>{
 *	if successful, use query result to generate family-page.pug template
 *	if failed, print error to console
 */
+
 router.get('/pages/:user_id([0-9]+)/:page_name', async (req, res) =>{
 	try{
 		if (req.oidc.isAuthenticated() == true)
@@ -145,14 +157,16 @@ router.get('/pages/:user_id([0-9]+)/:page_name', async (req, res) =>{
 
 				donation_goal = queryRes.rows[0].donation_goal;
 				donation_goal = Number(donation_goal.replace(/[^0-9.-]+/g,""));
-				// set donated amount here; sample is $500
-				donated_amount = 500;
+				donated_amount = queryRes.rows[0].amount_raised;
+				donated_amount = Number(donated_amount.replace(/[^0-9.-]+/g,""));
 				donated_percentage = ((donated_amount/donation_goal)*100).toFixed(1);
 
 				res.render('family-page', {
 					title: req.params.page_name, 
 					page_name: req.params.page_name,
+					userImageAction: '/family/' + idQuery.rows[0].user_id + '/remove-image/' + queryRes.rows[0].page_name,
 					name: queryRes.rows[0].name,
+					media: queryRes.rows[0].images,
 					day_of_birth: convertDate(queryRes.rows[0].day_of_birth),
 					day_of_passing: convertDate(queryRes.rows[0].day_of_passing),
 					visitation_date: convertDate(queryRes.rows[0].visitation_date),
@@ -169,7 +183,10 @@ router.get('/pages/:user_id([0-9]+)/:page_name', async (req, res) =>{
 					deadline: queryRes.rows[0].deadline, 
 					timezone: queryRes.rows[0].timezone, 
 					obituary: queryRes.rows[0].obituary,
-					back: '/advocate-admin/' + idQuery.rows[0].user_id + '/page-list'
+					back: '/advocate-admin/' + idQuery.rows[0].user_id + '/page-list',
+
+					userAction: '/donate/create-checkout-session/'
+						+ queryRes.rows[0].family_id + '/' + queryRes.rows[0].page_name
 				})
 			}
 			else
@@ -181,14 +198,16 @@ router.get('/pages/:user_id([0-9]+)/:page_name', async (req, res) =>{
 
 				donation_goal = queryRes.rows[0].donation_goal;
 				donation_goal = Number(donation_goal.replace(/[^0-9.-]+/g,""));
-				// set donated amount here; sample is $500
-				donated_amount = 500;
+				donated_amount = queryRes.rows[0].amount_raised;
+				donated_amount = Number(donated_amount.replace(/[^0-9.-]+/g,""));
 				donated_percentage = ((donated_amount/donation_goal)*100).toFixed(1);
 
 				res.render('family-page', {
 					title: req.params.page_name, 
 					page_name: req.params.page_name,
+					userImageAction: '/family/' + idQuery.rows[0].user_id + '/remove-image/' + queryRes.rows[0].page_name,
 					name: queryRes.rows[0].name,
+					media: queryRes.rows[0].images,
 					day_of_birth: convertDate(queryRes.rows[0].day_of_birth),
 					day_of_passing: convertDate(queryRes.rows[0].day_of_passing),
 					visitation_date: convertDate(queryRes.rows[0].visitation_date),
@@ -205,7 +224,10 @@ router.get('/pages/:user_id([0-9]+)/:page_name', async (req, res) =>{
 					deadline: queryRes.rows[0].deadline, 
 					timezone: queryRes.rows[0].timezone, 
 					obituary: queryRes.rows[0].obituary,
-					back: '/family/' + idQuery.rows[0].user_id
+					back: '/family/' + idQuery.rows[0].user_id,
+
+					userAction: '/donate/create-checkout-session/'
+						+ queryRes.rows[0].family_id + '/' + queryRes.rows[0].page_name
 				})
 			}
 		}
@@ -218,13 +240,14 @@ router.get('/pages/:user_id([0-9]+)/:page_name', async (req, res) =>{
 
 			donation_goal = queryRes.rows[0].donation_goal;
 			donation_goal = Number(donation_goal.replace(/[^0-9.-]+/g,""));
-			// set donated amount here; sample is $500
-			donated_amount = 500;
+			donated_amount = queryRes.rows[0].amount_raised;
+			donated_amount = Number(donated_amount.replace(/[^0-9.-]+/g,""));
 			donated_percentage = ((donated_amount/donation_goal)*100).toFixed(1);
 			res.render('family-page-public', {
 				title: req.params.page_name, 
 				page_name: req.params.page_name,
 				name: queryRes.rows[0].name,
+				media: queryRes.rows[0].images,
 				day_of_birth: convertDate(queryRes.rows[0].day_of_birth),
 				day_of_passing: convertDate(queryRes.rows[0].day_of_passing),
 				visitation_date: convertDate(queryRes.rows[0].visitation_date),
@@ -240,7 +263,10 @@ router.get('/pages/:user_id([0-9]+)/:page_name', async (req, res) =>{
 				donated_percentage: donated_percentage,
 				deadline: queryRes.rows[0].deadline, 
 				timezone: queryRes.rows[0].timezone, 
-				obituary: queryRes.rows[0].obituary
+				obituary: queryRes.rows[0].obituary,
+				
+				userAction: '/donate/create-checkout-session/'
+					+ queryRes.rows[0].family_id + '/' + queryRes.rows[0].page_name
 			})
 		}
 	} catch(e) {
