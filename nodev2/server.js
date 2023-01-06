@@ -10,8 +10,7 @@ const express = require('express');									//load express for front-end and rou
 const app = express();												//set application as express
 const port = 3000;													//set port to 3000
 const checkRole = require('./checkRole.js');	
-const client = require('./database.js');							//load database connection
-
+const prisma = require("./database.js")
 // import openid-connect module
 const { auth, requiresAuth } = require('express-openid-connect');
 
@@ -24,7 +23,7 @@ const config = {
 	auth0Logout: true,
 	secret: process.env.AUTH0_SECRET,
 	baseURL: process.env.BASEURL,
-	clientID: process.env.CLIENTID,
+	clientID: process.env.AUTH0_CLIENTID,
 	issuerBaseURL: process.env.ISSUER,
 };
 
@@ -48,11 +47,6 @@ const routeSearch = require('./routes/search.js');					// load search route
 app.use(express.urlencoded({extended: false}));						// set body-parser
 app.set('view engine', 'pug');										// set view engine to pug
 
-client.connect();													// connect to database
-
-client.query('SELECT NOW()')										// check database connectivity
-	.then(res => console.log(res.rows[0]))
-	.catch(err => console.error(err.stack));
 
 // redirect root url to auth0 login page if the user is not logged in yet
 // otherwise, let them go to their role page
@@ -71,7 +65,9 @@ async function checkEmail(req, res, next) {
 	//if yes then call next()
 
 	//database is sql, use client object
-	const advocateText = await client.query("SELECT user_id FROM User_Account WHERE email = '" + req.oidc.user.email + "'");
+  const advocateText = await prisma.userAccount.findFirst({
+    where: {email:req.oidc.user.email}
+  })
 	if(!advocateText) {
 		console.log("log out");
 		res.redirect(`${process.env.ISSUER}v2/logout?client_id=${process.env.AUTH0_CLIENTID}&returnTo=${encodeURI('https://www.youtube.com/watch?v=bxqLsrlakK8')}`);

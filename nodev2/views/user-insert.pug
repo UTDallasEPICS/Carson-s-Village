@@ -12,10 +12,6 @@ head
 			legend User Account Entry
 			// Text input
 			.form-group
-				label.col-md-4.control-label(for='user_id') User ID
-				.col-md-4
-					input#user_id.form-control.input-md(name='user_id' type='text' placeholder='(auto generate)')
-			.form-group
 				label.col-md-4.control-label(for='email') Email
 				.col-md-4
 					input#email.form-control.input-md(name='email' type='text' placeholder='(user defined)')
@@ -23,9 +19,8 @@ head
 				label.col-md-4.control-label(for='user_role') User Role
 				.col-md-4
 					select#user_role.form-control.input-md(name='user_role' type='number' placeholder='(administrator/advocate defined)')
-						option(value='1') family
-						option(value='2') advocate/administrator
-						option(value='3') disabled
+						option(value='family') family
+						option(value='advocate') advocate
 			.form-group
 				label.col-md-4.control-label(for='first_name') First Name
 				.col-md-4

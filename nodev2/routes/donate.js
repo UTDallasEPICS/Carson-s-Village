@@ -10,17 +10,14 @@
 const nanoid = require('nanoid')
 
 require('dotenv').config()
-
+const prisma = require("../database.js")
 // Stripe API tokens
 const stripePublicKey = process.env.STRIPE_PUBLIC;
 const stripeSecretKey = process.env.STRIPE_SECRET;
 
-const { query } = require('express');
 const express = require('express');					// load express for front-end and routes
 const router = express.Router();					// load express router
-const client = require('../database.js');			// load database connection
 const stripe = require('stripe')(stripeSecretKey)	// library for handling transactions
-const queryErr = 'An error has occurred';
 
 /*
 *	/donate
@@ -66,7 +63,7 @@ router.post('/create-checkout-session/:family_id([0-9]+)/:page_name/',
 		],
 		metadata: {
 			transaction_id: transaction_id,
-			transaction_amount: price_in_cents,
+			amount: price_in_cents,
 			target_family_id: family_id,
 			target_page_name: page_name,
 		},
@@ -74,10 +71,13 @@ router.post('/create-checkout-session/:family_id([0-9]+)/:page_name/',
 		cancel_url: `${process.env.BASEURL}/search/pages/${family_id}/${page_name}`,
 	});
 		
-    var insertStatement = "INSERT INTO Transactions (transaction_id, transaction_amount, family_id, page_name, success) VALUES ($1, $2, $3, $4, $5)"
-    var insertValues = [transaction_id, req.body.donation_amount, family_id, page_name, false]
-
-    await client.query(insertStatement, insertValues)
+    await prisma.pageDonation.create({
+      data: {
+      transaction_id, 
+        amount: req.body.donation_amount, 
+        familyCuid: family_id, 
+        page_name,
+    }})
 	res.redirect(303, session.url);
 
 	} catch(e){
@@ -92,30 +92,31 @@ router.post('/create-checkout-session/:family_id([0-9]+)/:page_name/',
 *	function:	GET
 *	Page after payment is successfully processed
 */
-
+// TODO: should probably hit stripe API to validate that transaction actually succeeded
+// and also make sure a transaction cant be double counted
 router.get('/donation-successful/:transaction_id/', async (req, res) => {
 	try{
 	// get amount donated from transaction
-	const text = 'SELECT * FROM Transactions WHERE transaction_id = $1';
-	const values = [req.params.transaction_id]
-	const queryRes = await client.query(text, values);
-	const transaction_amount = queryRes.rows[0].transaction_amount
-
+    const transaction = await prisma.pageDonation.findFirst({
+      where: {transaction_id: req.params.transaction_id}
+    })
 	// update success flag in transaction
-	
-	
-	const family_id = queryRes.rows[0].family_id
-	const page_name = queryRes.rows[0].page_name
+    await prisma.$transaction([
+      prisma.pageDonation.update({
+        where: { transaction_id: req.params.transaction_id },
+        data: {success: true}
+      }),
+      prisma.page.update({
+        where: {
+          familyCuid: transaction.familyCuid,
+          page_name: transaction.page_name
+        },
+        data: {amount_raised: {increment: transaction.amount}}
+      }),
+    ])
 
-	const update_status = 'UPDATE Transactions SET success = $1 WHERE transaction_id = $2'
-	const update_status_vals = [true, req.params.transaction_id]
-	await client.query(update_status, update_status_vals)
-	
-	const update_amt = 'UPDATE Page_Details SET amount_raised = amount_raised + $1 WHERE family_id = $2'
-	const update_amt_vals = [transaction_amount, family_id]
-	await client.query(update_amt, update_amt_vals)
 	res.render('donation-successful', {
-		back: '/search' + '/pages/' + family_id + '/'  + page_name
+		back: '/search' + '/pages/' + transaction.family_id + '/'  + transaction.page_name
 	})
 	} catch(e){
 		res.render('failed', {});

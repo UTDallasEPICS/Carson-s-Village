@@ -8,10 +8,11 @@
 */
 
 //Declare required dependencies
+const { data } = require('autoprefixer');
 const express = require('express');				//load express for front-end and routes
 const router = express.Router();				//load express router
-const client = require('../database.js');		//load database connection
 const queryErr = 'An error has occurred'
+const prisma = require("../database.js")
 
 /*
 *	/search/user-search
@@ -33,36 +34,16 @@ router.get('/', function(req, res) {
 
 router.post('/user-search', async (req, res) => {
 	try{
-		//declare SELECT query
-		var text = 'SELECT user_id, first_name, middle_name, last_name FROM User_Account WHERE';
-		var values = [];							//declare conditional values
-		var reqKeys = Object.keys(req.body);		//get parameter names from precious GET
-		var reqValues = Object.values(req.body);	//get parameter values from pervious GET
-		var count = 1;								//current condition index
-		/*
-		*	build condition of SELECT query
-		*	iterate through each array element of the user-search GET response
-		*	if an item is returned as "" (empty string), do not add
-		*	otherwise, add that element to values and add the relevant condition to the query text
-		*/
-		for(var i = 0; i<reqKeys.length; i++) {
-			if(reqValues[i] != '') {
-				text = ' ' + text + ' ' + reqKeys[i] + ' = $' + count;
-				if(i != reqKeys.length - 1) {
-					text = text + ' AND';
-				}
-				count++;
-				values.push(reqValues[i]); 
-			}
-		}
 		/*
 		*	query database
 		*		if successful, use query result to generate user-results.pug template
 		*		if failed, print error to console
 		*/
-		const queryRes = await client.query(text, values)
+    const queryRes = await prisma.userAccount.findMany({
+      where: req.body
+    })
 		res.render('user-results', {
-			items: queryRes.rows
+			items: queryRes
 		});
 	} catch(e) {
 		console.error(queryErr.stack);
@@ -93,39 +74,14 @@ router.get('/', function(req, res) {
 
 router.post('/pages/page-search', async (req, res) =>{
 	try{
-		//declare SELECT query
-		var text = 'SELECT family_id, page_name, donation_goal, deadline FROM Page_Details WHERE';
-		var values = [];							//declare conditional values
-		var reqKeys = Object.keys(req.body);		//get parameter names from previous GET
-		var reqValues = Object.values(req.body);	//get parameter values from pervious GET
-		var count = 1;								//current condition index
-		/*
-		*	build condition of SELECT query
-		*	iterate through each array element of the user-search GET response
-		*	if an item is returned as "" (empty string), do not add
-		*	otherwise, add that element to values and add the relevant condition to the query text
-		*/
-		for(var i = 0; i<reqKeys.length; i++) {
-			if(reqValues[i] != '') {
-				text = ' ' + text + ' ' + reqKeys[i] + ' = $' + count;
-				if(i != reqKeys.length - 1) {
-					text = text + ' AND';
-				}
-				count++;
-				values.push(reqValues[i]); 
-			}
-		}
-		/*
-		*	query database
-		*		if successful, use query result to generate page-search.pug template
-		*		if failed, print error to console
-		*/
-		const queryRes = await client.query(text, values)	
+		const queryRes = await prisma.page.findMany({
+      where: req.body
+    })
 		res.render('page-search', {
-			items: queryRes.rows
+			items: queryRes
 		});
 	} catch(e) {
-		res.send(queryErr);
+		console.error(e); res.send(e);
 	}
 });
 
@@ -139,138 +95,80 @@ router.post('/pages/page-search', async (req, res) =>{
 *	if failed, print error to console
 */
 
-router.get('/pages/:user_id([0-9]+)/:page_name', async (req, res) =>{
-	try{
-		if (req.oidc.isAuthenticated() == true)
-		{
+router.get('/pages/:user_id/:page_name', async (req, res) =>{
+  try {
+    const page = await prisma.page.findFirst({
+      where: {
+        familyCuid: req.params.user_id,
+        page_name: req.params.page_name
+      },
+      include: {
+        Images: {
+          select: {
+            url: true
+        }
+        }
+      }
+    })
+
+    const donation_goal = page.donation_goal;
+    const donated_amount = page.amount_raised;
+    const donated_percentage = ((donated_amount / donation_goal) * 100).toFixed(1);
+    const media = page.Images.map(({url}) => url)
+    const data = {
+      cuid: page.cuid,
+      title: req.params.page_name, 
+      page_name: req.params.page_name,
+      name: page.name,
+      media,
+      funeral_location: page.funeral_location, 
+      funeral_description: page.funeral_description, 
+      donation_goal: page.donation_goal, 
+      donated_amount: convertDonationAmount(donated_amount),
+      donated_percentage: donated_percentage,
+      deadline: page.deadline, 
+      timezone: page.timezone, 
+      obituary: page.obituary,
+      profile: media[0],
+      day_of_birth: page.day_of_birth,
+      day_of_passing: page.day_of_passing,
+      visitation_date: page.visitation_date,
+      visitation_location: page.visitation_location,
+      visitation_description: page.visitation_description,
+      funeral_date: page.funeral_date,
+    }
+		if (req.oidc.isAuthenticated() == true) {
 			// save the id to access when we want to go back to the page list
-			var email = (JSON.stringify(req.oidc.user.email)).replace(/"/g, "'");
-			const idQuery = await client.query('SELECT user_id FROM User_Account WHERE email = ' + email);
-			const roleQuery = await client.query('SELECT user_role FROM User_Account WHERE email = ' + email);
-
-			if (roleQuery == 2)
-			{
-				const text = 'SELECT * FROM Page_Details WHERE family_id = $1 AND page_name = $2';
-
-				const values = [req.params.user_id, req.params.page_name];
-				const queryRes = await client.query(text, values);
-
-				donation_goal = queryRes.rows[0].donation_goal;
-				donation_goal = Number(donation_goal.replace(/[^0-9.-]+/g,""));
-				donated_amount = queryRes.rows[0].amount_raised;
-				donated_amount = Number(donated_amount.replace(/[^0-9.-]+/g,""));
-				donated_percentage = ((donated_amount/donation_goal)*100).toFixed(1);
-
-				res.render('family-page', {
-					title: req.params.page_name, 
-					page_name: req.params.page_name,
-					userImageAction: '/family/' + idQuery.rows[0].user_id + '/remove-image/' + queryRes.rows[0].page_name,
-					name: queryRes.rows[0].name,
-					media: queryRes.rows[0].images,
-					day_of_birth: convertDate(queryRes.rows[0].day_of_birth),
-					day_of_passing: convertDate(queryRes.rows[0].day_of_passing),
-					visitation_date: convertDate(queryRes.rows[0].visitation_date),
-					visitation_time: convertTime(queryRes.rows[0].visitation_time),
-					visitation_location: queryRes.rows[0].visitation_location,
-					vistitation_description: queryRes.rows[0].visitation_description,
-					funeral_date: convertDate(queryRes.rows[0].funeral_date),
-					funeral_time: convertTime(queryRes.rows[0].funeral_time),
-					funeral_location: queryRes.rows[0].funeral_location, 
-					funeral_description: queryRes.rows[0].funeral_description, 
-					donation_goal: queryRes.rows[0].donation_goal, 
-					donated_amount: convertDonationAmount(donated_amount),
-					donated_percentage: donated_percentage,
-					deadline: queryRes.rows[0].deadline, 
-					timezone: queryRes.rows[0].timezone, 
-					obituary: queryRes.rows[0].obituary,
-					back: '/advocate-admin/' + idQuery.rows[0].user_id + '/page-list',
-
+      const user = await prisma.userAccount.findFirst({ where: { email:req.oidc.user.email } })
+      
+			if (user.user_role == "advocate") {
+        res.render('family-page', {
+          ...data,
+					userImageAction: '/family/' + user.cuid + '/remove-image/' + page.page_name,
+					back: '/advocate-admin/' + user.cuid + '/page-list',
 					userAction: '/donate/create-checkout-session/'
-						+ queryRes.rows[0].family_id + '/' + queryRes.rows[0].page_name
+						+ page.familyCuid + '/' + page.page_name
 				})
 			}
-			else
-			{
-				const text = 'SELECT * FROM Page_Details WHERE family_id = $1 AND page_name = $2';
-
-				const values = [req.params.user_id, req.params.page_name];
-				const queryRes = await client.query(text, values);
-
-				donation_goal = queryRes.rows[0].donation_goal;
-				donation_goal = Number(donation_goal.replace(/[^0-9.-]+/g,""));
-				donated_amount = queryRes.rows[0].amount_raised;
-				donated_amount = Number(donated_amount.replace(/[^0-9.-]+/g,""));
-				donated_percentage = ((donated_amount/donation_goal)*100).toFixed(1);
-
+			else {
 				res.render('family-page', {
-					title: req.params.page_name, 
-					page_name: req.params.page_name,
-					userImageAction: '/family/' + idQuery.rows[0].user_id + '/remove-image/' + queryRes.rows[0].page_name,
-					name: queryRes.rows[0].name,
-					media: queryRes.rows[0].images,
-					day_of_birth: convertDate(queryRes.rows[0].day_of_birth),
-					day_of_passing: convertDate(queryRes.rows[0].day_of_passing),
-					visitation_date: convertDate(queryRes.rows[0].visitation_date),
-					visitation_time: convertTime(queryRes.rows[0].visitation_time),
-					visitation_location: queryRes.rows[0].visitation_location,
-					vistitation_description: queryRes.rows[0].visitation_description,
-					funeral_date: convertDate(queryRes.rows[0].funeral_date),
-					funeral_time: convertTime(queryRes.rows[0].funeral_time),
-					funeral_location: queryRes.rows[0].funeral_location, 
-					funeral_description: queryRes.rows[0].funeral_description, 
-					donation_goal: queryRes.rows[0].donation_goal, 
-					donated_amount: convertDonationAmount(donated_amount),
-					donated_percentage: donated_percentage,
-					deadline: queryRes.rows[0].deadline, 
-					timezone: queryRes.rows[0].timezone, 
-					obituary: queryRes.rows[0].obituary,
-					back: '/family/' + idQuery.rows[0].user_id,
-
+          ...data,
+					userImageAction: '/family/' + user.cuid + '/remove-image/' + page.page_name,
+					back: '/family/' + user.cuid,
 					userAction: '/donate/create-checkout-session/'
-						+ queryRes.rows[0].family_id + '/' + queryRes.rows[0].page_name
+						+ page.familyCuid + '/' + page.page_name
 				})
 			}
 		}
-		else
-		{
-			const text = 'SELECT * FROM Page_Details WHERE family_id = $1 AND page_name = $2';
-
-			const values = [req.params.user_id, req.params.page_name];
-			const queryRes = await client.query(text, values);
-
-			donation_goal = queryRes.rows[0].donation_goal;
-			donation_goal = Number(donation_goal.replace(/[^0-9.-]+/g,""));
-			donated_amount = queryRes.rows[0].amount_raised;
-			donated_amount = Number(donated_amount.replace(/[^0-9.-]+/g,""));
-			donated_percentage = ((donated_amount/donation_goal)*100).toFixed(1);
-			res.render('family-page-public', {
-				title: req.params.page_name, 
-				page_name: req.params.page_name,
-				name: queryRes.rows[0].name,
-				media: queryRes.rows[0].images,
-				day_of_birth: convertDate(queryRes.rows[0].day_of_birth),
-				day_of_passing: convertDate(queryRes.rows[0].day_of_passing),
-				visitation_date: convertDate(queryRes.rows[0].visitation_date),
-				visitation_time: convertTime(queryRes.rows[0].visitation_time),
-				visitation_location: queryRes.rows[0].visitation_location,
-				vistitation_description: queryRes.rows[0].visitation_description,
-				funeral_date: convertDate(queryRes.rows[0].funeral_date),
-				funeral_time: convertTime(queryRes.rows[0].funeral_time),
-				funeral_location: queryRes.rows[0].funeral_location, 
-				funeral_description: queryRes.rows[0].funeral_description, 
-				donation_goal: queryRes.rows[0].donation_goal, 
-				donated_amount: convertDonationAmount(donated_amount),
-				donated_percentage: donated_percentage,
-				deadline: queryRes.rows[0].deadline, 
-				timezone: queryRes.rows[0].timezone, 
-				obituary: queryRes.rows[0].obituary,
-				
+		else {
+      res.render('family-page-public', {
+        ...data,
 				userAction: '/donate/create-checkout-session/'
-					+ queryRes.rows[0].family_id + '/' + queryRes.rows[0].page_name
+					+ page.familyCuid + '/' + page.page_name
 			})
 		}
 	} catch(e) {
-		res.send(queryErr);
+		console.error(e); res.send(e);
 	}
 })
 
@@ -313,6 +211,25 @@ function convertTime(time){
 	// AM or PM
 	standardTime += (hours >= 12) ? " PM" : " AM";
 	return standardTime;
+}
+
+/*
+	Change text from this format: 2022-07-22T18:05:00.000Z
+	to this format: 07/28/2022
+*/
+function convertDateTime(str) {
+	// UTC to Fri Jul 22 2022 13:05:00 GMT-0500 (Central Daylight Time)
+	const reformmatedDate = new Date(str);
+
+	// change date format to 07/22/2022
+	const date = convertDate(reformmatedDate);
+
+	// get 13:05:00 and convert it to 01:05 PM
+	time = reformmatedDate.toUTCString().split(" ");
+	time = convertTime(time[4]);
+
+	str = date + " " + time;
+	return str;
 }
 
 //export modules for user in server.js

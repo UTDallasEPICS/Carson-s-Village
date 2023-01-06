@@ -1,22 +1,21 @@
-const express = require('express');			//load express for front-end and routes
-const client = require('./database.js');	//load database connection
-
+const prisma = require("./database.js")
 module.exports = function () {
   return async function checkRole (req, res, next) {
     console.log('Checking user role...')
     try{
-      userEmail = (JSON.stringify(req.oidc.user.email)).replace(/"/g, "'");
-      const text = 'SELECT user_role, user_id FROM User_Account WHERE email = ' + userEmail;
-      const queryRes = await client.query(text)
+      const queryRes = await prisma.userAccount.findFirst({
+        where: {
+        email: req.oidc.user.email
+      }})
             
-      if(queryRes.rows[0] != null){
+      if(queryRes){
         
-        if (queryRes.rows[0].user_role == 1){
-          console.log(`${userEmail}` + ' is a family account');
+        if (queryRes.user_role == "family"){
+          console.log(`${req.oidc.user.email}` + ' is a family account');
           res.render('unauthorized');
         }
-        else if(queryRes.rows[0].user_role == 2){
-          console.log(`${userEmail}` + ' is an admin account');
+        else if(queryRes.user_role == "advocate"){
+          console.log(`${req.oidc.user.email}` + ' is an admin account');
           return next(); 
         }
       }
@@ -25,7 +24,8 @@ module.exports = function () {
         theErrorMessage = "User ID does not exist";
         res.send(theErrorMessage);
       }
-    } catch(e){
+    } catch (e) {
+      console.error(e)
       res.send('Error in query');
     }
     
