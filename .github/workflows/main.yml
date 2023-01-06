@@ -12,7 +12,7 @@ jobs:
         uses: appleboy/ssh-action@v0.1.4
         with:
           script: |
-            cd carsons-village
+            cd carson-s-village
             git checkout main
             git pull
             npm install
