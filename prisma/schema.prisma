@@ -1,0 +1,75 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model UserAccount {
+  cuid        String @id @default(cuid())
+  email       String @unique
+  user_role   String @default("family") // advocate, admin
+  first_name  String @default("")
+  middle_name String @default("")
+  last_name   String @default("")
+  phone       String @default("")
+
+  Pages        Page[]
+  PageDonation PageDonation[]
+
+  @@map("user_accounts")
+}
+
+model Page {
+  cuid                   String @id @default(cuid())
+  page_name              String
+  day_of_birth           String
+  day_of_passing         String
+  visitation_date        String
+  visitation_location    String
+  visitation_description String
+
+  funeral_date        String
+  funeral_location    String
+  funeral_description String
+
+  obituary      String
+  images        String[] // TODO: deprecate
+  timezone      String
+  donation_goal Decimal        @default(0)
+  amount_raised Decimal        @default(0)
+  deadline      String
+  familyCuid    String         @map("family_cuid")
+  PageDonations PageDonation[]
+  UserAccount   UserAccount    @relation(fields: [familyCuid], references: cuid)
+  Images        Image[]
+
+  @@map("pages")
+}
+
+model PageDonation {
+  cuid        String      @id @default(cuid())
+  familyCuid  String      @map("family_cuid")
+  pageCuid    String      @map("page_cuid")
+  page_name   String
+  link        String
+  success     Boolean     @default(false)
+  description String
+  amount      Decimal
+  Pages       Page        @relation(fields: [pageCuid], references: cuid)
+  UserAccount UserAccount @relation(fields: [familyCuid], references: cuid)
+
+  @@map("page_donations")
+}
+
+model Image {
+  cuid     String @id @default(cuid())
+  url      String
+  pageCuid String
+  Page     Page   @relation(fields: [pageCuid], references: [cuid])
+
+  @@unique([pageCuid, url])
+  @@map("images")
+}

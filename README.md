@@ -1,29 +1,42 @@
-# CarsonsVillage_Website-Upgrade
-EPCS3200 project to upgrade/automate the functionality and payment functions for the non-profit group "Carson's Village"
+# Nuxt 3 Minimal Starter
 
-## Current Goals
-Integrate REST API with prototype
-Integrate image upload with prototype
-Reformat page designs
-Draft transaction logs
+Look at the [Nuxt 3 documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
 
-## Current Modules
+## Setup
 
-### Database
-Queries to create the relevant tables
+Make sure to install the dependencies:
 
-### Node v2
-Current iteration of the prototype
+```bash
+# yarn
+yarn install
 
-### Nodejs-Postgresql
-Contains sample REST API implementation of database
+# npm
+npm install
 
-### Reference Code
-#### Jquery
-Deprecated Jqery code
-#### Papa Parse
-Deprecated CSV parser
-#### Java
-Deprecated Java generation of HTML pages
-#### Stripe
-Sample Stripe payment page
+# pnpm
+pnpm install --shamefully-hoist
+```
+
+## Development Server
+
+Start the development server on http://localhost:3000
+
+```bash
+npm run dev
+```
+
+## Production
+
+Build the application for production:
+
+```bash
+npm run build
+```
+
+Locally preview production build:
+
+```bash
+npm run preview
+```
+
+Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
