@@ -6,21 +6,19 @@
 *		Denotes functions specific to family accounts
 *		Located under "/family/"
 */
-const fs = require('fs');
 const multer = require('multer');
 const multerS3 = require('multer-s3');
 const { S3Client } = require('@aws-sdk/client-s3')
 const s3 = new S3Client({region: 'us-east-2'});
 const shortid = require('shortid');
-const { query } = require('express');
 const express = require('express');						//load express for front-end and routes
 const router = express.Router();						//load express router
-const client = require('./../database.js');				//load database connection
+const prisma = require("../database.js")
 const upload = multer({									//Sets up the parameters to upload an image(s) to S3 via Multer-S3
 	storage: multerS3({
 	s3: s3,
 	bucket: process.env.AWS_S3_BUCKET_NAME,
-	metadata: function (req, file, cb) {
+    metadata: function (req, file, cb) {
 	cb(null, {fieldName: file.fieldname});
 	},
 })
@@ -54,39 +52,30 @@ const queryErr = 'An error has occurred'
 *	function:	GET
 *	returns user profile based on id
 */
-router.get('/:user_id([0-9]+)', async (req, res) =>{
+router.get('/:user_id', async (req, res) =>{
 	try{
 		
-		userEmail = (JSON.stringify(req.oidc.user.email)).replace(/"/g, "'");
-		const advocateText = 'SELECT user_role, user_id FROM User_Account WHERE email = ' + userEmail;
-		const loggedInUserID = await client.query(advocateText);
+		const user = await prisma.userAccount.findFirst({
+      where: {email: req.oidc.user.email}
+    })
 
-		//build select query
-		const text = 'SELECT * FROM User_Account WHERE user_id = $1';
-		//set condition values
-		const values = [req.params.user_id];
-		/*
-		*	query database
-		*		if successful, use query result to generate profile-family.pug template
-		*		if failed, print error to console
-		*	NOTE
-		*		this page is currently not formatted, requires aesthetic overhaul
-		*/
-		const queryRes = await client.query(text, values)
+		const queryRes = await prisma.userAccount.findFirst({
+      where: {cuid: req.params.user_id}
+    })
 
-		if(loggedInUserID.rows[0].user_id == queryRes.rows[0].user_id || (loggedInUserID.rows[0].user_role == 2 && queryRes.rows[0].user_role == 1)){
+		if(user.cuid == queryRes.cuid || (user.user_role == "advocate" && queryRes.user_role == "family")){
 
 			//build name
-			var name = queryRes.rows[0].first_name;					//attach first name	
-			if(queryRes.rows[0].middle_name != null)				//check for middle name
+			var name = queryRes.first_name;					//attach first name	
+			if(queryRes.middle_name != null)				//check for middle name
 			{
-				name = name + ' ' + queryRes.rows[0].middle_name;	//attach middle name
+				name = name + ' ' + queryRes.middle_name;	//attach middle name
 			}
-			name = name + ' ' + queryRes.rows[0].last_name;			//attach last name
+			name = name + ' ' + queryRes.last_name;			//attach last name
 			res.render('profile-family', {
 				profileName: name, 
-				email: queryRes.rows[0].email, 
-				phone: queryRes.rows[0].phone, 
+				email: queryRes.email, 
+				phone: queryRes.phone, 
 				insert_link: '/family/' + req.params.user_id + '/page-insert', 
 				list_link: '/family/' + req.params.user_id + '/page-list',
 			});
@@ -95,7 +84,7 @@ router.get('/:user_id([0-9]+)', async (req, res) =>{
 			res.render('unauthorized');
 		}	
 	} catch(e){
-		res.send(queryErr);
+		console.error(e); res.send(e);
 	}
 });
 /*
@@ -104,45 +93,37 @@ router.get('/:user_id([0-9]+)', async (req, res) =>{
 *	function:	POST
 *	return list of applicable pages associated with the family account
 */
-router.get('/:user_id([0-9]+)/page-list', async (req, res) =>{
+router.get('/:user_id/page-list', async (req, res) =>{
 	try{
 
-		userEmail = (JSON.stringify(req.oidc.user.email)).replace(/"/g, "'");
-		const advocateText = 'SELECT user_role, user_id FROM User_Account WHERE email = ' + userEmail;
-		const loggedInUserID = await client.query(advocateText);
-
-		// use user_id from url to find user role		
-		textForRole = 'SELECT user_role, user_id FROM User_Account WHERE user_id = $1';
-		//set condition values
-		values = [req.params.user_id];
-		const urlRoleFind = await client.query(textForRole, values);
+		const user = await prisma.userAccount.findFirst({
+      where: {email:req.oidc.user.email}
+    })
+		const roleCheck = await prisma.userAccount.findFirst({
+      where: {cuid: req.params.user_id}
+    })
 
 		// Can access account only if user_id matches OR user is an admin
-		if(loggedInUserID.rows[0].user_id == urlRoleFind.rows[0].user_id || (loggedInUserID.rows[0].user_role == 2 && urlRoleFind.rows[0].user_role == 1)){
-			//build select query
-			text = 'SELECT family_id, page_name, donation_goal, deadline, status, timezone FROM Page_Details WHERE family_id = $1';
-			/*
-			*	query database
-			*		if successful, use query result to generate family-page.pug template
-			*		if failed, print error to console
-			*/
-			const queryRes = await client.query(text, values)
+		if(user.cuid == roleCheck.cuid || (user.user_role == "advocate" && roleCheck.user_role == "family")){
+
+			const queryRes = await prisma.page.findMany({
+        where: {familyCuid: req.params.user_id}
+      })
 			
 
-			for(var i = 0; i < queryRes.rowCount; i++){
-				var reformmatedDate = queryRes.rows[i].deadline;
+      queryRes.forEach(row => {
+				var reformmatedDate = row.deadline;
 				var setupTime = new Date(reformmatedDate);
 				var time = setupTime.getUTCHours() + ":" + setupTime.getUTCMinutes() + ":00";
 				time = convertTime(time);
 				date = reformmatedDate.toString().split(" ");
 				date = date[0] + " " + date[1] + " " + date[2];
-				queryRes.rows[i].deadline = date + " " + time
+				row.deadline = date + " " + time
+      })
 				
-			}
-
 			//list all available pages
 			res.render('client-pages', {
-				items: queryRes.rows,
+				items: queryRes,
 				back: '/family/' + req.params.user_id
 			});
 		}
@@ -151,7 +132,7 @@ router.get('/:user_id([0-9]+)/page-list', async (req, res) =>{
 		}
 			 
 	} catch(e) {
-		res.send(queryErr);
+		console.error(e); res.send(e);
 	}
 		
 });
@@ -162,22 +143,17 @@ router.get('/:user_id([0-9]+)/page-list', async (req, res) =>{
 *	function:	GET
 *	user interface to fill out information to apply for a family page
 */
-router.get('/:user_id([0-9]+)/page-insert', async(req, res) =>{
+router.get('/:user_id/page-insert', async(req, res) =>{
 	try{
-
-		userEmail = (JSON.stringify(req.oidc.user.email)).replace(/"/g, "'");
-		const advocateText = 'SELECT user_role, user_id FROM User_Account WHERE email = ' + userEmail;
-		const loggedInUserID = await client.query(advocateText);
-		
-		// use user_id from url to find user role		
-		textForRole = 'SELECT user_role, user_id FROM User_Account WHERE user_id = $1';
-		//set condition values
-		values = [req.params.user_id];
-		const urlRoleFind = await client.query(textForRole, values);
-
+		const user = await prisma.userAccount.findFirst({
+      where: {email:req.oidc.user.email}
+    })
+		const roleCheck = await prisma.userAccount.findFirst({
+      where: {cuid: req.params.user_id}
+    })
 		// Can access account only if user_id matches OR user is an admin
 
-		if(loggedInUserID.rows[0].user_id == urlRoleFind.rows[0].user_id || (loggedInUserID.rows[0].user_role == 2 && urlRoleFind.rows[0].user_role == 1)){
+		if(user.cuid == roleCheck.cuid || user.user_role == "advocate"){
 			res.render('page-insert', {
 				title: 'Family ' + req.params.user_id + ' client creation', 
 				userAction: '/family/' + req.params.user_id + '/page-insert',
@@ -189,7 +165,7 @@ router.get('/:user_id([0-9]+)/page-insert', async(req, res) =>{
 		}
 			 
 	} catch(e) {
-		res.send(queryErr);
+		console.error(e); res.send(e);
 	}
 
 });
@@ -199,38 +175,35 @@ router.get('/:user_id([0-9]+)/page-insert', async(req, res) =>{
 *	function:	POST
 *	submit family page details to database
 */
-router.post('/:user_id([0-9]+)/page-insert', upload.array('images'), async (req, res) =>{
+router.post('/:user_id/page-insert', upload.array('images'), async (req, res) =>{
 	try{
-		var reqFields = Object.keys(req.body);							//get parameter names from previous GET
-		reqFields.pop();												//remove "submit" from parameter list
-		reqFields.unshift('status');									//add "status" to head of parameter list
-		reqFields.unshift('family_id');									//add "family_id" to head of parameter list
-		var reqValues = Object.values(req.body);						//get parameter values from pervious GET
-		reqValues.pop();												//remove "submit" from values list
-		reqValues.unshift(1);											//add 1 as status to head of values list
-		reqValues.unshift(req.params.user_id);							//add user_id as user_id to head of values list
-		var images = reqValues[3];
-		var imageLinks = [];
-		imageLinks = req.files?.map(f => f.location) || []				//adds the S3 image links to a list
-		
-		if(imageLinks.length != 0){										//Adds image links to database insertion list if there are images uploaded.
-			reqFields.splice(3,0,"images");
-			reqValues.splice(3,0, imageLinks);
-		}
-		
-		var query = buildInsert(reqFields, reqValues, 'Page_Details');	//generate insert statement
-		/*
-		*	query database
-		*		if successful, results are inserted
-		*			use query result to generate confirm.pug template
-		*		if failed, print error to console
-		*/
-		const queryRes = await client.query(query)
+    delete req.body.submit
+    const queryRes = await prisma.page.create({
+      data: {
+        ...req.body,
+        day_of_birth: new Date(req.body.day_of_birth),
+        day_of_passing: new Date(req.body.day_of_passing),
+        visitation_date: new Date(req.body.visitation_date),
+        funeral_date: new Date(req.body.funeral_date),
+        deadline: new Date(req.body.deadline),
+        UserAccount: {
+          connect: {
+            cuid: req.params.user_id
+          }
+        },
+        Image: {
+          createMany: {
+            data: processImageUrls(req.files || [])
+          }
+        }
+      }
+    })
 		res.render('confirm', {
 			back: '/family/' + req.params.user_id
 		});
 		
-	} catch(e) {
+  } catch (e) {
+    console.error(e)
 		res.render('failed', {});
 	}
 });
@@ -242,23 +215,20 @@ router.post('/:user_id([0-9]+)/page-insert', upload.array('images'), async (req,
 *	function:	GET
 *	return form to edit existing family page
 */
-router.get('/:user_id([0-9]+)/edit/:page_name', async (req, res) => {
+router.get('/:user_id/edit/:page_name', async (req, res) => {
 	try{
-		userEmail = (JSON.stringify(req.oidc.user.email)).replace(/"/g, "'");
-		const advocateText = 'SELECT user_role, user_id FROM User_Account WHERE email = ' + userEmail;
-		const loggedInUserID = await client.query(advocateText);
-		
-		// use user_id from url to find user role		
-		textForRole = 'SELECT user_role, user_id FROM User_Account WHERE user_id = $1';
-		//set condition values
-		values = [req.params.user_id];
-		const urlRoleFind = await client.query(textForRole, values);
+		const user = await prisma.userAccount.findFirst({
+      where: {email:req.oidc.user.email}
+    })
+		const roleCheck = await prisma.userAccount.findFirst({
+      where: {cuid: req.params.user_id}
+    })
 
-		// Can access account only if user_id matches OR user is an admin
+		// Can access account only if cuid matches OR user is an admin
 
-		if(loggedInUserID.rows[0].user_id == urlRoleFind.rows[0].user_id || (loggedInUserID.rows[0].user_role == 2 && urlRoleFind.rows[0].user_role == 1)){
+		if(user.cuid == roleCheck.cuid || user.user_role == "advocate"){
 			//build select query
-			var text = 'SELECT * FROM page_details WHERE family_id = $1 AND page_name = $2';
+			var text = 'SELECT * FROM page_details WHERE familyCuid = $1 AND page_name = $2';
 			//set condition values
 			values = [req.params.user_id, req.params.page_name];
 			/*
@@ -266,26 +236,29 @@ router.get('/:user_id([0-9]+)/edit/:page_name', async (req, res) => {
 			*		if successful, use query result to generate family-page.pug template
 			*		if failed, print error to console
 			*/
-			const queryRes = await client.query(text, values)
+      const queryRes = await prisma.page.findFirst({
+        where: {
+          familyCuid: req.params.user_id,
+          familyCuid: req.params.user_id,
+        }
+      })
 			//load all details of existing page to edit page, separate field underneath for edits
 			res.render('page-edit', {
 				title: req.params.page_name, 
 				page_name: req.params.page_name,
-				media: queryRes.rows[0].images,
-				day_of_birth: convertDate(queryRes.rows[0].day_of_birth),
-				day_of_passing: convertDate(queryRes.rows[0].day_of_passing),
-				visitation_date: convertDate(queryRes.rows[0].visitation_date), 
-				visitation_time: convertTime(queryRes.rows[0].visitation_time),
-				visitation_location: queryRes.rows[0].visitation_location, 
-				visitation_description: queryRes.rows[0].visitation_description, 
-				funeral_date: convertDate(queryRes.rows[0].funeral_date), 
-				funeral_time: convertTime(queryRes.rows[0].funeral_time),
-				funeral_location: queryRes.rows[0].funeral_location, 
-				funeral_description: queryRes.rows[0].funeral_description, 
-				donation_goal: queryRes.rows[0].donation_goal.replace("$",""), 
-				deadline: convertDateTime(queryRes.rows[0].deadline), 
-				obituary: queryRes.rows[0].obituary,
-				timezone: queryRes.rows[0].timezone, 
+				media: queryRes.images,
+				day_of_birth: queryRes.day_of_birth,
+				day_of_passing: queryRes.day_of_passing,
+				visitation_date: queryRes.visitation_date, 
+				visitation_location: queryRes.visitation_location, 
+				visitation_description: queryRes.visitation_description, 
+				funeral_date: queryRes.funeral_date, 
+				funeral_location: queryRes.funeral_location, 
+				funeral_description: queryRes.funeral_description, 
+				donation_goal: queryRes.donation_goal, 
+				deadline: queryRes.deadline, 
+				obituary: queryRes.obituary,
+				timezone: queryRes.timezone, 
 				editPage: '/family/' + req.params.user_id + '/edit/' + req.params.page_name,
 				back: '/family/' + req.params.user_id + '/page-list'
 			})
@@ -294,91 +267,59 @@ router.get('/:user_id([0-9]+)/edit/:page_name', async (req, res) => {
 			res.render('unauthorized');
 		}			
 	} catch(e) {
-		res.send(queryErr);
+		console.error(e); res.send(e);
 	}
 });
 
-
+function processImageUrls(urls) {
+  return urls.map(u => {
+    const split = u.location.split("/")
+    return `${process.env.IMAGE_BASE_URL}/${split[split.length - 1]}`
+  })
+}
 /*
 *	/user_id/page-insert
 *	file:		/views/confirm.pug
 *	function:	POST
 *	submit family page details to database
 */
-router.post('/:user_id([0-9]+)/edit/:page_name', upload.array('images') , async (req, res, next) => {
+router.post('/:user_id/edit/:page_name', upload.array('images') , async (req, res, next) => {
 	try{
-		var reqFields = Object.keys(req.body);							//get parameter names from previous GET
-		reqFields.pop();												//remove "submit" from parameter list
-
-		var reqValues = Object.values(req.body);						//get parameter values from pervious GET
-		reqValues.pop();												//remove "submit" from values list
-		var imageLinks = [];											// Takes the S3 buckets link of the images to a list.	
-		imageLinks = req.files?.map(f => f.location) || []
-		
-		// Convert dates to YYY-MM-DD format and time to military format
-		for (var i = 0; i < reqValues.length - 1; i++){
-			if(reqValues[i].toString().includes("/")){
-				var date = new Date(reqValues[i]);
-				reqValues[i] = date.toISOString().split("T")[0];
-			}
-			else if(reqValues[i].toString().includes(":")){
-				var[time, period] = reqValues[i].split(" ");
-				var [hours, minutes] = time.split(":");
-				if(period == "PM" && hours != 12){
-					hours = Number(hours) + 12;
-					reqValues[i] = (hours + ":" + minutes);
-				}
-				else if (period == "AM") {
-					var date = new Date(null, null, null, hours, minutes);
-					reqValues[i] = (date.getHours() + ":" + date.getMinutes());
-				}
-			}
-
-		}		
-		
-		//places the image links into reqValues after the last for loop not to break the links due to the backslashes.
-		//Adds images to the database insertion list if there is an image.
-		if(imageLinks.length != 0) {				   
-			reqValues.splice(1, 0, imageLinks);
-			// Convert deadline to UTC format
-			var date = new Date(reqValues[14]);
-			var now_utc = Date.UTC(date.getUTCFullYear(), date.getUTCMonth(),
-							   date.getUTCDate(), date.getUTCHours(),
-							   date.getUTCMinutes(), date.getUTCSeconds());
-
-			reqValues[14] = date.toISOString().split(":00.")[0];
-		}else{
-			// Convert deadline to UTC format
-			var date = new Date(reqValues[13]);
-			var now_utc = Date.UTC(date.getUTCFullYear(), date.getUTCMonth(),
-							   date.getUTCDate(), date.getUTCHours(),
-							   date.getUTCMinutes(), date.getUTCSeconds());
-
-			reqValues[13] = date.toISOString().split(":00.")[0];
-		}
-
-		var fields = [];
-		for(var i = 0; i < reqValues.length; i++){
-			if(reqValues[i] != '' && reqValues[i] != []) {
-				fields.push(reqValues[i]);			//add to end of fields
-			}	
-		}
-
-		var queryRes;
-		var text = 'UPDATE page_details SET page_name = $1, images = array_cat(images, $2), day_of_birth = $3, day_of_passing = $4, visitation_date = $5, visitation_time = $6, visitation_location = $7, visitation_description = $8, funeral_date = $9, funeral_time = $10, funeral_location = $11, funeral_description = $12, obituary = $13, donation_goal = $14, deadline = $15 WHERE page_name = \'' +  req.params.page_name + "\'";
-		var text2 = 'UPDATE page_details SET page_name = $1, day_of_birth = $2, day_of_passing = $3, visitation_date = $4, visitation_time = $5, visitation_location = $6, visitation_description = $7, funeral_date = $8, funeral_time = $9, funeral_location = $10, funeral_description = $11, obituary = $12, donation_goal = $13, deadline = $14 WHERE page_name = \'' +  req.params.page_name + "\'";
-		if(imageLinks.length!=0){
-			queryRes = await client.query(text, fields);
-		} else{
-			queryRes = await client.query(text2, fields);
-		}
-
+		delete req.body.submit
+    const images = processImageUrls(req.files || [])
+    const page = await prisma.page.findFirst({
+      where: {
+        page_name: req.params.page_name,
+        familyCuid: req.params.user_id
+      }
+    })
+    await prisma.$transaction([
+      prisma.Image.deleteMany({
+        where: {
+          pageCuid: page.cuid
+        }
+      }),
+      prisma.page.update({
+        where: {
+          cuid: page.cuid
+        },
+        data: {
+          ...req.body,
+          Images: {
+            createMany: {
+              data: images.map(url => ({url}))
+            }
+          }
+        }
+      }),
+    ])
 		res.render('confirm', {
 			back: '/family/' + req.params.user_id
 
 		});
 		
-	} catch(e) {
+  } catch (e) {
+    console.error(e)
 		res.render('failed', {});
 	}
 });
@@ -389,25 +330,23 @@ router.post('/:user_id([0-9]+)/edit/:page_name', upload.array('images') , async 
 *	function:	POST
 *	Deletes family page image from the database.
 */
-router.post('/:user_id([0-9]+)/remove-image/:page_name' , async (req, res) => {
+router.post('/:user_id/remove-image/:page_name' , async (req, res) => {
 	try{
-		const {page_name, image} = JSON.parse(req.body.remove);
-		
-		var text ='UPDATE page_details SET images = ARRAY_REMOVE(images, $1) WHERE page_name = \'' + page_name+ "\'";
-		var queryRes = await client.query(text, [image]);
-		text = 'SELECT * FROM page_details WHERE family_id = $1 AND page_name = $2';
-		values = [req.params.user_id, page_name];
-			/*
-			*	query database
-			*		if successful, use query result to generate family-page.pug template
-			*		if failed, print error to console
-			*/
-			 queryRes = await client.query(text, values)
-			 res.render('image-delete-successful', {
-				back: '/search' + '/pages/' + req.params.user_id + '/'  + page_name
-			});
+		const {cuid:pageCuid,page_name, image} = JSON.parse(req.body.remove);
+    await prisma.image.delete({
+      where: {
+        pageCuid_url: {
+          url: image,
+          pageCuid
+        }
+      },
+    })
+    res.render('image-delete-successful', {
+      back: '/search' + '/pages/' + req.params.user_id + '/'  + page_name
+    });
 
-	} catch(e) {
+  } catch (e) {
+    console.error(e)
 		res.render('failed', {});
 	}
 });
@@ -423,7 +362,7 @@ function convertDate(str) {
 }
 
 /*
-	Change datetime-local from this format: 2022-07-22T18:05:00.000Z
+	Change text from this format: 2022-07-22T18:05:00.000Z
 	to this format: 07/28/2022
 */
 function convertDateTime(str) {
@@ -470,51 +409,58 @@ function convertTime(time){
 	return standardTime;
 }
 
-router.get('/:user_id([0-9]+)/family-page/:page_name', async (req, res) => {
+router.get('/:user_id/family-page/:page_name', async (req, res) => {
 	try{
-		userEmail = (JSON.stringify(req.oidc.user.email)).replace(/"/g, "'");
-		const advocateText = 'SELECT user_role, user_id FROM User_Account WHERE email = ' + userEmail;
-		const loggedInUserID = await client.query(advocateText);
-		
-		// use user_id from url to find user role		
-		textForRole = 'SELECT user_role, user_id FROM User_Account WHERE user_id = $1';
-		//set condition values
-		values = [req.params.user_id];
-		const urlRoleFind = await client.query(textForRole, values);
+		const user = await prisma.userAccount.findFirst({
+      where: {email: req.oidc.user.email}
+    })
+		const roleCheck = await prisma.userAccount.findFirst({
+      where: {cuid: req.params.user_id}
+    })
 
 		// Can access account only if user_id matches OR user is an admin
-		if(loggedInUserID.rows[0].user_id == urlRoleFind.rows[0].user_id || (loggedInUserID.rows[0].user_role == 2 && urlRoleFind.rows[0].user_role == 1)){
+		if(user.cuid == roleCheck.cuid || user.user_role == "advocate"){
 
-			//build select query
-			var text = 'SELECT * FROM page_details WHERE family_id = $1 AND page_name = $2';
-			//set condition values
-			values = [req.params.user_id, req.params.page_name];
-			/*
-			*	query database
-			*		if successful, use query result to generate family-page.pug template
-			*		if failed, print error to console
-			*/
-			const queryRes = await client.query(text, values)
+      const queryRes = await prisma.page.findFirst({
+        where: {
+          familyCuid: req.params.user_id,
+          page_name: req.params.page_name
+        },
+      include: {
+        Images: {
+          select: {
+            url: true
+        }
+        }
+      }
+      })
+      const donation_goal = queryRes.donation_goal;
+      const donated_amount = queryRes.amount_raised;
+      const donated_percentage = ((donated_amount / donation_goal) * 100).toFixed(1);
+    
+      const media = page.Images.map(({url}) => url)
 			//load all details of existing page to edit page, separate field underneath for edits
-			res.render('family-page', {
+			res.render('family-page-public', {
+         cuid: queryRes.cuid,
 				title: req.params.page_name, 
 				page_name: req.params.page_name,
-				name: queryRes.rows[0].page_name,
-				media: queryRes.rows[0].images,
-				day_of_birth: convertDate(queryRes.rows[0].day_of_birth),
-				day_of_passing: convertDate(queryRes.rows[0].day_of_passing),
-				visitation_date: convertDate(queryRes.rows[0].visitation_date), 
-				visitation_location: queryRes.rows[0].visitation_location, 
-				vistitation_description: queryRes.rows[0].visitation_description, 
-				visitation_time: convertTime(queryRes.rows[0].visitation_time),
-				funeral_date: convertDate(queryRes.rows[0].funeral_date), 
-				funeral_time: convertTime(queryRes.rows[0].funeral_time),
-				funeral_location: queryRes.rows[0].funeral_location, 
-				funeral_description: queryRes.rows[0].funeral_description, 
-				donation_goal: queryRes.rows[0].donation_goal, 
-				deadline: queryRes.rows[0].deadline, 
-				timezone: queryRes.rows[0].timezone, 
-				obituary: queryRes.rows[0].obituary,
+				name: queryRes.page_name,
+        media,
+        profile: media[0],
+				day_of_birth: queryRes.day_of_birth,
+				day_of_passing: queryRes.day_of_passing,
+				visitation_date: queryRes.visitation_date, 
+				visitation_location: queryRes.visitation_location, 
+				visitation_description: queryRes.visitation_description, 
+				funeral_date: queryRes.funeral_date, 
+				funeral_location: queryRes.funeral_location, 
+				funeral_description: queryRes.funeral_description, 
+				donation_goal: convertDonationAmount(queryRes.donation_goal), 
+        donated_amount: convertDonationAmount(donated_amount),
+        donated_percentage: donated_percentage,
+				deadline: queryRes.deadline, 
+				timezone: queryRes.timezone, 
+				obituary: queryRes.obituary,
 				back: '/family/' + req.params.user_id + '/edit/' + req.params.page_name
 			})
 		}
@@ -522,9 +468,15 @@ router.get('/:user_id([0-9]+)/family-page/:page_name', async (req, res) => {
 			res.render('unauthorized');
 		}	
 	} catch(e) {
-		res.send(queryErr);
+		console.error(e); res.send(e);
 	}
 });
-
+function convertDonationAmount(amount){
+	var formatter = new Intl.NumberFormat('en-US', {
+		style: 'currency',
+		currency: 'USD',
+	});
+	return formatter.format(amount);
+}
 //export modules for user in server.js
 module.exports = router;

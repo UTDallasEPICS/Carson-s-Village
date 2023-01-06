@@ -9,12 +9,7 @@
 //Declare required dependencies
 const express = require('express');			//load express for front-end and routes
 const router = express.Router();			//load express router
-const client = require('../database.js');	//load database connection
-const buildInsert = require('./../query-builder.js');	//load function to build query INSERT statements
-const checkRole = require('../checkRole.js');
-
-let theErrorMessage = ''
-
+const prisma = require("../database.js")
 /*
 *	function:	GET
 *	retrieve the user's authenticated email and find their role
@@ -22,24 +17,24 @@ let theErrorMessage = ''
 */
 router.get("/", async(req, res) =>  {
 	// Parsed email is in the format "evelynkha@yahoo.com" so we replace double quote with single
-	userEmail = (JSON.stringify(req.oidc.user.email)).replace(/"/g, "'");
 
 	// perform a query using the email
 	try{
-		const text = 'SELECT user_role, user_id FROM User_Account WHERE email = ' + userEmail;
-		const queryRes = await client.query(text)
+    const queryRes = await prisma.userAccount.findFirst({
+      where:{ email: req.oidc.user.email}
+    })
 		
-		if(queryRes.rows[0] != null){
+		if(queryRes != null){
 			/*
 			*	an access level of 1 denotes a family and generates a family profile
 			*	an access level of 2 denotes an advocate/admin and generates an admin profile
 			*/
 
-			if (queryRes.rows[0].user_role == 1){
-				res.redirect('/family/' + queryRes.rows[0].user_id);
+			if (queryRes.user_role == "family"){
+				res.redirect('/family/' + queryRes.cuid);
 			}
-			else if(queryRes.rows[0].user_role == 2){
-				res.redirect('/advocate-admin/' + queryRes.rows[0].user_id);
+			else if(queryRes.user_role == "advocate"){
+				res.redirect('/advocate-admin/' + queryRes.cuid);
 			}
 		}
 		// Query Error -> user email does not exist in database, but does exist in auth0
@@ -52,7 +47,8 @@ router.get("/", async(req, res) =>  {
 			});
 
 		}
-	} catch(e){
+  } catch (e) {
+    console.error(e)
 		res.send('Error in query');
 	}
 	
@@ -65,52 +61,15 @@ router.get("/", async(req, res) =>  {
 */
 router.post('/user-info', async (req, res) =>{
 	try{
-
-		// INSERT INTO User_Account (email, user_role, first_name, middle_name, last_name, phone) VALUES ($1, $2, $3, $4, $5, $6, $7)
-		// user_id is auto-incremented
-
-		// Build INSERT parameters
-		var reqFields = ["email", "user_role"];								// initial parameters
-		reqFields = reqFields.concat(Object.keys(req.body));				// parameters the users will need to type into
-		reqFields.pop();													// remove "submit" from parameter list
-
-		// Build VALUE parameters
-		email = (JSON.stringify(req.oidc.user.email)).replace(/"/g, "");	// authorized email
+		const email = req.oidc.user.email
 		// choosing role based on email
-		if(email.toLowerCase().includes("@carsonsvillage.org")){			
-			role = 2;
-		}
-		else{
-			role = 1;
-		}
-		var reqValues = [email, role];										// initial parameters 
-		reqValues = reqValues.concat(Object.values(req.body));			    // get first_name, middle_name, last_name, and phone from user
-		reqValues.pop();													// remove "submit" from values list
-
-		// generate insert statement
-		var query = buildInsert(reqFields, reqValues, 'User_Account');		
-
-		/*
-		*	query database
-		*		if successful, results are inserted and new user is directed to their new page
-		*		if failed, print error 
-		*/
-		const insertRes = await client.query(query)
-
-		const userIdText = 'SELECT user_id FROM User_Account WHERE email = ' + userEmail;
-		const userIdFromDatabase = await client.query(userIdText);
-
-		// display all the users in the database 
-		const allUsersText = 'SELECT * FROM User_Account';
-		const allUsers = await client.query(allUsersText);
-
+		const role = email.toLowerCase().includes("@carsonsvillage.org") ? "advocate" : "family"
+    const user = await prisma.userAccount.create({
+      data: {
+      email, user_role: role
+    }})
 		// redirect the user to their designated home page
-		if (role == 1){
-			res.redirect('/family/' + userIdFromDatabase.rows[0].user_id);
-		}
-		else if(role == 2){
-			res.redirect('/advocate-admin/' + userIdFromDatabase.rows[0].user_id);
-		}
+    res.redirect(role == "advocate" ? `/advocate-admin/${user.cuid}` : `/family/${user.cuid}`)
 	
 	} catch(e) {
 

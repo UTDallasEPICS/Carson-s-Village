@@ -9,7 +9,7 @@ html
 		include header.html
 		link(rel='stylesheet' href='/stylesheets/main.css')
 	.bg-blue.w-screen(class="h-[80px]")
-	.img.bg-orange.-mt-16.mx-auto(class="w-[122px] h-[122px] rounded-[8px]")
+	.img.bg-orange.-mt-16.mx-auto(class="w-[122px] h-[122px] rounded-[8px]" src=profile)
 	.text-gray-dark.font-poppins.text-2xl.text-center.font-semibold(style="text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.25);")=page_name
 	.row.text-center
 		.text-gray-dark.font-poppins.text-md.inline-block.text-center=day_of_birth
@@ -30,17 +30,17 @@ html
 			.div.px-8.py-4(style="color: #6E6E6E; font-weight: 500; font-size: 14px; line-height: 28px; letter-spacing: -0.078px;" id="obituary")=obituary
 			.div.hidden.p-4(id="services")
 				.px-5.py-4.text-gray-dark.font-poppins.text-2xl.text-left.font-bold(style="line-height: 36px; text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") Visitation
-				.px-5.pt-2.pb-8.font-outfit.text-dark-blue(style="font-size: 20px; line-height: 30px;")=vistitation_description
+				.px-5.pt-2.pb-8.font-outfit.text-dark-blue(style="font-size: 20px; line-height: 30px;")=visitation_description
 				.grid.gap-x-3.gap-y-0.grid-cols-5.grid-rows-2
 					img.px-4(src="/images/clock_icon.png")
-					.py-1.font-outfit.text-dark-blue.col-span-4(style="font-size: 20px; line-height: 30px;")=visitation_date + ", " + visitation_time
+					.py-1.font-outfit.text-dark-blue.col-span-4(style="font-size: 20px; line-height: 30px;")=visitation_date + ", " + timezone
 					img.px-2(src="/images/location_icon.png")
 					.py-2.font-outfit.text-dark-blue.col-span-4.whitespace-normal(style="font-size: 20px; line-height: 30px;")=visitation_location
 				.px-5.py-4.text-gray-dark.font-poppins.text-2xl.text-left.font-bold(style="line-height: 36px; text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") Funeral
 				.px-5.pt-2.pb-8.font-outfit.text-dark-blue(style="font-size: 20px; line-height: 30px;")=funeral_description
 				.grid.gap-x-3.gap-y-0.grid-cols-5.grid-rows-2
 					img.px-4(src="/images/clock_icon.png")
-					.py-1.font-outfit.text-dark-blue.col-span-4(style="font-size: 20px; line-height: 30px;")=funeral_date + ", " + funeral_time
+					.py-1.font-outfit.text-dark-blue.col-span-4(style="font-size: 20px; line-height: 30px;")=funeral_date + ", " + timezone
 					img.px-2(src="/images/location_icon.png")
 					.py-2.font-outfit.text-dark-blue.col-span-4.whitespace-normal.leading-loose(style="font-size: 20px; line-height: 30px;")=funeral_location
 			.div.hidden.p-4(id="donations")

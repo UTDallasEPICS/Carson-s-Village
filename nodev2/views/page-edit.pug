@@ -26,64 +26,57 @@ body
 					.col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
 						input#images.rounded-md.outline-0.border-box.w-full.p-2(class="sm:ml-2" style="border: 1px solid #c4c4c4;" name='images' type='file' accept=".png,.jpeg,.jpg,.gif" multiple)
 				.form-group.py-4.grid(class="sm:grid-cols-3")
-					label.ml-10.pt-1(for='visitation_date' style="text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") Day of Birth
+					label.ml-10.pt-1(for='visitation_date' style="text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") Day of Birth (YYY-MM-DD HH:MM)
 					.col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
-						input#visitation_date.rounded-md.outline-0.border-box.w-full.p-2(class="sm:ml-2" style="border: 1px solid #c4c4c4;" value=day_of_birth placeholder=day_of_birth name='day_of_birth_edit' type="text" onblur="(this.type='date')" onfocus="this.type='date'")
+						input#visitation_date.rounded-md.outline-0.border-box.w-full.p-2(class="sm:ml-2" style="border: 1px solid #c4c4c4;" value=day_of_birth placeholder=day_of_birth name='day_of_birth' type="text" pattern="[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}" )
 				.form-group.py-4.grid(class="sm:grid-cols-3")
-					label.ml-10.pt-1(for='visitation_date' style="text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") Day of Passing
+					label.ml-10.pt-1(for='visitation_date' style="text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") Day of Passing (YYY-MM-DD HH:MM)
 					.col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
-						input#visitation_date.rounded-md.outline-0.border-box.w-full.p-2(class="sm:ml-2" style="border: 1px solid #c4c4c4;" value=day_of_passing placeholder=day_of_passing name='day_of_passing_edit' type="text" onblur="(this.type='date')" onfocus="this.type='date'")
+						input#visitation_date.rounded-md.outline-0.border-box.w-full.p-2(class="sm:ml-2" style="border: 1px solid #c4c4c4;" value=day_of_passing placeholder=day_of_passing name='day_of_passing' type="text" pattern="[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}" )
 				.information.bg-gray-light.rounded-md.mx-9.my-2.text-center(class="sm:text-start")
 					legend.ml-2(class="sm:py-1" style="font-weight: 700; text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") Visitation Information 				
 				.form-group.py-4.grid(class="sm:grid-cols-3")
-					label.ml-10.pt-1(for='visitation_date' style="text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") Date
+					label.ml-10.pt-1(for='visitation_date' style="text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") Date (YYY-MM-DD HH:MM)
 					.col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
-						input#visitation_date.rounded-md.outline-0.border-box.w-full.p-2(class="sm:ml-2" style="border: 1px solid #c4c4c4;" value=visitation_date placeholder=visitation_date name='visitation_date_edit' type="text" onblur="(this.type='date')" onfocus="this.type='date'")
-				.form-group.py-4.grid(class="sm:grid-cols-3")
-					label.ml-10.pt-1(for='visitation_time' style="text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") Time
-					.col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
-						input#visitation_time.rounded-md.outline-0.border-box.w-full.p-2(class="sm:ml-2" style="border: 1px solid #c4c4c4;" value=visitation_time placeholder=visitation_time name='visitation_time_edit' type='text' onblur="(this.type='time')" onfocus="this.type='time'")
+						input#visitation_date.rounded-md.outline-0.border-box.w-full.p-2(class="sm:ml-2" style="border: 1px solid #c4c4c4;" value=visitation_date placeholder=visitation_date name='visitation_date' type="text" pattern="[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}")
 				.form-group.py-4.grid(class="sm:grid-cols-3")
 					label.ml-10.pt-1(for='visitation_location' style="text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") Location
 					.col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
-						input#visitation_location.rounded-md.outline-0.border-box.w-full.p-2(class="sm:ml-2" style="border: 1px solid #c4c4c4;" value=visitation_location placeholder=visitation_location name='visitation_location_edit' type='text')
+						input#visitation_location.rounded-md.outline-0.border-box.w-full.p-2(class="sm:ml-2" style="border: 1px solid #c4c4c4;" value=visitation_location placeholder=visitation_location name='visitation_location' type='text')
 				.form-group.py-4.grid(class="sm:grid-cols-3")
 					label.ml-10.pt-1(for='visitation_description' style="text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") Description
 					.col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
-						textarea#visitation_description.rounded-md.outline-0.border-box.w-full.p-2(class="sm:ml-2" style="border: 1px solid #c4c4c4;" rows='3' placeholder=visitation_description name='vistitation_description_edit' type='text')=visitation_description
+						textarea#visitation_description.rounded-md.outline-0.border-box.w-full.p-2(class="sm:ml-2" style="border: 1px solid #c4c4c4;" rows='3' placeholder=visitation_description name='visitation_description' type='text')=visitation_description
+				
 				.information.bg-gray-light.rounded-md.mx-9.my-2.text-center(class="sm:text-start")
 					legend.ml-2(class="sm:py-1" style="font-weight: 700; text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") Funeral Information 					
 				.form-group.py-4.grid(class="sm:grid-cols-3")
-					label.ml-10.pt-1(for='funeral_date' style="text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") Date
+					label.ml-10.pt-1(for='funeral_date' style="text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") Date  (YYY-MM-DD HH:MM)
 					.col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
-						input#funeral_date.rounded-md.outline-0.border-box.w-full.p-2(class="sm:ml-2" style="border: 1px solid #c4c4c4;" value=funeral_date placeholder=funeral_date name='funeral_date_edit' type="text" onblur="(this.type='date')" onfocus="this.type='date'")
-				.form-group.py-4.grid(class="sm:grid-cols-3")
-					label.ml-10.pt-1(for='funeral_time' style="text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") Time
-					.col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
-						input#funeral_time.rounded-md.outline-0.border-box.w-full.p-2(class="sm:ml-2" style="border: 1px solid #c4c4c4;" value=funeral_time placeholder=funeral_time name='funeral_time_edit' type='text' onblur="(this.type='time')" onfocus="this.type='time'")
+						input#funeral_date.rounded-md.outline-0.border-box.w-full.p-2(class="sm:ml-2" style="border: 1px solid #c4c4c4;" value=funeral_date placeholder=funeral_date name='funeral_date' type="text" pattern="[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}")
 				.form-group.py-4.grid(class="sm:grid-cols-3")
 					label.ml-10.pt-1(for='funeral_location' style="text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") Location
 					.col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
-						input#funeral_location.rounded-md.outline-0.border-box.w-full.p-2(class="sm:ml-2" style="border: 1px solid #c4c4c4;" value=funeral_location placeholder=funeral_location name='funeral_location_edit' type='text')
+						input#funeral_location.rounded-md.outline-0.border-box.w-full.p-2(class="sm:ml-2" style="border: 1px solid #c4c4c4;" value=funeral_location placeholder=funeral_location name='funeral_location' type='text')
 				.form-group.py-4.grid(class="sm:grid-cols-3")
 					label.ml-10.pt-1(for='funeral_description' style="text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") Description
 					.col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
-						textarea#funeral_description.rounded-md.outline-0.border-box.w-full.p-2(class="sm:ml-2" style="border: 1px solid #c4c4c4;"  rows='3' placeholder=funeral_description name='funeral_description_edit' type='text')=funeral_description
+						textarea#funeral_description.rounded-md.outline-0.border-box.w-full.p-2(class="sm:ml-2" style="border: 1px solid #c4c4c4;"  rows='3' placeholder=funeral_description name='funeral_description' type='text')=funeral_description
 				.form-group.py-4.grid(class="sm:grid-cols-3")
 					label.ml-10.pt-1(for='obituary' style="text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") Obituary 
 					.col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
-						textarea#obituary.rounded-md.outline-0.border-box.w-full.p-2(class="sm:ml-2" style="border: 1px solid #c4c4c4;" placeholder=obituary name='obituary_edit' rows='12')=obituary
+						textarea#obituary.rounded-md.outline-0.border-box.w-full.p-2(class="sm:ml-2" style="border: 1px solid #c4c4c4;" placeholder=obituary name='obituary' rows='12')=obituary
 				.information.bg-gray-light.rounded-md.mx-9.my-2.text-center(class="sm:text-start")
 					legend.ml-2(class="sm:py-1" style="font-weight: 700; text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") Fundraising Information 		
 				.form-group.py-4.grid(class="sm:grid-cols-3")
 					label.ml-10.pt-1(for='donation_goal' style="text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") Goal
 					.col-md-8.flex.mx-9(class="sm:col-span-2 sm:ml-11 sm:mr-9")
 						span.rounded-l-md.bg-gray-light.text-lg.p-2(style="text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25); border: 1px solid #c4c4c4;") $
-						input#donation_goal.outline-0.rounded-r-md.border-box.w-full.p-2(style="border: 1px solid #c4c4c4;" value=donation_goal placeholder=donation_goal name='donation_goal_edit' type='text' onblur="(this.type='number')" onfocus="(this.type='number')")
+						input#donation_goal.outline-0.rounded-r-md.border-box.w-full.p-2(style="border: 1px solid #c4c4c4;" value=donation_goal placeholder=donation_goal name='donation_goal' type='text' onblur="(this.type='number')" onfocus="(this.type='number')")
 				.form-group.py-4.grid(class="sm:grid-cols-3")
-					label.ml-10.pt-1(for='deadline' style="text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") Deadline Date
+					label.ml-10.pt-1(for='deadline' style="text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") Deadline Date (YYY-MM-DD HH:MM)
 					.col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
-						input#deadline.rounded-md.outline-0.border-box.w-full.p-2(class="sm:ml-2" style="border: 1px solid #c4c4c4;" value=deadline placeholder=deadline name='deadline_edit' type="text" onblur="(this.type='datetime-local')" onfocus="this.type='datetime-local'")
+						input#deadline.rounded-md.outline-0.border-box.w-full.p-2(class="sm:ml-2" style="border: 1px solid #c4c4c4;" value=deadline placeholder=deadline name='deadline' type="text" pattern="[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}")
 				.form-group.ml-9.mb-9.py-7.flex.flex-wrap.gap-2
 					label.control-label(for='submit')
 					.col-md-10.py-2

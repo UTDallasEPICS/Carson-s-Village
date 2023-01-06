@@ -19,9 +19,9 @@ html
 				th deadline
 			each item in items
 				tr
-					td=item.family_id
+					td=item.familyCuid
 					td
-						a(href='/search/pages/'+item.family_id+'/'+item.page_name)=item.page_name
+						a(href='/search/pages/'+item.familyCuid+'/'+item.page_name)=item.page_name
 					td=item.donation_goal
 					td=item.deadline
 html

@@ -1,0 +1,23 @@
+on:
+  push:
+    branches:
+      - main
+name: Update EC2
+jobs:
+  update:
+    name: Prod - SSH Login, Pull, Reload
+    runs-on: ubuntu-latest
+    steps:
+      - name: Execute
+        uses: appleboy/ssh-action@v0.1.4
+        with:
+          script: |
+            cd carsons-village
+            git checkout main
+            git pull
+            npm install
+            npx prisma migrate deploy
+            pm2 reload all
+          host: pages.carsonsvillage.org
+          username: ec2-user
+          key: ${{ secrets.CARSONS_AWS_API_PRIVATE_KEY }}
