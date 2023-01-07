@@ -58,7 +58,7 @@ model PageDonation {
   success     Boolean     @default(false)
   description String
   amount      Decimal
-  Pages       Page        @relation(fields: [pageCuid], references: cuid)
+  Page        Page        @relation(fields: [pageCuid], references: cuid)
   UserAccount UserAccount @relation(fields: [familyCuid], references: cuid)
 
   @@map("page_donations")
