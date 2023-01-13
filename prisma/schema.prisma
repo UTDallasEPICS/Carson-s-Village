@@ -7,7 +7,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model UserAccount {
+model User {
   cuid        String @id @default(cuid())
   email       String @unique
   user_role   String @default("family") // advocate, admin
@@ -16,8 +16,8 @@ model UserAccount {
   last_name   String @default("")
   phone       String @default("")
 
-  Pages        Page[]
-  PageDonation PageDonation[]
+  Pages         Page[]
+  PageDonations PageDonation[]
 
   @@map("user_accounts")
 }
@@ -43,23 +43,21 @@ model Page {
   deadline      String
   familyCuid    String         @map("family_cuid")
   PageDonations PageDonation[]
-  UserAccount   UserAccount    @relation(fields: [familyCuid], references: cuid)
+  User          User           @relation(fields: [familyCuid], references: cuid)
   Images        Image[]
 
   @@map("pages")
 }
 
 model PageDonation {
-  cuid        String      @id @default(cuid())
-  familyCuid  String      @map("family_cuid")
-  pageCuid    String      @map("page_cuid")
-  page_name   String
-  link        String
-  success     Boolean     @default(false)
-  description String
-  amount      Decimal
-  Page        Page        @relation(fields: [pageCuid], references: cuid)
-  UserAccount UserAccount @relation(fields: [familyCuid], references: cuid)
+  cuid           String  @id @default(cuid())
+  familyCuid     String  @map("family_cuid")
+  pageCuid       String  @map("page_cuid")
+  success        Boolean @default(false)
+  transaction_id String  @unique
+  amount         Decimal
+  Page           Page    @relation(fields: [pageCuid], references: cuid)
+  User           User    @relation(fields: [familyCuid], references: cuid)
 
   @@map("page_donations")
 }
