@@ -41,3 +41,13 @@ This system is focused around advocates, families, and pages. Advocates invite f
   - Images
   - Donations
     - Processed through strip
+
+## Third party integrations
+
+- Stripe for payments
+- Auth0 for authentication
+- AWS SES for emails
+
+## Deployment
+
+AWS EC2
