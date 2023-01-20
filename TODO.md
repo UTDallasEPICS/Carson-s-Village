@@ -42,6 +42,12 @@ This system is focused around advocates, families, and pages. Advocates invite f
   - Donations
     - Processed through strip
 
+## Stack
+Nuxt, postgres, prisma
+
+## Research Questions
+None
+
 ## Third party integrations
 
 - Stripe for payments
