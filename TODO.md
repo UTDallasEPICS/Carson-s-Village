@@ -40,7 +40,7 @@ This system is focused around advocates, families, and pages. Advocates invite f
   - Deadline
   - Images
   - Donations
-    - Processed through strip
+    - Processed through stripe
 
 ## Stack
 Nuxt, postgres, prisma
