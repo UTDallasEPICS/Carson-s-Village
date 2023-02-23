@@ -1,7 +1,7 @@
 <script lang="ts" setup></script>
 
 <template lang="pug">
-div Foo
+div This is where page editing goes. 
 </template>
 
 <style scoped></style>
