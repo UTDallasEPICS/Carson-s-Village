@@ -16,4 +16,10 @@ p Keep in mind that public users (those who are not logged in) should *not* see 
 <script setup lang="ts">
 const router = useRouter()
 const routes = ref(router.getRoutes())
+const cvCookie =useCookie('cvtoken')
+
+if(!cvCookie.value){
+  await navigateTo('/api/login')
+} 
+
 </script>
