@@ -4,11 +4,10 @@ import fs from "fs"
 import { PrismaClient } from "@prisma/client"
 
 const client = new PrismaClient()
-
 export default defineEventHandler(async event => {
   const cvtoken = getCookie(event, "cvtoken") || ""
   // not logged in but trying to
-  if (!cvtoken && !event.reg.url.includes('/api/authcallback')) {
+  if (!cvtoken && !event.reg.url.includes('/api/callback')) {
     await sendRedirect(event, loginRedirectUrl());
   } else {
     // theoretically logged in
