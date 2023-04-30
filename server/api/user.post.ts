@@ -1,13 +1,16 @@
 import { PrismaClient } from "@prisma/client"
+import { SESClient, SendEmailCommand } from "@aws-sdk/client-ses"
+//import { emailTemplates } from "email-templates'"
 const prisma = new PrismaClient()
+const sesClient = new SESClient({ region: "us-east-1" });
+//const EmailTemplates = require()
 
 export default defineEventHandler(async event => {
 
-  const { SESClient, SendEmailCommand } = require("@aws-sdk/client-ses")
-const sesClient = new SESClient({ region: "us-east-1" });
-const EmailTemplates = require('email-templates')
 
-const emailTemplates = new EmailTemplates({
+
+
+/*const emailTemplates = new EmailTemplates({
   views: {
     root: "./emails",
   },
@@ -18,8 +21,8 @@ const emailTemplates = new EmailTemplates({
       relativeTo: "./emails",
     },
   },
-})
-
+})*/
+/*
 module.exports = async (to, template, subject, data) => {
   const { html, text } = await emailTemplates.renderAll(template, data)
   const sendEmailCommand = new SendEmailCommand({
@@ -29,8 +32,7 @@ module.exports = async (to, template, subject, data) => {
   })
   const res = await sesClient.send(sendEmailCommand)
 };
-const body = await readBody(event)
-setCookie(event, 'cv',body.id_token )
+
   try {
     await prisma.user.create({ data: event.context.body })
 		const queryRes = await prisma.user.findFirst({ where: {cuid: event.context.user_id} });
@@ -39,17 +41,19 @@ setCookie(event, 'cv',body.id_token )
   } catch (e) {
 		console.error(e); 
   }
+*/
 
+const body = await readBody(event)
+//setCookie(event, 'cvuser',JSON.stringify(body))
+try{
   await prisma.user.create({
     data: {
-      ...event.context.body,
-      UserAccount: {
-        connect: {
-          cuid: event.context.user_id
-        }
-      
-        }
+      ...body,
+
       }
     });
+  } catch(e){
+    console.log(e);
+  }
   return true;
 })

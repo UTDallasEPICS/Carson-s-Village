@@ -3,17 +3,19 @@ const prisma = new PrismaClient()
 
 export default defineEventHandler((event) => {
   // updates the user
-  // await prisma.user.update({
-    /*data: {
-      ...event.context.body,
-      UserAccount: {
+  const body = readBody(event);
+  setCookie(event,'cvuser',(JSON.stringify(body)))
+    /*const queryRes = await prisma.user.update({
+    data: {
+      ...body,
+      User: {
         connect: {
-          cuid: event.context.user_id
+          cuid: event.context.cuid 
         }
       
         }
       }
-    });
-    const { familyCuid } = getQuery(event);*/
+    });*/
+   // const { familyCuid } = getQuery(event);
   return 'Hello user'
 })

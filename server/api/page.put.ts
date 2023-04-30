@@ -4,20 +4,19 @@ const prisma = new PrismaClient()
 export default defineEventHandler(async event => {
 
   const body = await readBody(event)
-  console.log(body);
-  setCookie(event, 'cv',body.id_token )
-  /*await prisma.page.update({
-    data: {
-      ...event.context.body,
-      UserAccount: {
-        connect: {
-          cuid: event.context.user_id || ""
-        }
-      
-        }
+
+ // setCookie(event, 'cvuser',(JSON.stringify(body)))
+ const queryRes = await prisma.page.update({
+  where: {
+    cuid: event.context.cuid
+  },
+  data: {
+    ...body
       }
-    });*/
-  return true;
+    })
+
+
+  return queryRes;
 });
 
 

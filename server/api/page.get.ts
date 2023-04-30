@@ -5,13 +5,13 @@ const prisma = new PrismaClient()
 export default defineEventHandler(async event => {
 
   // check if role == advocate?
-  const { familyCuid } = getQuery(event);
-	const cookiecooks = getCookie(event, "cv");
-	const { Cuid } = JSON.parse(cookiecooks || "{}")
-	console.log(familyCuid);
-	console.log(Cuid);
-
-	const { pageDataTotal } = getQuery(event);
+ // const { familyCuid } = getQuery(event);
+	//const cookiecooks = getCookie(event, "cvtoken");
+	//const { Cuid } = JSON.parse(cookiecooks || "{}")
+	//console.log(familyCuid);
+	//console.log(Cuid);
+	//const body = readBody(event);
+	//const { pageDataTotal } = getQuery(event);
 	/*  try{
 		const user = await prisma.userAccount.findFirst({
       where: {email:event.context.oidc.user.email}
@@ -32,22 +32,19 @@ export default defineEventHandler(async event => {
 			*		if successful, use query result to generate family-page.pug template
 			*		if failed, print error to console
 			*/
-      /*const queryRes = await prisma.page.findFirst({
+      const queryRes = await prisma.page.findFirst({
         where: {
-			cuid : Cuid, 
-			page_name: event.context.page_name
-		  },
-		include: {
-		  Images: {
-			select: {
-			  url: true
+			cuid : event.context.cuid, 
+			page_name: event.context.body.page_name
 		  }
 		  }
-		}
-		})*/
+	  );
+	  return queryRes;
+		})
+		
 		//const media = queryRes.Images.map(({url}) => url)
-		return true;
-      });
+		
+//      });
   /*const body = await readBody(event)
   setCookie(event, "cv", body.id_token)
   setCookie(event, "role", body.id_token)*/
