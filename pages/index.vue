@@ -1,18 +1,14 @@
 <script lang="ts" setup>
-const isAdmin  = false;
-
-// const user = useCookie()
-type Profile ={
-    profileName: String,
-    Email:  String,
-    Phone: String
-}
-const data2= ref<Profile>({
-    profileName: "",
-    Email: "",
-    Phone: ""
-})
+type Profile = {
+  last_name: string,
+  first_name: string,
+  role: string,
+  email: string,
+  phone: string; 
+};
 const cvuser = useCookie('cvuser');
+const user = computed<Profile>(() => JSON.parse(cvuser.value || "{}"))
+const isAdmin = computed(() => user.value.role == "admin")
 </script>
 
 <template lang="pug">
@@ -22,11 +18,11 @@ div
         .text-white.bg-blue.w-full.m-0.text-3xl.font-poppins.font-bold.text-center.drop-shadow-sm.p-10(v-else class="sm:text-5xl" style="text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") Family Profile
         .flex.flex-col.justify-start.gap-6(class="sm:grid sm:gap-10 sm:grid-rows-3 sm:grid-cols-2 sm:my-16")
             .text-gray-dark.font-poppins.font-bold.pt-4.text-xl.ml-8(class="sm:mx-auto sm:text-3xl") Name:
-            .text-gray-dark.font-poppins.font-bold.text-xl.ml-8(class="sm:text-3xl") {{ data2.profileName }}
+            .text-gray-dark.font-poppins.font-bold.text-xl.ml-8(class="sm:text-3xl") {{ user.first_name }} {{ user.last_name }}
             .text-gray-dark.font-poppins.font-bold.text-xl.ml-8(class="sm:mx-auto sm:text-3xl")   Email:
-            .text-gray-dark.font-poppins.font-bold.text-xl.ml-8(class="sm:text-3xl") {{data2.email}}
+            .text-gray-dark.font-poppins.font-bold.text-xl.ml-8(class="sm:text-3xl") {{user.email}}
             .text-gray-dark.font-poppins.font-bold.text-xl.ml-8(class="sm:mx-auto sm:text-3xl")   Phone:
-            .text-gray-dark.font-poppins.font-bold.text-xl.ml-8(class="sm:text-3xl") {{data2.phone}}
+            .text-gray-dark.font-poppins.font-bold.text-xl.ml-8(class="sm:text-3xl") {{user.phone}}
         .buttons.flex.gap-3(class=" sm:gap-10 space-between  sm:my-24" )
             NuxtLink.p-4.mx-auto.text-white.font-poppins.font-bold.bg-orange-400.rounded-full.w-fit(to='/Pages') List of client pages
             NuxtLink.p-4.mx-auto.text-white.font-poppins.font-bold.bg-orange-400.rounded-full.w-fit(to='EditPage/0') Insert new page
