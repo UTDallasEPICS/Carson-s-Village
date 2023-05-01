@@ -24,7 +24,7 @@ div
             .text-gray-dark.font-poppins.font-bold.text-xl.ml-8(class="sm:text-3xl") {{cvuser.phone}}
         .buttons.flex.gap-3(class=" sm:gap-10 space-between  sm:my-24" )
             NuxtLink.p-4.mx-auto.text-white.font-poppins.font-bold.bg-orange-400.rounded-full.w-fit(to='/Pages') List of client pages
-            NuxtLink.p-4.mx-auto.text-white.font-poppins.font-bold.bg-orange-400.rounded-full.w-fit(to='EditPage/0') Insert new page
+            NuxtLink.p-4.mx-auto.text-white.font-poppins.font-bold.bg-orange-400.rounded-full.w-fit(to='/EditPage/0') Insert new page
             NuxtLink.p-4.mx-auto.text-white.font-poppins.font-bold.bg-orange-400.rounded-full.w-fit(v-if="isAdmin" to='/Users') See all users
             NuxtLink.p-4.mx-auto.text-white.font-poppins.font-bold.bg-orange-400.rounded-full.w-fit(v-if="isAdmin" to='/EditUser/0') Invite user
 </template>
