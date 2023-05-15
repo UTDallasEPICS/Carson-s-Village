@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-/*const emit = defineEmits([])
+const emit = defineEmits([])
 const getSignedUrl = async (file: File) => {
   // perform the request to get the presigned url from server (image_upload) and return it
   // the api returns {uploadUrl, contentURl} from image_upload.post.ts
@@ -33,24 +33,16 @@ const uploadFile = async (data, ContentLength, ContentType, presignedUrl, imageL
       }
       emit('image-uploaded', imageLink)
   // do actual upload, after upload finished, emit imageURL*/
-//} 
+  } 
 </script>
 
 
-<template>
- <div>
-    <h2>File Upload</h2>
-    <form>
-      <label>
-        Select a file:
-        <input type="file">
-      </label>
-    </form>
-  </div> 
+<template lang ="pug">
+input#images.rounded-md.outline-0.border-box.p-2(class="sm:ml-2" style="border: 1px solid #c4c4c4;" type="file"  accept=".png,.jpeg,.jpg,.gif" multiple)
 </template>
 
 <script lang = "ts">
-/*export default {
+export default {
   methods: {
     handleFileUpload(event) {
       const file = event.target.files[0];
@@ -58,5 +50,5 @@ const uploadFile = async (data, ContentLength, ContentType, presignedUrl, imageL
       console.log(`File size: ${file.size} bytes`);
     },
   },
-};*/
+};
 </script>

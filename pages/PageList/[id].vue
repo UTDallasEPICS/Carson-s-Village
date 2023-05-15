@@ -1,0 +1,105 @@
+<script lang = "ts" setup>
+
+/*
+*   Ofek Shaltiel
+*	  ECS 3200
+*	  Carson's Village: Automated Family Page
+*	  PageList.vue 
+*		Shows a list of pages for a specific user based on their cuid
+*		Located under "/PageList/"
+*/
+
+
+
+const pages = ref<Page[]>([])
+
+type Page = {
+  page_name: string,
+  cuid: string,
+  day_of_birth: Date,
+  day_of_passing: Date,
+  visitation_date: Date,
+  visitation_location: string,
+  visitation_description: string,
+  funeral_date: Date,
+  funeral_description: string,
+  funeral_location: string,
+  obituary: string,
+  deadline: Date,
+  donation_goal: number,
+  amount_raised: number,
+  familyCuid: string
+}
+
+type User = {
+  cuid: string
+  first_name: string,
+  last_name: string,
+  user_role: Object,
+  email: string,
+  middle_name: string,
+  phone: string,
+}
+
+const cvuser = useCookie<User>('cvuser')
+const isAdmin = computed(() => cvuser.value?.user_role == "advocate")
+
+const data = ref<User>({
+  cuid: "",
+  first_name: "",
+  last_name: "",
+  user_role: "{}",
+  email: "",
+  middle_name: "",
+  phone: "",
+})
+
+// Method to populate the page list with databased on the cuid of the user in the url
+const getDataPageList = async (family_cuid: string) => {
+  const { data: pagesData } = await useFetch('/api/page_list', {
+    method: 'GET',
+    query: { family_cuid: family_cuid }
+  })
+  pages.value = pagesData.value as unknown as Page[]
+}
+
+// Function that converts each date from the TimeStamp object from the date picker to a human readable format
+// The timezone is computed automatically.
+const dateFormat = function (date: string){
+  var dateObj = new Date(date);
+  return dateObj.toString();
+}
+
+onMounted(() => { 
+  const router = useRoute()
+  const family_cuid_data = computed(() => router.params.id)
+  const family_cuid = family_cuid_data.value as string;
+  getDataPageList(family_cuid) });
+</script>
+
+<template lang ="pug">
+.row.p-3
+  NuxtLink.p-3.px-6.pt-2.text-white.bg-orange-500.font-poppins(style="font-weight: 700; border-radius: 32px;" to='/') Back
+.container.bg-white.mx-auto.mt-1(class="w-11/12 sm:w-[1000px]" style="height: auto; box-shadow: 0px 3px 6px 3px rgba(0, 0, 0, 0.15), 0px 3px 3px rgba(0, 0, 0, 0.3); border-radius: 60px;")
+  table(style="table-layout: auto;")
+    thead
+      tr 
+        th.font-poppins.font-bold.p-2(style="--tw-bg-opacity: 1; background-color: rgb(110 171 191 / var(--tw-bg-opacity));overflow: hidden; border-radius: 60px 0px 0px 0px; width:30%; ")  Page Name
+        th.font-poppins.font-bold.overflow-hidden(v-if="isAdmin" style="width:15%;--tw-bg-opacity: 1; background-color: rgb(110 171 191 / var(--tw-bg-opacity));") User ID
+        th.font-poppins.font-bold(style="width:20%;--tw-bg-opacity: 1; background-color: rgb(110 171 191 / var(--tw-bg-opacity));") Donation Deadline
+        th.font-poppins.font-bold(style="width:30%; --tw-bg-opacity: 1; background-color: rgb(110 171 191 / var(--tw-bg-opacity));") Page Edit
+        th.font-poppins.font-bold(style="border-radius: 0px 60px 0px 0px; width:20%; --tw-bg-opacity: 1; background-color: rgb(110 171 191 / var(--tw-bg-opacity));") Page View
+      tr(v-for="(item, i) in pages" 
+      :key="i" 
+      )
+        td.font-poppins.text-gray-dark.font-bold(style="text-align: center") {{ item.page_name }}
+        td.font-poppins.text-gray-dark.font-bold(style="text-align: center" v-if="isAdmin") {{ item.familyCuid }}
+        td.font-poppins.text-gray-dark.font-bold(style="text-align: center") {{ dateFormat(item.deadline) }}
+        td
+            NuxtLink.text-white.font-poppins.font-bold.bg-blue-300.rounded-full(class="sm:mx-auto sm:my-2 sm:w-fit" style="white-space: nowrap; display: flex; flex-direction: row; padding: 14px 24px; gap: 10px;" :to="`/EditPage/${item.cuid}`") Edit
+        td
+            NuxtLink.text-white.font-poppins.font-bold.bg-blue-300.rounded-full(class="sm:mx-auto sm:my-2 sm:w-fit" style="white-space: nowrap; display: flex; flex-direction: row; padding: 14px 24px; gap: 10px;" :to="`/Page/${item.cuid}`") View
+  .container.bg-blue-300.mx-auto(class="w-auto sm:w-[1000px]" style="--tw-bg-opacity: 1; background-color: rgb(110 171 191 / var(--tw-bg-opacity));height: 50px; border-radius: 0px 0px 60px 60px;")
+</template>
+
+<style scoped></style>		
