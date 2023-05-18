@@ -1,5 +1,4 @@
 
-
 <template lang="pug">
 .group.flex.flex-row
   NuxtLink.items-center.px-2.py-2.text-base.font-medium.rounded-md.text-green-600.cursor-pointer(
@@ -28,7 +27,7 @@ NuxtLink.items-center.px-2.py-2.text-base.font-medium.rounded-md.text-green-600.
 <script setup lang="ts">
 const router = useRouter()
 const routes = ref(router.getRoutes())
-const cvCookie =useCookie('cvtoken')
+const cvCookie = useCookie('cvtoken')
 
 if(!cvCookie.value){
   await navigateTo('/api/login')

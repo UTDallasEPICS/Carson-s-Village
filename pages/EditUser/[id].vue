@@ -1,15 +1,21 @@
 <script lang="ts" setup>
 
+/*
+*   Ofek Shaltiel
+*	ECS 3200
+*	Carson's Village: Automated Family Page
+*	EditUser.vue 
+*		Denotes functions specific to user insertion  
+*		Located under "/EditUser/"
+*/
+
+
+// Placeholder annotations for the insert user form.
 const first_name = '(user defined)'
 const last_name = '(user defined)'
 const email = '(user defined)'
 const middle_name = '(user defined, optional)'
 const phone = '(user defined, optional)'
-var first_name_input = ''
-var middle_name_input = ''
-var last_name_input = ''
-var email_input = ''
-var phone_input = ''
 
 enum role {
     family,
@@ -17,16 +23,16 @@ enum role {
 }
 
 type User = {
-    cuid : String
-    first_name: String,
-    last_name: String,
+    cuid : string
+    first_name: string,
+    last_name: string,
     user_role : Object,
-    email: String,
-    middle_name: String,
-    phone: String,
+    email: string,
+    middle_name: string,
+    phone: string,
 }
 
-const data = ref<User>({
+var data_user = ref<User>({
     cuid : "",
     first_name: "",
     last_name: "",
@@ -36,67 +42,72 @@ const data = ref<User>({
     phone: ""
 })
 
-//const cookieUsage = useCookie('cv')
 const cvuser = useCookie('cvuser');
-const cvData1 = cvuser.value || "{}";
 const cvData = computed (() => JSON.parse(cvuser.value || "{}"))
-const cvData2 = cvData1.length;
-//console.log(typeof(cvData1));
 const router = useRoute()
-const cuid = computed(() => parseInt(router.params.id as string || "0"));
+const cuid = computed(() => router.params.id as string);
 
-console.log(cuid.value);
-const save = async (first_name: string, last_name: String,user_role:Object, email: String, middle_name: String, phone: String) => {
+// Method that creates a new user on the database on the backend
+const save = async () => {
     await useFetch('/api/user',{
-    //method: cuid.value !=0 ? 'PUT' : 'POST',
-    method: 'POST',
-    body: ({...data.value, cuid: cvData.value?.cuid
-    })
-    //method: data.value.id? 'PUT' : 'POST'
+    method: (cuid.value as string) !== "0" ? 'PUT' : 'POST',
+    body: ({...data_user.value, cuid: cuid.value as string})
 })
     
 }
+
+// Method to populate the form when editing a pre-existing user
+const getData = async () => {
+    const { data: userData } = await useFetch('/api/user', {
+        method: 'GET',
+        query: { cuid: cuid.value }
+    })
+    data_user.value = userData.value as unknown as User;
+}
+
+onMounted(() => {
+    if((cuid.value as string) !== "0")
+        getData();
+})
 </script>
 
 <template lang="pug">
-    
-div This is where users are created or updated. Admins can create new users and update user info, family members can only update their own. you can do both POSt and PUT here, sw3itching based on whether we are editing a new or existing user. 
-    .row.p-3
-    nuxtLink.p-3.px-6.pt-2.text-white.bg-orange-500.font-sans(to = '/' style="font-weight: 700; border-radius: 32px;") Back
-    .container.overflow-hidden.mt-4.mx-auto.place-content-center.font-sans.well.well-sm(class="w-5/6 sm:max-w-xl sm:p-6" style="box-shadow: 0px 3px 6px 3px rgba(0, 0, 0, 0.15), 0px 3px 3px rgba(0, 0, 0, 0.3); border-radius: 60px;")
-        .well.well-sm
-            h1.text-center.pt-9.text-xl(class="sm:text-3xl" style="text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25); font-weight: 700;") User Account Entry 
-            br
-            .bar.mx-9(style="border-top: 0.5px solid #646464;")
-            br
-            .py-4.grid(class="sm:grid-cols-3")
-                label.ml-10.pt-1(style="text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") Email
-                .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
-                    input.rounded-md.outline-0.border-box.w-full.p-2(style="border: 1px solid #c4c4c4;" v-model='data.email' :placeholder="email")
-            .py-4.grid(class="sm:grid-cols-3")
-                label.ml-10.pt-1(style="text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") User Role
-                .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
-                    select.rounded-md.outline-0.border-box.w-full.p-2.bg-white(style="border: 1px solid #c4c4c4;" v-model='data.user_role') Select User Role
-                        option Family
-                        option Advocate
-            .py-4.grid(class="sm:grid-cols-3")
-                label.ml-10.pt-1(style="text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") First Name
-                .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
-                    input.rounded-md.outline-0.border-box.w-full.p-2(style="border: 1px solid #c4c4c4;" v-model='data.first_name' :placeholder="first_name")
-            .py-4.grid(class="sm:grid-cols-3")
-                label.ml-10.pt-1(style="text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") Middle Name
-                .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
-                    input.rounded-md.outline-0.border-box.w-full.p-2(style="border: 1px solid #c4c4c4;" v-model='data.middle_name' :placeholder="middle_name")
-            .py-4.grid(class="sm:grid-cols-3")
-                label.ml-10.pt-1(style="text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") Last Name
-                .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
-                    input.rounded-md.outline-0.border-box.w-full.p-2(style="border: 1px solid #c4c4c4;" v-model='data.last_name' :placeholder="last_name" )
-            .py-4.grid(class="sm:grid-cols-3")
-                label.ml-10.pt-1(style="text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") Phone
-                .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
-                    input.rounded-md.outline-0.border-box.w-full.p-2(style="border: 1px solid #c4c4c4;" v-model='data.phone' :placeholder="phone")
-                .col-md-10.py-2
-                    button.p-3.px-6.pt-2.bg-orange-500(@click="save" style="color: white; font-weight: 700; border-radius: 100px;") Save    
+.row.p-3
+NuxtLink.p-3.px-6.pt-2.text-white.bg-orange-500.font-sans(to='/' style="font-weight: 700; border-radius: 32px;") Back
+.container.overflow-hidden.mt-4.mx-auto.place-content-center.font-sans.well.well-sm(class="w-5/6 sm:max-w-xl sm:p-6" style="box-shadow: 0px 3px 6px 3px rgba(0, 0, 0, 0.15), 0px 3px 3px rgba(0, 0, 0, 0.3); border-radius: 60px;")
+    .well.well-sm
+        h1.text-center.pt-9.text-xl(class="sm:text-3xl" style="text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25); font-weight: 700;") User Account Entry 
+        br
+        .bar.mx-9(style="border-top: 0.5px solid #646464;")
+        br
+        .py-4.grid(class="sm:grid-cols-3")
+            label.ml-10.pt-1(style="text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") Email
+            .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
+                input.rounded-md.outline-0.border-box.w-full.p-2(style="border: 1px solid #c4c4c4;" v-model='data_user.email' :placeholder="email")
+        .py-4.grid(class="sm:grid-cols-3")
+            label.ml-10.pt-1(style="text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") User Role
+            .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
+                select.rounded-md.outline-0.border-box.w-full.p-2.bg-white(style="border: 1px solid #c4c4c4;" v-model='data_user.user_role') Select User Role
+                    option family
+                    option advocate
+        .py-4.grid(class="sm:grid-cols-3")
+            label.ml-10.pt-1(style="text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") First Name
+            .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
+                input.rounded-md.outline-0.border-box.w-full.p-2(style="border: 1px solid #c4c4c4;" v-model='data_user.first_name' :placeholder="first_name")
+        .py-4.grid(class="sm:grid-cols-3")
+            label.ml-10.pt-1(style="text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") Middle Name
+            .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
+                input.rounded-md.outline-0.border-box.w-full.p-2(style="border: 1px solid #c4c4c4;" v-model='data_user.middle_name' :placeholder="middle_name")
+        .py-4.grid(class="sm:grid-cols-3")
+            label.ml-10.pt-1(style="text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") Last Name
+            .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
+                input.rounded-md.outline-0.border-box.w-full.p-2(style="border: 1px solid #c4c4c4;" v-model='data_user.last_name' :placeholder="last_name" )
+        .py-4.grid(class="sm:grid-cols-3")
+            label.ml-10.pt-1(style="text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") Phone
+            .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
+                input.rounded-md.outline-0.border-box.w-full.p-2(style="border: 1px solid #c4c4c4;" v-model='data_user.phone' :placeholder="phone")
+            .col-md-10.py-2
+                button.p-3.px-6.pt-2.bg-orange-500(@click="save" style="color: white; font-weight: 700; border-radius: 100px;") Save    
 </template>
 
 <style scoped></style>

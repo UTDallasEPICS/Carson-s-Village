@@ -3,14 +3,16 @@ import { SESClient, SendEmailCommand } from "@aws-sdk/client-ses"
 //import { emailTemplates } from "email-templates'"
 const prisma = new PrismaClient()
 const sesClient = new SESClient({ region: "us-east-1" });
-//const EmailTemplates = require()
+import emailTemplates from "email-templates"
+
+/*	/EditUser/0
+*	  function:	POST
+*	  submit user account details to database
+*/
 
 export default defineEventHandler(async event => {
 
-
-
-
-/*const emailTemplates = new EmailTemplates({
+/* const EmailTemplates = new emailTemplates({
   views: {
     root: "./emails",
   },
@@ -22,18 +24,17 @@ export default defineEventHandler(async event => {
     },
   },
 })*/
-/*
-module.exports = async (to, template, subject, data) => {
-  const { html, text } = await emailTemplates.renderAll(template, data)
+/*module.exports = async (to:string, template:string, subject:string, data:string) => {
+  const { html, text } = await EmailTemplates.renderAll(template, data)
   const sendEmailCommand = new SendEmailCommand({
     Destination: { ToAddresses: [to] }, 
     Message: {Subject: {Charset: "UTF-8", Data: subject},Body:{Html: {Charset: "UTF-8", Data: html}, Text:{Charset: "UTF-8", Data: text}}},
     Source: process.env.EMAIL_SOURCE_ADDRESS,
   })
   const res = await sesClient.send(sendEmailCommand)
-};
+};*/
 
-  try {
+/*  try {
     await prisma.user.create({ data: event.context.body })
 		const queryRes = await prisma.user.findFirst({ where: {cuid: event.context.user_id} });
     //const middleName = queryRes.middle_name ? ` ${queryRes.middle_name} ` : " "
@@ -44,16 +45,20 @@ module.exports = async (to, template, subject, data) => {
 */
 
 const body = await readBody(event)
-//setCookie(event, 'cvuser',JSON.stringify(body))
-try{
-  await prisma.user.create({
-    data: {
-      ...body,
+delete body.cuid
 
+try{
+  //await sendEmail(body.email, "invitation", "Invitation to Carson's village", ({...body, url: `${process.env.BASEURL}/login`}))
+  // creates a new user entry in the user model/table.
+  const queryRes = await prisma.user.create({
+    data: {
+      ...body,cuid:undefined,
       }
     });
+  return queryRes.cuid;
   } catch(e){
     console.log(e);
   }
+
   return true;
 })

@@ -1,3 +1,27 @@
-export default defineEventHandler((event) => {
-  return 'Hello image'
-})
+import { PrismaClient } from "@prisma/client"
+const prisma = new PrismaClient()
+
+/*
+*	/api/image/cuid
+*	file:		/Pages/EditPage.vue
+*	function:	Delete
+*	Deletes family page image from the database.
+*/
+
+export default defineEventHandler(async event => {
+  const body = await readBody(event);
+  const url = body.url as string;
+try {
+    // Deletes an image from the database.
+    const queryRes = await prisma.image.deleteMany({
+      where: {
+          url : url
+        }
+        }
+    );
+
+    return queryRes; 
+  } catch(e){
+  console.log(e)
+  } 
+});
