@@ -11,7 +11,8 @@ export default defineEventHandler(async event => {
     fs.readFileSync(process.cwd()+"/cert-dev.pem")
   )
   const user = await client.user.findFirst({
-    where: { email : claims.email }})
+    where: { email: claims.email }
+  })
   setCookie(event,"cvuser",JSON.stringify(user))
   await sendRedirect(event, "/")
 });

@@ -31,29 +31,27 @@ const getDataUsers = async () => {
     users.value = usersData.value as unknown as User[];
 }
 
-onMounted(() => {
-    if( (isAdmin.value as boolean) == true ){
-    getDataUsers()
-    }})
+if( (isAdmin.value as boolean) == true )
+  await getDataUsers()
 </script>
+
 <template lang = "pug">
-a(v-if="isAdmin")
-    .row.p-3
-        NuxtLink.p-3.px-6.pt-2.text-white.bg-orange-500.font-poppins(style="font-weight: 700; border-radius: 32px;" to ='/') Back
-    .container.bg-white.mx-auto.mt-1(class="w-11/12 sm:w-[1000px]" style="height: auto; box-shadow: 0px 3px 6px 3px rgba(0, 0, 0, 0.15), 0px 3px 3px rgba(0, 0, 0, 0.3); border-radius: 60px;")
-        table(style="table-layout: auto;")
-            thead
-                tr
-                    th.font-poppins.font-bold.font-bold.p-2(style="--tw-bg-opacity: 1; background-color: rgb(110 171 191 / var(--tw-bg-opacity));border-radius: 60px 0px 0px 0px; width:33%; overflow: hidden") User Names
-                    th.font-poppins.font-bold(style="width:34%; --tw-bg-opacity: 1; background-color: rgb(110 171 191 / var(--tw-bg-opacity));") User ID
-                    th.font-poppins.font-bold(style="--tw-bg-opacity: 1; background-color: rgb(110 171 191 / var(--tw-bg-opacity));")
-                    th.font-poppins.font-bold(style="width:33%; --tw-bg-opacity: 1; border-radius: 0px 60px 0px 0px; background-color: rgb(110 171 191 / var(--tw-bg-opacity));") Pages
-                tr(v-for="(item, i) in users" 
-                    :key="i" 
-                )
-                    td.font-poppins.text-gray-dark.font-bold(style="text-align: center") {{ item.first_name + "" + item.last_name }}
-                    td.font-poppins.text-gray-dark.font-bold(style="text-align: center")  {{ item.cuid }}
-                    td
-                    NuxtLink.text-white.font-poppins.font-bold.bg-blue-300.rounded-full(class="sm:mx-auto sm:my-2 sm:w-fit" style="--tw-bg-opacity: 1; background-color: rgb(110 171 191 / var(--tw-bg-opacity));white-space: nowrap; display: flex; flex-direction: row; padding: 14px 24px; gap: 10px;" :to="`/pageList/${item.cuid}`") View
-        .container.mx-auto(class="w-auto sm:w-[1000px]" style="--tw-bg-opacity: 1; background-color: rgb(110 171 191 / var(--tw-bg-opacity));height: 50px; border-radius: 0px 0px 60px 60px;")
+.row.p-3
+    LinkButton(to='/') Back
+.container.bg-white.mx-auto.mt-1(class="w-11/12 sm:w-[1000px]" style="height: auto; box-shadow: 0px 3px 6px 3px rgba(0, 0, 0, 0.15), 0px 3px 3px rgba(0, 0, 0, 0.3); border-radius: 60px;")
+    table(style="table-layout: auto;")
+        thead
+            tr
+                th.font-poppins.font-bold.font-bold.p-2(style="--tw-bg-opacity: 1; background-color: rgb(110 171 191 / var(--tw-bg-opacity));border-radius: 60px 0px 0px 0px; width:33%; overflow: hidden") User Names
+                th.font-poppins.font-bold(style="width:34%; --tw-bg-opacity: 1; background-color: rgb(110 171 191 / var(--tw-bg-opacity));") User ID
+                th.font-poppins.font-bold(style="--tw-bg-opacity: 1; background-color: rgb(110 171 191 / var(--tw-bg-opacity));")
+                th.font-poppins.font-bold(style="width:33%; --tw-bg-opacity: 1; border-radius: 0px 60px 0px 0px; background-color: rgb(110 171 191 / var(--tw-bg-opacity));") Pages
+            tr(v-for="(item, i) in users" 
+                :key="i" 
+            )
+                td.font-poppins.text-gray-dark.font-bold(style="text-align: center") {{ item.first_name + "" + item.last_name }}
+                td.font-poppins.text-gray-dark.font-bold(style="text-align: center")  {{ item.cuid }}
+                td
+                NuxtLink.text-white.font-poppins.font-bold.bg-blue-300.rounded-full(class="sm:mx-auto sm:my-2 sm:w-fit" style="--tw-bg-opacity: 1; background-color: rgb(110 171 191 / var(--tw-bg-opacity));white-space: nowrap; display: flex; flex-direction: row; padding: 14px 24px; gap: 10px;" :to="`/pageList/${item.cuid}`") View
+    .container.mx-auto(class="w-auto sm:w-[1000px]" style="--tw-bg-opacity: 1; background-color: rgb(110 171 191 / var(--tw-bg-opacity));height: 50px; border-radius: 0px 0px 60px 60px;")
 </template>

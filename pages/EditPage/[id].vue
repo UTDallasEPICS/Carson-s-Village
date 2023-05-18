@@ -92,7 +92,7 @@ const getData = async () => {
 }
 
 if (cuid.value as string !== "0")
-    getData();
+  await getData();
 
 // Method to remove a single image
 const removeImage = async (theImage: string) => {
