@@ -7,13 +7,18 @@ import Stripe from "stripe"
 // Stripe API tokens
 const stripeSecretKey = process.env.STRIPE_SECRET;
 
+/*
+*	/Page/cuid
+*	function:	GET
+*	updates transactions to have success tag and increments the amount donated to families
+*/
 
 export default defineEventHandler(async event => {
   const stripe = new Stripe(stripeSecretKey as string,{ apiVersion:"2022-11-15"})
   //const stripe = await loadStripe(process.env.STRIPE_PUBLIC ? process.env.STRIPE_PUBLIC : '');
     const query = await getQuery(event)
     
-    try{
+    /*try{  
 
     const transaction = await prisma.pageDonation.findFirst({
         where: { transaction_id: query.transaction_id as string},
@@ -41,7 +46,8 @@ export default defineEventHandler(async event => {
   
     } catch (e) {
       console.error(e)
-      }try{
+    }*/
+    try{
       // get amount donated from transaction
       const transaction = await prisma.pageDonation.findFirst({
         where: { transaction_id: query.transaction_id as string},
@@ -66,7 +72,7 @@ export default defineEventHandler(async event => {
           data: {amount_raised: {increment: transaction?.amount}}
         }),
       ])
-      const pageLink = "/Page/"+transaction?.pageCuid;
+      const pageLink = process.env.BASEURL+"/Page/"+transaction?.pageCuid;
       console.log(pageLink);
       await sendRedirect(event, pageLink)
     } catch (e) {

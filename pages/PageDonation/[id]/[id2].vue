@@ -1,5 +1,8 @@
 <script setup lang="ts">
 //temporary page to display family page data and to call Complete_session.get.ts in order to complete donation handling
+//import type { Page } from '@/types.d.ts'
+import type { User } from '@/types.d.ts'
+
 type Page = {
     cuid: string,
     page_name: string,
@@ -17,6 +20,7 @@ type Page = {
     amount_raised: number,
     donated_percentage: number,
 };
+
 type Donation = {
     amount_raised: number,
     first_name: string,
@@ -24,6 +28,7 @@ type Donation = {
     comments: string
     transaction_id: string
 };
+
 const pageData = ref<Page>({
     cuid: "",
     page_name: "",
@@ -39,7 +44,7 @@ const pageData = ref<Page>({
     deadline: new Date(),
     donation_goal: 0,
     amount_raised: 0,
-    donated_percentage: 0,
+    donated_percentage: 0
 });
 
 const donationData = ref<Donation>({

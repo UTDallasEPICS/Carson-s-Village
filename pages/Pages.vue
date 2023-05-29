@@ -4,31 +4,18 @@
 * Shalin Shrestha
 *	ECS 2200
 *	Carson's Village: Automated Family Page
-*	pages.vue 
+*	Pages.vue 
 * Allows users to search for a page by name
-*	Located under "/"
+*	Located under "/Pages"
 */
 
-type Page = {
-    page_name: string,
-    cuid : string,
-    day_of_birth: Date,
-    day_of_passing: Date,
-    visitation_date: Date,
-    visitation_location: string,
-    visitation_description: string,
-    funeral_date: Date,
-    funeral_description: string,
-    funeral_location: string,
-    obituary: string,
-    deadline: Date,
-    donation_goal: number,
-    amount_raised: number
-}
+import type { Page } from '@/types.d.ts'
+import { donationFormat, dateFormat } from '@/utils'
 
 const pages = ref<Page[]>([])
 const searchQuery = ref('');
 
+// Method to populate search results for pages
 const pageSearch = async() => { 
     const { data : pageData } = await useFetch('/api/pages', {
     method: 'GET',
@@ -37,10 +24,10 @@ const pageSearch = async() => {
     pages.value = pageData.value as unknown as Page[]
 }
 
-const dateFormat = function (date: string){
+/*const dateFormat = function (date: string){
   var dateObj = new Date(date);
   return dateObj.toString();
-}
+}*/
 </script>
 
 <template lang="pug">
@@ -64,7 +51,7 @@ const dateFormat = function (date: string){
         tr(v-for="page in pages")
           td(style="text-align: center")   
             NuxtLink(:to="`/Page/${page.cuid}`") {{ page.page_name}}
-          td(style="text-align: center") {{ page.donation_goal }}
+          td(style="text-align: center") {{ donationFormat(page.donation_goal) }}
           td(style="text-align: center") {{ dateFormat(page.deadline) }}
               
 </template>

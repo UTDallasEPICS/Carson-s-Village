@@ -1,4 +1,6 @@
 <script lang = "ts" setup>
+import type { Page, User } from '@/types.d.ts'
+import { dateFormat, donationFormat} from '@/utils'
 
 /*
 *   Ofek Shaltiel
@@ -9,38 +11,7 @@
 *		Located under "/PageList/"
 */
 
-
-
 const pages = ref<Page[]>([])
-
-type Page = {
-  page_name: string,
-  cuid: string,
-  day_of_birth: Date,
-  day_of_passing: Date,
-  visitation_date: Date,
-  visitation_location: string,
-  visitation_description: string,
-  funeral_date: Date,
-  funeral_description: string,
-  funeral_location: string,
-  obituary: string,
-  deadline: Date,
-  donation_goal: number,
-  amount_raised: number,
-  familyCuid: string
-}
-
-type User = {
-  cuid: string
-  first_name: string,
-  last_name: string,
-  user_role: Object,
-  email: string,
-  middle_name: string,
-  phone: string,
-}
-
 const cvuser = useCookie<User>('cvuser')
 const isAdmin = computed(() => cvuser.value?.user_role == "advocate")
 
@@ -63,18 +34,11 @@ const getDataPageList = async (family_cuid: string) => {
   pages.value = pagesData.value as unknown as Page[]
 }
 
-// Function that converts each date from the TimeStamp object from the date picker to a human readable format
-// The timezone is computed automatically.
-const dateFormat = function (date: string){
-  var dateObj = new Date(date);
-  return dateObj.toString();
-}
-
-onMounted(() => { 
-  const router = useRoute()
+onMounted(async() => { 
+  const router = await useRoute()
   const family_cuid_data = computed(() => router.params.id)
   const family_cuid = family_cuid_data.value as string;
-  getDataPageList(family_cuid) });
+  await getDataPageList(family_cuid) });
 </script>
 
 <template lang ="pug">

@@ -9,10 +9,9 @@ const prisma = new PrismaClient()
 
 export default defineEventHandler(async event => {
   const body = await readBody(event)
-  const family_cuid = body.family_cuid
-  const cuid = body.cuid;
-  delete body.family_cuid;
-
+  delete body.familyCuid;
+  body.donation_goal = body.donation_goal * 100;
+  body.amount_raised = body.amount_raised * 100;
   try {
     // updates a pre-existing page
     const queryRes = await prisma.page.update({
@@ -24,7 +23,7 @@ export default defineEventHandler(async event => {
       }
     });
   } catch (e) {
-    console.log(e);
+    console.error(e);
   }
   return true;
 });

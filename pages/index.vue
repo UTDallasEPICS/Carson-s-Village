@@ -1,15 +1,17 @@
 <script lang="ts" setup>
-type Profile = {
-  last_name: string,
-  first_name: string,
-  user_role: string,
-  email: string,
-  phone: string,
-  cuid : string
-};
 
-const cvuser = useCookie<Profile>('cvuser');
-console.log(cvuser.value)
+/*
+*	ECS 2200
+*	Carson's Village: Automated Family Page
+*	index.vue 
+* Shows the admin and family profile depending on role
+*	Located under "/index"
+*/
+
+
+import type { User } from '@/types.d.ts'
+
+const cvuser = useCookie<User>('cvuser');
 const cuid_data = computed(() => cvuser.value?.cuid)
 const cuid = cuid_data.value as string
 const isAdmin = computed(() => cvuser.value?.user_role == "advocate")

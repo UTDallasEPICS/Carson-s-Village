@@ -2,7 +2,7 @@ import { PrismaClient } from "@prisma/client"
 const prisma = new PrismaClient()
 
 /*
-*	/EditPage/cuid or /Page/cuid
+*	/EditPage/cuid and /Page/cuid
 *	function:	POST
 *	retrive family page images from database
 */
