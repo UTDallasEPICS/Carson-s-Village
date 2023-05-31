@@ -9,7 +9,6 @@ const prisma = new PrismaClient()
 */
 
 export default defineEventHandler(async event => {
-  var newCuid = "";
   //extracting family id to connect the page to the authenticated user
   const body = await readBody(event)
   const familyCuid = body.familyCuid;
@@ -30,12 +29,10 @@ export default defineEventHandler(async event => {
         }
       }
     });
-    newCuid = queryRes.cuid;
+    return queryRes.cuid
   } catch(e) {
     console.error(e);
   }
-
-    return newCuid;
 });
 
 

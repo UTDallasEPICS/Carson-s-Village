@@ -1,5 +1,5 @@
 import { PrismaClient } from "@prisma/client"
-import {nanoid} from "nanoid"
+import  {nanoid } from "nanoid"
 const prisma = new PrismaClient()
 // Stripe API tokens
 const stripeSecretKey = process.env.STRIPE_SECRET;
@@ -88,9 +88,9 @@ export default defineEventHandler(async event => {
     })*/
     console.log(session.url);
     console.log(queryRes.transaction_id);
-    await sendRedirect(event, session.url || "", 302)
+    //await sendRedirect(event, session.url || "", 302)
     
-    return queryRes;
+    return session.url;
   }catch(e) {
     console.error(e);
   }

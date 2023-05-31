@@ -10,11 +10,15 @@ const prisma = new PrismaClient()
 export default defineEventHandler(async event => {
 		const { cuid } = getQuery(event);
 
+		if( (cuid as string) == "0" || cuid == undefined){
+			return []
+		  }
 		const queryRes = await prisma.page.findFirst({
        	where: {
 			cuid : cuid as string
 		  }
 		  }
 	  );
+	  console.log(queryRes)
 	  return queryRes;
 		})

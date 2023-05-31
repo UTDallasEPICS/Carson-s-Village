@@ -13,8 +13,8 @@ export type Page = {
     funeral_location: string,
     obituary: string,
     deadline: Date,
-    donation_goal: number,
-    amount_raised: number
+    donation_goal: number | string
+    amount_raised: number | string
   }
   
 export type User = {

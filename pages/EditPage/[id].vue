@@ -20,26 +20,9 @@ import {
 } from '@headlessui/vue'
 
 import type { Page, User } from '@/types.d.ts'
-import { donationFormat} from '@/utils'
+import { donationFormat } from '@/utils'
 
-/*type Page = {
-    page_name: string,
-    cuid: string,
-    day_of_birth: Date,
-    day_of_passing: Date,
-    visitation_date: Date,
-    visitation_location: string,
-    visitation_description: string,
-    funeral_date: Date,
-    funeral_description: string,
-    funeral_location: string,
-    obituary: string,
-    deadline: Date,
-    donation_goal: number,
-    amount_raised: number,
-}
-*/
-var data = ref<Page>({
+const data = ref<Page>({
     cuid: "",
     familyCuid: "",
     page_name: "",
@@ -57,31 +40,21 @@ var data = ref<Page>({
     amount_raised: 0
 })
 
-/*type User = {
-    cuid: string
-    first_name: string,
-    last_name: string,
-    user_role: Object,
-    email: string,
-    middle_name: string,
-    phone: string,
-}*/
-
 const router = useRoute()
 const cvuser = useCookie<User>('cvuser');
-const cuid_data = computed(() => router.params.id as string);
+const cuid_data = computed(() => router.params.id);
 const cuid = cuid_data.value as string
 const image_cuid = "";
 const family_cuid_data = computed(() => cvuser.value?.cuid)
 const family_cuid = family_cuid_data.value as string
 data.value.cuid = cuid;
 data.value.familyCuid = family_cuid;
+
 // Method that saves form data to the database for a page that has cuid: router.params.id
 const save = async (page_name: string, day_of_birth: string, day_of_passing: string, visitation_date: Date, visitation_location: string, visitation_description: string, obituary: string, deadline: Date, donation_goal: Number) => {
     await useFetch('/api/page', {
         // Checks if there is a pre-existing page to edit or if to create a new page    
         method: router.params.id !== "0" ? 'PUT' : 'POST',
-        //body: ({ ...data.value, family_cuid: family_cuid_data, cuid: router.params.id as string })
         body: ({ ...data.value})
     }
     )
@@ -93,15 +66,23 @@ const getData = async () => {
         method: 'GET',
         query: { cuid: cuid }
     })
+    
     data.value = pageData.value as unknown as Page;
-    data.value.amount_raised = data.value.amount_raised / 100.0;
-    data.value.donation_goal = data.value.donation_goal / 100.0;
+    console.log(data.value.donation_goal as string)
+    data.value.amount_raised = donationFormat(data.value.amount_raised as unknown as number).replace("$","") ;
+    data.value.donation_goal = donationFormat(data.value.donation_goal as unknown as number).replace("$","") ;
+    console.log(data.value.donation_goal)
 }
 
-onMounted(async() => {
+    (async() => {
+        await getData()
+    }) ()
+
+/*onMounted(async() => {
 if (cuid !== "0")
   await getData();
-})
+})*/
+
 // Method to remove a single image
 const removeImage = async (theImage: string) => {
     await useFetch('/api/image', {
@@ -120,16 +101,15 @@ const setProfileImage = async (theImage: string) => {
     )
 }
 
-
 // Placeholder values to annotate the form
-var page_name_place_holder = 'required'
-var visitation_location_place_holder = 'required'
-var visitation_description_place_holder = 'required'
-var funeral_location_place_holder = 'required'
-var funeral_description_place_holder = 'required'
-var obituary_place_holder = 'required'
-var donation_goal_place_holder = 'required'
-var idExist = cuid != "0";
+const page_name_place_holder = 'required'
+const visitation_location_place_holder = 'required'
+const visitation_description_place_holder = 'required'
+const funeral_location_place_holder = 'required'
+const funeral_description_place_holder = 'required'
+const obituary_place_holder = 'required'
+const donation_goal_place_holder = 'required'
+const idExist = computed(() => router.params.id !== "0")
 
 const images = ["../blue_image.png", "../profile.png", "../profile.png", "../media2.png", "../media2.png", "../media2.png", "../media3.png", "../media4.png", "../media2.png", "https://images-dev.carsonsvillage.org/3302bbef4ae68777a7d18c0e6914b25e"]
 const selectedImage = [images[1]];
@@ -137,7 +117,7 @@ const selectedImage = [images[1]];
 
 <template lang="pug">
 .row.p-3
-NuxtLink.p-3.px-6.pt-2.text-white.bg-orange-500.font-sans(:to="`/PageList/${family_cuid}`" style="font-weight: 700; border-radius: 32px;") Back
+LinkButton(:to="`/PageList/${family_cuid}`") Back
 .container.overflow-hidden.mt-4.mx-auto.place-content-center.font-sans.well.well-sm(class="w-5/6 sm:max-w-xl sm:p-6" style="box-shadow: 0px 3px 6px 3px rgba(0, 0, 0, 0.15), 0px 3px 3px rgba(0, 0, 0, 0.3); border-radius: 60px;")
     .well.well-sm
         <!-- conditional rendering for page editing or page insert. This does not affect the function of Page editting. -->
@@ -189,7 +169,7 @@ NuxtLink.p-3.px-6.pt-2.text-white.bg-orange-500.font-sans(:to="`/PageList/${fami
                 ImageUpload()
         .information.bg-gray-300.rounded-md.mx-9.my-2.text-center(class="sm:text-start")
             legend.ml-2(class="sm:py-1" style="font-weight: 700; text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") Image Selection        
-        Listbox(v-model="data.profile_image" @change="selectProfileImage")
+        Listbox(v-model="data.profile_image" @change="setProfileImage(theImage)")
             ListboxButton() {{ data.profile_image }}
                 ListboxOptions
                     ListboxOption(v-for="(image,k) in images" :key="k" :value="image" ) {{ image }}                                            
@@ -241,18 +221,18 @@ NuxtLink.p-3.px-6.pt-2.text-white.bg-orange-500.font-sans(:to="`/PageList/${fami
             label.ml-10.pt-1(class="sm:ml-11" style="text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") Goal    
             .col-md-8.flex.mx-9(class="sm:col-span-2 sm:mr-11")
                 span.rounded-l-md.bg-gray-200.text-lg.p-2(style="text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25); border: 1px solid #c4c4c4;") $
-                input.outline-0.rounded-r-md.border-box.w-full.p-2(style="border: 1px solid #c4c4c4;" type="number" min="0.00" step="0.01" v-model='data.donation_goal' :placeholder="donation_goal_place_holder" onblur="(this.type='number')" onfocus="(this.type='number')" required)
+                input.outline-0.rounded-r-md.border-box.w-full.p-2(style="border: 1px solid #c4c4c4;" min="0.00" step="0.01" v-model='data.donation_goal' :placeholder="donation_goal_place_holder" required)
         .py-4.grid(class="sm:grid-cols-3")
             label.ml-10.pt-1(class="sm:ml-11" style="text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") Deadline Date (YYYY-MM-DD HH:MM)
             .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
                 Datepicker.rounded-md.outline-0.border-box.w-full.p-2(style="border: 1px solid #c4c4c4;" v-model='data.deadline')
         .ml-9.mb-9.py-7.flex.flex-wrap.gap-2
-            .col-md-10.py-2
-                button.p-3.px-6.pt-2.bg-orange-500(@click="save" style="color: white; font-weight: 700; border-radius: 32px;") Save
-            .col-md-10.py-2.mt-2
-                NuxtLink.p-3.px-6.pt-2.bg-orange-500(v-if="idExist" :to="`/Page/${cuidString}`" style="color: white; font-weight: 700; border-radius: 32px;") View Page <!-- v-if id!=null--> 
+            .col-md-10
+                button.p-4.mx-auto.text-white.font-poppins.font-bold.bg-orange-400.rounded-full.w-fit(@click="save") Save
+            .col-md-10.p-2.mt-2
+                LinkButton(v-if="idExist" :to="`/Page/${cuid}`") View Page <!-- v-if id!=null--> 
             .col-md-10.p-2.pt-6.mt-2(class="sm:pt-2 sm:ml-auto sm:mr-6")
-                NuxtLink.p-3.px-6.pt-2.bg-orange-500(v-if="idExist" to='#' style="color: white; font-weight: 700; border-radius: 32px;") Delete Page <!-- v-if id!=null-->      
+                LinkButton(v-if="idExist" to='#') Delete Page <!-- v-if id!=null-->      
                 .row.gallery.flex.flex-wrap.gap-1.items-center.justify-center(class="basis-1/2 sm:basis-1/4 sm:gap-3 sm:m-8")
 </template>
 

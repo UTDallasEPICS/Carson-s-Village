@@ -1,6 +1,7 @@
 <script lang = "ts" setup>
 import type { Page, User } from '@/types.d.ts'
 import { dateFormat, donationFormat} from '@/utils'
+import { RoutingRuleFilterSensitiveLog } from '@aws-sdk/client-s3'
 
 /*
 *   Ofek Shaltiel
@@ -10,6 +11,16 @@ import { dateFormat, donationFormat} from '@/utils'
 *		Shows a list of pages for a specific user based on their cuid
 *		Located under "/PageList/"
 */
+
+var family_cuid = ""
+onMounted(async() =>{
+  const router = useRoute()
+  const family_cuid_data = computed(() => router.params.id)
+  family_cuid = family_cuid_data.value as string;
+  console.log(family_cuid)
+  
+  await getDataPageList()
+})
 
 const pages = ref<Page[]>([])
 const cvuser = useCookie<User>('cvuser')
@@ -26,24 +37,23 @@ const data = ref<User>({
 })
 
 // Method to populate the page list with databased on the cuid of the user in the url
-const getDataPageList = async (family_cuid: string) => {
+const getDataPageList = async () => {
   const { data: pagesData } = await useFetch('/api/page_list', {
     method: 'GET',
-    query: { family_cuid: family_cuid }
+    query: { family_cuid }
   })
+
   pages.value = pagesData.value as unknown as Page[]
 }
 
-onMounted(async() => { 
-  const router = await useRoute()
-  const family_cuid_data = computed(() => router.params.id)
-  const family_cuid = family_cuid_data.value as string;
-  await getDataPageList(family_cuid) });
+/*onMounted(async() => {
+  
+})*/
 </script>
 
 <template lang ="pug">
 .row.p-3
-  NuxtLink.p-3.px-6.pt-2.text-white.bg-orange-500.font-poppins(style="font-weight: 700; border-radius: 32px;" to='/') Back
+  LinkButton(to='/') Back
 .container.bg-white.mx-auto.mt-1(class="w-11/12 sm:w-[1000px]" style="height: auto; box-shadow: 0px 3px 6px 3px rgba(0, 0, 0, 0.15), 0px 3px 3px rgba(0, 0, 0, 0.3); border-radius: 60px;")
   table(style="table-layout: auto;")
     thead
@@ -60,9 +70,9 @@ onMounted(async() => {
         td.font-poppins.text-gray-dark.font-bold(style="text-align: center" v-if="isAdmin") {{ item.familyCuid }}
         td.font-poppins.text-gray-dark.font-bold(style="text-align: center") {{ dateFormat(item.deadline) }}
         td
-            NuxtLink.text-white.font-poppins.font-bold.bg-blue-300.rounded-full(class="sm:mx-auto sm:my-2 sm:w-fit" style="white-space: nowrap; display: flex; flex-direction: row; padding: 14px 24px; gap: 10px;" :to="`/EditPage/${item.cuid}`") Edit
+            LinkButton(class="sm:my-2" style="white-space: nowrap; display: flex; flex-direction: row; padding: 14px 24px; gap: 10px;" :to="`/EditPage/${item.cuid}`") Edit
         td
-            NuxtLink.text-white.font-poppins.font-bold.bg-blue-300.rounded-full(class="sm:mx-auto sm:my-2 sm:w-fit" style="white-space: nowrap; display: flex; flex-direction: row; padding: 14px 24px; gap: 10px;" :to="`/Page/${item.cuid}`") View
+            LinkButton(class="sm:my-2" style="white-space: nowrap; display: flex; flex-direction: row; padding: 14px 24px; gap: 10px;" :to="`/Page/${item.cuid}`") View
   .container.bg-blue-300.mx-auto(class="w-auto sm:w-[1000px]" style="--tw-bg-opacity: 1; background-color: rgb(110 171 191 / var(--tw-bg-opacity));height: 50px; border-radius: 0px 0px 60px 60px;")
 </template>
 

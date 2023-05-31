@@ -19,7 +19,7 @@ const phone = '(user defined, optional)'
 
 import type { User } from '@/types.d.ts'
 
-var data_user = ref<User>({
+const data_user = ref<User>({
     cuid : "",
     first_name: "",
     last_name: "",
@@ -44,23 +44,25 @@ const save = async () => {
 }
 
 // Method to populate the form when editing a pre-existing user
-const getData = async () => {
+const getData = async (cuid: string) => {
     const { data: userData } = await useFetch('/api/user', {
         method: 'GET',
-        query: { cuid: cuid.value }
+        query: { cuid: cuid }
     })
     data_user.value = userData.value as unknown as User;
 }
 
-onMounted(async() => {
+if((cuid.value as string) !== "0")
+        await getData(cuid.value as string);
+/*onMounted(async() => {
     if((cuid.value as string) !== "0")
         await getData();
-})
+})*/
 </script>
 
 <template lang="pug">
 .row.p-3
-NuxtLink.p-3.px-6.pt-2.text-white.bg-orange-500.font-sans(to='/' style="font-weight: 700; border-radius: 32px;") Back
+LinkButton(to='/') Back
 .container.overflow-hidden.mt-4.mx-auto.place-content-center.font-sans.well.well-sm(class="w-5/6 sm:max-w-xl sm:p-6" style="box-shadow: 0px 3px 6px 3px rgba(0, 0, 0, 0.15), 0px 3px 3px rgba(0, 0, 0, 0.3); border-radius: 60px;")
     .well.well-sm
         h1.text-center.pt-9.text-xl(class="sm:text-3xl" style="text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25); font-weight: 700;") User Account Entry 
@@ -94,7 +96,7 @@ NuxtLink.p-3.px-6.pt-2.text-white.bg-orange-500.font-sans(to='/' style="font-wei
             .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
                 input.rounded-md.outline-0.border-box.w-full.p-2(style="border: 1px solid #c4c4c4;" v-model='data_user.phone' :placeholder="phone")
             .col-md-10.py-2
-                button.p-3.px-6.pt-2.bg-orange-500(@click="save" style="color: white; font-weight: 700; border-radius: 100px;") Save    
+                button.p-3.px-6.pt-2.bg-orange-400(@click="save" style="color: white; font-weight: 700; border-radius: 100px;") Save    
 </template>
 
 <style scoped></style>

@@ -22,6 +22,8 @@ NuxtLink.items-center.px-2.py-2.text-base.font-medium.rounded-md.text-green-600.
   p EditUser
 .border-2.border-black
   RouterView
+
+// use footer and header components here
 </template>
 
 <script setup lang="ts">
