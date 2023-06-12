@@ -12,14 +12,6 @@
 import type { Page, PageDonation } from '@/types.d.ts'
 import {  dateFormat, donationFormat } from '@/utils'
 
-/*(type Donation = {
-    amount_raised: number,
-    first_name: string,
-    last_name: string,
-    comments: string
-    transaction_id: string
-};*/
-
 const pageData = ref<Page>({
     cuid: "",
     familyCuid: "",
@@ -36,7 +28,7 @@ const pageData = ref<Page>({
     deadline: new Date(),
     donation_goal: 0,
     amount_raised: 0,
-   
+    amount_distributed: 0
 });
 
 type donor = {
@@ -61,21 +53,17 @@ const donationData = ref<PageDonation>({
     transaction_id : ""
 });
 
-var donated_percentage = ref(0);
-var family_cuid = ref("0")
+const donated_percentage = ref(0);
+const donated_percentage_100 = ref(0)
+const family_cuid = ref("0")
 const router = await useRoute();
-//const cuid = computed(() => parseInt(router.params.id as string || "0"));
-//const cv_data = computed(() => JSON.parse(cvuser.value || "{}"));
-//const page_data_cookie = useCookie('cv');
 var id = computed(() =>  '');
-//const page_data = computed(() => JSON.parse(page_data_cookie.value || "{}"));
 const cvuser = useCookie<Page>('cvuser')
 const stripeLink_ref = ref("")
-//const family_cuid_data = computed(() => cvuser2.value?.cuid)
-//const family_cuid = family_cuid_data.value as string;
 
-/* Right now this creates a stripe session and redirects the user to stripe.
-*  Then it redirects to /PageDonation/cuid/transaction_id
+
+/* This creates a stripe session and redirects the user to stripe.
+*  Then it redirects to /PageDonation/pagecuid/transactionId
 */
 const create_checkup_session = async () => {
     const { data : sessionInfo } = await useFetch('/api/create_session', {
@@ -84,12 +72,6 @@ const create_checkup_session = async () => {
     });
     stripeLink_ref.value = sessionInfo.value as string
     await navigateTo(stripeLink_ref.value as string,  { external: true } )
-    //if(sessionInfo.value !== undefined){
-        
-        /*await useFetch('/api/complete_session', {
-        method: 'GET',
-    });*/
-   //}
 };
 
 // Method to populate the page with data based on the cuid in the url
@@ -99,24 +81,26 @@ const getDataPage = async( id: string ) => {
     query: { cuid: id }
 })
 
-pageData.value = pageDataDB.value as unknown as Page;
-donated_percentage.value = Math.trunc((((pageData.value.amount_raised as number) / (pageData.value.donation_goal as number )) * 100) * 100)/100;
-family_cuid.value = pageData.value.familyCuid as string;
-console.log(pageData);
-console.log(family_cuid.value as string)
+if(pageDataDB.value !== false){
+    pageData.value = pageDataDB.value as unknown as Page;
+    donated_percentage.value = Math.trunc((((pageData.value.amount_raised as number) / (pageData.value.donation_goal as number )) * 100) * 100)/100;
+    donated_percentage_100.value = donated_percentage.value*100
+    family_cuid.value = pageData.value.familyCuid as string;
+    console.log(pageData);
+    console.log(family_cuid.value as string)
+    donated_percentage.value = 60.60 as number
+    console.log(donated_percentage.value as number)
 }
 
-onMounted(async() => { 
-    //setTimeout(() => { bellow code attempting to load the id before the DOM }, 1)
-    /*
-    update the progress bar based on donation amount !!!!!
-    */
-    //const progress=document.querySelector('.progress') || "{}" ;
-    //progress.style.width=progress?.getAttribute('donated-amount') + "%";
-    //progress.style.opacity=1;
-    id = computed(() =>  router.params.id) as ComputedRef<string>;
-    await getDataPage(id.value as string)
-    })
+}
+
+onMounted(() => { 
+    const progress=(document.querySelector('.progress') || document.createElement("null")) as HTMLElement ;
+    progress.style.width=progress?.getAttribute('donated-amount')+ "%";
+    progress.style.opacity="1";
+})
+id = computed(() =>  router.params.id) as ComputedRef<string>;
+await getDataPage(id.value as string)
 
 const images = ["../blue_image.png", "../profile.png", "../media2.png", "../media3.png", "../media4.png", "../media2.png"]
 const pageImages = ["../location_icon.png", "../clock_icon.png"]
@@ -137,7 +121,6 @@ img.bg-orange-400.-mt-16.mx-auto(class="w-[122px] h-[122px] rounded-[8px]" :src=
 .row.p-3
 LinkButton(:to="`/PageList/${family_cuid}`") Back
 .div(style="background: #F8F8F8;")
-    .div.px-8.py-4(style="color: #6E6E6E; font-weight: 500; font-size: 14px; line-height: 28px; letter-spacing: -0.078px; word-break: break-word;" id="obituary") {{ pageData.obituary }}
     .div.p-4(id="services")
         .div(v-if="pageData.visitation_date")
             .px-5.py-4.text-gray-dark.font-poppins.text-2xl.text-left.font-bold(style="line-height: 36px; text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") Visitation
@@ -160,16 +143,18 @@ LinkButton(:to="`/PageList/${family_cuid}`") Back
             .container.m-4.place-content-center.font-poppins(class="w-5/6 sm:m-auto sm:py-3")
                 .text-md.text-center.ml-4.my-3(class="sm:text-xl sm:my-6" style="letter-spacing: 0.35px; font-weight: 600; color: #646464;") {{ donationFormat(pageData.amount_raised)  + " raised of " +  donationFormat(pageData.donation_goal) + " goal" }}
                 .progress-bar.overflow-hidden.ml-4.h-5.rounded-full(style="30px; background-color:#b5b5b5;")
-                    .progress.rounded-full.text-white.flex.items-center.justify-center(donated-amount=donated_percentage style="background: linear-gradient(90deg, rgba(15,200,0,1) 35%, rgba(203,255,0,1) 100%); box-shadow: 0 3px 3px -5px #1ba710, 0 2px 5px #1ba710; height: 100%; opacity: 1; width: 30%;") {{ donated_percentage  + "%" }}
+                    .progress.rounded-full.text-white.flex.items-center.justify-center(donated-amount=donated_percentage style="background: linear-gradient(90deg, rgba(15,200,0,1) 100%, rgba(203,255,0,1) 35%); box-shadow: 0 3px 3px -5px #1ba710, 0 2px 5px #1ba710; height: 100%; opacity: 1; width: 30%;") {{ donated_percentage  + "%" }}
+                .py-4
+                .progress-bar.overflow-hidden.ml-4.h-5.rounded-full(style="30px ; background-color:#b5b5b5;")
+                    progress.rounded-full.text-white.flex.items-center.justify-center(max="100" :value ="`${donated_percentage}`") {{ donated_percentage  + "%" }}
                 .well.well-sm
                     h1.ml-4.pt-9.text-2xl.text-gray-dark(class="sm:text-3xl" style="font-weight: 600; letter-spacing: 0.35px;") Donor Information
-                        .bar(style="border-top: 0.5px solid #646464;")
                 br
                 .form-horizontal()
                     .col-md-8.ml-4.pt-1.pr-5(class="sm:mx-4 sm:w-full sm:py-2")
-                        input#first_name.rounded-md.outline-0.border-box.w-full.p-2(style="border: 1px solid #c4c4c4;" name='first_name' type='text' v-model="donorInfo.first_name" placeholder='First Name' required)
+                        Input(name='first_name' type='text' v-model="donorInfo.first_name" placeholder='First Name' required)
                     .col-md-8.ml-4.pt-1.pr-5(class="sm:mx-4 sm:w-full sm:py-2")
-                        input#last_name.rounded-md.outline-0.border-box.w-full.p-2(style="border: 1px solid #c4c4c4;" name='last_name' type='text' v-model="donorInfo.last_name" placeholder='Last Name' required)
+                        Input(name='last_name' type='text' v-model="donorInfo.last_name" placeholder='Last Name' required)
                     .col-md-8.ml-4.pt-4.pr-5.flex
                         input#anonymous(type='checkbox' class="sm:ml-1" name='anonymous' value='Bike')
                         label.mt-4.ml-4.text-md(for='anonymous' class="sm:mt-0" style="letter-spacing: 0.35px;")  Make this an anonymous donation
@@ -181,7 +166,8 @@ LinkButton(:to="`/PageList/${family_cuid}`") Back
                             span.bg-gray-light.py-2.px-1.text-lg(style="text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25); border: 1px solid #c4c4c4; border-right:none;") $
                             input#donation_amount.bg-gray-light.outline-0.rounded-r-md.border-box.w-full.p-2(style="border: 1px solid #c4c4c4; border-left:none;" name='donation_amount' type="number" min="0.00" step="0.01" v-model="donationData.amount" required)
                     .col-md-8.ml-4.pt-6.pr-5.flex.items-center.justify-center
-                        button#submit.mx-auto.p-3.px-6.pt-2.bg-orange-400.text-md(style="color: white; font-weight: 700; border-radius: 32px;" name='submit' @click="create_checkup_session") DONATE NOW
+                        ActionButton.mx-auto.text-md(name='submit' @click="create_checkup_session") DONATE NOW
+    .div.px-8.py-4(style="color: #6E6E6E; font-weight: 500; font-size: 14px; line-height: 28px; letter-spacing: -0.078px; word-break: break-word;" id="obituary") {{ pageData.obituary }}
     .div.p-4(id="media")
         .row.gallery.flex.flex-wrap.gap-1.items-center.justify-center(class="basis-1/2 sm:basis-1/4 sm:gap-3 sm:m-8")
             .div(style='position: relative ;width:25%; height:auto;' v-for="(image,i) in images" :key="i") 

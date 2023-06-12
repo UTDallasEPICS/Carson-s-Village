@@ -12,16 +12,11 @@ import { RoutingRuleFilterSensitiveLog } from '@aws-sdk/client-s3'
 *		Located under "/PageList/"
 */
 
-var family_cuid = ""
-onMounted(async() =>{
-  const router = useRoute()
-  const family_cuid_data = computed(() => router.params.id)
-  family_cuid = family_cuid_data.value as string;
-  console.log(family_cuid)
-  
-  await getDataPageList()
-})
-
+const family_cuid = ref("")
+const router = useRoute()
+const family_cuid_data = computed(() => router.params.id)
+family_cuid.value = family_cuid_data.value as string;
+console.log(family_cuid)
 const pages = ref<Page[]>([])
 const cvuser = useCookie<User>('cvuser')
 const isAdmin = computed(() => cvuser.value?.user_role == "advocate")
@@ -46,9 +41,7 @@ const getDataPageList = async () => {
   pages.value = pagesData.value as unknown as Page[]
 }
 
-/*onMounted(async() => {
-  
-})*/
+await getDataPageList()
 </script>
 
 <template lang ="pug">

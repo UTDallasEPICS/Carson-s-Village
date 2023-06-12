@@ -11,7 +11,7 @@ export default defineEventHandler(async event => {
 		const { cuid } = getQuery(event);
 
 		if( (cuid as string) == "0" || cuid == undefined){
-			return []
+			return false
 		  }
 		const queryRes = await prisma.page.findFirst({
        	where: {

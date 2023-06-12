@@ -22,17 +22,19 @@ const isAdmin = computed(() => cvuser.value?.user_role == "advocate")
   .text-white.w-full.m-0.text-3xl.font-poppins.font-bold.text-center.drop-shadow-sm.p-10(v-if="isAdmin" class="sm:text-5xl" style="text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25); --tw-bg-opacity: 1; background-color: rgb(110 171 191 / var(--tw-bg-opacity));") Admin Profile
   .text-white.w-full.m-0.text-3xl.font-poppins.font-bold.text-center.drop-shadow-sm.p-10(v-else class="sm:text-5xl" style="text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25); --tw-bg-opacity: 1; background-color: rgb(110 171 191 / var(--tw-bg-opacity));") Family Profile
   .flex.flex-col.justify-start.gap-6(class="sm:grid sm:gap-10 sm:grid-rows-3 sm:grid-cols-2 sm:my-16")
-    .text-gray-dark.font-poppins.font-bold.pt-4.text-xl.ml-8(class="sm:mx-auto sm:text-3xl") Name:
-    .text-gray-dark.font-poppins.font-bold.text-xl.ml-8(class="sm:text-3xl") {{ cvuser?.first_name }} {{ cvuser?.last_name }}
-    .text-gray-dark.font-poppins.font-bold.text-xl.ml-8(class="sm:mx-auto sm:text-3xl")   Email:
-    .text-gray-dark.font-poppins.font-bold.text-xl.ml-8(class="sm:text-3xl") {{ cvuser?.email}}
-    .text-gray-dark.font-poppins.font-bold.text-xl.ml-8(class="sm:mx-auto sm:text-3xl")   Phone:
-    .text-gray-dark.font-poppins.font-bold.text-xl.ml-8(class="sm:text-3xl") {{ cvuser?.phone}}
+    TextGrayField(class="sm:mx-auto") Name:
+    TextGrayField {{ cvuser?.first_name }} {{ cvuser?.last_name }}
+    //.text-gray-dark.font-poppins.font-bold.text-xl.ml-8(class="sm:text-3xl") {{ cvuser?.first_name }} {{ cvuser?.last_name }}
+    TextGrayField(class="sm:mx-auto") Email:
+    TextGrayField {{ cvuser?.email}}
+    TextGrayField(class="sm:mx-auto") Phone:
+    TextGrayField {{ cvuser?.phone}}
   .buttons.flex.flex-wrap.gap-3(class=" sm:gap-10 space-between  sm:my-24" )
     LinkButton(:to="`/PageList/${cuid}`") List of client pages
     LinkButton(to='/EditPage/0') Insert new page
     LinkButton(v-if="isAdmin" to='/Users') See all users
     LinkButton(v-if="isAdmin" to='/EditUser/0') Invite user
+    LinkButton(v-if="isAdmin" to='/FamilyTransactionList') See Family Donations
 </template>
 
 <style scoped></style>

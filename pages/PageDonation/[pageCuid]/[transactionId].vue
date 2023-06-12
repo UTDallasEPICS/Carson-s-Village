@@ -71,10 +71,7 @@ const complete_session = async () => {
     await navigateTo('/page/'+ cuid)
 };
 
-onMounted(() => { 
-                complete_session()    
-                } )
-
+complete_session()    
 </script>
 
 <template lang="pug">

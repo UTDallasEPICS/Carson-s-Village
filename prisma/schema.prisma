@@ -16,10 +16,22 @@ model User {
   last_name   String @default("")
   phone       String @default("")
 
-  Pages         Page[]
-  PageDonations PageDonation[]
+  Pages           Page[]
+  PageDonations   PageDonation[]
+  DonationPayouts DonationPayout[] 
 
   @@map("user_accounts")
+}
+
+model DonationPayout {
+  cuid                   String  @id @default(cuid())
+  familyCuid             String  @map("family_cuid")
+  pageCuid               String  @map("page_cuid")
+  transaction_id         String  @unique
+  amount                 Int     @default(0)
+  distributionDate       String
+  Page                   Page    @relation(fields: [pageCuid], references: cuid)
+  User                   User    @relation(fields: [familyCuid], references: cuid)
 }
 
 model Page {
@@ -35,15 +47,16 @@ model Page {
   funeral_location    String
   funeral_description String
 
-  obituary      String
-  images        String[] // TODO: deprecate
-  donation_goal Int      @default(0)
-  amount_raised Int      @default(0)
-  deadline      String
-  familyCuid    String         @map("family_cuid")
-  PageDonations PageDonation[]
-  User          User           @relation(fields: [familyCuid], references: cuid)
-  Images        Image[]
+  obituary        String
+  images          String[] // TODO: deprecate
+  donation_goal   Int      @default(0)
+  amount_raised   Int      @default(0)
+  deadline        String
+  familyCuid      String         @map("family_cuid")
+  PageDonations   PageDonation[]
+  DonationPayouts DonationPayout[]
+  User            User           @relation(fields: [familyCuid], references: cuid)
+  Images          Image[]
   amount_distributed Int      @default(0)
   //profileImageCuid String      @map("profile_image_cuid")
   //ProfileImage  Image?         @relation(fields: [profileImageCuid], references: cuid)

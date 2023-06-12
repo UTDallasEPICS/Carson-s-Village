@@ -20,27 +20,27 @@ const phone = '(user defined, optional)'
 import type { User } from '@/types.d.ts'
 
 const data_user = ref<User>({
-    cuid : "",
+    cuid: "",
     first_name: "",
     last_name: "",
     email: "",
     middle_name: "",
-    user_role : "{}",
+    user_role: "{}",
     phone: ""
 })
 
 const cvuser = useCookie('cvuser');
-const cvData = computed (() => JSON.parse(cvuser.value || "{}"))
+const cvData = computed(() => JSON.parse(cvuser.value || "{}"))
 const router = await useRoute()
 const cuid = computed(() => router.params.id as string);
 
 // Method that creates a new user on the database on the backend
 const save = async () => {
-    await useFetch('/api/user',{
-    method: (cuid.value as string) !== "0" ? 'PUT' : 'POST',
-    body: ({...data_user.value, cuid: cuid.value as string})
-})
-    
+    await useFetch('/api/user', {
+        method: (cuid.value as string) !== "0" ? 'PUT' : 'POST',
+        body: ({ ...data_user.value, cuid: cuid.value as string })
+    })
+
 }
 
 // Method to populate the form when editing a pre-existing user
@@ -52,8 +52,8 @@ const getData = async (cuid: string) => {
     data_user.value = userData.value as unknown as User;
 }
 
-if((cuid.value as string) !== "0")
-        await getData(cuid.value as string);
+if ((cuid.value as string) !== "0")
+    await getData(cuid.value as string);
 /*onMounted(async() => {
     if((cuid.value as string) !== "0")
         await getData();
@@ -65,38 +65,38 @@ if((cuid.value as string) !== "0")
 LinkButton(to='/') Back
 .container.overflow-hidden.mt-4.mx-auto.place-content-center.font-sans.well.well-sm(class="w-5/6 sm:max-w-xl sm:p-6" style="box-shadow: 0px 3px 6px 3px rgba(0, 0, 0, 0.15), 0px 3px 3px rgba(0, 0, 0, 0.3); border-radius: 60px;")
     .well.well-sm
-        h1.text-center.pt-9.text-xl(class="sm:text-3xl" style="text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25); font-weight: 700;") User Account Entry 
+        TitleComp User Account Entry 
         br
         .bar.mx-9(style="border-top: 0.5px solid #646464;")
         br
-        .py-4.grid(class="sm:grid-cols-3")
-            label.ml-10.pt-1(style="text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") Email
-            .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
+        .py-4.grid(class="sm:grid-cols-2")
+            Label Email
+            .col-md-8.mx-9(class="sm:col-span-2a sm:mr-11")
                 input.rounded-md.outline-0.border-box.w-full.p-2(style="border: 1px solid #c4c4c4;" v-model='data_user.email' :placeholder="email")
-        .py-4.grid(class="sm:grid-cols-3")
-            label.ml-10.pt-1(style="text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") User Role
-            .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
+        .py-4.grid(class="sm:grid-cols-2")
+            Label User Role
+            .col-md-8.mx-9(class="sm:col-span-2a sm:mr-11")
                 select.rounded-md.outline-0.border-box.w-full.p-2.bg-white(style="border: 1px solid #c4c4c4;" v-model='data_user.user_role') Select User Role
                     option family
                     option advocate
-        .py-4.grid(class="sm:grid-cols-3")
-            label.ml-10.pt-1(style="text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") First Name
-            .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
-                input.rounded-md.outline-0.border-box.w-full.p-2(style="border: 1px solid #c4c4c4;" v-model='data_user.first_name' :placeholder="first_name")
-        .py-4.grid(class="sm:grid-cols-3")
-            label.ml-10.pt-1(style="text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") Middle Name
-            .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
-                input.rounded-md.outline-0.border-box.w-full.p-2(style="border: 1px solid #c4c4c4;" v-model='data_user.middle_name' :placeholder="middle_name")
-        .py-4.grid(class="sm:grid-cols-3")
-            label.ml-10.pt-1(style="text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") Last Name
-            .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
-                input.rounded-md.outline-0.border-box.w-full.p-2(style="border: 1px solid #c4c4c4;" v-model='data_user.last_name' :placeholder="last_name" )
-        .py-4.grid(class="sm:grid-cols-3")
-            label.ml-10.pt-1(style="text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") Phone
-            .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
-                input.rounded-md.outline-0.border-box.w-full.p-2(style="border: 1px solid #c4c4c4;" v-model='data_user.phone' :placeholder="phone")
+        .py-4.grid(class="sm:grid-cols-2")
+            Label First Name
+            .col-md-8.mx-9(class="sm:col-span-2a sm:mr-11")
+                Input(v-model='data_user.first_name' :placeholder="first_name")
+        .py-4.grid(class="sm:grid-cols-2")
+            Label Middle Name
+            .col-md-8.mx-9(class="sm:col-span-2a sm:mr-11")
+                Input(v-model='data_user.middle_name' :placeholder="middle_name")
+        .py-4.grid(class="sm:grid-cols-2")
+            Label Last Name
+            .col-md-8.mx-9(class="sm:col-span-2a sm:mr-11")
+                Input(v-model='data_user.last_name' :placeholder="last_name" )
+        .py-4.grid(class="sm:grid-cols-2")
+            Label Phone
+            .col-md-8.mx-9(class="sm:col-span-2a sm:mr-11")
+                Input(v-model='data_user.phone' :placeholder="phone")
             .col-md-10.py-2
-                button.p-3.px-6.pt-2.bg-orange-400(@click="save" style="color: white; font-weight: 700; border-radius: 100px;") Save    
+                ActionButton(@click="save") Save    
 </template>
 
 <style scoped></style>

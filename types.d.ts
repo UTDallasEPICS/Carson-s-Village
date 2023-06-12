@@ -3,7 +3,7 @@ export type Page = {
     page_name: string,
     cuid: string,
     familyCuid: string,
-    day_of_birth: Date,
+    day_of_birth: Date | string,
     day_of_passing: Date,
     visitation_date: Date,
     visitation_location: string,
@@ -15,6 +15,7 @@ export type Page = {
     deadline: Date,
     donation_goal: number | string
     amount_raised: number | string
+    amount_distributed: number | string
   }
   
 export type User = {

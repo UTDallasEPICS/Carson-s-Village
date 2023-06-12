@@ -9,8 +9,12 @@ const prisma = new PrismaClient()
 
 export default defineEventHandler(async event => {
   const { searchQuery } = await getQuery(event);
+  if((searchQuery as string) ==""){
+    return await prisma.page.findMany({
+    })
+  }
   
-  const pagesResult = prisma.page.findMany({
+  const pagesResult = await prisma.page.findMany({
   where: {
   page_name: {
     contains: searchQuery as string,

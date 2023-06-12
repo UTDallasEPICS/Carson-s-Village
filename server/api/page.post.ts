@@ -13,8 +13,8 @@ export default defineEventHandler(async event => {
   const body = await readBody(event)
   const familyCuid = body.familyCuid;
   delete body.familyCuid;
-  body.donation_goal = body.donation_goal * 100;
-  body.amount_raised = body.amount_raised * 100;
+  body.donation_goal = Math.trunc(body.donation_goal * 100);
+  body.amount_raised = Math.trunc(body.amount_raised * 100);
 
   try{
   // Creates a new entry in the database in the page model to a specfic user
