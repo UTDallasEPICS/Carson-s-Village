@@ -3,20 +3,13 @@
 *   Ofek Shaltiel
 *	ECS 3200
 *	Carson's Village: Automated Family Page
-*	EditPage.vue 
+*	Users.vue 
 *	Lists all the users in the website
-*	Located under "/Users/"
+*	Located under "/Users"
 */
 
-type User = {
-    cuid: string
-    first_name: string,
-    last_name: string,
-    user_role: Object,
-    email: string,
-    middle_name: string,
-    phone: string,
-}
+import type { User } from "@/types.d.ts"
+
 const users = ref<User[]>([])
 
 const cvuser = useCookie<User>('cvuser')
@@ -49,7 +42,7 @@ if( (isAdmin.value as boolean) == true )
             tr(v-for="(item, i) in users" 
                 :key="i" 
             )
-                td.font-poppins.text-gray-dark.font-bold(style="text-align: center") {{ item.first_name + "" + item.last_name }}
+                td.font-poppins.text-gray-dark.font-bold(style="text-align: center") {{ item.first_name + " " + item.last_name }}
                 td.font-poppins.text-gray-dark.font-bold(style="text-align: center")  {{ item.cuid }}
                 td
                 NuxtLink.text-white.font-poppins.font-bold.bg-blue-300.rounded-full(class="sm:mx-auto sm:my-2 sm:w-fit" style="--tw-bg-opacity: 1; background-color: rgb(110 171 191 / var(--tw-bg-opacity));white-space: nowrap; display: flex; flex-direction: row; padding: 14px 24px; gap: 10px;" :to="`/pageList/${item.cuid}`") View

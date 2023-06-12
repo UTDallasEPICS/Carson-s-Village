@@ -57,7 +57,7 @@ try{
     });
   return queryRes.cuid;
   } catch(e){
-    console.log(e);
+    console.error(e);
   }
 
   return true;

@@ -17,20 +17,7 @@ const email = '(user defined)'
 const middle_name = '(user defined, optional)'
 const phone = '(user defined, optional)'
 
-enum role {
-    family,
-    admin
-}
-
-type User = {
-    cuid : string
-    first_name: string,
-    last_name: string,
-    user_role : Object,
-    email: string,
-    middle_name: string,
-    phone: string,
-}
+import type { User } from '@/types.d.ts'
 
 var data_user = ref<User>({
     cuid : "",
@@ -44,7 +31,7 @@ var data_user = ref<User>({
 
 const cvuser = useCookie('cvuser');
 const cvData = computed (() => JSON.parse(cvuser.value || "{}"))
-const router = useRoute()
+const router = await useRoute()
 const cuid = computed(() => router.params.id as string);
 
 // Method that creates a new user on the database on the backend
@@ -65,9 +52,9 @@ const getData = async () => {
     data_user.value = userData.value as unknown as User;
 }
 
-onMounted(() => {
+onMounted(async() => {
     if((cuid.value as string) !== "0")
-        getData();
+        await getData();
 })
 </script>
 

@@ -2,7 +2,7 @@ import { PrismaClient } from "@prisma/client"
 const prisma = new PrismaClient()
 
 /*
-*	/api/image/cuid
+*	/EditPage/cuid (image upload)
 *	file:		/Pages/EditPage.vue
 *	function:	Delete
 *	Deletes family page image from the database.
@@ -30,7 +30,7 @@ export default defineEventHandler(async event => {
 
     return true;
 }catch(e){
-    console.error();
+    console.error(e);
 }
 })
 

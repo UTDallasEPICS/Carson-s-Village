@@ -19,7 +19,10 @@ import {
     ListboxOption,
 } from '@headlessui/vue'
 
-type Page = {
+import type { Page, User } from '@/types.d.ts'
+import { donationFormat} from '@/utils'
+
+/*type Page = {
     page_name: string,
     cuid: string,
     day_of_birth: Date,
@@ -31,14 +34,14 @@ type Page = {
     funeral_description: string,
     funeral_location: string,
     obituary: string,
-    timezone: string,
     deadline: Date,
     donation_goal: number,
     amount_raised: number,
 }
-
+*/
 var data = ref<Page>({
     cuid: "",
+    familyCuid: "",
     page_name: "",
     day_of_birth: new Date(),
     day_of_passing: new Date(),
@@ -49,13 +52,12 @@ var data = ref<Page>({
     funeral_description: "",
     funeral_location: "",
     obituary: "",
-    timezone: "",
     deadline: new Date(),
     donation_goal: 0,
     amount_raised: 0
 })
 
-type User = {
+/*type User = {
     cuid: string
     first_name: string,
     last_name: string,
@@ -63,21 +65,24 @@ type User = {
     email: string,
     middle_name: string,
     phone: string,
-}
+}*/
 
 const router = useRoute()
 const cvuser = useCookie<User>('cvuser');
-const cuid = computed(() => router.params.id as string);
-const cuidString = cuid.value as string
+const cuid_data = computed(() => router.params.id as string);
+const cuid = cuid_data.value as string
 const image_cuid = "";
 const family_cuid_data = computed(() => cvuser.value?.cuid)
 const family_cuid = family_cuid_data.value as string
+data.value.cuid = cuid;
+data.value.familyCuid = family_cuid;
 // Method that saves form data to the database for a page that has cuid: router.params.id
 const save = async (page_name: string, day_of_birth: string, day_of_passing: string, visitation_date: Date, visitation_location: string, visitation_description: string, obituary: string, deadline: Date, donation_goal: Number) => {
     await useFetch('/api/page', {
         // Checks if there is a pre-existing page to edit or if to create a new page    
         method: router.params.id !== "0" ? 'PUT' : 'POST',
-        body: ({ ...data.value, family_cuid: family_cuid_data, cuid: router.params.id as string })
+        //body: ({ ...data.value, family_cuid: family_cuid_data, cuid: router.params.id as string })
+        body: ({ ...data.value})
     }
     )
 };
@@ -86,14 +91,17 @@ const save = async (page_name: string, day_of_birth: string, day_of_passing: str
 const getData = async () => {
     const { data: pageData } = await useFetch('/api/page', {
         method: 'GET',
-        query: { cuid: cuid.value }
+        query: { cuid: cuid }
     })
     data.value = pageData.value as unknown as Page;
+    data.value.amount_raised = data.value.amount_raised / 100.0;
+    data.value.donation_goal = data.value.donation_goal / 100.0;
 }
 
-if (cuid.value as string !== "0")
+onMounted(async() => {
+if (cuid !== "0")
   await getData();
-
+})
 // Method to remove a single image
 const removeImage = async (theImage: string) => {
     await useFetch('/api/image', {
@@ -103,6 +111,16 @@ const removeImage = async (theImage: string) => {
     )
 }
 
+// Method to set an uploaded image as the profile image of a page
+const setProfileImage = async (theImage: string) => {
+    await useFetch('/api/image', {
+        method: 'POST',
+        body: ({ url: theImage })
+    }
+    )
+}
+
+
 // Placeholder values to annotate the form
 var page_name_place_holder = 'required'
 var visitation_location_place_holder = 'required'
@@ -111,7 +129,7 @@ var funeral_location_place_holder = 'required'
 var funeral_description_place_holder = 'required'
 var obituary_place_holder = 'required'
 var donation_goal_place_holder = 'required'
-var idExist = cuid.value != "0";
+var idExist = cuid != "0";
 
 const images = ["../blue_image.png", "../profile.png", "../profile.png", "../media2.png", "../media2.png", "../media2.png", "../media3.png", "../media4.png", "../media2.png", "https://images-dev.carsonsvillage.org/3302bbef4ae68777a7d18c0e6914b25e"]
 const selectedImage = [images[1]];
@@ -171,10 +189,10 @@ NuxtLink.p-3.px-6.pt-2.text-white.bg-orange-500.font-sans(:to="`/PageList/${fami
                 ImageUpload()
         .information.bg-gray-300.rounded-md.mx-9.my-2.text-center(class="sm:text-start")
             legend.ml-2(class="sm:py-1" style="font-weight: 700; text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") Image Selection        
-        //Listbox(v-model="data.profile_image")
-            ListboxButton() {{ data.profile_image.cuid }}
+        Listbox(v-model="data.profile_image" @change="selectProfileImage")
+            ListboxButton() {{ data.profile_image }}
                 ListboxOptions
-                    ListboxOption(v-for="image in images" :key="image.cuid" :value="image" ) {{ image.cuid }}                       
+                    ListboxOption(v-for="(image,k) in images" :key="k" :value="image" ) {{ image }}                                            
         .py-4.grid(class="sm:grid-cols-3")
             label.ml-10.pt-1(class="sm:ml-11" style="text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") Day of birth (YYYY-MM-DD)  
             .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
@@ -237,7 +255,5 @@ NuxtLink.p-3.px-6.pt-2.text-white.bg-orange-500.font-sans(:to="`/PageList/${fami
                 NuxtLink.p-3.px-6.pt-2.bg-orange-500(v-if="idExist" to='#' style="color: white; font-weight: 700; border-radius: 32px;") Delete Page <!-- v-if id!=null-->      
                 .row.gallery.flex.flex-wrap.gap-1.items-center.justify-center(class="basis-1/2 sm:basis-1/4 sm:gap-3 sm:m-8")
 </template>
-
-
 
 <style scoped></style>

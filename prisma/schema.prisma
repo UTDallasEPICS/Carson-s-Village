@@ -37,14 +37,15 @@ model Page {
 
   obituary      String
   images        String[] // TODO: deprecate
-  timezone      String
-  donation_goal Decimal        @default(0)
-  amount_raised Decimal        @default(0)
+  donation_goal Int      @default(0)
+  amount_raised Int      @default(0)
   deadline      String
   familyCuid    String         @map("family_cuid")
   PageDonations PageDonation[]
   User          User           @relation(fields: [familyCuid], references: cuid)
   Images        Image[]
+  //profileImageCuid String      @map("profile_image_cuid")
+  //ProfileImage  Image?         @relation(fields: [profileImageCuid], references: cuid)
 
   @@map("pages")
 }
@@ -55,7 +56,7 @@ model PageDonation {
   pageCuid       String  @map("page_cuid")
   success        Boolean @default(false)
   transaction_id String  @unique
-  amount         Decimal
+  amount         Int     //In cents
   Page           Page    @relation(fields: [pageCuid], references: cuid)
   User           User    @relation(fields: [familyCuid], references: cuid)
 

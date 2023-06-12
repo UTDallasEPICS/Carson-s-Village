@@ -6,7 +6,7 @@ import { PrismaClient } from "@prisma/client"
 const prisma = new PrismaClient()
 
 /*
-*	/api/image/cuid
+*	/EditPage/cuid (image replace)
 *	file:		/Pages/EditPage.vue
 *	function:	PUT
 *	Replace family page image from the database.
