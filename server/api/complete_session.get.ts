@@ -1,5 +1,5 @@
 import { PrismaClient } from "@prisma/client"
-import {nanoid} from "nanoid"
+import { nanoid } from "nanoid"
 const prisma = new PrismaClient()
 import Stripe from "stripe"
 
@@ -14,39 +14,10 @@ const stripeSecretKey = process.env.STRIPE_SECRET;
 */
 
 export default defineEventHandler(async event => {
-  const stripe = new Stripe(stripeSecretKey as string,{ apiVersion:"2022-11-15"})
+  const stripe = new Stripe(stripeSecretKey as string, { apiVersion:"2022-11-15"} )
   //const stripe = await loadStripe(process.env.STRIPE_PUBLIC ? process.env.STRIPE_PUBLIC : '');
     const query = await getQuery(event)
-    
-    /*try{  
-
-    const transaction = await prisma.pageDonation.findFirst({
-        where: { transaction_id: query.transaction_id as string},
-        include: {
-          Page: {
-            select: {
-              page_name: true
-            }
-          }
-        }
-      })
-      // update success flag in transaction
-      await prisma.$transaction([
-        prisma.pageDonation.update({
-          where: { transaction_id: query.transaction_id as string },
-          data: {success: true}
-        }),
-        prisma.page.update({
-          where: {
-            cuid: transaction?.pageCuid
-          },
-          data: {amount_raised: {increment: transaction?.amount}}
-        }),
-      ])
   
-    } catch (e) {
-      console.error(e)
-    }*/
     try{
       // get amount donated from transaction
       const transaction = await prisma.pageDonation.findFirst({
@@ -63,7 +34,7 @@ export default defineEventHandler(async event => {
       await prisma.$transaction([
         prisma.pageDonation.update({
           where: { transaction_id: query.transaction_id as string},
-          data: {success: true}
+          data: { success: true }
         }),
         prisma.page.update({
           where: {
@@ -72,9 +43,12 @@ export default defineEventHandler(async event => {
           data: {amount_raised: {increment: transaction?.amount}}
         }),
       ])
-      const pageLink = process.env.BASEURL+"/Page/"+transaction?.pageCuid;
-      console.log(pageLink);
-      await sendRedirect(event, pageLink)
+      const pageLink = "/page/"+transaction?.pageCuid;
+      return true;
+      //console.log(pageLink);
+      //const pageLinker = () => `${process.env.BASEURL}/page/${transaction?.pageCuid}`
+      //return pageLink;
+      //await sendRedirect(event, pageLinker() || "")
     } catch (e) {
       console.error(e)
 

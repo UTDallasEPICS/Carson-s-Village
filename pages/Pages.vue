@@ -23,11 +23,6 @@ const pageSearch = async() => {
     })
     pages.value = pageData.value as unknown as Page[]
 }
-
-/*const dateFormat = function (date: string){
-  var dateObj = new Date(date);
-  return dateObj.toString();
-}*/
 </script>
 
 <template lang="pug">

@@ -9,16 +9,16 @@
 *	Located under "/Page/"
 */
 
-import type { Page } from '@/types.d.ts'
+import type { Page, PageDonation } from '@/types.d.ts'
 import {  dateFormat, donationFormat } from '@/utils'
 
-type Donation = {
+/*(type Donation = {
     amount_raised: number,
     first_name: string,
     last_name: string,
     comments: string
     transaction_id: string
-};
+};*/
 
 const pageData = ref<Page>({
     cuid: "",
@@ -39,24 +39,38 @@ const pageData = ref<Page>({
    
 });
 
-const donationData = ref<Donation>({
-    amount_raised: 0,
+type donor = {
+    first_name: string,
+    last_name: string,
+    isAnonnomous: boolean,
+    comments: string 
+}
+const donorInfo = ref<donor>({
     first_name: "",
     last_name: "",
+    isAnonnomous: false,
     comments: "",
+})
+
+const donationData = ref<PageDonation>({
+    amount: 0,
+    success: false,
+    cuid: "",
+    pageCuid: "",
+    familyCuid: "",
     transaction_id : ""
 });
 
 var donated_percentage = ref(0);
 var family_cuid = ref("0")
-const router = await useRoute(); 
-const cvuser = useCookie('cvuser');
+const router = await useRoute();
 //const cuid = computed(() => parseInt(router.params.id as string || "0"));
-const cv_data = computed(() => JSON.parse(cvuser.value || "{}"));
+//const cv_data = computed(() => JSON.parse(cvuser.value || "{}"));
 //const page_data_cookie = useCookie('cv');
 var id = computed(() =>  '');
 //const page_data = computed(() => JSON.parse(page_data_cookie.value || "{}"));
-const cvuser2 = useCookie<Page>('cvuser')
+const cvuser = useCookie<Page>('cvuser')
+const stripeLink_ref = ref("")
 //const family_cuid_data = computed(() => cvuser2.value?.cuid)
 //const family_cuid = family_cuid_data.value as string;
 
@@ -66,15 +80,16 @@ const cvuser2 = useCookie<Page>('cvuser')
 const create_checkup_session = async () => {
     const { data : sessionInfo } = await useFetch('/api/create_session', {
         method: 'POST',
-        body: {...donationData.value, cuid: id.value, family_cuid: pageData.value.familyCuid, amount_raised: parseFloat(donationData.value.amount_raised as unknown as string) * 100}
+        body: {...donationData.value, cuid: id.value, family_cuid: pageData.value.familyCuid, amount_raised: Math.trunc(parseFloat(donationData.value.amount as unknown as string) * 100) as number}
     });
-    
-    if(sessionInfo.value !== null){
-        console.log("we execute through here!")
+    stripeLink_ref.value = sessionInfo.value as string
+    await navigateTo(stripeLink_ref.value as string,  { external: true } )
+    //if(sessionInfo.value !== undefined){
+        
         /*await useFetch('/api/complete_session', {
         method: 'GET',
     });*/
-    }
+   //}
 };
 
 // Method to populate the page with data based on the cuid in the url
@@ -85,7 +100,7 @@ const getDataPage = async( id: string ) => {
 })
 
 pageData.value = pageDataDB.value as unknown as Page;
-donated_percentage.value = Math.trunc(((pageData.value.amount_raised / pageData.value.donation_goal ) * 100) * 100)/100;
+donated_percentage.value = Math.trunc((((pageData.value.amount_raised as number) / (pageData.value.donation_goal as number )) * 100) * 100)/100;
 family_cuid.value = pageData.value.familyCuid as string;
 console.log(pageData);
 console.log(family_cuid.value as string)
@@ -120,7 +135,7 @@ img.bg-orange-400.-mt-16.mx-auto(class="w-[122px] h-[122px] rounded-[8px]" :src=
 .text-gray-dark.font-poppins.text-md.inline-block.whitespace-pre  - 
 .text-gray-dark.font-poppins.text-md.inline-block {{ dateFormat(pageData.day_of_passing)}}
 .row.p-3
-NuxtLink.mx-16.p-3.px-6.pt-2.text-white.bg-orange-400.font-poppins(style="font-weight: 700; border-radius: 32px;" :to="`/PageList/${family_cuid}`") Back
+LinkButton(:to="`/PageList/${family_cuid}`") Back
 .div(style="background: #F8F8F8;")
     .div.px-8.py-4(style="color: #6E6E6E; font-weight: 500; font-size: 14px; line-height: 28px; letter-spacing: -0.078px; word-break: break-word;" id="obituary") {{ pageData.obituary }}
     .div.p-4(id="services")
@@ -152,19 +167,19 @@ NuxtLink.mx-16.p-3.px-6.pt-2.text-white.bg-orange-400.font-poppins(style="font-w
                 br
                 .form-horizontal()
                     .col-md-8.ml-4.pt-1.pr-5(class="sm:mx-4 sm:w-full sm:py-2")
-                        input#first_name.rounded-md.outline-0.border-box.w-full.p-2(style="border: 1px solid #c4c4c4;" name='first_name' type='text' v-model="donationData.first_name" placeholder='First Name' required)
+                        input#first_name.rounded-md.outline-0.border-box.w-full.p-2(style="border: 1px solid #c4c4c4;" name='first_name' type='text' v-model="donorInfo.first_name" placeholder='First Name' required)
                     .col-md-8.ml-4.pt-1.pr-5(class="sm:mx-4 sm:w-full sm:py-2")
-                        input#last_name.rounded-md.outline-0.border-box.w-full.p-2(style="border: 1px solid #c4c4c4;" name='last_name' type='text' v-model="donationData.last_name" placeholder='Last Name' required)
+                        input#last_name.rounded-md.outline-0.border-box.w-full.p-2(style="border: 1px solid #c4c4c4;" name='last_name' type='text' v-model="donorInfo.last_name" placeholder='Last Name' required)
                     .col-md-8.ml-4.pt-4.pr-5.flex
                         input#anonymous(type='checkbox' class="sm:ml-1" name='anonymous' value='Bike')
                         label.mt-4.ml-4.text-md(for='anonymous' class="sm:mt-0" style="letter-spacing: 0.35px;")  Make this an anonymous donation
                     .col-md-8.ml-4.pt-4.pr-5.flex(class="sm:mx-4 sm:w-full sm:py-2")
-                        textarea#comments.rounded-md.outline-0.border-box.w-full.p-2(style="border: 1px solid #c4c4c4;" name='comments' rows='3' v-model="donationData.comments" placeholder='Comments' required)
+                        textarea#comments.rounded-md.outline-0.border-box.w-full.p-2(style="border: 1px solid #c4c4c4;" name='comments' rows='3' v-model="donorInfo.comments" placeholder='Comments' required)
                     .col-md-8.ml-4.pt-4.pr-5.grid.grid-cols-3(class="sm:mx-4 sm:w-full sm:py-2")
                         span.rounded-l-md.p-3.col-span-2(style="text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25); border: 1px solid #c4c4c4;") Donation Amount
                         .flex
                             span.bg-gray-light.py-2.px-1.text-lg(style="text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25); border: 1px solid #c4c4c4; border-right:none;") $
-                            input#donation_amount.bg-gray-light.outline-0.rounded-r-md.border-box.w-full.p-2(style="border: 1px solid #c4c4c4; border-left:none;" name='donation_amount' type="number" min="0.00" step="0.01" v-model="donationData.amount_raised" required)
+                            input#donation_amount.bg-gray-light.outline-0.rounded-r-md.border-box.w-full.p-2(style="border: 1px solid #c4c4c4; border-left:none;" name='donation_amount' type="number" min="0.00" step="0.01" v-model="donationData.amount" required)
                     .col-md-8.ml-4.pt-6.pr-5.flex.items-center.justify-center
                         button#submit.mx-auto.p-3.px-6.pt-2.bg-orange-400.text-md(style="color: white; font-weight: 700; border-radius: 32px;" name='submit' @click="create_checkup_session") DONATE NOW
     .div.p-4(id="media")

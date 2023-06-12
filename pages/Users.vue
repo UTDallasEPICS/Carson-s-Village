@@ -11,7 +11,6 @@
 import type { User } from "@/types.d.ts"
 
 const users = ref<User[]>([])
-
 const cvuser = useCookie<User>('cvuser')
 const family_cuid_data = computed(() => cvuser.value?.cuid)
 const isAdmin = computed(() => cvuser.value?.user_role == "advocate")
@@ -43,8 +42,8 @@ if( (isAdmin.value as boolean) == true )
                 :key="i" 
             )
                 td.font-poppins.text-gray-dark.font-bold(style="text-align: center") {{ item.first_name + " " + item.last_name }}
-                td.font-poppins.text-gray-dark.font-bold(style="text-align: center")  {{ item.cuid }}
+                td.font-poppins.text-gray-dark.font-bold(style="text-align: center") {{ item.cuid }}
                 td
-                NuxtLink.text-white.font-poppins.font-bold.bg-blue-300.rounded-full(class="sm:mx-auto sm:my-2 sm:w-fit" style="--tw-bg-opacity: 1; background-color: rgb(110 171 191 / var(--tw-bg-opacity));white-space: nowrap; display: flex; flex-direction: row; padding: 14px 24px; gap: 10px;" :to="`/pageList/${item.cuid}`") View
+                LinkButton(class="sm:my-2" style="white-space: nowrap; display: flex; flex-direction: row; padding: 14px 24px; gap: 10px;" :to="`/pageList/${item.cuid}`") View
     .container.mx-auto(class="w-auto sm:w-[1000px]" style="--tw-bg-opacity: 1; background-color: rgb(110 171 191 / var(--tw-bg-opacity));height: 50px; border-radius: 0px 0px 60px 60px;")
 </template>
