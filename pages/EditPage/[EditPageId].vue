@@ -10,9 +10,9 @@
 */
 
 import ImageUpload from '@/components/ImageUpload.vue'
-import Input from '@/components/Input.vue'
-import Label from '@/components/Label.vue'
-import Datepicker from '@vuepic/vue-datepicker';
+import CVInput from '@/components/CVInput.vue'
+import CVLabel from '@/components/CVLabel.vue'
+import CVDatepicker from '@/components/CVDatepicker.vue'
 import '@vuepic/vue-datepicker/dist/main.css';
 import {
     Listbox,
@@ -130,14 +130,14 @@ LinkButton(:to="`/PageList/${family_cuid}`") Back
     br
     .form-horizontal
         .information.bg-gray-300.rounded-md.mx-9.my-2.text-center(class="sm:text-start")
-            Legend Personal Information
-        .py-4.grid(class="sm:grid-cols-2") 
-            Label Page Name
+            CVLegend Personal Information
+        .py-4.grid(class="sm:grid-cols-3") 
+            CVLabel Page Name
             .col-md-8.mx-9(class="sm:col-span-2a sm:mr-11")
-                Input(v-model='data.page_name' :placeholder="page_name_place_holder") 
-                //Input(v-model='data.page_name' :placeholder="page_name_place_holder")  
+                CVInput(v-model='data.page_name' :placeholder="page_name_place_holder") 
+                //CVInput(v-model='data.page_name' :placeholder="page_name_place_holder")  
         .information.bg-gray-300.rounded-md.mx-9.my-2.text-center(class="sm:text-start")
-            Legend Image Preview Stable
+            CVLegend Image Preview Stable
         .py-4.grid.flex-box.flex-directional-row.item-centered.gap-1(class="sm:grid-cols-3" style="line-height: 0px;text-align: center")
             .div(style='position: relative;' v-for="(theImage,j) in selectedImage" :key="j") 
                 img.object-cover.align-middle.rounded-lg(class="w-40 sm:w-64" :src = "`${theImage}`")
@@ -150,7 +150,7 @@ LinkButton(:to="`/PageList/${family_cuid}`") Back
                         .form-horizontal(style='position: absolute; top: 5px; right: 5px')
                             button#remove.bg-red-500(style="display: flex;align-items: center;justify-content: center;line-height: 0px;text-align: center ; color: white; font-weight: 300; positon: absolute; top:0px; left: 0px; width: 15px; height: 15px; border-radius: 50%;" @click = "removeImage(image)") x
         .information.bg-gray-300.rounded-md.mx-9.my-2.text-center(class="sm:text-start")
-            Legend Image Preview Dev
+            CVLegend Image Preview Dev
         .py-4.grid.flex-box.flex-directional-row(class="sm:grid-cols-3" style="line-height: 0px;text-align: center")
             .div(style='position: relative'  v-for="(theImage,j) in selectedImage" :key="j") 
                 img.object-cover.align-middle.rounded-lg( class="w-40 sm:w-64" :src = "`${theImage}`")
@@ -162,11 +162,11 @@ LinkButton(:to="`/PageList/${family_cuid}`") Back
                         img.object-cover.align-middle.rounded-lg(class="w-40 sm:w-64" :src = "`${image}`")
                         .form-horizontal(style='position: absolute; top: 5px; right: 5px')
                             button#remove.bg-red-500(style="display: flex;align-items: center;justify-content: center;line-height: 0px;text-align: center ; color: white; font-weight: 300; positon: absolute; top:0px; left: 0px; width: 15px; height: 15px; border-radius: 50%;" @click = "removeImage(image)") x
-        .py-4.grid(class="sm:grid-cols-2") 
+        .py-4.grid(class="sm:grid-cols-3") 
             a.ml-10.pt-1(style="text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") image upload
             .col-md-8.mx-9(class="sm:col-span-2a sm:mr-11")
                 ImageUpload()
-        .py-4.grid(class="sm:grid-cols-2") 
+        .py-4.grid(class="sm:grid-cols-3") 
             a.ml-10.pt-1(style="text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") image replace
             .col-md-8.mx-9(class="sm:col-span-2a sm:mr-11")
                 ImageUpload()
@@ -177,60 +177,60 @@ LinkButton(:to="`/PageList/${family_cuid}`") Back
                 ListboxOptions
                     ListboxOption(v-for="(image,k) in images" :key="k" :value="image" ) {{ image }}                                            
         .py-4.grid(class="sm:grid-cols-2") 
-            Label Day of Birth
+            CVLabel Day of Birth
             .col-md-8.mx-9(class="sm:col-span-2a sm:mr-11")
                 CVDatepicker(v-model='data.day_of_birth')
                 //Datepicker.rounded-md.outline-0.border-box.w-full.p-2(style="border: 1px solid #c4c4c4;" v-model='data.day_of_birth')
         .py-4.grid(class="sm:grid-cols-2") 
-            Label Day of Passing 
+            CVLabel Day of Passing 
             .col-md-8.mx-9(class="sm:col-span-2a sm:mr-11")
                 CVDatepicker(v-model='data.day_of_passing')
                 //Datepicker.rounded-md.outline-0.border-box.w-full.p-2(style="border: 1px solid #c4c4c4;" v-model='data.day_of_passing')  
 
         .information.bg-gray-300.rounded-md.mx-9.my-2.text-center(class="sm:text-start")
-            Legend Visitation Information 
+            CVLegend Visitation Information 
         .py-4.grid(class="sm:grid-cols-2") 
-            Label Date
+            CVLabel Date
             .col-md-8.mx-9(class="sm:col-span-2a sm:mr-11")
                 CVDatepicker(v-model='data.visitation_date')
                 //Datepicker.rounded-md.outline-0.border-box.w-full.p-2(style="border: 1px solid #c4c4c4;" v-model='data.visitation_date')
-        .py-4.grid(class="sm:grid-cols-2")
-            Label Location 
+        .py-4.grid(class="sm:grid-cols-3")
+            CVLabel Location 
             .col-md-8.mx-9(class="sm:col-span-2a sm:mr-11")
-                Input(v-model='data.visitation_location' :placeholder="visitation_location_place_holder")
-        .py-4.grid(class="sm:grid-cols-2")
-            Label Description
+                CVInput(v-model='data.visitation_location' :placeholder="visitation_location_place_holder")
+        .py-4.grid(class="sm:grid-cols-3")
+            CVLabel Description
             .col-md-8.mx-9(class="sm:col-span-2a sm:mr-11")
-                textarea.rounded-md.outline-0.border-box.w-full.p-2(style="border: 1px solid #c4c4c4;" v-model='data.visitation_description' :placeholder="visitation_description_place_holder")
+                textarea.rounded-md.outline-0.border-box.p-2(style="border: 1px solid #c4c4c4;" v-model='data.visitation_description' :placeholder="visitation_description_place_holder")
 
         .information.bg-gray-300.rounded-md.mx-9.my-2.text-center(class="sm:text-start")
-            Legend Funeral Information       
+            CVLegend Funeral Information       
         .py-4.grid(class="sm:grid-cols-2")
-            Label Date    
+            CVLabel Date    
             .col-md-8.mx-9(class="sm:col-span-2a sm:mr-11")
                 CVDatepicker(v-model='data.funeral_date')
                 //Datepicker.rounded-md.outline-0.border-box.w-full.p-2(style="border: 1px solid #c4c4c4;" v-model='data.funeral_date')
-        .py-4.grid(class="sm:grid-cols-2")
-            Label Location 
-            .col-md-8.mx-9(class="sm:col-span-2a sm:mr-11")
-                Input(v-model='data.funeral_location' :placeholder="funeral_location_place_holder")
-        .py-4.grid(class="sm:grid-cols-2")
-            Label Description
-            .col-md-8.mx-9(class="sm:col-span-2a sm:mr-11")
-                textarea.rounded-md.outline-0.border-box.w-full.p-2(style="border: 1px solid #c4c4c4;" v-model='data.funeral_description' :placeholder="funeral_description_place_holder")
-        .py-4.grid(class="sm:grid-cols-2")
-            Label Obituary
-            .col-md-8.mx-9(class="sm:col-span-2a sm:mr-11")
-                textarea.rounded-md.outline-0.border-box.w-full.p-2(style="border: 1px solid #c4c4c4;" v-model='data.obituary' :placeholder="obituary_place_holder")
-        .information.bg-gray-300.rounded-md.mx-9.my-2.text-center(class="sm:text-start")
-            Legend Fundraising Information
         .py-4.grid(class="sm:grid-cols-3")
-            Label Goal    
+            CVLabel Location 
+            .col-md-8.mx-9(class="sm:col-span-2a sm:mr-11")
+                CVInput(v-model='data.funeral_location' :placeholder="funeral_location_place_holder")
+        .py-4.grid(class="sm:grid-cols-3")
+            CVLabel Description
+            .col-md-8.mx-9(class="sm:col-span-2a sm:mr-11")
+                textarea.rounded-md.outline-0.border-box.p-2(style="border: 1px solid #c4c4c4;" v-model='data.funeral_description' :placeholder="funeral_description_place_holder")
+        .py-4.grid(class="sm:grid-cols-3")
+            CVLabel Obituary
+            .col-md-8.mx-9(class="sm:col-span-2a sm:mr-11")
+                textarea.rounded-md.outline-0.border-box.p-2(style="border: 1px solid #c4c4c4;" v-model='data.obituary' :placeholder="obituary_place_holder")
+        .information.bg-gray-300.rounded-md.mx-9.my-2.text-center(class="sm:text-start")
+            CVLegend Fundraising Information
+        .py-4.grid(class="sm:grid-cols-3")
+            CVLabel Goal    
             .col-md-8.flex.mx-9(class="sm:col-span-2 sm:mr-11")
                 span.rounded-l-md.bg-gray-200.text-lg.p-2(style="text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25); border: 1px solid #c4c4c4;") $
                 input.outline-0.rounded-r-md.border-box.w-full.p-2(style="border: 1px solid #c4c4c4;" min="0.00" step="0.01" v-model='data.donation_goal' :placeholder="donation_goal_place_holder" onblur="(this.type='number')" onfocus="(this.type='number')" required)
         .py-4.grid(class="sm:grid-cols-2")
-            Label Deadline Date
+            CVLabel Deadline Date
             .col-md-8.mx-9(class="sm:col-span-2a sm:mr-11")
                 CVDatepicker(v-model='data.deadline')
                 //Datepicker.rounded-md.outline-0.border-box.w-full.p-2(style="border: 1px solid #c4c4c4;" v-model='data.deadline')

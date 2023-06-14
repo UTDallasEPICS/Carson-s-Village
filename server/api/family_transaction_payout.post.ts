@@ -8,6 +8,9 @@ export default defineEventHandler(async event => {
       //const stripe = await loadStripe(process.env.STRIPE_PUBLIC ? process.env.STRIPE_PUBLIC : '');
         //const query = await getQuery(event)
         const body = await readBody(event)
+        body.amount_to_record = Math.trunc(body.amount_to_record * 100)
+        console.log(body)
+        console.log(body.value)
         try{
 
           // update success flag in transaction
@@ -17,10 +20,11 @@ export default defineEventHandler(async event => {
               },
               data: {amount_distributed: {increment: body.amount_to_record}}
             })
-            const queryRes = await prisma.DonationPayout.create({
+            const queryRes = await prisma.donationPayout.create({
                 data: {
                   transaction_id: body.transaction_id,
                   amount: body.amount_to_record, 
+                  distributionDate: body.transaction_recording_date,
                   User: {
                     connect: {
                       cuid: body.familyCuid
@@ -28,7 +32,7 @@ export default defineEventHandler(async event => {
                   },
                   Page: {
                     connect: {
-                      cuid: body.pageCuid,
+                      cuid: body.cuid,
                     }
                   }
               }})

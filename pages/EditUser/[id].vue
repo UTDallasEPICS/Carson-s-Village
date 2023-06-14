@@ -70,31 +70,31 @@ LinkButton(to='/') Back
         .bar.mx-9(style="border-top: 0.5px solid #646464;")
         br
         .py-4.grid(class="sm:grid-cols-2")
-            Label Email
+            CVLabel Email
             .col-md-8.mx-9(class="sm:col-span-2a sm:mr-11")
                 input.rounded-md.outline-0.border-box.w-full.p-2(style="border: 1px solid #c4c4c4;" v-model='data_user.email' :placeholder="email")
         .py-4.grid(class="sm:grid-cols-2")
-            Label User Role
+            CVLabel User Role
             .col-md-8.mx-9(class="sm:col-span-2a sm:mr-11")
                 select.rounded-md.outline-0.border-box.w-full.p-2.bg-white(style="border: 1px solid #c4c4c4;" v-model='data_user.user_role') Select User Role
                     option family
                     option advocate
         .py-4.grid(class="sm:grid-cols-2")
-            Label First Name
+            CVLabel First Name
             .col-md-8.mx-9(class="sm:col-span-2a sm:mr-11")
-                Input(v-model='data_user.first_name' :placeholder="first_name")
+                CVInput(v-model='data_user.first_name' :placeholder="first_name")
         .py-4.grid(class="sm:grid-cols-2")
-            Label Middle Name
+            CVLabel Middle Name
             .col-md-8.mx-9(class="sm:col-span-2a sm:mr-11")
-                Input(v-model='data_user.middle_name' :placeholder="middle_name")
+                CVInput(v-model='data_user.middle_name' :placeholder="middle_name")
         .py-4.grid(class="sm:grid-cols-2")
-            Label Last Name
+            CVLabel Last Name
             .col-md-8.mx-9(class="sm:col-span-2a sm:mr-11")
-                Input(v-model='data_user.last_name' :placeholder="last_name" )
+                CVInput(v-model='data_user.last_name' :placeholder="last_name" )
         .py-4.grid(class="sm:grid-cols-2")
-            Label Phone
+            CVLabel Phone
             .col-md-8.mx-9(class="sm:col-span-2a sm:mr-11")
-                Input(v-model='data_user.phone' :placeholder="phone")
+                CVInput(v-model='data_user.phone' :placeholder="phone")
             .col-md-10.py-2
                 ActionButton(@click="save") Save    
 </template>
