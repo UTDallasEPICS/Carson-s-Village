@@ -88,7 +88,6 @@ if(pageDataDB.value !== false){
     family_cuid.value = pageData.value.familyCuid as string;
     console.log(pageData);
     console.log(family_cuid.value as string)
-    donated_percentage.value = 60.60 as number
     console.log(donated_percentage.value as number)
 }
 
@@ -121,23 +120,26 @@ img.bg-orange-400.-mt-16.mx-auto(class="w-[122px] h-[122px] rounded-[8px]" :src=
 .row.p-3
 LinkButton(:to="`/PageList/${family_cuid}`") Back
 .div(style="background: #F8F8F8;")
-    .div.p-4(id="services")
-        .div(v-if="pageData.visitation_date")
-            .px-5.py-4.text-gray-dark.font-poppins.text-2xl.text-left.font-bold(style="line-height: 36px; text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") Visitation
-            .px-5.pt-2.pb-8.font-outfit.text-dark-blue(style="font-size: 20px; line-height: 30px;") {{ pageData.visitation_description }}
-            .grid.gap-x-3.gap-y-0.grid-cols-5.grid-rows-2
-                img.px-4(:src="`${clock}`")
-                .py-1.font-outfit.text-dark-blue.col-span-4(style="font-size: 20px; line-height: 30px;") {{ dateFormat(pageData.visitation_date) }}
-                img.px-2(:src="`${location}`")
-                .py-2.font-outfit.text-dark-blue.col-span-4.whitespace-normal(style="font-size: 20px; line-height: 30px;") {{ pageData.visitation_location }}
-        .div(v-if="pageData.funeral_date")
-            .px-5.py-4.text-gray-dark.font-poppins.text-2xl.text-left.font-bold(style="line-height: 36px; text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") Funeral
-            .px-5.pt-2.pb-8.font-outfit.text-dark-blue(style="font-size: 20px; line-height: 30px;") {{ pageData.funeral_description }}
-            .grid.gap-x-3.gap-y-0.grid-cols-5.grid-rows-2
-                img.px-4(:src="`${clock}`")
-                .py-1.font-outfit.text-dark-blue.col-span-4(style="font-size: 20px; line-height: 30px;") {{ dateFormat(pageData.funeral_date) }}
-                img.px-2(:src="`${location}`")
-                .py-2.font-outfit.text-dark-blue.col-span-4.whitespace-normal.leading-loose(style="font-size: 20px; line-height: 30px;") {{ pageData.funeral_location }}
+    py-4.grid(class="sm:grid-cols-2")
+        img.object-cover.align-middle.rounded-lg( class="w-40 sm:w-64" :src = "`${profile}`")
+        .col-md-8.mx-9(class="sm:col-span-2a sm:mr-11")
+            .div.p-4(id="services")
+                .div(v-if="pageData.visitation_date")
+                    .px-5.py-4.text-gray-dark.font-poppins.text-2xl.text-left.font-bold(style="line-height: 36px; text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") Visitation
+                    .px-5.pt-2.pb-8.font-outfit.text-dark-blue(style="font-size: 20px; line-height: 30px;") {{ pageData.visitation_description }}
+                    .grid.gap-x-3.gap-y-0.grid-cols-5.grid-rows-2
+                        img.px-4(:src="`${clock}`")
+                        .py-1.font-outfit.text-dark-blue.col-span-4(style="font-size: 20px; line-height: 30px;") {{ dateFormat(pageData.visitation_date) }}
+                        img.px-2(:src="`${location}`")
+                        .py-2.font-outfit.text-dark-blue.col-span-4.whitespace-normal(style="font-size: 20px; line-height: 30px;") {{ pageData.visitation_location }}
+                .div(v-if="pageData.funeral_date")
+                    .px-5.py-4.text-gray-dark.font-poppins.text-2xl.text-left.font-bold(style="line-height: 36px; text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") Funeral
+                    .px-5.pt-2.pb-8.font-outfit.text-dark-blue(style="font-size: 20px; line-height: 30px;") {{ pageData.funeral_description }}
+                    .grid.gap-x-3.gap-y-0.grid-cols-5.grid-rows-2
+                        img.px-4(:src="`${clock}`")
+                        .py-1.font-outfit.text-dark-blue.col-span-4(style="font-size: 20px; line-height: 30px;") {{ dateFormat(pageData.funeral_date) }}
+                        img.px-2(:src="`${location}`")
+                        .py-2.font-outfit.text-dark-blue.col-span-4.whitespace-normal.leading-loose(style="font-size: 20px; line-height: 30px;") {{ pageData.funeral_location }}
     .div.p-4(id="donations")
         .container(class="sm:overflow-hidden sm:w-3/4 sm:mt-4 sm:mx-auto sm:place-content-center sm:max-w-xl sm:p-6 sm:rounded-card sm:shadow-card")
             .container.m-4.place-content-center.font-poppins(class="w-5/6 sm:m-auto sm:py-3")
@@ -147,14 +149,17 @@ LinkButton(:to="`/PageList/${family_cuid}`") Back
                 .py-4
                 .progress-bar.overflow-hidden.ml-4.h-5.rounded-full(style="30px ; background-color:#b5b5b5;")
                     progress.rounded-full.text-white.flex.items-center.justify-center(max="100" :value ="`${donated_percentage}`") {{ donated_percentage  + "%" }}
+                .py-4
+                .progress-bar.overflow-hidden.ml-4.h-5.rounded-full(style="30px; background-color:#b5b5b5;")
+                    CVProgress(:barWidth="donated_percentage")
                 .well.well-sm
                     h1.ml-4.pt-9.text-2xl.text-gray-dark(class="sm:text-3xl" style="font-weight: 600; letter-spacing: 0.35px;") Donor Information
                 br
                 .form-horizontal()
                     .col-md-8.ml-4.pt-1.pr-5(class="sm:mx-4 sm:w-full sm:py-2")
-                        Input(name='first_name' type='text' v-model="donorInfo.first_name" placeholder='First Name' required)
+                        CVInput(name='first_name' type='text' v-model="donorInfo.first_name" placeholder='First Name' required)
                     .col-md-8.ml-4.pt-1.pr-5(class="sm:mx-4 sm:w-full sm:py-2")
-                        Input(name='last_name' type='text' v-model="donorInfo.last_name" placeholder='Last Name' required)
+                        CVInput(name='last_name' type='text' v-model="donorInfo.last_name" placeholder='Last Name' required)
                     .col-md-8.ml-4.pt-4.pr-5.flex
                         input#anonymous(type='checkbox' class="sm:ml-1" name='anonymous' value='Bike')
                         label.mt-4.ml-4.text-md(for='anonymous' class="sm:mt-0" style="letter-spacing: 0.35px;")  Make this an anonymous donation
