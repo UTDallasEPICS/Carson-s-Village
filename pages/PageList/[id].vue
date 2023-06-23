@@ -16,7 +16,6 @@ const family_cuid = ref("")
 const router = useRoute()
 const family_cuid_data = computed(() => router.params.id)
 family_cuid.value = family_cuid_data.value as string;
-console.log(family_cuid)
 const pages = ref<Page[]>([])
 const cvuser = useCookie<User>('cvuser')
 const isAdmin = computed(() => cvuser.value?.user_role == "advocate")
@@ -45,7 +44,7 @@ await getDataPageList()
 </script>
 
 <template lang ="pug">
-.row.p-3
+//.row.p-3
   LinkButton(to='/') Back
 .container.bg-white.mx-auto.mt-1(class="w-11/12 sm:w-[1000px]" style="height: auto; box-shadow: 0px 3px 6px 3px rgba(0, 0, 0, 0.15), 0px 3px 3px rgba(0, 0, 0, 0.3); border-radius: 60px;")
   table(style="table-layout: auto;")

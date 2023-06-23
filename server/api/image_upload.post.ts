@@ -16,12 +16,12 @@ export default defineEventHandler(async (event) => {
     // key used to retrieve image later on
     const key = nanoid()
     // gets presigned URL from aws.ts and returns it to the call from vue
-    /*const uploadUrl =  await getSignedFileUrl(data.contentLength,data.contentType, key);
+    const uploadUrl =  await getSignedFileUrl(data.contentLength,data.contentType, key);
     const contentUrl = import.meta.env.IMAGES_URL + key;
     const body = await readBody(event)
     const url = body.url
-  const page_cuid = body.cuid;
-  delete body.cuid;*/
+  //const page_cuid = body.cuid;
+  //delete body.cuid;
 
   try{
   // Creates a new entry in the database in the page model to a specfic user

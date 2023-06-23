@@ -17,7 +17,8 @@ export default defineEventHandler(async event => {
             familyCuid : familyCuid as string
         },
         include: {
-            Page: true
+            Page: true,
+            User: true
         }
   });
 

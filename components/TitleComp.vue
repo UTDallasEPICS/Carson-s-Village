@@ -4,5 +4,4 @@ h1.text-center.pt-9.text-xl(class="sm:text-3xl" style="text-shadow: 3px 3px 4px 
 </template>
         
 <script setup lang="ts">
-    //const props = defineProps<{ to: string}>()
 </script>

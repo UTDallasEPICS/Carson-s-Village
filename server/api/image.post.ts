@@ -10,18 +10,19 @@ const prisma = new PrismaClient()
 
 export default defineEventHandler(async event => {
   const body = await readBody(event)
-  const url = body.url
-  const page_cuid = body.cuid;
-  delete body.cuid;
+  var url = body.url
+  url = "https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/C751A_depot.jpg/324px-C751A_depot.jpg"
+  const page_cuid = body.page_cuid;
+  //delete body.cuid;
 
   try{
   // Creates a new entry in the database in the image model to a specfic image
   const queryRes = await prisma.image.create({
     data: {
-      ...body,cuid: undefined,
-      User: {
+      url,cuid: undefined,
+      Page: {
         connect: {
-          PageCuid : page_cuid || "0"
+          cuid : page_cuid || "0"
         }
       
         }

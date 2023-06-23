@@ -3,54 +3,75 @@ import type { User, Page } from "@/types.d.ts"
 import { donationFormat, dateFormat } from '@/utils'
 const cvuser = useCookie<User>('cvuser');
 const isAdmin = computed(() => cvuser.value?.user_role == "advocate")
+const cuid = computed(() => cvuser.value?.cuid)
+const isLoggedIn = computed(() => cvuser.value )
+//const isNotLoggedIn = !isLoggedIn
 const pages = ref<Page[]>([])
 const searchQuery = ref('');
 const route = useRoute()
 const isNotSearch = computed(() => route.path !== "/Search/")
-console.log(route.path)
+console.log(route.path +"route path")
+//console.log(cuid);
 </script>
 
 <template lang="pug">
 .max-w-min.mx-auto.flex
-  NuxtLink.items-center.px-2.py-2.text-base.font-medium.rounded-md.text-green-600.cursor-pointer(
-  class='hover:text-white hover:bg-gray-600'  
-    to='https://carsonsvillage.org/'
-  ) 
-    p.uppercase.white.w-max HOME
-  NuxtLink.items-center.px-2.py-2.text-base.font-medium.rounded-md.text-green-600.cursor-pointer(
-  class='hover:text-white hover:bg-gray-600'  
-    to='https://carsonsvillage.org/#'
-  ) 
-    p.uppercase.white.w-max RESOURCES
-  NuxtLink.items-center.px-2.py-2.text-base.font-medium.rounded-md.text-green-600.cursor-pointer(
-  class='hover:text-white hover:bg-gray-600'  
-    to='https://carsonsvillage.org/get-involved/'
-  ) 
-    p.uppercase.white.w-max GET INVOLVED
-  NuxtLink.items-center.px-2.py-2.text-base.font-medium.rounded-md.text-green-600.cursor-pointer(
-  class='hover:text-white hover:bg-gray-600'  
-    to='https://carsonsvillage.org/'
-  ) 
-    p.uppercase.white.w-max ABOUT US
+  div.max-w-min.mx-auto.flex(v-if="isLoggedIn")
+    a.items-center.px-2.py-2.text-base.font-medium.rounded-md.text-green-600.cursor-pointer(
+    class='hover:text-white hover:bg-gray-600'  
+      href="/api/logout"
+    ) 
+      p.uppercase.white.w-max LOGOUT
+    NuxtLink.items-center.px-2.py-2.text-base.font-medium.rounded-md.text-green-600.cursor-pointer(
+    class='hover:text-white hover:bg-gray-600' :to="`/PageList/${cuid}`") 
+      p.uppercase.white.w-max List of client pages
+    NuxtLink.items-center.px-2.py-2.text-base.font-medium.rounded-md.text-green-600.cursor-pointer(class='hover:text-white hover:bg-gray-600' to='/EditPage/0') 
+      p.uppercase.white.w-max Insert new page
+    NuxtLink.items-center.px-2.py-2.text-base.font-medium.rounded-md.text-green-600.cursor-pointer(class='hover:text-white hover:bg-gray-600' v-if="isAdmin" to='/Users') 
+      p.uppercase.white.w-max See all users
+    NuxtLink.items-center.px-2.py-2.text-base.font-medium.rounded-md.text-green-600.cursor-pointer(class='hover:text-white hover:bg-gray-600' v-if="isAdmin" to='/EditUser/0') 
+      p.uppercase.white.w-max Invite user
+    NuxtLink.items-center.px-2.py-2.text-base.font-medium.rounded-md.text-green-600.cursor-pointer(
+      class='hover:text-white hover:bg-gray-600' 
+      to="/"
+    ) 
+      p.uppercase.white.w-max PROFILE
+  div.max-w-min.mx-auto.flex(v-else-if="!isLoggedIn")
+    a.items-center.px-2.py-2.text-base.font-medium.rounded-md.text-green-600.cursor-pointer(
+    class='hover:text-white hover:bg-gray-600'  
+    href="/api/login"
+    ) 
+      p.uppercase.white.w-max LOGIN
+    NuxtLink.items-center.px-2.py-2.text-base.font-medium.rounded-md.text-green-600.cursor-pointer(
+    class='hover:text-white hover:bg-gray-600'  
+      to='https://carsonsvillage.org/'
+    ) 
+      p.uppercase.white.w-max HOME
+    NuxtLink.items-center.px-2.py-2.text-base.font-medium.rounded-md.text-green-600.cursor-pointer(
+    class='hover:text-white hover:bg-gray-600'  
+      to='https://carsonsvillage.org/#'
+    ) 
+      p.uppercase.white.w-max RESOURCES
+    NuxtLink.items-center.px-2.py-2.text-base.font-medium.rounded-md.text-green-600.cursor-pointer(
+    class='hover:text-white hover:bg-gray-600'  
+      to='https://carsonsvillage.org/get-involved/'
+    ) 
+      p.uppercase.white.w-max GET INVOLVED
+    NuxtLink.items-center.px-2.py-2.text-base.font-medium.rounded-md.text-green-600.cursor-pointer(
+    class='hover:text-white hover:bg-gray-600'  
+      to='https://carsonsvillage.org/'
+    ) 
+      p.uppercase.white.w-max ABOUT US
   
   .flex.w-max(v-if="isNotSearch")
     input(class="border border-gray-300 py-2 px-4 ml-8 rounded-lg focus:outline-none focus:border-black-500" type="search" placeholder=" " v-model="searchQuery")
     NuxtLink.inline(:to="`/Search/?search=${searchQuery}`")
       img(src="../CVSearchIcon.png")
-  
-  NuxtLink.items-center.px-2.py-2.text-base.font-medium.rounded-md.text-green-600.cursor-pointer(v-if="isAdmin"
-    class='hover:text-white hover:bg-gray-600' 
-    to="/"
-  ) 
-    p.uppercase.white.w-max PROFILE
-p the above is an example of how to work with routes, which are what govern navigation in Nuxt. 
-p Keep in mind that public users (those who are not logged in) should *not* see a nav - they just need search and page view.
-NuxtLink.items-center.px-2.py-2.text-base.font-medium.rounded-md.text-green-600.cursor-pointer(v-if="isAdmin"
+  //NuxtLink.items-center.px-2.py-2.text-base.font-medium.rounded-md.text-green-600.cursor-pointer(v-if="isAdmin"
     class='hover:text-white hover:bg-gray-600' 
     to="/FamilyTransactionList"
-  ) 
-
-  p FamilyTransactionList  
+  //) 
+   p FamilyTransactionList  
 </template>
 
 <style scoped></style>

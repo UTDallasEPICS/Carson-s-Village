@@ -9,39 +9,38 @@ export default defineEventHandler(async event => {
         //const query = await getQuery(event)
         const body = await readBody(event)
         body.amount_to_record = Math.trunc(body.amount_to_record * 100)
-        console.log(body)
-        console.log(body.value)
+        //console.log(body)
         try{
 
           // update success flag in transaction
-            await prisma.page.update({
+        
+          await prisma.$transaction([
+            prisma.donationPayout.create({
+              data: {
+                transaction_id: body.transaction_id,
+                amount: body.amount_to_record, 
+                distributionDate: body.transaction_recording_date,
+                User: {
+                  connect: {
+                    cuid: body.familyCuid
+                  }
+                },
+                Page: {
+                  connect: {
+                    cuid: body.cuid,
+                  }
+                }
+            }}),
+            prisma.page.update({
               where: {
                 cuid: body.cuid as string
               },
               data: {amount_distributed: {increment: body.amount_to_record}}
             })
-            const queryRes = await prisma.donationPayout.create({
-                data: {
-                  transaction_id: body.transaction_id,
-                  amount: body.amount_to_record, 
-                  distributionDate: body.transaction_recording_date,
-                  User: {
-                    connect: {
-                      cuid: body.familyCuid
-                    }
-                  },
-                  Page: {
-                    connect: {
-                      cuid: body.cuid,
-                    }
-                  }
-              }})
-          //const pageLink = "/page/"+transaction?.pageCuid;
+          ]) 
+          
           return true;
-          //console.log(pageLink);
-          //const pageLinker = () => `${process.env.BASEURL}/page/${transaction?.pageCuid}`
-          //return pageLink;
-          //await sendRedirect(event, pageLinker() || "")
+
         } catch (e) {
           console.error(e)
     

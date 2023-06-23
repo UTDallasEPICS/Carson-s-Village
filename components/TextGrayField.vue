@@ -3,5 +3,4 @@
    slot
 </template>    
 <script setup lang="ts">
-//const props = defineProps<{ to: string}>()
 </script>
