@@ -101,7 +101,7 @@ if(pageDataDB.value !== false){
   'box-shadow': '0 3px 3px -5px #1ba710, 0 2px 5px #1ba710'
 })*/
 
-
+// Progress bar todo: add logic for over 100 percent and 0 percent.
 onMounted(() => { 
     const progress=(document.querySelector('.progress') || document.createElement("null")) as HTMLElement ;
     progress.style.width=progress?.getAttribute('donated-amount') + "%";
@@ -153,14 +153,16 @@ img.bg-orange-400.-mt-16.mx-auto(class="w-[122px] h-[122px] rounded-[8px]" :src=
         .container(class="sm:overflow-hidden sm:w-3/4 sm:mt-4 sm:mx-auto sm:place-content-center sm:max-w-xl sm:p-6 sm:rounded-card sm:shadow-card")
             .container.m-4.place-content-center.font-poppins(class="w-5/6 sm:m-auto sm:py-3")
                 .text-md.text-center.ml-4.my-3(class="sm:text-xl sm:my-6" style="letter-spacing: 0.35px; font-weight: 600; color: #646464;") {{ donationFormat(pageData.amount_raised)  + " raised of " +  donationFormat(pageData.donation_goal) + " goal" }}
-                .progress-bar.overflow-hidden.ml-4.h-5.rounded-full(style="30px; background-color:#b5b5b5;")
+                //.progress-bar.overflow-hidden.ml-4.h-5.rounded-full(style="30px; background-color:#b5b5b5;")
                     .progress.rounded-full.text-white.flex.items-center.justify-center(donated-amount=donated_percentage style="background: linear-gradient(90deg, rgba(15,200,0,1) 100%, rgba(203,255,0,1) 35%); box-shadow: 0 3px 3px -5px #1ba710, 0 2px 5px #1ba710; height: 100%; opacity: 1;") {{ donated_percentage  + "%" }}
-                .py-4
-                .progress-bar.overflow-hidden.ml-4.h-5.rounded-full(style="30px ; background-color:#b5b5b5;")
+                //.py-4
+                //.progress-bar.overflow-hidden.ml-4.h-5.rounded-full(style="30px ; background-color:#b5b5b5;")
                     progress.rounded-full.text-white.flex.items-center.justify-center(style="30px;" max="100" :value ="`${donated_percentage}`") {{ donated_percentage  + "%" }}
                 .py-4
                 .progress-bar.overflow-hidden.ml-4.h-5.rounded-full(style="30px; background-color:#b5b5b5;")
-                    CVProgress(:style="{'width':donated_percentage + '%'}" :modelBarWidth="`${donated_percentage}`") {{ donated_percentage  + "%" }}
+                    CVProgress(v-if="donated_percentage >= 100" style="width=100%;" :modelBarWidth="100") {{ donated_percentage  + "%" }}
+                    CVProgress(v-else-if="donated_percentage > 0 && donated_percentage < 100" :style="{'width':donated_percentage + '%'}" :modelBarWidth="`${donated_percentage}`") {{ donated_percentage  + "%" }}
+                    CVProgress(v-else style="width:0%;" modelBarWidth="0")
                 .well.well-sm
                     h1.ml-4.pt-9.text-2xl.text-gray-dark(class="sm:text-3xl" style="font-weight: 600; letter-spacing: 0.35px;") Donor Information
                 br

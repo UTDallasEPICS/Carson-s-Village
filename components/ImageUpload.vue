@@ -50,7 +50,9 @@ const uploadFile = async (data: BodyInit, ContentLength:string, ContentType:stri
         "Content-Type": ContentType,
       },
         body: data,
-      })//.then((res) => res.json())
+      }).then((res) => {
+      return res.json()
+      })
       //const { uploadUrl, contentUrl } = data
       //return { uploadUrl, contentUrl }
 
