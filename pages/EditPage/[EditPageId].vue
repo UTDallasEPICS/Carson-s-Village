@@ -156,7 +156,7 @@ CVContainer
                 CVInput(v-model='data.page_name' :placeholder="page_name_place_holder") 
                 //CVInput(v-model='data.page_name' :placeholder="page_name_place_holder")  
         .information.bg-gray-300.rounded-md.mx-9.my-2.text-center(class="sm:text-start")
-            CVLegend Image Preview Stable
+            CVLegend Image Preview
         .py-4.grid.flex-box.flex-directional-row.item-centered.gap-1(class="sm:grid-cols-3" style="line-height: 0px;text-align: center")
             .div(style='position: relative;' v-for="(theImage,j) in selectedImage" :key="j") 
                 img.object-cover.align-middle.rounded-lg(class="w-40 sm:w-64" :src = "`${theImage}`")
@@ -168,9 +168,9 @@ CVContainer
                         img.object-cover.align-middle.rounded-lg(class="w-40 sm:w-64" :src = "`${image}`")
                         .form-horizontal(style='position: absolute; top: 5px; right: 5px')
                             button#remove.bg-red-500(style="display: flex;align-items: center;justify-content: center;line-height: 0px;text-align: center ; color: white; font-weight: 300; positon: absolute; top:0px; left: 0px; width: 15px; height: 15px; border-radius: 50%;" @click = "removeImage(image)") x
-        .information.bg-gray-300.rounded-md.mx-9.my-2.text-center(class="sm:text-start")
+        //.information.bg-gray-300.rounded-md.mx-9.my-2.text-center(class="sm:text-start")
             CVLegend Image Preview Dev
-        .py-4.grid.flex-box.flex-directional-row(class="sm:grid-cols-3" style="line-height: 0px;text-align: center")
+        //.py-4.grid.flex-box.flex-directional-row(class="sm:grid-cols-3" style="line-height: 0px;text-align: center")
             .div(style='position: relative'  v-for="(theImage,j) in selectedImage" :key="j") 
                 img.object-cover.align-middle.rounded-lg( class="w-40 sm:w-64" :src = "`${theImage}`")
                 .form-horizontal(style='position: absolute; top: 5px; right: 5px')
@@ -181,6 +181,12 @@ CVContainer
                         img.object-cover.align-middle.rounded-lg(class="w-40 sm:w-64" :src = "`${image}`")
                         .form-horizontal(style='position: absolute; top: 5px; right: 5px')
                             button#remove.bg-red-500(style="display: flex;align-items: center;justify-content: center;line-height: 0px;text-align: center ; color: white; font-weight: 300; positon: absolute; top:0px; left: 0px; width: 15px; height: 15px; border-radius: 50%;" @click = "removeImage(image)") x
+        //.information.bg-gray-300.rounded-md.mx-9.my-2.text-center(class="sm:text-start")
+            CVLegend Image Preview Developer
+        //div(v-for="(image,i) in images" :key="i" style="background-color: #333; overflow: auto; white-space: nowrap; padding: 10px;")
+            img.rounded-lg(style="padding: 10px;" :src = "`${image}`")
+            .form-horizontal(style='position: absolute; top: 5px; right: 5px')
+                button#remove.bg-red-500(style="display: flex;align-items: center;justify-content: center;line-height: 0px;text-align: center ; color: white; font-weight: 300; positon: absolute; top:0px; left: 0px; width: 15px; height: 15px; border-radius: 50%;" @click = "removeImage(image)") x
         .py-4.grid(class="sm:grid-cols-3") 
             a.ml-10.pt-1(style="text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") image upload
             .col-md-8.mx-9(class="sm:col-span-2a sm:mr-11")
