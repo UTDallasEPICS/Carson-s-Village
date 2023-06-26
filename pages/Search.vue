@@ -5,8 +5,8 @@
 *	ECS 2200
 *	Carson's Village: Automated Family Page
 *	Pages.vue 
-* Allows users to search for a page by name
-*	Located under "/Pages"
+* Allows users to search for a page(s) by name
+*	Located under "/Search"
 */
 
 import type { Page } from '@/types.d.ts'
@@ -14,10 +14,13 @@ import { donationFormat, dateFormat } from '@/utils'
 
 const pages = ref<Page[]>([])
 const router = useRoute();
+// we use either the search query from either the input field or the url depending on which one was used 
+// to call Search.vue
 const searchQueryURL = computed(() =>  router.query.search);
 const searchQueryInput = ref("");
-console.log(searchQueryURL.value as string)
-console.log(searchQueryInput.value as string)
+//console.log(searchQueryURL.value as string)
+//console.log(searchQueryInput.value as string)
+
 // Method to populate search results for pages
 const pageSearch = async() => { 
     const { data : pageData } = await useFetch('/api/pages', {

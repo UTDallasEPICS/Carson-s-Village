@@ -43,6 +43,8 @@ const data = ref<Page>({
     amount_distributed: 0
 })
 
+const imageLink = ref("")
+const imageLinkReplacement = ref("")
 const router = useRoute()
 const cvuser = useCookie<User>('cvuser');
 const cuid_data = computed(() => router.params.EditPageId);
@@ -50,6 +52,7 @@ const cuid = cuid_data.value as string
 const image_cuid = "";
 const family_cuid_data = computed(() => cvuser.value?.cuid)
 const family_cuid = family_cuid_data.value as string
+const pageCuid = computed(() => router.params.EditPageId)
 data.value.cuid = cuid;
 data.value.familyCuid = family_cuid;
 
@@ -85,6 +88,15 @@ if (cuid !== "0")
   await getData();
 })*/
 
+// Method that calls the backend to handle uploading the image urls to the database
+const saveImage = async (theImage: string) => {
+    await useFetch('/api/image', {
+        method: 'post',
+        body: ({ url: theImage, page_cuid: pageCuid.value as string})
+    }
+    )
+}
+
 // Method to remove a single image
 const removeImage = async (theImage: string) => {
     await useFetch('/api/image', {
@@ -96,13 +108,20 @@ const removeImage = async (theImage: string) => {
 
 // Method to set an uploaded image as the profile image of a page
 const setProfileImage = async (theImage: string) => {
-    await useFetch('/api/image', {
+    await useFetch('/api/profile_image', {
         method: 'POST',
-        body: ({ url: theImage })
+        body: ({ url: theImage, pageCuid: pageCuid.value as string })
     }
     )
 }
 
+const replaceImage = async (theImage: string) => {
+    await useFetch('/api/image', {
+        method: 'PUT',
+        body: ({ url: theImage, page_cuid: pageCuid.value as string })
+    }
+    )
+}
 // Placeholder values to annotate the form
 const page_name_place_holder = 'required'
 const visitation_location_place_holder = 'required'
@@ -118,9 +137,9 @@ const selectedImage = [images[1]];
 </script>
 
 <template lang="pug">
-.row.p-3
-LinkButton(:to="`/PageList/${family_cuid}`") Back
-.container.overflow-hidden.mt-4.mx-auto.place-content-center.font-sans.well.well-sm(class="w-5/6 sm:max-w-xl sm:p-6" style="box-shadow: 0px 3px 6px 3px rgba(0, 0, 0, 0.15), 0px 3px 3px rgba(0, 0, 0, 0.3); border-radius: 60px;")
+//.row.p-3
+    LinkButton(:to="`/PageList/${family_cuid}`") Back
+CVContainer
     .well.well-sm
         <!-- conditional rendering for page editing or page insert. This does not affect the function of Page editting. -->
         TitleComp(v-if="idExist") Edit Family Page
@@ -165,11 +184,11 @@ LinkButton(:to="`/PageList/${family_cuid}`") Back
         .py-4.grid(class="sm:grid-cols-3") 
             a.ml-10.pt-1(style="text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") image upload
             .col-md-8.mx-9(class="sm:col-span-2a sm:mr-11")
-                ImageUpload()
+                ImageUpload(v-model="imageLink" @click="saveImage(imageLink)")
         .py-4.grid(class="sm:grid-cols-3") 
             a.ml-10.pt-1(style="text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") image replace
             .col-md-8.mx-9(class="sm:col-span-2a sm:mr-11")
-                ImageUpload()
+                ImageUpload(v-model="imageLinkReplacement" @click="replaceImage(imageLink)")
         .information.bg-gray-300.rounded-md.mx-9.my-2.text-center(class="sm:text-start")
             legend.ml-2(class="sm:py-1" style="font-weight: 700; text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") Image Selection        
         Listbox(v-model="data.profile_image" @change="setProfileImage(theImage)")

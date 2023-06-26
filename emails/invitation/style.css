@@ -1,0 +1,20 @@
+.root {
+    width: 50%;
+    margin: auto;
+  }
+  
+  .hello {
+    font-size: larger;
+  }
+  
+  .blurb {
+    font-size: small
+  }
+  
+  .url {
+    padding: 4px;
+    padding-left: 6px;
+    padding-right: 6px;
+    background-color:rgb(16, 199, 16);
+    color: white;
+  }

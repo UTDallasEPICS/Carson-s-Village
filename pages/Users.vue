@@ -28,7 +28,7 @@ if( (isAdmin.value as boolean) == true )
 </script>
 
 <template lang = "pug">
-.row.p-3
+//.row.p-3
     LinkButton(to='/') Back
 .container.bg-white.mx-auto.mt-1(class="w-11/12 sm:w-[1000px]" style="height: auto; box-shadow: 0px 3px 6px 3px rgba(0, 0, 0, 0.15), 0px 3px 3px rgba(0, 0, 0, 0.3); border-radius: 60px;")
     table(style="table-layout: auto;")

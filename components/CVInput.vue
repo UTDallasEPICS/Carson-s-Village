@@ -1,12 +1,17 @@
 <script setup lang="ts">
-const props = defineProps({
-    modelValue: {
-        type: String,
-        default: "",
-    }
-});
-  </script>
+const props = defineProps<{ modelValue: string }>()
+
+const emit = defineEmits(["update:modelValue"])
+const value = computed({
+    get(){
+        return props.modelValue
+    },
+    set(v: string){
+        emit("update:modelValue", v)
+    },
+})
+</script>
 
 <template lang="pug">
-input.rounded-md.outline-0.border-box.p-2(style="border: 1px solid #c4c4c4;" :value="modelValue" @input="$emit('update:modelValue',$event.target.value)")
+input.rounded-md.outline-0.border-box.p-2(class="sm:ml-2"  style="border: 1px solid #c4c4c4;" v-model="value")
 </template>

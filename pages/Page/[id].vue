@@ -57,13 +57,14 @@ const donated_percentage = ref(0);
 const donated_percentage_100 = ref(0)
 const family_cuid = ref("0")
 const router = await useRoute();
-var id = computed(() =>  '');
+const id = computed(() =>  router.params.id);
 const cvuser = useCookie<Page>('cvuser')
 const stripeLink_ref = ref("")
 
 
-/* This creates a stripe session and redirects the user to stripe.
-*  Then it redirects to /PageDonation/pagecuid/transactionId
+/* 
+*  This creates a stripe session and redirects the user to stripe.
+*  Then it redirects to /PageDonation/pageCuid/transactionId
 */
 const create_checkup_session = async () => {
     const { data : sessionInfo } = await useFetch('/api/create_session', {
@@ -84,21 +85,29 @@ const getDataPage = async( id: string ) => {
 if(pageDataDB.value !== false){
     pageData.value = pageDataDB.value as unknown as Page;
     donated_percentage.value = Math.trunc((((pageData.value.amount_raised as number) / (pageData.value.donation_goal as number )) * 100) * 100)/100;
-    donated_percentage_100.value = donated_percentage.value*100
+    //donated_percentage_100.value = donated_percentage.value*100
     family_cuid.value = pageData.value.familyCuid as string;
-    console.log(pageData);
+    /*console.log(pageData);
     console.log(family_cuid.value as string)
-    console.log(donated_percentage.value as number)
+    console.log(donated_percentage.value as number)*/
 }
 
 }
+
+
+/*const styleObject = reactive({
+  height: '100%',
+  background: 'linear-gradient(90deg, rgba(15,200,0,1) 100%, rgba(203,255,0,1) 35%)',
+  'box-shadow': '0 3px 3px -5px #1ba710, 0 2px 5px #1ba710'
+})*/
+
 
 onMounted(() => { 
     const progress=(document.querySelector('.progress') || document.createElement("null")) as HTMLElement ;
-    progress.style.width=progress?.getAttribute('donated-amount')+ "%";
+    progress.style.width=progress?.getAttribute('donated-amount') + "%";
     progress.style.opacity="1";
 })
-id = computed(() =>  router.params.id) as ComputedRef<string>;
+
 await getDataPage(id.value as string)
 
 const images = ["../blue_image.png", "../profile.png", "../media2.png", "../media3.png", "../media4.png", "../media2.png"]
@@ -117,11 +126,11 @@ img.bg-orange-400.-mt-16.mx-auto(class="w-[122px] h-[122px] rounded-[8px]" :src=
 .text-gray-dark.font-poppins.text-md.inline-block.text-center {{ dateFormat(pageData.day_of_birth) }} 
 .text-gray-dark.font-poppins.text-md.inline-block.whitespace-pre  - 
 .text-gray-dark.font-poppins.text-md.inline-block {{ dateFormat(pageData.day_of_passing)}}
-.row.p-3
-LinkButton(:to="`/PageList/${family_cuid}`") Back
+//.row.p-3
+//LinkButton(:to="`/PageList/${family_cuid}`") Back
 .div(style="background: #F8F8F8;")
-    py-4.grid(class="sm:grid-cols-2")
-        img.object-cover.align-middle.rounded-lg( class="w-40 sm:w-64" :src = "`${profile}`")
+    .py-4.grid(class="sm:grid-cols-2")
+        img.object-cover.align-middle(class="w-40 sm:w-64" :src = "`${profile}`")
         .col-md-8.mx-9(class="sm:col-span-2a sm:mr-11")
             .div.p-4(id="services")
                 .div(v-if="pageData.visitation_date")
@@ -145,13 +154,13 @@ LinkButton(:to="`/PageList/${family_cuid}`") Back
             .container.m-4.place-content-center.font-poppins(class="w-5/6 sm:m-auto sm:py-3")
                 .text-md.text-center.ml-4.my-3(class="sm:text-xl sm:my-6" style="letter-spacing: 0.35px; font-weight: 600; color: #646464;") {{ donationFormat(pageData.amount_raised)  + " raised of " +  donationFormat(pageData.donation_goal) + " goal" }}
                 .progress-bar.overflow-hidden.ml-4.h-5.rounded-full(style="30px; background-color:#b5b5b5;")
-                    .progress.rounded-full.text-white.flex.items-center.justify-center(donated-amount=donated_percentage style="background: linear-gradient(90deg, rgba(15,200,0,1) 100%, rgba(203,255,0,1) 35%); box-shadow: 0 3px 3px -5px #1ba710, 0 2px 5px #1ba710; height: 100%; opacity: 1; width: 30%;") {{ donated_percentage  + "%" }}
+                    .progress.rounded-full.text-white.flex.items-center.justify-center(donated-amount=donated_percentage style="background: linear-gradient(90deg, rgba(15,200,0,1) 100%, rgba(203,255,0,1) 35%); box-shadow: 0 3px 3px -5px #1ba710, 0 2px 5px #1ba710; height: 100%; opacity: 1;") {{ donated_percentage  + "%" }}
                 .py-4
                 .progress-bar.overflow-hidden.ml-4.h-5.rounded-full(style="30px ; background-color:#b5b5b5;")
-                    progress.rounded-full.text-white.flex.items-center.justify-center(max="100" :value ="`${donated_percentage}`") {{ donated_percentage  + "%" }}
+                    progress.rounded-full.text-white.flex.items-center.justify-center(style="30px;" max="100" :value ="`${donated_percentage}`") {{ donated_percentage  + "%" }}
                 .py-4
                 .progress-bar.overflow-hidden.ml-4.h-5.rounded-full(style="30px; background-color:#b5b5b5;")
-                    CVProgress(:barWidth="donated_percentage")
+                    CVProgress(:style="{'width':donated_percentage + '%'}" :modelBarWidth="`${donated_percentage}`") {{ donated_percentage  + "%" }}
                 .well.well-sm
                     h1.ml-4.pt-9.text-2xl.text-gray-dark(class="sm:text-3xl" style="font-weight: 600; letter-spacing: 0.35px;") Donor Information
                 br

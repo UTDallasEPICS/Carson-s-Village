@@ -1,4 +1,8 @@
 export default defineEventHandler(async event => {
   setCookie(event, "cvtoken", "")
-  await sendRedirect(event, "/login")
+  setCookie(event, "cvuser", "")
+  //const body = await readBody(event)
+  //console.log(body)
+  //console.log("logout")
+  await sendRedirect(event, "/Search/?search=")
 })
