@@ -2,7 +2,7 @@
 // The timezone is computed automatically.
 export function dateFormat(date: string) {
     const dateObj = new Date(date);
-    return dateObj.toString();
+    return dateObj.toLocaleString();
 }
 
 // Function that converts the donation amounts in cents to a string in the form

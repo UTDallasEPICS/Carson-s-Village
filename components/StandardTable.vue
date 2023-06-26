@@ -17,7 +17,27 @@ const props = defineProps({
 //                  LinkButton(v-if="header.isLink")
 //                  td.css(v-else) {{ header.property }}
 //                
+const rows = [
+  {
+    name: "row 1",
+    amount_raised: "5"
+  }
+]
+const headers = [
+  {
+    title: "Name",
+    property: "name"
+  },
+  {
+    title: "Amount Raised",
+    property: "amount_raised"
+  }
+]
 
+/* 
+tr(v-for="row in rows")
+  td(v-for="header in headers") {{row[header.property]}}
+*/
 // Usage
 /* rowsObject = ref<tableItems>({
     name: ""
