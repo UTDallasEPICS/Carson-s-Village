@@ -1,0 +1,14 @@
+services:
+  stage-db:
+    image: postgres
+    restart: always
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    ports:
+      - '11112:5432'
+    volumes:
+      - carsons-stage-db:/var/lib/postgresql/data
+volumes:
+  carsons-stage-db:
+    driver: local
