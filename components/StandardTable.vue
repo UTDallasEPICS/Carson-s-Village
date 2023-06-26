@@ -1,12 +1,46 @@
 <script lang="ts" setup>
+const props2 = defineProps<{ headers: [] }>()
 const props = defineProps({
-    itemList: {
-        type: [],
-        default: "",
+    headers: {
+        type: []
     }
 });
-// make the table based on a row of objects with a list of headers (list of objects) { title, property } iterate over headers
 
+// make the table based on a row of objects with a list of headers (list of objects) { title, property } iterate over headers
+// header object has header.name and header.property
+//  table 
+//      thread
+//              tr(v-for="(header in headers)" :key="i")
+//                  th.css  {{ header.name }}
+//              tr(v-for="(header in headers)" :key="j")
+//                  th.css {{ header.name }}
+//                  LinkButton(v-if="header.isLink")
+//                  td.css(v-else) {{ header.property }}
+//                
+
+// Usage
+/* rowsObject = ref<tableItems>({
+    name: ""
+    property: undefined or new object()
+    url: ""
+    linkName: ""
+}
+
+/* pageNameHeader = ref<tableItems>({
+    name: "Page Name"
+    property: ""
+    isLink: false
+}
+
+/* viewPageHeader = ref<tableItems>({
+    name: "view"
+    property: ""
+    isLink: true
+}
+}
+
+*/
+// StandardTable(:header=rowsObject )
 </script>
 
 <template lang="pug">

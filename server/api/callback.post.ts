@@ -19,12 +19,17 @@ export default defineEventHandler(async event => {
     redirect_uri: process.env.BASEURL as string + '/api/callback'
    })}).then(response => {
     console.log(response)
-    console.log("one")
-    return response.json()
+
+    if (!response.ok) {
+      throw new Error("Failed requst for tokens and claims")
+    }
+
+    return response.json()  
    })
+   
  
    console.log(responseAuth0)
-   console.log("auth")
+  
   setCookie(event, "cvtoken", responseAuth0.id_token)
   const claims = jwt.verify(
     responseAuth0.id_token,
@@ -35,6 +40,6 @@ export default defineEventHandler(async event => {
   const user = await client.user.findFirst({
     where: { email: claims.email}
   })
-  setCookie(event,"cvuser",JSON.stringify(user))
+  setCookie(event, "cvuser", JSON.stringify(user))
   await sendRedirect(event, "/")
 });
