@@ -17,11 +17,11 @@ export default defineEventHandler(async event => {
   const stripe = new Stripe(stripeSecretKey as string, { apiVersion:"2022-11-15"} )
   //const stripe = await loadStripe(process.env.STRIPE_PUBLIC ? process.env.STRIPE_PUBLIC : '');
     const query = await getQuery(event)
-  
+    console.log(query)
     try{
       // get amount donated from transaction
       const transaction = await prisma.pageDonation.findFirst({
-        where: { transaction_id: query.transaction_id as string},
+        where: { transaction_id: query.transaction as string},
         include: {
           Page: {
             select: {
@@ -30,10 +30,11 @@ export default defineEventHandler(async event => {
           }
         }
       })
+      // TODO: reject if the transactionid has already been completed
       // update success flag in transaction
       await prisma.$transaction([
         prisma.pageDonation.update({
-          where: { transaction_id: query.transaction_id as string},
+          where: { transaction_id: query.transaction as string},
           data: { success: true }
         }),
         prisma.page.update({
@@ -44,11 +45,11 @@ export default defineEventHandler(async event => {
         }),
       ])
       const pageLink = "/page/"+transaction?.pageCuid;
-      return true;
+     // return true;
       //console.log(pageLink);
       //const pageLinker = () => `${process.env.BASEURL}/page/${transaction?.pageCuid}`
       //return pageLink;
-      //await sendRedirect(event, pageLinker() || "")
+      await sendRedirect(event, pageLink)
     } catch (e) {
       console.error(e)
 

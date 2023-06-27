@@ -31,12 +31,15 @@ const headers = [
   {
     title: "Amount Raised",
     property: "amount_raised"
+    kind: "link"
   }
 ]
 
 /* 
 tr(v-for="row in rows")
-  td(v-for="header in headers") {{row[header.property]}}
+  td(v-for="header in headers") 
+    p(v-if="header.kind != 'link") {{row[header.property]}}
+    LinkButton(v-else) {{row[header.property]}}
 */
 // Usage
 /* rowsObject = ref<tableItems>({

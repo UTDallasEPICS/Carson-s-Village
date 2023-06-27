@@ -60,7 +60,7 @@ export default defineEventHandler(async event => {
 			target_page_name: page?.page_name as string,
 			target_page_cuid: page?.cuid as string,
 		},
-		success_url: `${process.env.BASEURL}/pageDonation/${page_cuid}/${transaction_id}`,
+		success_url: `${process.env.BASEURL}/api/complete_session?transaction=${transaction_id}`,
 		cancel_url: `${process.env.BASEURL}/page/${page_cuid}`,
 	});
 	
