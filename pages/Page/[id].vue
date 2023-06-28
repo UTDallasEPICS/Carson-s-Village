@@ -16,16 +16,16 @@ const pageData = ref<Page>({
     cuid: "",
     familyCuid: "",
     page_name: "",
-    day_of_birth: new Date(),
-    day_of_passing: new Date(),
-    visitation_date: new Date(),
+    day_of_birth: "",
+    day_of_passing: "",
+    visitation_date: "",
     visitation_location: "",
     visitation_description: "",
-    funeral_date: new Date(),
+    funeral_date: "",
     funeral_description: "",
     funeral_location: "",
     obituary: "",
-    deadline: new Date(),
+    deadline: "",
     donation_goal: 0,
     amount_raised: 0,
     amount_distributed: 0
@@ -56,7 +56,7 @@ const donationData = ref<PageDonation>({
 const donated_percentage = ref(0);
 const donated_percentage_100 = ref(0)
 const family_cuid = ref("0")
-const router = await useRoute();
+const router = useRoute();
 const id = computed(() =>  router.params.id);
 const cvuser = useCookie<Page>('cvuser')
 const stripeLink_ref = ref("")
@@ -162,7 +162,7 @@ img.bg-orange-400.-mt-16.mx-auto(class="w-[122px] h-[122px] rounded-[8px]" :src=
                 .progress-bar.overflow-hidden.ml-4.h-5.rounded-full(style="30px; background-color:#b5b5b5;")
                     CVProgress(v-if="donated_percentage >= 100" style="width=100%;" :modelBarWidth="100") {{ donated_percentage  + "%" }}
                     CVProgress(v-else-if="donated_percentage > 0 && donated_percentage < 100" :style="{'width':donated_percentage + '%'}" :modelBarWidth="`${donated_percentage}`") {{ donated_percentage  + "%" }}
-                    CVProgress(v-else style="width:0%;" modelBarWidth="0")
+                    CVProgress(v-else style="width:0%; text-align:center;" modelBarWidth="0") {{ "0%" }}
                 .well.well-sm
                     h1.ml-4.pt-9.text-2xl.text-gray-dark(class="sm:text-3xl" style="font-weight: 600; letter-spacing: 0.35px;") Donor Information
                 br

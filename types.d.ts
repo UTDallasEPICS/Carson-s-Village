@@ -4,15 +4,15 @@ export type Page = {
     cuid: string,
     familyCuid: string,
     day_of_birth: Date | string,
-    day_of_passing: Date,
-    visitation_date: Date,
+    day_of_passing: Date | string,
+    visitation_date: Date | string,
     visitation_location: string,
     visitation_description: string,
-    funeral_date: Date,
+    funeral_date: Date | string,
     funeral_description: string,
     funeral_location: string,
     obituary: string,
-    deadline: Date,
+    deadline: Date | string,
     donation_goal: number | string
     amount_raised: number | string
     amount_distributed: number | string

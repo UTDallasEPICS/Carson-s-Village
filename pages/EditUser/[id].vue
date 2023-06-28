@@ -61,8 +61,8 @@ if ((cuid.value as string) !== "0")
 </script>
 
 <template lang="pug">
-.row.p-3
-LinkButton(to='/') Back
+//.row.p-3
+//LinkButton(to='/') Back
 CVContainer
     .well.well-sm
         TitleComp User Account Entry 
@@ -72,7 +72,7 @@ CVContainer
         .py-4.grid(class="sm:grid-cols-2")
             CVLabel Email
             .col-md-8.mx-9(class="sm:col-span-2a sm:mr-11")
-                input.rounded-md.outline-0.border-box.w-full.p-2(style="border: 1px solid #c4c4c4;" v-model='data_user.email' :placeholder="email")
+                CVInput(v-model='data_user.email' :placeholder="email")
         .py-4.grid(class="sm:grid-cols-2")
             CVLabel User Role
             .col-md-8.mx-9(class="sm:col-span-2a sm:mr-11")

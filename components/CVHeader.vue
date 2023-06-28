@@ -2,6 +2,8 @@
 import type { User, Page } from "@/types.d.ts"
 import { donationFormat, dateFormat } from '@/utils'
 const cvuser = useCookie<User>('cvuser');
+const cvtoken = useCookie('cvtoken');
+console.log(cvtoken.value)
 const isAdmin = computed(() => cvuser.value?.user_role == "advocate")
 const cuid = computed(() => cvuser.value?.cuid)
 const isLoggedIn = computed(() => cvuser.value )
@@ -12,52 +14,64 @@ const route = useRoute()
 const isNotSearch = computed(() => route.path !== "/Search/")
 console.log(route.path +"route path")
 //console.log(cuid);
+const logout = async () => {
+  await useFetch("/api/logout", {
+    method: 'GET',
+    query: { id_token: cvtoken.value as string}
+  })
+} 
 </script>
 
 <template lang="pug">
 .max-w-min.mx-auto.flex
   div.max-w-min.mx-auto.flex(v-if="isLoggedIn")
-    a.items-center.px-2.py-2.text-base.font-medium.rounded-md.text-green-600.cursor-pointer(
+    button.items-center.px-2.py-2.text-base.font-medium.rounded-md.text-green-600.cursor-pointer(style="border: 1px solid #c4c4c4;"
     class='hover:text-white hover:bg-gray-600'  
-      href="/api/logout"
+      @click="logout"
     ) 
       p.uppercase.white.w-max LOGOUT
-    NuxtLink.items-center.px-2.py-2.text-base.font-medium.rounded-md.text-green-600.cursor-pointer(
+    NuxtLink.items-center.px-2.py-2.text-base.font-medium.rounded-md.text-green-600.cursor-pointer(style="border: 1px solid #c4c4c4;"
     class='hover:text-white hover:bg-gray-600' :to="`/PageList/${cuid}`") 
       p.uppercase.white.w-max List of client pages
-    NuxtLink.items-center.px-2.py-2.text-base.font-medium.rounded-md.text-green-600.cursor-pointer(class='hover:text-white hover:bg-gray-600' to='/EditPage/0') 
+    NuxtLink.items-center.px-2.py-2.text-base.font-medium.rounded-md.text-green-600.cursor-pointer(style="border: 1px solid #c4c4c4;"
+    class='hover:text-white hover:bg-gray-600' to='/EditPage/0') 
       p.uppercase.white.w-max Insert new page
-    NuxtLink.items-center.px-2.py-2.text-base.font-medium.rounded-md.text-green-600.cursor-pointer(class='hover:text-white hover:bg-gray-600' v-if="isAdmin" to='/Users') 
+    NuxtLink.items-center.px-2.py-2.text-base.font-medium.rounded-md.text-green-600.cursor-pointer(style="border: 1px solid #c4c4c4;"
+    class='hover:text-white hover:bg-gray-600' v-if="isAdmin" to='/Users') 
       p.uppercase.white.w-max See all users
-    NuxtLink.items-center.px-2.py-2.text-base.font-medium.rounded-md.text-green-600.cursor-pointer(class='hover:text-white hover:bg-gray-600' v-if="isAdmin" to='/EditUser/0') 
+    NuxtLink.items-center.px-2.py-2.text-base.font-medium.rounded-md.text-green-600.cursor-pointer(style="border: 1px solid #c4c4c4;"
+    class='hover:text-white hover:bg-gray-600' v-if="isAdmin" to='/EditUser/0') 
       p.uppercase.white.w-max Invite user
-    NuxtLink.items-center.px-2.py-2.text-base.font-medium.rounded-md.text-green-600.cursor-pointer(
+    NuxtLink.items-center.px-2.py-2.text-base.font-medium.rounded-md.text-green-600.cursor-pointer(style="border: 1px solid #c4c4c4;"
       class='hover:text-white hover:bg-gray-600' 
       to="/"
     ) 
       p.uppercase.white.w-max PROFILE
+    NuxtLink.items-center.px-2.py-2.text-base.font-medium.rounded-md.text-green-600.cursor-pointer(style="border: 1px solid #c4c4c4;"
+    class='hover:text-white hover:bg-gray-600' v-if="isAdmin" to='/FamilyTransactionList') 
+      p.uppercase.white.w-max See Family Donations
   div.max-w-min.mx-auto.flex(v-else-if="!isLoggedIn")
-    a.items-center.px-2.py-2.text-base.font-medium.rounded-md.text-green-600.cursor-pointer(
+    a.items-center.px-2.py-2.text-base.font-medium.rounded-md.text-green-600.cursor-pointer(style="border: 1px solid #c4c4c4;"
     class='hover:text-white hover:bg-gray-600'  
     href="/api/login"
     ) 
       p.uppercase.white.w-max LOGIN
-    NuxtLink.items-center.px-2.py-2.text-base.font-medium.rounded-md.text-green-600.cursor-pointer(
+    NuxtLink.items-center.px-2.py-2.text-base.font-medium.rounded-md.text-green-600.cursor-pointer(style="border: 1px solid #c4c4c4;"
     class='hover:text-white hover:bg-gray-600'  
       to='https://carsonsvillage.org/'
     ) 
       p.uppercase.white.w-max HOME
-    NuxtLink.items-center.px-2.py-2.text-base.font-medium.rounded-md.text-green-600.cursor-pointer(
+    NuxtLink.items-center.px-2.py-2.text-base.font-medium.rounded-md.text-green-600.cursor-pointer(style="border: 1px solid #c4c4c4;"
     class='hover:text-white hover:bg-gray-600'  
       to='https://carsonsvillage.org/#'
     ) 
       p.uppercase.white.w-max RESOURCES
-    NuxtLink.items-center.px-2.py-2.text-base.font-medium.rounded-md.text-green-600.cursor-pointer(
+    NuxtLink.items-center.px-2.py-2.text-base.font-medium.rounded-md.text-green-600.cursor-pointer(style="border: 1px solid #c4c4c4;"
     class='hover:text-white hover:bg-gray-600'  
       to='https://carsonsvillage.org/get-involved/'
     ) 
       p.uppercase.white.w-max GET INVOLVED
-    NuxtLink.items-center.px-2.py-2.text-base.font-medium.rounded-md.text-green-600.cursor-pointer(
+    NuxtLink.items-center.px-2.py-2.text-base.font-medium.rounded-md.text-green-600.cursor-pointer(style="border: 1px solid #c4c4c4;"
     class='hover:text-white hover:bg-gray-600'  
       to='https://carsonsvillage.org/'
     ) 

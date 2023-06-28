@@ -28,16 +28,16 @@ const data = ref<Page>({
     cuid: "",
     familyCuid: "",
     page_name: "",
-    day_of_birth: new Date(),
-    day_of_passing: new Date(),
-    visitation_date: new Date(),
+    day_of_birth: "",
+    day_of_passing: "",
+    visitation_date: "",
     visitation_location: "",
     visitation_description: "",
-    funeral_date: new Date(),
+    funeral_date: "",
     funeral_description: "",
     funeral_location: "",
     obituary: "",
-    deadline: new Date(),
+    deadline: "",
     donation_goal: 0,
     amount_raised: 0,
     amount_distributed: 0
@@ -226,7 +226,7 @@ CVContainer
         .py-4.grid(class="sm:grid-cols-3")
             CVLabel Description
             .col-md-8.mx-9(class="sm:col-span-2a sm:mr-11")
-                textarea.rounded-md.outline-0.border-box.p-2(style="border: 1px solid #c4c4c4;" v-model='data.visitation_description' :placeholder="visitation_description_place_holder")
+                CVTextArea(v-model='data.visitation_description' :placeholder="visitation_description_place_holder")
 
         .information.bg-gray-300.rounded-md.mx-9.my-2.text-center(class="sm:text-start")
             CVLegend Funeral Information       
@@ -242,11 +242,11 @@ CVContainer
         .py-4.grid(class="sm:grid-cols-3")
             CVLabel Description
             .col-md-8.mx-9(class="sm:col-span-2a sm:mr-11")
-                textarea.rounded-md.outline-0.border-box.p-2(style="border: 1px solid #c4c4c4;" v-model='data.funeral_description' :placeholder="funeral_description_place_holder")
+                CVTextArea(v-model='data.funeral_description' :placeholder="funeral_description_place_holder")
         .py-4.grid(class="sm:grid-cols-3")
             CVLabel Obituary
             .col-md-8.mx-9(class="sm:col-span-2a sm:mr-11")
-                textarea.rounded-md.outline-0.border-box.p-2(style="border: 1px solid #c4c4c4;" v-model='data.obituary' :placeholder="obituary_place_holder")
+                CVTextArea(v-model='data.obituary' :placeholder="obituary_place_holder")
         .information.bg-gray-300.rounded-md.mx-9.my-2.text-center(class="sm:text-start")
             CVLegend Fundraising Information
         .py-4.grid(class="sm:grid-cols-3")
