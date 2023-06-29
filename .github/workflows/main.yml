@@ -19,5 +19,5 @@ jobs:
             npx prisma migrate deploy
             pm2 restart all
           host: pages.carsonsvillage.org
-          username: ec2-user
+          username: ubuntu
           key: ${{ secrets.CARSONS_AWS_API_PRIVATE_KEY }}
