@@ -26,11 +26,8 @@ export default defineNuxtConfig({
     transpile: ['@vuepic/vue-datepicker']
 },
 modules: 
-  ['@nuxtjs/tailwindcss',
-    '@nuxtjs/proxy'],
-//plugins: [
- // { src: '~/plugins/stripe.js', mode: 'client' }
-//],
+  ['@nuxtjs/tailwindcss',],
+
   vite: {
     resolve: {
       dedupe:["vue"]
