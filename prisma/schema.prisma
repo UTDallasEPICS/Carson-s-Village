@@ -56,10 +56,9 @@ model Page {
   PageDonations      PageDonation[]
   DonationPayouts    DonationPayout[]
   User               User             @relation(fields: [familyCuid], references: cuid)
-  Images             Image[]          @relation(name: "asd")
+  Images             Image[]
   amount_distributed Int              @default(0)
   profileImageCuid   String           @map("profile_image_cuid")
-  ProfileImage       Image?           @relation(fields: [profileImageCuid], references: cuid)
 
   @@map("pages")
 }
@@ -78,11 +77,10 @@ model PageDonation {
 }
 
 model Image {
-  cuid        String @id @default(cuid())
-  url         String
-  pageCuid    String
-  Page        Page   @relation(fields: [pageCuid], references: [cuid])
-  PageProfile Page   @relation(name: "asd", fields: [pageCuid], references: [cuid])
+  cuid     String @id @default(cuid())
+  url      String
+  pageCuid String
+  Page     Page   @relation(fields: [pageCuid], references: [cuid])
 
   @@unique([pageCuid, url])
   @@map("images")
