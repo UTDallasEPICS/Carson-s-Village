@@ -13,5 +13,5 @@ const value = computed({
 </script>
 
 <template lang="pug">
-textarea.rounded-md.outline-0.border-box.p-2(style="border: 1px solid #c4c4c4;" v-model="value")
+textarea.rounded-md.outline-0.border-box.w-full.p-2(style="border: 1px solid #c4c4c4;" v-model="value")
 </template>

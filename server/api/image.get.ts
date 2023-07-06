@@ -9,22 +9,14 @@ const prisma = new PrismaClient()
 
 
 export default defineEventHandler(async event => {
-  const body = await readBody(event);
-  const page_cuid = body.page_cuid as string;
+  const { pageCuid } = getQuery(event)
 
-try {
-    // retrives all the images that belong to a family page to a family page
-    const queryRes = await prisma.image.findMany({
+  // retrives all the images that belong to a family page to a family page
+  const queryRes = await prisma.image.findMany({
       where: {
-          pageCuid : page_cuid
+          pageCuid : pageCuid as string
         }
         }
     );
     return queryRes; 
-  } catch(e){
-  console.log(e)
-  }
-
-
-    
 });

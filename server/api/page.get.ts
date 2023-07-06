@@ -16,9 +16,11 @@ export default defineEventHandler(async event => {
 		const queryRes = await prisma.page.findFirst({
        	where: {
 			cuid : cuid as string
+		  },
+		  include: {
+            Images: true
 		  }
-		  }
-	  );
-	  console.log(queryRes)
+		});
+	  //console.log(queryRes)
 	  return queryRes;
 		})

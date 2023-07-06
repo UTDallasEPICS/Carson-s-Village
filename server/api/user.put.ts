@@ -10,6 +10,7 @@ export default defineEventHandler(async event => {
 const body = await readBody(event);
 
 // updates the user
+try{ 
 const queryRes = await prisma.user.update({
   where: {
     cuid: body.cuid
@@ -20,4 +21,7 @@ const queryRes = await prisma.user.update({
     });
 
   return true;
+  } catch(e){
+    console.log(e)
+  }
 })

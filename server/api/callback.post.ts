@@ -5,8 +5,8 @@ const client = new PrismaClient()
 
 export default defineEventHandler(async event => {
   const body = await readBody(event)
-  console.log(body)
-  console.log(body.value)
+  //console.log(body)
+  //console.log(body.value)
   const requestURL = () => `${process.env.ISSUER}/oauth/token`
   const responseAuth0 = await fetch(requestURL(),
    { method: 'POST',
@@ -18,7 +18,7 @@ export default defineEventHandler(async event => {
     code: body.code,
     redirect_uri: process.env.BASEURL as string + '/api/callback'
    })}).then(response => {
-    console.log(response)
+    //console.log(response)
 
     if (!response.ok) {
       throw new Error("Failed requst for tokens and claims")
@@ -28,14 +28,14 @@ export default defineEventHandler(async event => {
    })
    
  
-   console.log(responseAuth0)
+   //console.log(responseAuth0)
   
   setCookie(event, "cvtoken", responseAuth0.id_token)
   const claims = jwt.verify(
     responseAuth0.id_token,
     fs.readFileSync(process.cwd()+"/cert-dev.pem")
   )
-  console.log(claims)
+  //console.log(claims)
 
   const user = await client.user.findFirst({
     where: { email: claims.email}

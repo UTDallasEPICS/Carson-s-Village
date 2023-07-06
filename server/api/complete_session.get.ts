@@ -54,12 +54,14 @@ export default defineEventHandler(async event => {
         console.log("Transaction already completed.")
       }
 
-      //const pageLink = "/page/"+transaction?.pageCuid;
+      const pageLink = "/Page/"+transaction?.pageCuid;
+      //console.log(pageLink)
+      await sendRedirect(event, pageLink)
       return true;
       //console.log(pageLink);
       //const pageLinker = () => `${process.env.BASEURL}/page/${transaction?.pageCuid}`
       //return pageLink;
-      //await sendRedirect(event, pageLinker() || "")
+      
     } catch (e) {
       console.error(e)
 

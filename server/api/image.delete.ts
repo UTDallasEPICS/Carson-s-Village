@@ -1,4 +1,5 @@
 import { PrismaClient } from "@prisma/client"
+import type { Image, Page, User } from '@/types.d.ts'
 const prisma = new PrismaClient()
 
 /*
@@ -10,12 +11,12 @@ const prisma = new PrismaClient()
 
 export default defineEventHandler(async event => {
   const body = await readBody(event);
-  const url = body.url as string;
+  const image = body.image as Image;
 try {
     // Deletes an image from the database.
-    const queryRes = await prisma.image.deleteMany({
+    const queryRes = await prisma.image.delete({
       where: {
-          url : url
+          cuid : image.cuid as string
         }
         }
     );
