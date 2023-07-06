@@ -6,50 +6,52 @@ import { PrismaClient } from "@prisma/client"
 const prisma = new PrismaClient()
 
 export default defineEventHandler(async (event) => {
-  try {
     // Read the request body
     const data = await readBody(event)
 
     // Log the incoming request body
-    console.log(data)
-
+    //console.log(data)
+    //console.log("image data logging")
     // key used to retrieve image later on
     const key = nanoid()
     // gets presigned URL from aws.ts and returns it to the call from vue
     const uploadUrl =  await getSignedFileUrl(data.contentLength,data.contentType, key);
-    const contentUrl = import.meta.env.IMAGES_URL + key;
+    const contentUrl=  import.meta.env.IMAGE_BASE_URL + "/" + key;
     const body = await readBody(event)
     const url = body.url
-  //const page_cuid = body.cuid;
+    const pageCuid = body.pageCuid;
   //delete body.cuid;
 
-  try{
+  //try{
   // Creates a new entry in the database in the page model to a specfic user
-  /*const queryRes = await prisma.image.create({
+  const image = await prisma.image.create({
     data: {
-      ...body,cuid: undefined,
-      User: {
+      url: contentUrl,
+      //cuid: undefined,
+      Page: {
         connect: {
-          PageCuid : page_cuid || "0"
+          cuid : pageCuid || "0"
         }
       
         }
       }
-    });*/
-  } catch(e){
-    console.error(e)
-  }
+    });
+
     return  {
       
       uploadUrl: await getSignedFileUrl(data.contentLength, data.contentType, key),
-      contentUrl: import.meta.env.IMAGES_URL + key
+      image
     }
+  /*} catch(e){
+    console.error(e)
+  }*/
+    
 
-  } catch (err) {
-    console.error(err)
-    alert("Error Uploading Image")
+ // } catch (err) { 
+ //   console.error(err)
+ //   alert("Error Uploading Image")
     //event.status(500).send('Error uploading image')
-  }
+  //}
 })
 
 

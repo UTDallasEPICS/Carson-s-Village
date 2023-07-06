@@ -87,8 +87,8 @@ export default defineEventHandler(async event => {
       methods: "*",
       allowHeaders: [session.url]
     })*/
-    console.log(session.url);
-    console.log(queryRes.transaction_id);
+    //console.log(session.url);
+    //console.log(queryRes.transaction_id);
     //await sendRedirect(event, session.url || "", 302)
     
     return session.url;

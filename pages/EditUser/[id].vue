@@ -31,7 +31,7 @@ const data_user = ref<User>({
 
 const cvuser = useCookie('cvuser');
 const cvData = computed(() => JSON.parse(cvuser.value || "{}"))
-const router = await useRoute()
+const router = useRoute()
 const cuid = computed(() => router.params.id as string);
 
 // Method that creates a new user on the database on the backend
@@ -61,39 +61,39 @@ if ((cuid.value as string) !== "0")
 </script>
 
 <template lang="pug">
-.row.p-3
-LinkButton(to='/') Back
+//.row.p-3
+//LinkButton(to='/') Back
 CVContainer
     .well.well-sm
         TitleComp User Account Entry 
         br
         .bar.mx-9(style="border-top: 0.5px solid #646464;")
         br
-        .py-4.grid(class="sm:grid-cols-2")
+        .py-4.grid(class="sm:grid-cols-3")
             CVLabel Email
-            .col-md-8.mx-9(class="sm:col-span-2a sm:mr-11")
-                input.rounded-md.outline-0.border-box.w-full.p-2(style="border: 1px solid #c4c4c4;" v-model='data_user.email' :placeholder="email")
-        .py-4.grid(class="sm:grid-cols-2")
+            .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
+                CVInput(v-model='data_user.email' :placeholder="email")
+        .py-4.grid(class="sm:grid-cols-3")
             CVLabel User Role
-            .col-md-8.mx-9(class="sm:col-span-2a sm:mr-11")
+            .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
                 select.rounded-md.outline-0.border-box.w-full.p-2.bg-white(style="border: 1px solid #c4c4c4;" v-model='data_user.user_role') Select User Role
                     option family
                     option advocate
-        .py-4.grid(class="sm:grid-cols-2")
+        .py-4.grid(class="sm:grid-cols-3")
             CVLabel First Name
-            .col-md-8.mx-9(class="sm:col-span-2a sm:mr-11")
+            .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
                 CVInput(v-model='data_user.first_name' :placeholder="first_name")
-        .py-4.grid(class="sm:grid-cols-2")
+        .py-4.grid(class="sm:grid-cols-3")
             CVLabel Middle Name
-            .col-md-8.mx-9(class="sm:col-span-2a sm:mr-11")
+            .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
                 CVInput(v-model='data_user.middle_name' :placeholder="middle_name")
-        .py-4.grid(class="sm:grid-cols-2")
+        .py-4.grid(class="sm:grid-cols-3")
             CVLabel Last Name
-            .col-md-8.mx-9(class="sm:col-span-2a sm:mr-11")
+            .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
                 CVInput(v-model='data_user.last_name' :placeholder="last_name" )
-        .py-4.grid(class="sm:grid-cols-2")
+        .py-4.grid(class="sm:grid-cols-3")
             CVLabel Phone
-            .col-md-8.mx-9(class="sm:col-span-2a sm:mr-11")
+            .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
                 CVInput(v-model='data_user.phone' :placeholder="phone")
             .col-md-10.py-2
                 ActionButton(@click="save") Save    

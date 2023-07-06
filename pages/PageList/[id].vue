@@ -52,7 +52,7 @@ await getDataPageList()
       tr 
         th.font-poppins.font-bold.p-2(style="--tw-bg-opacity: 1; background-color: rgb(110 171 191 / var(--tw-bg-opacity));overflow: hidden; border-radius: 60px 0px 0px 0px; width:30%; ")  Page Name
         th.font-poppins.font-bold.overflow-hidden(v-if="isAdmin" style="width:15%;--tw-bg-opacity: 1; background-color: rgb(110 171 191 / var(--tw-bg-opacity));") User ID
-        th.font-poppins.font-bold(style="width:20%;--tw-bg-opacity: 1; background-color: rgb(110 171 191 / var(--tw-bg-opacity));") Donation Deadline
+        th.font-poppins.font-bold(style="width:35%; --tw-bg-opacity: 1; background-color: rgb(110 171 191 / var(--tw-bg-opacity));") Donation Deadline
         th.font-poppins.font-bold(style="width:30%; --tw-bg-opacity: 1; background-color: rgb(110 171 191 / var(--tw-bg-opacity));") Page Edit
         th.font-poppins.font-bold(style="border-radius: 0px 60px 0px 0px; width:20%; --tw-bg-opacity: 1; background-color: rgb(110 171 191 / var(--tw-bg-opacity));") Page View
       tr(v-for="(item, i) in pages" 

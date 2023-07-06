@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { Image } from '~~/types';
+import type { Image } from '../types.d.ts';
 
 // TODO: this component needs to handle getting the presigned url (which should also create an Image entry in the database), performing the upload, and then emitting the Image object (not the file) so that
 // the parent component can add it to its list
@@ -14,23 +14,23 @@ type imageLinkTypes = {
 }
 // we need to know what page we are adding images to
 const props = defineProps({
-    page: {
+    pageCuid: {
         type: String,
         default: "",
     }
 });
 
-
 // actually uploads images using presigned url to s3 bucket
 const onFile = async (event: Event) => {
   const file = event?.target?.files[0];
 
-  // TODO: this needs to be modified so that the API call also creates an image in the database
   const { data: imageData } = await useFetch('/api/image_upload', {
     method: 'POST',
-    body: { size: file.size, contentType: file.type, file }
+    body: { contentLength: file.size, contentType: file.type, file, pageCuid: props.pageCuid }
   });
-  const { uploadUrl, image} = imageData as unknown as imageLinkTypes;
+  const { uploadUrl, image} = imageData.value as unknown as imageLinkTypes;
+  //console.log(uploadUrl)
+  //console.log(imageData.value)
   const response = await fetch(uploadUrl, {
     method: "PUT",
     headers: {
@@ -42,7 +42,9 @@ const onFile = async (event: Event) => {
   if (!response.ok) {
     throw new Error("Failed to upload data")
   }
-  // TODO: parent component adds this image to its list of images
+
+  //console.log(image.url)
+  //console.log("content url")
   emit('imageUploaded', image)
   } 
 </script>

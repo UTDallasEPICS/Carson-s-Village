@@ -30,26 +30,38 @@ export default defineEventHandler(async event => {
           }
         }
       })
+
       // TODO: reject if the transactionid has already been completed
       // update success flag in transaction
-      await prisma.$transaction([
-        prisma.pageDonation.update({
-          where: { transaction_id: query.transaction as string},
-          data: { success: true }
-        }),
-        prisma.page.update({
-          where: {
-            cuid: transaction?.pageCuid
-          },
-          data: {amount_raised: {increment: transaction?.amount}}
-        }),
-      ])
-      const pageLink = "/page/"+transaction?.pageCuid;
-     // return true;
+      const checkTransaction = await prisma.pageDonation.findFirst({
+        where: { transaction_id: query.transaction as string}
+      })
+
+      if(checkTransaction?.success!= true){
+        await prisma.$transaction([
+          prisma.pageDonation.update({
+            where: { transaction_id: query.transaction as string},
+            data: { success: true }
+          }),
+          prisma.page.update({
+            where: {
+              cuid: transaction?.pageCuid
+            },
+            data: {amount_raised: {increment: transaction?.amount}}
+          }),
+        ])
+      } else {
+        console.log("Transaction already completed.")
+      }
+
+      const pageLink = "/Page/"+transaction?.pageCuid;
+      //console.log(pageLink)
+      await sendRedirect(event, pageLink)
+      return true;
       //console.log(pageLink);
       //const pageLinker = () => `${process.env.BASEURL}/page/${transaction?.pageCuid}`
       //return pageLink;
-      await sendRedirect(event, pageLink)
+      
     } catch (e) {
       console.error(e)
 

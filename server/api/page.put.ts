@@ -8,19 +8,19 @@ const prisma = new PrismaClient()
 */
 
 export default defineEventHandler(async event => {
-  const body = await readBody(event)
-  delete body.familyCuid;
+  const { Images, ...data } = await readBody(event)
+  delete data.familyCuid;
   
-  body.donation_goal = Math.trunc(body.donation_goal * 100);
-  body.amount_raised = Math.trunc(body.amount_raised * 100);
+  data.donation_goal = Math.trunc(data.donation_goal * 100);
+  data.amount_raised = Math.trunc(data.amount_raised * 100);
   try {
     // updates a pre-existing page
     const queryRes = await prisma.page.update({
       where: {
-        cuid: body.cuid
+        cuid: data.cuid
       },
       data: {
-        ...body
+        ...data
       }
     });
   } catch (e) {

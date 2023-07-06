@@ -9,26 +9,27 @@
 *	Located under "/Page/"
 */
 
-import type { Page, PageDonation } from '@/types.d.ts'
+import type { Page, PageDonation, Image } from '@/types.d.ts'
 import {  dateFormat, donationFormat } from '@/utils'
 
 const pageData = ref<Page>({
     cuid: "",
     familyCuid: "",
     page_name: "",
-    day_of_birth: new Date(),
-    day_of_passing: new Date(),
-    visitation_date: new Date(),
+    day_of_birth: "",
+    day_of_passing: "",
+    visitation_date: "",
     visitation_location: "",
     visitation_description: "",
-    funeral_date: new Date(),
+    funeral_date: "",
     funeral_description: "",
     funeral_location: "",
     obituary: "",
-    deadline: new Date(),
+    deadline: "",
     donation_goal: 0,
     amount_raised: 0,
-    amount_distributed: 0
+    amount_distributed: 0,
+    Images: []
 });
 
 type donor = {
@@ -53,10 +54,11 @@ const donationData = ref<PageDonation>({
     transaction_id : ""
 });
 
+const imageData = ref<Image[]>([])
 const donated_percentage = ref(0);
 const donated_percentage_100 = ref(0)
 const family_cuid = ref("0")
-const router = await useRoute();
+const router = useRoute();
 const id = computed(() =>  router.params.id);
 const cvuser = useCookie<Page>('cvuser')
 const stripeLink_ref = ref("")
@@ -90,8 +92,9 @@ if(pageDataDB.value !== false){
     /*console.log(pageData);
     console.log(family_cuid.value as string)
     console.log(donated_percentage.value as number)*/
+    if(pageData.value.Images.length!=0)
+        imageData.value = pageData.value.Images as unknown as Image[]
 }
-
 }
 
 
@@ -129,9 +132,9 @@ img.bg-orange-400.-mt-16.mx-auto(class="w-[122px] h-[122px] rounded-[8px]" :src=
 //.row.p-3
 //LinkButton(:to="`/PageList/${family_cuid}`") Back
 .div(style="background: #F8F8F8;")
-    .py-4.grid(class="sm:grid-cols-2")
+    .py-4.grid(class="sm:grid-cols-3")
         img.object-cover.align-middle(class="w-40 sm:w-64" :src = "`${profile}`")
-        .col-md-8.mx-9(class="sm:col-span-2a sm:mr-11")
+        .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
             .div.p-4(id="services")
                 .div(v-if="pageData.visitation_date")
                     .px-5.py-4.text-gray-dark.font-poppins.text-2xl.text-left.font-bold(style="line-height: 36px; text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") Visitation
@@ -162,7 +165,7 @@ img.bg-orange-400.-mt-16.mx-auto(class="w-[122px] h-[122px] rounded-[8px]" :src=
                 .progress-bar.overflow-hidden.ml-4.h-5.rounded-full(style="30px; background-color:#b5b5b5;")
                     CVProgress(v-if="donated_percentage >= 100" style="width=100%;" :modelBarWidth="100") {{ donated_percentage  + "%" }}
                     CVProgress(v-else-if="donated_percentage > 0 && donated_percentage < 100" :style="{'width':donated_percentage + '%'}" :modelBarWidth="`${donated_percentage}`") {{ donated_percentage  + "%" }}
-                    CVProgress(v-else style="width:0%;" modelBarWidth="0")
+                    CVProgress(v-else style="width:0%; text-align:center;" modelBarWidth="0") 
                 .well.well-sm
                     h1.ml-4.pt-9.text-2xl.text-gray-dark(class="sm:text-3xl" style="font-weight: 600; letter-spacing: 0.35px;") Donor Information
                 br
@@ -186,8 +189,8 @@ img.bg-orange-400.-mt-16.mx-auto(class="w-[122px] h-[122px] rounded-[8px]" :src=
     .div.px-8.py-4(style="color: #6E6E6E; font-weight: 500; font-size: 14px; line-height: 28px; letter-spacing: -0.078px; word-break: break-word;" id="obituary") {{ pageData.obituary }}
     .div.p-4(id="media")
         .row.gallery.flex.flex-wrap.gap-1.items-center.justify-center(class="basis-1/2 sm:basis-1/4 sm:gap-3 sm:m-8")
-            .div(style='position: relative ;width:25%; height:auto;' v-for="(image,i) in images" :key="i") 
-                img.object-cover.align-middle.rounded-lg( class="w-40 sm:w-64" :src = "`${image}`")
+            .div(style='position: relative ;width:25%; height:auto;' v-for="(image,i) in imageData" :key="i") 
+                img.object-cover.align-middle.rounded-lg( class="w-40 sm:w-64" :src = "`${image.url}`")
 </template>
 
 <style scoped></style>
