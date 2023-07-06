@@ -86,7 +86,7 @@ const getDataPage = async( id: string ) => {
 
 if(pageDataDB.value !== false){
     pageData.value = pageDataDB.value as unknown as Page;
-    donated_percentage.value = Math.trunc((((pageData.value.amount_raised as number) / (pageData.value.donation_goal as number )) * 100) * 100)/100;
+    donated_percentage.value = Math.trunc((((pageData.value.amount_raised as number) / (pageData.value.donation_goal as number )) * 100));
     //donated_percentage_100.value = donated_percentage.value*100
     family_cuid.value = pageData.value.familyCuid as string;
     /*console.log(pageData);
@@ -126,9 +126,9 @@ const location = pageImages[0]
 img.bg-orange-400.-mt-16.mx-auto(class="w-[122px] h-[122px] rounded-[8px]" :src="`${profile}`")
 .text-gray-dark.font-poppins.text-2xl.text-center.font-semibold(style="text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.25);") {{ pageData.page_name }}
 .row.text-center
-.text-gray-dark.font-poppins.text-md.inline-block.text-center {{ dateFormat(pageData.day_of_birth) }} 
-.text-gray-dark.font-poppins.text-md.inline-block.whitespace-pre  - 
-.text-gray-dark.font-poppins.text-md.inline-block {{ dateFormat(pageData.day_of_passing)}}
+  .text-gray-dark.font-poppins.text-md.inline-block {{ dateFormat(pageData.day_of_birth) }} 
+  .text-gray-dark.font-poppins.text-md.inline-block.whitespace-pre  - 
+  .text-gray-dark.font-poppins.text-md.inline-block {{ dateFormat(pageData.day_of_passing)}}
 //.row.p-3
 //LinkButton(:to="`/PageList/${family_cuid}`") Back
 .div(style="background: #F8F8F8;")

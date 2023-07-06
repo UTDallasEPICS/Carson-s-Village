@@ -1,0 +1,39 @@
+on:
+  push:
+    branches:
+      - stage
+name: Update EC2
+jobs:
+  update:
+    name: Prod - SSH Login, Pull, Reload
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup Node
+        uses: actions/setup-node@v2.1.2
+        with:
+          node-version: "19.x"
+      - run: npm install
+      - run: npx prisma generate
+      - run: npm run build
+      - name: copy file via ssh password
+        uses: appleboy/scp-action@v0.1.4
+        with:
+          host: ec2-52-34-213-210.us-west-2.compute.amazonaws.com
+          username: ubuntu
+          key: ${{ secrets.CARSONS_AWS_API_PRIVATE_KEY }}
+          source: ./.output
+          target: ~/carsons-village-stage/.output
+      - name: Execute
+        uses: appleboy/ssh-action@v0.1.4
+        with:
+          script: |
+            cd carsons-village-stage
+            git checkout stage
+            git pull
+            npm install
+            npx prisma migrate deploy
+            pm2 restart all
+          host: ec2-52-34-213-210.us-west-2.compute.amazonaws.com
+          username: ubuntu
+          key: ${{ secrets.CARSONS_AWS_API_PRIVATE_KEY }}

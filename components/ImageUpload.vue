@@ -23,9 +23,6 @@ const props = defineProps({
 // actually uploads images using presigned url to s3 bucket
 const onFile = async (event: Event) => {
   const file = event?.target?.files[0];
-  const Files = event?.target?.files
-  //console.log(file)
-  //console.log(Files)
 
   const { data: imageData } = await useFetch('/api/image_upload', {
     method: 'POST',

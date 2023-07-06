@@ -60,7 +60,7 @@ const logout = async () => {
   .flex.w-max(v-if="isNotSearch")
     input(class="border border-gray-300 py-2 px-4 ml-8 rounded-lg focus:outline-none focus:border-black-500" type="search" placeholder=" " v-model="searchQuery")
     NuxtLink.inline(:to="`/Search/?search=${searchQuery}`")
-      img(src="../CVSearchIcon.png")
+      img(src="/CVSearchIcon.png")
   //NuxtLink.items-center.px-2.py-2.text-base.font-medium.rounded-md.text-green-600.cursor-pointer(v-if="isAdmin"
     class='hover:text-white hover:bg-gray-600' 
     to="/FamilyTransactionList"
