@@ -24,6 +24,7 @@ jobs:
           key: ${{ secrets.CARSONS_AWS_API_PRIVATE_KEY }}
           source: ./.output
           target: ~/carsons-village-stage/.output
+          overwrite: true
       - name: Execute
         uses: appleboy/ssh-action@v0.1.4
         with:
