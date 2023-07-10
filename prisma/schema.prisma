@@ -57,8 +57,8 @@ model Page {
   DonationPayouts DonationPayout[]
   User            User           @relation(fields: [familyCuid], references: cuid)
   Images          Image[]
-  amount_distributed Int      @default(0)
-  //profileImageCuid String      @map("profile_image_cuid")
+  amount_distributed Int         @default(0)
+  profileImageCuid String        @map("profile_image_cuid")
   //ProfileImage  Image?         @relation(fields: [profileImageCuid], references: cuid)
 
   @@map("pages")

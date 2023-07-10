@@ -45,8 +45,9 @@ const sendEmail = async (to:string, template:string, subject:string, data:string
 
 const body = await readBody(event)
 //delete body.cuid
-
+console.log(event.context.user)
 try{
+  //if(event.context.user.user_role === "advocate"){
   await sendEmail(body.email, "invitation", "Invitation to Carson's village", ({...body, url: `${process.env.BASEURL}/api/login`}))
   // creates a new user entry in the user model/table.
   const queryRes = await prisma.user.create({
@@ -55,6 +56,9 @@ try{
       }
     });
   return queryRes.cuid;
+  //}else{
+  //  alert("not allowed")
+  //}
   } catch(e){
     console.error(e);
   }

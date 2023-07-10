@@ -1,13 +1,13 @@
 <script lang="ts" setup>
 const props = defineProps<{modelBarWidth: number}>()
-const emit = defineEmits(["update:modelbarWidth"])
+const emit = defineEmits(["update:modelBarWidth"])
 
 const BarWidth = computed({
    get() {
     return props.modelBarWidth
    },
    set(v: number){
-        emit("update:modelbarWidth", v)
+        emit("update:modelBarWidth", v)
    },
 })
 const style = computed(() => 

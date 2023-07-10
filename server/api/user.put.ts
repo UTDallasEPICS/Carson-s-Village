@@ -11,16 +11,18 @@ const body = await readBody(event);
 
 // updates the user
 try{ 
-const queryRes = await prisma.user.update({
-  where: {
-    cuid: body.cuid
-  },
-  data: {
-    ...body     
-  }  
-    });
+//if(event.context.user.user_role === "advocate"){
+  const queryRes = await prisma.user.update({
+    where: {
+      cuid: body.cuid
+    },
+    data: {
+      ...body     
+    }  
+      });
 
-  return true;
+    return true;
+//}
   } catch(e){
     console.log(e)
   }

@@ -17,6 +17,7 @@ const isAdmin = computed(() => cvuser.value?.user_role == "advocate")
 
 // Method that retrieves all the authenticated users on the website (advocates and family members)
 const getDataUsers = async () => {
+    //await useFetch('/api/middleware/auth')
     const { data: usersData } = await useFetch('/api/users', {
         method: 'GET',
     })

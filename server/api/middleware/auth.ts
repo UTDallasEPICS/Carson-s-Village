@@ -7,24 +7,28 @@ const client = new PrismaClient()
 export default defineEventHandler(async event => {
   const cvtoken = getCookie(event, "cvtoken") || ""
   // not logged in but trying to
-  if (!cvtoken && !event.reg.url.includes('/api/callback')) {
-    await sendRedirect(event, loginRedirectUrl());
-  } else {
+  //if (!cvtoken && !event.reg.url.includes('/api/callback')) {
+   // await sendRedirect(event, loginRedirectUrl());
+  //} else {
     // theoretically logged in
     if (cvtoken) {
-      try {
+      //try {
         const claims = jwt.verify(
           cvtoken, 
-          fs.readFileSync("./cert-dev.pem")
+          fs.readFileSync(process.cwd()+"/cert-dev.pem")
         )
+        console.log(claims)
         event.context.claims = claims
         event.context.client = client
-        event.context.user = await event.context.client.user.getByEmail(claims.email)
+        
+        event.context.user = await event.context.client.user.findFirst({where:{ email: claims.email }})
+        console.log(event)
+        await sendRedirect(event, '/')
         //setCookie(event, "user", JSON.stringify(event.context.user))
-      } catch (e) {
-        console.error(e)
-        return await sendRedirect(event, loginRedirectUrl());
-      }
-    }
+      //} catch (e) {
+        //console.error(e)
+       // return await sendRedirect(event, 'loginRedirectUrl()');
+      //}
+    //}
   }
 })

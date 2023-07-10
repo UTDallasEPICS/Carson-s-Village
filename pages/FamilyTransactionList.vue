@@ -51,7 +51,7 @@ const data_payout = ref<donation_payout>({
     transaction_id: "",
     familyCuid: "",
     amount_to_record: 0,
-    transaction_recording_date: ""
+    transaction_recording_date: new Date().toString()
 })
 
 const totalUserDonations = ref(0);
@@ -75,6 +75,7 @@ const thePage = ref<Page>({
     donation_goal: 0,
     amount_raised: 0,
     amount_distributed: 0,
+    profileImageCuid: "",
     Images: []
 })
 

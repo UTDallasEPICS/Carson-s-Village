@@ -28,19 +28,20 @@ const data = ref<Page>({
     cuid: "",
     familyCuid: "",
     page_name: "",
-    day_of_birth: "",
-    day_of_passing: "",
-    visitation_date: "",
+    day_of_birth: new Date().toString(),
+    day_of_passing: new Date().toString(),
+    visitation_date: new Date().toString(),
     visitation_location: "",
     visitation_description: "",
-    funeral_date: "",
+    funeral_date: new Date().toString(),
     funeral_description: "",
     funeral_location: "",
     obituary: "",
-    deadline: "",
+    deadline: new Date().toString(),
     donation_goal: 0,
     amount_raised: 0,
     amount_distributed: 0,
+    profileImageCuid: "",
     Images: []
 })
 
@@ -163,27 +164,35 @@ const removeImage = async (theImage: Image) => {
             }
             if(theImage.url === profile_image.value && imageData.value.length !=0){
                 profile_image.value = imageData.value[0].url
+                data.value.profileImageCuid = imageData.value[0].cuid
             }
         }
     }
 }
 
 // Method to set an uploaded image as the profile image of a page
+// There is no network request because the profiile image cuid is saved with the rest of the form
 const setProfileImage = async (theImage: Image) => {
-    await useFetch('/api/profile_image', {
-        method: 'PUT',
-        body: ({ cuid: theImage.cuid, url: theImage.url, pageCuid: pageCuid.value as string })
-    }
-    )
+    data.value.profileImageCuid = theImage.cuid
     profile_image.value = theImage.url
 }
 
-const replaceImage = async (theImage: string) => {
-    /*await useFetch('/api/image', {
-        method: 'PUT',
-        body: ({ url: theImage, page_cuid: pageCuid.value as string })
+const replaceImage = async (theImage: Image) => {
+    for(let i = 0 ; i < imageData.value.length; i++){
+        if(imageData.value[i].cuid == selectedImageObj.value.cuid){
+            imageData.value[i] = theImage
+        }
     }
-    )*/
+    await useFetch('/api/image', {
+        method: 'PUT',
+        body: ({ imageUploaded: theImage, replacedImage: selectedImageObj, page_cuid: pageCuid.value as string })
+    }
+    )
+    if(selectedImageObj.value.url === profile_image.value){
+        data.value.profileImageCuid = imageData.value[0].cuid
+    }
+    selectedImageObj.value = theImage
+    
 }
 // Placeholder values to annotate the form
 const page_name_place_holder = 'required'
@@ -255,10 +264,10 @@ CVContainer
             .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
                 // at click was saveImage(imageLink) :pageCuid="cuid`"
                 ImageUpload(@imageUploaded="saveImage" :pageCuid="cuid" )
-        //.py-4.grid(class="sm:grid-cols-3") 
+        .py-4.grid(class="sm:grid-cols-3") 
             a.ml-10.pt-1(style="text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") image replace
             .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
-                ImageUpload(:pageCuid="cuid" @imageUploaded="replaceImage(imageLink)")
+                ImageUpload(:pageCuid="cuid" @imageUploaded="replaceImage")
         .information.bg-gray-300.rounded-md.mx-9.my-2.text-center(class="sm:text-start")
             legend.ml-2(class="sm:py-1" style="font-weight: 700; text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") Profile Image Selection        
         .py-4.grid(class="sm:grid-cols-3") 

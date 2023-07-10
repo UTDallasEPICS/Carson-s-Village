@@ -29,6 +29,7 @@ const pageData = ref<Page>({
     donation_goal: 0,
     amount_raised: 0,
     amount_distributed: 0,
+    profileImageCuid: "",
     Images: []
 });
 
@@ -54,6 +55,7 @@ const donationData = ref<PageDonation>({
     transaction_id : ""
 });
 
+const profileImageLink = ref("")
 const imageData = ref<Image[]>([])
 const donated_percentage = ref(0);
 const donated_percentage_100 = ref(0)
@@ -93,7 +95,12 @@ if(pageDataDB.value !== false){
     console.log(family_cuid.value as string)
     console.log(donated_percentage.value as number)*/
     if(pageData.value.Images.length!=0)
-        imageData.value = pageData.value.Images as unknown as Image[]
+        imageData.value = pageData.value.Images as unknown as Image[] 
+        for(let i = 0; i < imageData.value.length; i++){
+            if(imageData.value[i].cuid === pageData.value.profileImageCuid){
+                profileImageLink.value = imageData.value[i].url
+            }
+        }
 }
 }
 
@@ -123,7 +130,7 @@ const location = pageImages[0]
 
 <template lang="pug">
 .bg-blue.w-screen(class="h-[80px]")
-img.bg-orange-400.-mt-16.mx-auto(class="w-[122px] h-[122px] rounded-[8px]" :src="`${profile}`")
+img.bg-orange-400.-mt-16.mx-auto(class="w-[122px] h-[122px] rounded-[8px]" :src="`${profileImageLink}`")
 .text-gray-dark.font-poppins.text-2xl.text-center.font-semibold(style="text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.25);") {{ pageData.page_name }}
 .row.text-center
 .text-gray-dark.font-poppins.text-md.inline-block.text-center {{ dateFormat(pageData.day_of_birth) }} 
@@ -133,7 +140,7 @@ img.bg-orange-400.-mt-16.mx-auto(class="w-[122px] h-[122px] rounded-[8px]" :src=
 //LinkButton(:to="`/PageList/${family_cuid}`") Back
 .div(style="background: #F8F8F8;")
     .py-4.grid(class="sm:grid-cols-3")
-        img.object-cover.align-middle(class="w-40 sm:w-64" :src = "`${profile}`")
+        img.object-cover.align-middle(class="w-40 sm:w-64" :src = "`${profileImageLink}`")
         .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
             .div.p-4(id="services")
                 .div(v-if="pageData.visitation_date")
@@ -163,9 +170,9 @@ img.bg-orange-400.-mt-16.mx-auto(class="w-[122px] h-[122px] rounded-[8px]" :src=
                     progress.rounded-full.text-white.flex.items-center.justify-center(style="30px;" max="100" :value ="`${donated_percentage}`") {{ donated_percentage  + "%" }}
                 .py-4
                 .progress-bar.overflow-hidden.ml-4.h-5.rounded-full(style="30px; background-color:#b5b5b5;")
-                    CVProgress(v-if="donated_percentage >= 100" style="width=100%;" :modelBarWidth="100") {{ donated_percentage  + "%" }}
-                    CVProgress(v-else-if="donated_percentage > 0 && donated_percentage < 100" :style="{'width':donated_percentage + '%'}" :modelBarWidth="`${donated_percentage}`") {{ donated_percentage  + "%" }}
-                    CVProgress(v-else style="width:0%; text-align:center;" modelBarWidth="0") 
+                    CVProgress(v-if="donated_percentage >= 100" :modelBarWidth="100") {{ donated_percentage  + "%" }}
+                    CVProgress(v-else-if="donated_percentage > 0 && donated_percentage < 100" :modelBarWidth="donated_percentage") {{ donated_percentage  + "%" }}
+                    CVProgress(v-else style="text-align:center;" modelBarWidth="0") 
                 .well.well-sm
                     h1.ml-4.pt-9.text-2xl.text-gray-dark(class="sm:text-3xl" style="font-weight: 600; letter-spacing: 0.35px;") Donor Information
                 br

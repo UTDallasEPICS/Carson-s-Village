@@ -41,5 +41,9 @@ export default defineEventHandler(async event => {
     where: { email: claims.email}
   })
   setCookie(event, "cvuser", JSON.stringify(user))
-  await sendRedirect(event, "/")
+  event.context.claims = claims
+  event.context.client = client
+  event.context.user = await event.context.client.user.findFirst({where:{email: claims.email}})
+  console.log(event)
+  await sendRedirect(event, "/") //api/middleware/auth")
 });
