@@ -1,7 +1,7 @@
 {
   "private": true,
   "scripts": {
-    "build": "nuxt build",
+    "build": "nuxt build && cp .env ./.output/server/.env",
     "dev": "nuxt dev",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
@@ -9,7 +9,7 @@
   },
   "devDependencies": {
     "@types/email-templates": "^10.0.1",
-    "nuxt": "3.2.2"
+    "nuxt": "3.6.2"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.226.0",
@@ -32,7 +32,7 @@
     "tailwindcss": "^3.2.4",
     "vite": "^4.1.4",
     "vite-plugin-pug": "^0.3.2",
-    "vue": "^3.2.47",
+    "vue": "^3.3.4",
     "vue-router": "^4.1.6"
   }
 }

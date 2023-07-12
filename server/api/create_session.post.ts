@@ -2,10 +2,10 @@ import { PrismaClient } from "@prisma/client"
 import  { nanoid } from "nanoid"
 const prisma = new PrismaClient()
 // Stripe API tokens
-const stripeSecretKey = process.env.STRIPE_SECRET;
 //import { loadStripe } from '@stripe/stripe-js'
 import Stripe from "stripe"
 
+const runtime = useRuntimeConfig()
  
 //const stripe = require('stripe')(stripeSecretKey)
 
@@ -20,7 +20,7 @@ export default defineEventHandler(async event => {
     const transaction_id = nanoid();
     const { req, res } = event;
     //const stripe = await loadStripe(process.env.STRIPE_PUBLIC ? process.env.STRIPE_PUBLIC : '');
-    const stripe = new Stripe(stripeSecretKey as string, { apiVersion:"2022-11-15"})
+    const stripe = new Stripe(runtime.STRIPE_SECRET, { apiVersion:"2022-11-15"})
     const body = await readBody(event)
     const family_cuid = body.family_cuid
     const page_cuid = body.cuid

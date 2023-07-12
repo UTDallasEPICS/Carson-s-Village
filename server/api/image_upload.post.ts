@@ -4,7 +4,7 @@ import { nanoid } from "nanoid"
 import { getSignedFileUrl } from "./integrations/aws"
 import { PrismaClient } from "@prisma/client"
 const prisma = new PrismaClient()
-
+const runtime = useRuntimeConfig()
 export default defineEventHandler(async (event) => {
     // Read the request body
     const data = await readBody(event)
@@ -16,7 +16,7 @@ export default defineEventHandler(async (event) => {
     const key = nanoid()
     // gets presigned URL from aws.ts and returns it to the call from vue
     const uploadUrl =  await getSignedFileUrl(data.contentLength,data.contentType, key);
-    const contentUrl=  import.meta.env.IMAGE_BASE_URL + "/" + key;
+    const contentUrl=  "https://" + runtime.AWS_S3_BUCKET_NAME + "/" + key;
     const body = await readBody(event)
     const url = body.url
     const pageCuid = body.pageCuid;

@@ -12,13 +12,13 @@
   ) 
   p.uppercase.white.w-max LOGIN
 //Button.items-center.px-2.py-2.text-base.font-medium.rounded-md.text-green-600.cursor-pointer(@click="logout") LOGOUT
-//:BaseURL="`${process.env.process}`
 CVHeader
 NuxtPage
 CVFooter.mt-4
 </template>
 
 <script setup lang="ts">
+const runtime = useRuntimeConfig()
 const router = useRouter()
 const routes = ref(router.getRoutes())
 const route = useRoute()
