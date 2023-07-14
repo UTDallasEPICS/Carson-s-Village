@@ -27,7 +27,10 @@ const data = ref<User>({
   user_role: "{}",
   email: "",
   middle_name: "",
-  phone: "",
+  phone: ""
+  //Pages: [],
+  //PageDonations: [],
+  //DonationPayouts: []
 })
 
 // Method to populate the page list with databased on the cuid of the user in the url

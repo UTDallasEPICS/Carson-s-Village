@@ -14,31 +14,27 @@ const prisma = new PrismaClient()
 
 export default defineEventHandler(async event => {
     const body = await readBody(event)
-    const url = body.url
-    const image_cuid = body.cuid;
-    delete body.cuid;
-
+    const replaced_image_cuid = body.replacedImage.cuid
+    console.log(replaced_image_cuid)
+    console.log(body)
     try {
         // Replaces entry in the database in the image model for a specfic image
-        const queryRes = await prisma.image.update({
+
+        await prisma.$transaction([
+            prisma.image.delete({
             where: {
-                cuid: image_cuid
+                cuid: body.imageUploaded.cuid
+            }
+        }), prisma.image.update({
+            where: {
+                cuid: replaced_image_cuid
             },
             data: {
-                ...body,
-                User: {
-                    connect: {
-                        UserCuid: body.user_cuid || "0"
-                    },
-                    Page: {
-                        connect: {
-                            PageCuid: body.page_cuid || "0"
-                        }
-                    }
-
+                url:  body.imageUploaded.url,
+        
                 }
             }
-        });
+        ) ]);
 
         return true;
     } catch (e) {

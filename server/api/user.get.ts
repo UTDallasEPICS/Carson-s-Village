@@ -15,8 +15,10 @@ export default defineEventHandler(async event => {
   }
   //const role = event.context.user.Clients.find(o => o.clientCuid == clientCuid)
   // retrieves a single user
-  const queryRes = await prisma.user.findFirst({
-    where: {cuid: (cuid as string) }
-  });
-  return queryRes;
+  //if(event.context.user.user_role === "advocate" ){
+    const queryRes = await prisma.user.findFirst({
+      where: {cuid: (cuid as string) }
+    });
+    return queryRes;
+  //}
 })
