@@ -11,11 +11,11 @@
 
 
 // Placeholder annotations for the insert user form.
-const first_name = '(user defined)'
+/*const first_name = '(user defined)'
 const last_name = '(user defined)'
 const email = '(user defined)'
 const middle_name = '(user defined, optional)'
-const phone = '(user defined, optional)'
+const phone = '(user defined, optional)'*/
 
 import type { User } from '@/types.d.ts'
 
@@ -27,10 +27,13 @@ const data_user = ref<User>({
     middle_name: "",
     user_role: "{}",
     phone: ""
+    //Pages: [],
+    //PageDonations: [],
+    //DonationPayouts: []
 })
 
 const cvuser = useCookie('cvuser');
-const cvData = computed(() => JSON.parse(cvuser.value || "{}"))
+//const cvData = computed(() => JSON.parse(cvuser.value || "{}"))
 const router = useRoute()
 const cuid = computed(() => router.params.id as string);
 
@@ -54,15 +57,9 @@ const getData = async (cuid: string) => {
 
 if ((cuid.value as string) !== "0")
     await getData(cuid.value as string);
-/*onMounted(async() => {
-    if((cuid.value as string) !== "0")
-        await getData();
-})*/
 </script>
 
 <template lang="pug">
-//.row.p-3
-//LinkButton(to='/') Back
 CVContainer
     .well.well-sm
         TitleComp User Account Entry 
@@ -72,7 +69,7 @@ CVContainer
         .py-4.grid(class="sm:grid-cols-3")
             CVLabel Email
             .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
-                CVInput(v-model='data_user.email' :placeholder="email")
+                CVInput(v-model='data_user.email' placeholder="(user defined)")
         .py-4.grid(class="sm:grid-cols-3")
             CVLabel User Role
             .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
@@ -82,19 +79,19 @@ CVContainer
         .py-4.grid(class="sm:grid-cols-3")
             CVLabel First Name
             .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
-                CVInput(v-model='data_user.first_name' :placeholder="first_name")
+                CVInput(v-model='data_user.first_name' placeholder="(user-defined")
         .py-4.grid(class="sm:grid-cols-3")
             CVLabel Middle Name
             .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
-                CVInput(v-model='data_user.middle_name' :placeholder="middle_name")
+                CVInput(v-model='data_user.middle_name' placeholder="(user defined, optional)")
         .py-4.grid(class="sm:grid-cols-3")
             CVLabel Last Name
             .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
-                CVInput(v-model='data_user.last_name' :placeholder="last_name" )
+                CVInput(v-model='data_user.last_name' placeholder="(user-defined)" )
         .py-4.grid(class="sm:grid-cols-3")
             CVLabel Phone
             .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
-                CVInput(v-model='data_user.phone' :placeholder="phone")
+                CVInput(v-model='data_user.phone' placeholder="(user defined, optional)")
             .col-md-10.py-2
                 ActionButton(@click="save") Save    
 </template>

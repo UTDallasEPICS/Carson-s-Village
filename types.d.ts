@@ -44,16 +44,16 @@ export type PageDonation = {
   //User: User
 }
 
-/*
+
 export type donation_payout = {
     cuid: string,
     transaction_id: string,
     familyCuid: string
     amount_to_record: number,
     transaction_recording_date: string
-    Page: Page
-    User: User
-}*/
+    //page: Page
+    //user: User
+}
 
 export type Image = {
   cuid: string

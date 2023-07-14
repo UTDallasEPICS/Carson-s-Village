@@ -136,8 +136,6 @@ img.bg-orange-400.-mt-16.mx-auto(class="w-[122px] h-[122px] rounded-[8px]" :src=
 .text-gray-dark.font-poppins.text-md.inline-block.text-center {{ dateFormat(pageData.day_of_birth) }} 
 .text-gray-dark.font-poppins.text-md.inline-block.whitespace-pre  - 
 .text-gray-dark.font-poppins.text-md.inline-block {{ dateFormat(pageData.day_of_passing)}}
-//.row.p-3
-//LinkButton(:to="`/PageList/${family_cuid}`") Back
 .div(style="background: #F8F8F8;")
     .py-4.grid(class="sm:grid-cols-3")
         img.object-cover.align-middle(class="w-40 sm:w-64" :src = "`${profileImageLink}`")
