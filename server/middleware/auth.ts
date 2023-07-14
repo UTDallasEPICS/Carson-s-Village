@@ -7,8 +7,9 @@ export default defineEventHandler(async event => {
   event.context.client = client
 
   const cvtoken = getCookie(event, "cvtoken") || ""
+  console.log(cvtoken)
   // not logged in but trying to
-  if (!cvtoken && !event.reg.url.includes('/api/callback')) {
+  if (!cvtoken && !event.req.url.includes('/api/callback')) {
     await sendRedirect(event, loginRedirectUrl());
   } else {
     // theoretically logged in
@@ -18,7 +19,6 @@ export default defineEventHandler(async event => {
           cvtoken, 
           fs.readFileSync(process.cwd()+"/cert-dev.pem")
         )
-        console.log(claims)
         event.context.claims = claims
         event.context.user = await event.context.client.user.findFirst({where:{ email: claims.email }})
         setCookie(event, "cvuser", JSON.stringify(event.context.user))
