@@ -33,9 +33,9 @@ const onFile = async (event: Event) => {
   for(let i = 0 ; i < Files.length; i++){
     const file = Files[i];
     const { data: imageData } = await useFetch('/api/image_upload', {
-    method: 'POST',
-    body: { contentLength: file.size, contentType: file.type, file, pageCuid: props.pageCuid }
-  });
+      method: 'POST',
+      body: { contentLength: file.size, contentType: file.type, file, pageCuid: props.pageCuid }
+    });
   const { uploadUrl, image} = imageData.value as unknown as imageLinkTypes;
   //console.log(uploadUrl)
   //console.log(imageData.value)
@@ -58,7 +58,9 @@ const onFile = async (event: Event) => {
   emit('imageUploaded', image)
   if(props.isImageReplace === 'true'){
     break;
-  }}} 
+  }
+  }
+} 
 </script>
 
 

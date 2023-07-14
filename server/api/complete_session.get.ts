@@ -17,7 +17,7 @@ export default defineEventHandler(async event => {
   const stripe = new Stripe(stripeSecretKey as string, { apiVersion:"2022-11-15"} )
   //const stripe = await loadStripe(process.env.STRIPE_PUBLIC ? process.env.STRIPE_PUBLIC : '');
     const query = await getQuery(event)
-  
+    console.log(query)
     try{
       // get amount donated from transaction
       const transaction = await prisma.pageDonation.findFirst({
