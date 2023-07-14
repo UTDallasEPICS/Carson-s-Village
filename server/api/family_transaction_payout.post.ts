@@ -15,7 +15,7 @@ export default defineEventHandler(async event => {
         try{
 
           // update success flag in transaction
-        
+          //if(event.context.user.user_role === "advocate"){
           await prisma.$transaction([
             prisma.donationPayout.create({
               data: {
@@ -42,7 +42,8 @@ export default defineEventHandler(async event => {
           ]) 
           
           return true;
-
+        //}
+        //  return false
         } catch (e) {
           console.error(e)
     

@@ -16,8 +16,9 @@ export default defineEventHandler(async event => {
       try {
         const claims = jwt.verify(
           cvtoken, 
-          fs.readFileSync("./cert-dev.pem")
+          fs.readFileSync(process.cwd()+"/cert-dev.pem")
         )
+        console.log(claims)
         event.context.claims = claims
         event.context.user = await event.context.client.user.findFirst({where:{ email: claims.email }})
         setCookie(event, "cvuser", JSON.stringify(event.context.user))

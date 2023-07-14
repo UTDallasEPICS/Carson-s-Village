@@ -17,17 +17,25 @@ const props = defineProps({
     pageCuid: {
         type: String,
         default: "",
+    },
+    isImageReplace: {
+      type: String,
+      default: 'false',
     }
 });
 
 // actually uploads images using presigned url to s3 bucket
 const onFile = async (event: Event) => {
-  const file = event?.target?.files[0];
-
-  const { data: imageData } = await useFetch('/api/image_upload', {
-    method: 'POST',
-    body: { contentLength: file.size, contentType: file.type, file, pageCuid: props.pageCuid }
-  });
+  console.log(props.isImageReplace)
+  const Files = event?.target?.files
+  //console.log(file)
+  console.log(Files)
+  for(let i = 0 ; i < Files.length; i++){
+    const file = Files[i];
+    const { data: imageData } = await useFetch('/api/image_upload', {
+      method: 'POST',
+      body: { contentLength: file.size, contentType: file.type, file, pageCuid: props.pageCuid }
+    });
   const { uploadUrl, image} = imageData.value as unknown as imageLinkTypes;
   //console.log(uploadUrl)
   //console.log(imageData.value)
@@ -40,13 +48,19 @@ const onFile = async (event: Event) => {
     body: file,
   })
   if (!response.ok) {
+    console.log("Failed to upload a file")
     throw new Error("Failed to upload data")
+    
   }
 
   //console.log(image.url)
   //console.log("content url")
   emit('imageUploaded', image)
-  } 
+  if(props.isImageReplace === 'true'){
+    break;
+  }
+  }
+} 
 </script>
 
 

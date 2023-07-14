@@ -16,7 +16,7 @@ import {
     ListboxOptions,
     ListboxOption,
 } from '@headlessui/vue'
-import type { User, Page, PageDonation } from "@/types.d.ts"
+import type { User, Page, PageDonation, donation_payout } from "@/types.d.ts"
 import { donationFormat } from "@/utils"
 
 const data_user = ref<User>({
@@ -27,6 +27,9 @@ const data_user = ref<User>({
     middle_name: "",
     user_role: "{}",
     phone: ""
+    //Pages: [],
+    //PageDonations: [],
+    //DonationPayouts: []
 })
 
 const data_donation = ref<PageDonation>({
@@ -38,20 +41,12 @@ const data_donation = ref<PageDonation>({
     amount: 0
 })
 
-type donation_payout = {
-    cuid: string,
-    transaction_id: string,
-    familyCuid: string
-    amount_to_record: number,
-    transaction_recording_date: string
-}
-
 const data_payout = ref<donation_payout>({
     cuid: "",
     transaction_id: "",
     familyCuid: "",
     amount_to_record: 0,
-    transaction_recording_date: ""
+    transaction_recording_date: new Date().toString()
 })
 
 const totalUserDonations = ref(0);
@@ -75,6 +70,7 @@ const thePage = ref<Page>({
     donation_goal: 0,
     amount_raised: 0,
     amount_distributed: 0,
+    profileImageCuid: "",
     Images: []
 })
 
@@ -168,22 +164,21 @@ if ((isAdmin.value as boolean)) {
 //LinkButton(to='/') Back
 .container.mx-auto    
     .well.well-sm
-        h1.text-center.pt-9.text-xl(class="sm:text-3xl" style="text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25); font-weight: 700;") Family Transaction List
-        //TitleComp Family Transaction List
+        TitleComp Family Transaction List
         .bar.mx-9(style="border-top: 0.5px solid #646464;")
         br
         .py-4.grid(class="sm:grid-cols-7")
-            label.ml-10.pt-1(class="sm:ml-11" style="text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") Select the Family to View
+            CVLabel Select the Family to View
             .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
                 Listbox.rounded-md.outline-0.border-box.w-full.p-2.bg-white(style="border: 1px solid #c4c4c4;" v-model="data_user.cuid")
                     ListboxButton {{ data_user.first_name + " " + data_user.last_name }}
                         ListboxOptions(v-for="item in users" :key="item.cuid" @click="getDataUserDonations(item.cuid)") {{ item.first_name + " " + item.last_name }}
             .col-md-8.mx-9(class="sm:col-span-1 sm:mr-11")
-            label.ml-10.pt-1(class="sm:ml-11" style="text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") Transaction Recording Date    
+            CVLabel Transaction Recording Date    
             .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
-                Datepicker.rounded-md.outline-0.border-box.w-full.p-2(style="border: 1px solid #c4c4c4;" v-model='data_payout.transaction_recording_date')
+                CVDatepicker(v-model='data_payout.transaction_recording_date')
         .py-4.grid(class="sm:grid-cols-7")
-            label.ml-10.pt-1(class="sm:ml-11" style="text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") Total Donations
+            CVLabel Total Donations
             .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
               .px-5.pt-2.pb-8.font-outfit.text-dark-blue(style="font-size: 20px; line-height: 30px;") {{ donationFormat(totalUserDonations) }}
             .col-md-8.mx-9(class="sm:col-span-1 sm:mr-11")
@@ -200,16 +195,15 @@ if ((isAdmin.value as boolean)) {
                 input(type='checkbox' class="sm:ml-1" name='allFunds' value='Bike')
                 label.mt-4.ml-4.text-md(for='allFunds' class="sm:mt-0" style="letter-spacing: 0.35px;") Record all of amount left to distribute
         .py-4.grid(class="sm:grid-cols-7")
-            label.ml-10.pt-1(class="sm:ml-11" style="text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") Select Family Page
+            CVLabel Select Family Page
             .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
-                //select.rounded-md.outline-0.border-box.w-full.p-2.bg-white(style="border: 1px solid #c4c4c4;" v-model='') Select the Family to view
                 Listbox.rounded-md.outline-0.border-box.w-full.p-2.bg-white(style="border: 1px solid #c4c4c4;" v-model="data_payout.cuid")
                     ListboxButton  {{ thePage.page_name }}
                         ListboxOptions(v-for="page in pages" :key="page.cuid" @click="getDataPageDonations(page.cuid)" ) {{ page.page_name }}
             .col-md-8.mx-9(class="sm:col-span-1 sm:mr-11")
-            label.ml-10.pt-1(style="text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") Enter transaction id from Stripe
+            CVLabel Enter transaction id from Stripe
             .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
-                input.rounded-md.outline-0.border-box.w-full.p-2(style="border: 1px solid #c4c4c4;" v-model='data_payout.transaction_id')
+                CVInput(v-model='data_payout.transaction_id')
         .py-4.grid(class="sm:grid-cols-7")
             CVLabel Amount left to distribute to family page
             .col-md-8.mx-9(class="sm:col-span-3 sm:mr-11")
@@ -231,7 +225,7 @@ if ((isAdmin.value as boolean)) {
                     td.font-poppins.text-gray-dark.font-bold(style="text-align: center")  {{ donationFormat(item.amount_raised-item.amount_distributed) }}
                     td.font-poppins.text-gray-dark.font-bold(style="text-align: center")  {{ item.cuid }}
         .information.bg-gray-300.rounded-md.mx-9.my-2.text-center(class="sm:text-start")
-            legend.ml-2(class="sm:py-1" style="font-weight: 700; text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") Table of Donations
+            CVLegend Table of Donations
         table.table.table-striped(style="width:100%;")
             thead
                 tr

@@ -45,7 +45,7 @@ const sendEmail = async (to:string, template:string, subject:string, data:string
 
 const body = await readBody(event)
 //delete body.cuid
-
+console.log(event.context.user)
 try{
   await sendEmail(body.email, "invitation", "Invitation to Carson's village", ({...body, url: `${runtime.BASEURL}/api/login`}))
   // creates a new user entry in the user model/table.
@@ -55,6 +55,9 @@ try{
       }
     });
   return queryRes.cuid;
+  //}else{
+  //  alert("not allowed")
+  //}
   } catch(e){
     console.error(e);
   }

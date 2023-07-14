@@ -13,11 +13,13 @@ export default defineEventHandler(async event => {
   const {Images, ...data} = await readBody(event)
   const familyCuid = data.familyCuid;
   delete data.familyCuid;
+  console.log(data)
   data.donation_goal = Math.trunc(data.donation_goal * 100);
   data.amount_raised = Math.trunc(data.amount_raised * 100);
-
+  console.log(data.donation_goal)
   try{
   // Creates a new entry in the database in the page model to a specfic user
+  //if(event.context.user.user_role === "advocate" || event.context.user.cuid === familyCuid ){
   const queryRes = await prisma.page.create({
     data: {
       ...data,cuid: undefined,
@@ -30,6 +32,8 @@ export default defineEventHandler(async event => {
       }
     });
     return queryRes.cuid
+  //}
+  //return []
   } catch(e) {
     console.error(e);
   }
