@@ -15,11 +15,10 @@ const runtime = useRuntimeConfig()
 *	function:	POST
 *	submit donation details to the database and creates a stripe session
 */
-
 export default defineEventHandler(async event => {
     const transaction_id = nanoid();
     const { req, res } = event;
-    //const stripe = await loadStripe(process.env.STRIPE_PUBLIC ? process.env.STRIPE_PUBLIC : '');
+    //const stripe = await loadStripe(runtime.STRIPE_PUBLIC ? runtime.STRIPE_PUBLIC : '');
     const stripe = new Stripe(runtime.STRIPE_SECRET, { apiVersion:"2022-11-15"})
     const body = await readBody(event)
     const family_cuid = body.family_cuid
@@ -60,8 +59,8 @@ export default defineEventHandler(async event => {
 			target_page_name: page?.page_name as string,
 			target_page_cuid: page?.cuid as string,
 		},
-		success_url: `${process.env.BASEURL}/api/complete_session?transaction=${transaction_id}`,
-		cancel_url: `${process.env.BASEURL}/page/${page_cuid}`,
+		success_url: `${runtime.BASEURL}/api/complete_session?transaction=${transaction_id}`,
+		cancel_url: `${runtime.BASEURL}/page/${page_cuid}`,
 	});
 	
     const queryRes = await prisma.pageDonation.create({

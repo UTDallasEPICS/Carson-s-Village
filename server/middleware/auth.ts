@@ -1,4 +1,4 @@
-import {loginRedirectUrl} from "../auth0"
+import {loginRedirectUrl} from "../api/auth0"
 import jwt from "jsonwebtoken"
 import fs from "fs"
 import { PrismaClient } from "@prisma/client"
@@ -19,8 +19,8 @@ export default defineEventHandler(async event => {
           fs.readFileSync("./cert-dev.pem")
         )
         event.context.claims = claims
-        event.context.user = await event.context.client.user.getByEmail(claims.email)
-        //setCookie(event, "user", JSON.stringify(event.context.user))
+        event.context.user = await event.context.client.user.findFirst({where:{ email: claims.email }})
+        setCookie(event, "cvuser", JSON.stringify(event.context.user))
       } catch (e) {
         console.error(e)
         return await sendRedirect(event, loginRedirectUrl());

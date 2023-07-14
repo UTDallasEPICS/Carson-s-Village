@@ -2,10 +2,10 @@ import { PrismaClient } from "@prisma/client"
 import { nanoid } from "nanoid"
 const prisma = new PrismaClient()
 import Stripe from "stripe"
-
+const runtime = useRuntimeConfig()
 //require('dotenv').config()
 // Stripe API tokens
-const stripeSecretKey = process.env.STRIPE_SECRET;
+const stripeSecretKey = runtime.STRIPE_SECRET;
 
 /*
 *	/Page/cuid
@@ -15,7 +15,7 @@ const stripeSecretKey = process.env.STRIPE_SECRET;
 
 export default defineEventHandler(async event => {
   const stripe = new Stripe(stripeSecretKey as string, { apiVersion:"2022-11-15"} )
-  //const stripe = await loadStripe(process.env.STRIPE_PUBLIC ? process.env.STRIPE_PUBLIC : '');
+  //const stripe = await loadStripe(runtime.STRIPE_PUBLIC ? runtime.STRIPE_PUBLIC : '');
     const query = await getQuery(event)
     console.log(query)
     try{
@@ -59,7 +59,7 @@ export default defineEventHandler(async event => {
       await sendRedirect(event, pageLink)
       return true;
       //console.log(pageLink);
-      //const pageLinker = () => `${process.env.BASEURL}/page/${transaction?.pageCuid}`
+      //const pageLinker = () => `${runtime.BASEURL}/page/${transaction?.pageCuid}`
       //return pageLink;
       
     } catch (e) {

@@ -2,10 +2,12 @@ import { PrismaClient } from "@prisma/client"
 const prisma = new PrismaClient()
 import { nanoid } from "nanoid"
 import Stripe from "stripe"
-const stripeSecretKey = process.env.STRIPE_SECRET;
+const runtime = useRuntimeConfig()
+
+const stripeSecretKey = runtime.STRIPE_SECRET;
 export default defineEventHandler(async event => {
       const stripe = new Stripe(stripeSecretKey as string, { apiVersion:"2022-11-15"} )
-      //const stripe = await loadStripe(process.env.STRIPE_PUBLIC ? process.env.STRIPE_PUBLIC : '');
+      //const stripe = await loadStripe(runtime.STRIPE_PUBLIC ? runtime.STRIPE_PUBLIC : '');
         //const query = await getQuery(event)
         const body = await readBody(event)
         body.amount_to_record = Math.trunc(body.amount_to_record * 100)

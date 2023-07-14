@@ -8,7 +8,7 @@ import emailTemplates from "email-templates"
 *	  function:	POST
 *	  submit user account details to database
 */
-
+const runtime= useRuntimeConfig()
 export default defineEventHandler(async event => {
 
 const EmailTemplates = new emailTemplates({
@@ -28,7 +28,7 @@ const sendEmail = async (to:string, template:string, subject:string, data:string
   const sendEmailCommand = new SendEmailCommand({
     Destination: { ToAddresses: [to] }, 
     Message: {Subject: {Charset: "UTF-8", Data: subject},Body:{Html: {Charset: "UTF-8", Data: html}, Text:{Charset: "UTF-8", Data: text}}},
-    Source: process.env.EMAIL_SOURCE_ADDRESS,
+    Source: runtime.EMAIL_SOURCE_ADDRESS,
   })
   const res = await sesClient.send(sendEmailCommand)
 };
@@ -47,7 +47,7 @@ const body = await readBody(event)
 //delete body.cuid
 
 try{
-  await sendEmail(body.email, "invitation", "Invitation to Carson's village", ({...body, url: `${process.env.BASEURL}/api/login`}))
+  await sendEmail(body.email, "invitation", "Invitation to Carson's village", ({...body, url: `${runtime.BASEURL}/api/login`}))
   // creates a new user entry in the user model/table.
   const queryRes = await prisma.user.create({
     data: {
