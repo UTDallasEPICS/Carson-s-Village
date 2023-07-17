@@ -54,6 +54,8 @@ const selectedImageObj = ref<Image>({
     pageCuid: ""
 })
 
+var selectedImageObjCopy = undefined
+
 const imageLinkReplacement = ref("")
 const router = useRoute()
 const cvuser = useCookie<User>('cvuser');
@@ -92,6 +94,7 @@ const getData = async (cuid: string) => {
             selectedImageObj.value.url =  imageData.value[0].url
             selectedImageObj.value.cuid =  imageData.value[0].cuid
             selectedImageObj.value.pageCuid =  imageData.value[0].pageCuid
+            selectedImageObjCopy = {...selectedImageObj.value}
             imageListIsNotEmpty.value = true;
         }
     }
@@ -130,6 +133,7 @@ const saveImage = async (theImage: Image) => {
     imageData.value.push(theImage)
     if(selectedImageObj.value.cuid === ""){
         selectedImageObj.value = theImage as unknown as Image
+        selectedImageObjCopy = {...selectedImageObj.value}
     }
     if(profile_image.value === ""){
         profile_image.value = theImage.url 
@@ -139,12 +143,10 @@ const saveImage = async (theImage: Image) => {
 // Method to remove a single image
 const removeImage = async (theImage: Image) => {
     if(confirm('Are you sure you want to delete this image?')){
-    await useFetch('/api/image', {
-        method: 'delete',
-        body: ({ image : theImage })
-    })
+    
     for(let i = 0 ; i < imageData.value.length; i++){
         if(imageData.value[i].cuid === theImage.cuid){
+            console.log(i)
             imageData.value.splice(i, 1)
             if(selectedImageObj.value.cuid === theImage.cuid && imageData.value.length !=0 ){
                 selectedImageObj.value.url = imageData.value[0].url
@@ -157,11 +159,16 @@ const removeImage = async (theImage: Image) => {
                 selectedImageObj.value.url = ""
                 selectedImageObj.value.pageCuid = ""
             }
+            await useFetch('/api/image', {
+            method: 'delete',
+            body: ({ image : theImage })
+            })
             if(theImage.url === profile_image.value && imageData.value.length !=0){
                 profile_image.value = imageData.value[0].url
                 data.value.profileImageCuid = imageData.value[0].cuid
             }
-        }
+            return selectedImageObjCopy = {...selectedImageObj.value};
+            }
     }
 }
 }
@@ -191,6 +198,7 @@ const replaceImage = async (theImage: Image) => {
     selectedImageObj.value = theImage
     
 }
+
 
 // confirmation for each image delete
 /*try{
@@ -246,7 +254,7 @@ CVContainer
             .div(style='position: relative;') 
                 img.object-cover.align-middle.rounded-lg(class="w-40 sm:w-64" :src = "`${selectedImageObj.url}`")
                 .form-horizontal(style='position: absolute; top: 5px; right: 5px')
-                    button.bg-red-500(style="display: flex;align-items: center;justify-content: center;line-height: 0px;text-align: center; color: white; font-weight: 450; positon: absolute; top:0px; left: 0px; width: 30px; height: 30px; border-radius: 50%;" @click = "removeImage(selectedImageObj)") x
+                    button.bg-red-500(style="display: flex;align-items: center;justify-content: center;line-height: 0px;text-align: center; color: white; font-weight: 450; positon: absolute; top:0px; left: 0px; width: 30px; height: 30px; border-radius: 50%;" @click = "removeImage(selectedImageObjCopy)") x
             
             .col-md-8(class="sm:col-span-2 sm:mr-11")
                 .row.gallery.flex.flex-wrap.gap-1.items-center.justify-center(class="basis-1/2 sm:basis-1/4 sm:gap-3 sm:m-8" style="overflow-x: scroll; width:250px; height:150px;")

@@ -5,6 +5,8 @@ const client = new PrismaClient()
 const runtime = useRuntimeConfig()
 export default defineEventHandler(async event => {
   const body = await readBody(event)
+  console.log(body)
+  console.log(body.id_token)
   setCookie(event, "cvtoken", body.id_token)
-  await sendRedirect(event, "/") //api/middleware/auth")
+  await sendRedirect(event, "/") 
 });

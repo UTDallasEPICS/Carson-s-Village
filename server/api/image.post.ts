@@ -11,7 +11,6 @@ const prisma = new PrismaClient()
 export default defineEventHandler(async event => {
   const body = await readBody(event)
   const url = body.url
-  //url = "https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/C751A_depot.jpg/324px-C751A_depot.jpg"
   const page_cuid = body.page_cuid;
   //delete body.cuid;
 
