@@ -7,9 +7,8 @@ export default defineEventHandler(async event => {
   event.context.client = client
 
   const cvtoken = getCookie(event, "cvtoken") || ""
-  console.log(cvtoken)
   // not logged in but trying to
-  if (!cvtoken && !event.req.url.includes('/api/callback')) {
+  if (!cvtoken && !(event.req.url.includes('/api/callback') || event.req.url.includes("/Page/") || event.req.url.includes("/api/page"))) {
     await sendRedirect(event, loginRedirectUrl());
   } else {
     // theoretically logged in
