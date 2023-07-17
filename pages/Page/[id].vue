@@ -94,9 +94,9 @@ if(pageDataDB.value !== false){
     /*console.log(pageData);
     console.log(family_cuid.value as string)
     console.log(donated_percentage.value as number)*/
-    if(pageData.value.Images.length!=0)
+    if(pageData.value.Images?.length!=0)
         imageData.value = pageData.value.Images as unknown as Image[] 
-        for(let i = 0; i < imageData.value.length; i++){
+        for(let i = 0; i < imageData.value?.length; i++){
             if(imageData.value[i].cuid === pageData.value.profileImageCuid){
                 profileImageLink.value = imageData.value[i].url
             }

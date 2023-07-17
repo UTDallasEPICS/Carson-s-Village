@@ -6,21 +6,8 @@ const client = new PrismaClient()
 export default defineEventHandler(async event => {
   
   const cvtoken = getCookie(event, "cvtoken") || ""
-  
-  try{
-  //console.log(cvtoken)
   // not logged in but trying to
-  //console.log(event.req.url)
-  //console.log(event)
-  //console.log(process.cwd()+"/cert-dev.pem")
-  //console.log(event.node.req.url)
-  //console.log(event.context)
-
-  } catch(e){
-    console.log(e)
-  }
-  if (!cvtoken && event.node.req.url?.includes('/api/login')) {
-    //console.log(event)
+  if (!cvtoken && !(event.req.url.includes('/api/callback') || event.req.url.includes("/Page/") || event.req.url.includes("/api/page"))) {
     await sendRedirect(event, loginRedirectUrl());
   } else {
     // theoretically logged in
