@@ -6,7 +6,7 @@ const cvtoken = useCookie('cvtoken');
 
 const isAdmin = computed(() => cvuser.value?.user_role == "advocate")
 const cuid = computed(() => cvuser.value?.cuid)
-const isLoggedIn = computed(() => cvuser.value )
+const isLoggedIn = computed(() => cvuser.value != undefined)
 //const isNotLoggedIn = !isLoggedIn
 const pages = ref<Page[]>([])
 const searchQuery = ref('');
@@ -14,6 +14,7 @@ const route = useRoute()
 const isNotSearch = computed(() => route.path !== "/Search/")
 //console.log(route.path +"route path")
 //console.log(cuid);
+console.log(isLoggedIn.value)
 const logout = async () => {
   await useFetch("/api/logout", {
     method: 'GET',

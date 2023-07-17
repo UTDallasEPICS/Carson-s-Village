@@ -12,6 +12,7 @@ const prisma = new PrismaClient()
 export default defineEventHandler(async event => {
   const body = await readBody(event);
   const image = body.image as Image;
+  console.log(image.cuid)
 try {
     // Deletes an image from the database.
     const queryRes = await prisma.image.delete({

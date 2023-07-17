@@ -9,6 +9,7 @@ const prisma = new PrismaClient()
 
 export default defineEventHandler(async event => {
     const { family_cuid } = await getQuery(event);
+    //console.log(event)
     //const cvuser = getCookie(event, 'cvuser')
     //const cvData = JSON.parse(cvuser as string)
 
