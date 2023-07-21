@@ -18,8 +18,6 @@ const router = useRoute();
 // to call Search.vue
 const searchQueryURL = computed(() =>  router.query.search);
 const searchQueryInput = ref("");
-//console.log(searchQueryURL.value as string)
-//console.log(searchQueryInput.value as string)
 
 // Method to populate search results for pages
 const pageSearch = async() => { 

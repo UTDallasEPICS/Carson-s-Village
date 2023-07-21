@@ -94,24 +94,18 @@ if(pageDataDB.value !== false){
     /*console.log(pageData);
     console.log(family_cuid.value as string)
     console.log(donated_percentage.value as number)*/
+    // Sets the front end images including the profile image
     if(pageData.value.Images?.length!=0)
         imageData.value = pageData.value.Images as unknown as Image[] 
         for(let i = 0; i < imageData.value?.length; i++){
             if(imageData.value[i].cuid === pageData.value.profileImageCuid){
                 profileImageLink.value = imageData.value[i].url
+                break;
             }
         }
 }
 }
 
-
-/*const styleObject = reactive({
-  height: '100%',
-  background: 'linear-gradient(90deg, rgba(15,200,0,1) 100%, rgba(203,255,0,1) 35%)',
-  'box-shadow': '0 3px 3px -5px #1ba710, 0 2px 5px #1ba710'
-})*/
-
-// Progress bar todo: add logic for over 100 percent and 0 percent.
 onMounted(() => { 
     const progress=(document.querySelector('.progress') || document.createElement("null")) as HTMLElement ;
     progress.style.width=progress?.getAttribute('donated-amount') + "%";
@@ -119,7 +113,7 @@ onMounted(() => {
 })
 
 await getDataPage(id.value as string)
-
+// use flex for services 3 rows, justify-center: space-between
 const images = ["../blue_image.png", "../profile.png", "../media2.png", "../media3.png", "../media4.png", "../media2.png"]
 const pageImages = ["../location_icon.png", "../clock_icon.png"]
 const profile = images[1];
@@ -136,41 +130,44 @@ img.bg-orange-400.-mt-16.mx-auto(class="w-[122px] h-[122px] rounded-[8px]" :src=
   .text-gray-dark.font-poppins.text-md.inline-block {{ dateFormat(pageData.day_of_birth) }} 
   .text-gray-dark.font-poppins.text-md.inline-block.whitespace-pre  - 
   .text-gray-dark.font-poppins.text-md.inline-block {{ dateFormat(pageData.day_of_passing)}}
-.div(style="background: #F8F8F8;")
-    .py-4.grid(class="sm:grid-cols-3")
+.div
+    
+    .py-4.grid(class="sm:grid-cols-6")
         img.object-cover.align-middle(class="w-40 sm:w-64" :src = "`${profileImageLink}`")
+        .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11") 
+            .text-gray-dark.font-poppins.text-2xl.text-left.font-bold(style="line-height: 36px; text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") Services
+            .div(v-if="pageData.visitation_date")
+                .px-5.py-4.text-gray-dark.font-poppins.text-2xl.text-left.font-bold(style="line-height: 36px; text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") Visitation
+                .flex.justify-between.gap-5
+                    //img.px-4(:src="`${clock}`")
+                    .py-1.font-outfit.text-dark-blue(style="font-size: 20px; line-height: 30px;") {{ "Date:" }}
+                    .py-1.font-outfit.text-dark-blue.col-span-4(style="font-size: 20px; line-height: 30px;") {{ dateFormat(pageData.visitation_date) }}
+                    //img.px-2(:src="`${location}`")
+                .flex.justify-between.gap-5
+                    .py-1.font-outfit.text-dark-blue(style="font-size: 20px; line-height: 30px;") {{ "Location:" }}
+                    .py-1.font-outfit.text-dark-blue.col-span-4.leading-loose.whitespace-normal(style="font-size: 20px; line-height: 30px;") {{ pageData.visitation_location }}
+                .px-5.pt-2.pb-8.font-outfit.text-dark-blue(style="font-size: 20px; line-height: 30px;") {{ pageData.visitation_description }}
         .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
-            .div.p-4(id="services")
-                .div(v-if="pageData.visitation_date")
-                    .px-5.py-4.text-gray-dark.font-poppins.text-2xl.text-left.font-bold(style="line-height: 36px; text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") Visitation
-                    .px-5.pt-2.pb-8.font-outfit.text-dark-blue(style="font-size: 20px; line-height: 30px;") {{ pageData.visitation_description }}
-                    .grid.gap-x-3.gap-y-0.grid-cols-5.grid-rows-2
-                        img.px-4(:src="`${clock}`")
-                        .py-1.font-outfit.text-dark-blue.col-span-4(style="font-size: 20px; line-height: 30px;") {{ dateFormat(pageData.visitation_date) }}
-                        img.px-2(:src="`${location}`")
-                        .py-2.font-outfit.text-dark-blue.col-span-4.whitespace-normal(style="font-size: 20px; line-height: 30px;") {{ pageData.visitation_location }}
-                .div(v-if="pageData.funeral_date")
-                    .px-5.py-4.text-gray-dark.font-poppins.text-2xl.text-left.font-bold(style="line-height: 36px; text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") Funeral
+            br
+            .div(v-if="pageData.funeral_date")
+                .px-5.py-4.text-gray-dark.font-poppins.text-2xl.text-left.font-bold(style="line-height: 36px; text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") Funeral
+                .grid.gap-x-3.gap-y-0.grid-cols-5.grid-rows-2
+                    //img.px-4(:src="`${clock}`")
+                    .py-1.font-outfit.text-dark-blue(style="font-size: 20px; line-height: 30px;") {{ "Date:" }}
+                    .py-1.font-outfit.text-dark-blue.col-span-4(style="font-size: 20px; line-height: 30px;") {{ dateFormat(pageData.funeral_date) }}
+                    //img.px-2(:src="`${location}`")
+                    .py-1.font-outfit.text-dark-blue(style="font-size: 20px; line-height: 30px;") {{ "Location:" }}
+                    .py-1.font-outfit.text-dark-blue.whitespace-normal.leading-loose.col-span-4(style="font-size: 20px; line-height: 30px;") {{ pageData.funeral_location }}
                     .px-5.pt-2.pb-8.font-outfit.text-dark-blue(style="font-size: 20px; line-height: 30px;") {{ pageData.funeral_description }}
-                    .grid.gap-x-3.gap-y-0.grid-cols-5.grid-rows-2
-                        img.px-4(:src="`${clock}`")
-                        .py-1.font-outfit.text-dark-blue.col-span-4(style="font-size: 20px; line-height: 30px;") {{ dateFormat(pageData.funeral_date) }}
-                        img.px-2(:src="`${location}`")
-                        .py-2.font-outfit.text-dark-blue.col-span-4.whitespace-normal.leading-loose(style="font-size: 20px; line-height: 30px;") {{ pageData.funeral_location }}
     .div.p-4(id="donations")
         .container(class="sm:overflow-hidden sm:w-3/4 sm:mt-4 sm:mx-auto sm:place-content-center sm:max-w-xl sm:p-6 sm:rounded-card sm:shadow-card")
             .container.m-4.place-content-center.font-poppins(class="w-5/6 sm:m-auto sm:py-3")
                 .text-md.text-center.ml-4.my-3(class="sm:text-xl sm:my-6" style="letter-spacing: 0.35px; font-weight: 600; color: #646464;") {{ donationFormat(pageData.amount_raised)  + " raised of " +  donationFormat(pageData.donation_goal) + " goal" }}
-                //.progress-bar.overflow-hidden.ml-4.h-5.rounded-full(style="30px; background-color:#b5b5b5;")
-                    .progress.rounded-full.text-white.flex.items-center.justify-center(donated-amount=donated_percentage style="background: linear-gradient(90deg, rgba(15,200,0,1) 100%, rgba(203,255,0,1) 35%); box-shadow: 0 3px 3px -5px #1ba710, 0 2px 5px #1ba710; height: 100%; opacity: 1;") {{ donated_percentage  + "%" }}
-                //.py-4
-                //.progress-bar.overflow-hidden.ml-4.h-5.rounded-full(style="30px ; background-color:#b5b5b5;")
-                    progress.rounded-full.text-white.flex.items-center.justify-center(style="30px;" max="100" :value ="`${donated_percentage}`") {{ donated_percentage  + "%" }}
                 .py-4
                 .progress-bar.overflow-hidden.ml-4.h-5.rounded-full(style="30px; background-color:#b5b5b5;")
-                    CVProgress(v-if="donated_percentage >= 100" :modelBarWidth="100") {{ donated_percentage  + "%" }}
+                    CVProgress(v-if="donated_percentage >= 100" modelBarWidth=100) {{ donated_percentage  + "%" }}
                     CVProgress(v-else-if="donated_percentage > 0 && donated_percentage < 100" :modelBarWidth="donated_percentage") {{ donated_percentage  + "%" }}
-                    CVProgress(v-else style="text-align:center;" modelBarWidth="0") 
+                    CVProgress(v-else style="text-align:center;" modelBarWidth=0) 
                 .well.well-sm
                     h1.ml-4.pt-9.text-2xl.text-gray-dark(class="sm:text-3xl" style="font-weight: 600; letter-spacing: 0.35px;") Donor Information
                 br
@@ -194,8 +191,12 @@ img.bg-orange-400.-mt-16.mx-auto(class="w-[122px] h-[122px] rounded-[8px]" :src=
     .div.px-8.py-4(style="color: #6E6E6E; font-weight: 500; font-size: 14px; line-height: 28px; letter-spacing: -0.078px; word-break: break-word;" id="obituary") {{ pageData.obituary }}
     .div.p-4(id="media")
         .row.gallery.flex.flex-wrap.gap-1.items-center.justify-center(class="basis-1/2 sm:basis-1/4 sm:gap-3 sm:m-8")
-            .div(style='position: relative ;width:25%; height:auto;' v-for="(image,i) in imageData" :key="i") 
-                img.object-cover.align-middle.rounded-lg( class="w-40 sm:w-64" :src = "`${image.url}`")
+            .div(style='position: relative ;width:25%; height:auto;' class="basis-1/4" v-for="(image,i) in imageData" :key="i") 
+                img.object-cover.align-middle.rounded-lg(class="w-40 sm:w-64" :src = "`${image.url}`")
+        //.container.gap-1(style="width:500px" class="basis-1/2 sm:basis-1/4 sm:gap-3 sm:m-8")
+            div(class="flex" style="overflow-x: auto")
+                .div(v-for="(image,i) in imageData" :key="i" style="flex-shrink: 0;") 
+                    img.object-cover.align-middle.rounded-lg(class="w-40 sm:w-64" style="margin-right:5px" :src = "`${image.url}`")
 </template>
 
 <style scoped></style>

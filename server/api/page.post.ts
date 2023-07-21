@@ -1,5 +1,6 @@
 import { PrismaClient } from "@prisma/client"
 import { donationFormat } from "@/utils"
+import {loginRedirectUrl} from "../api/auth0"
 const prisma = new PrismaClient()
 
 /*
@@ -17,25 +18,30 @@ export default defineEventHandler(async event => {
   data.donation_goal = Math.trunc(data.donation_goal * 100);
   data.amount_raised = Math.trunc(data.amount_raised * 100);
   console.log(data.donation_goal)
-  try{
-  // Creates a new entry in the database in the page model to a specfic user
-  //if(event.context.user.user_role === "advocate" || event.context.user.cuid === familyCuid ){
-  const queryRes = await prisma.page.create({
-    data: {
-      ...data,cuid: undefined,
-      User: {
-        connect: {
-          cuid : familyCuid || "0"
+  if(event.context.user?.user_role === "advocate" || event.context.user.cuid === familyCuid ){
+    try{
+    // Creates a new entry in the database in the page model to a specfic user
+
+    const queryRes = await prisma.page.create({
+      data: {
+        ...data,cuid: undefined,
+        User: {
+          connect: {
+            cuid : familyCuid || "0"
+          }
+        
+          }
         }
-      
-        }
-      }
-    });
-    return queryRes.cuid
-  //}
-  //return []
-  } catch(e) {
-    console.error(e);
+      });
+      return queryRes.cuid
+    //}
+    //return []
+    } catch(e) {
+      console.error(e);
+    }
+  } else {
+    console.log("unauthorized")
+    return await sendRedirect(event, loginRedirectUrl());
   }
 });
 

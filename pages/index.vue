@@ -24,7 +24,6 @@ const isAdmin = computed(() => cvuser.value?.user_role == "advocate")
   .flex.flex-col.justify-start.gap-6(class="sm:grid sm:gap-10 sm:grid-rows-3 sm:grid-cols-2 sm:my-16")
     TextGrayField(class="sm:mx-auto") Name:
     TextGrayField {{ cvuser?.first_name }} {{ cvuser?.last_name }}
-    //.text-gray-dark.font-poppins.font-bold.text-xl.ml-8(class="sm:text-3xl") {{ cvuser?.first_name }} {{ cvuser?.last_name }}
     TextGrayField(class="sm:mx-auto") Email:
     TextGrayField {{ cvuser?.email}}
     TextGrayField(class="sm:mx-auto") Phone:

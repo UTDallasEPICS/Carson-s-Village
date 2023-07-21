@@ -1,4 +1,5 @@
 import { PrismaClient } from "@prisma/client"
+import {loginRedirectUrl} from "../api/auth0"
 const prisma = new PrismaClient()
 
 /*
@@ -8,12 +9,15 @@ const prisma = new PrismaClient()
 */
 
 export default defineEventHandler(async event => {
-  //console.log(event)
+  console.log(event.context.user)
   //console.log(event.context.client.user)
-  //if(event.context.user.user_role === "advocate"){
+  if(event.context.user.user_role === "advocate"){
     const queryRes = await prisma.user.findMany({
   });
   return queryRes;
-//}
+  } else {
+    console.log("unauthorized")
+    return await sendRedirect(event, loginRedirectUrl());
+  }
   //return []
 })

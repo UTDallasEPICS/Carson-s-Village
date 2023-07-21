@@ -49,6 +49,7 @@ const data_payout = ref<donation_payout>({
     transaction_recording_date: new Date().toString()
 })
 
+const recordWholeAmount = ref(false)
 const totalUserDonations = ref(0);
 const users = ref<User[]>([])
 const pages = ref<Page[]>([])
@@ -130,6 +131,7 @@ const getDataPageDonations = async( id: string ) => {
     method: 'GET',
     query: { cuid: id }
 })
+recordWholeAmount.value = false
 data_payout.value.cuid = id
 thePage.value= pageDataDB.value as unknown as Page;
 //console.log(thePage.value);
@@ -155,12 +157,17 @@ const save = async () => {
     }
 }
 
+const setWholeAmount = function(){
+    console.log("this does stuff")
+    data_payout.value.amount_to_record = ((thePage.value.amount_raised as number) - (thePage.value.amount_distributed as number)) / 100.0
+}
+
 if ((isAdmin.value as boolean)) {
     getDataUsers()
 }
 </script>
 
-<template lang="pug">
+<template lang="pug" v-if="isAdmin">
 //LinkButton(to='/') Back
 .container.mx-auto    
     .well.well-sm
@@ -192,7 +199,7 @@ if ((isAdmin.value as boolean)) {
                 .px-5.pt-2.pb-8.font-outfit.text-dark-blue(style="font-size: 20px; line-height: 30px;") {{ donationFormat(amount_remaining) }}
             .col-md-8.ml-4.pt-4.pr-5.flex(class="sm:col-span-1 sm:mr-11")
             .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
-                input(type='checkbox' class="sm:ml-1" name='allFunds' value='Bike')
+                input(type='checkbox' class="sm:ml-1" name='allFunds' value='Bike' v-model="recordWholeAmount" @click="setWholeAmount")
                 label.mt-4.ml-4.text-md(for='allFunds' class="sm:mt-0" style="letter-spacing: 0.35px;") Record all of amount left to distribute
         .py-4.grid(class="sm:grid-cols-7")
             CVLabel Select Family Page
