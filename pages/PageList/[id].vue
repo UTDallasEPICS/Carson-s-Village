@@ -35,12 +35,14 @@ const data = ref<User>({
 
 // Method to populate the page list with databased on the cuid of the user in the url
 const getDataPageList = async () => {
+  if(cvuser.value.cuid === family_cuid.value || cvuser.value.user_role == "advocate"){
   const { data: pagesData } = await useFetch('/api/page_list', {
     method: 'GET',
     query: { family_cuid }
   })
 
   pages.value = pagesData.value as unknown as Page[]
+}
 }
 
 await getDataPageList()

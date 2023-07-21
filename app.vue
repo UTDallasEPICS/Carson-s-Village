@@ -25,10 +25,10 @@ const route = useRoute()
 const cvCookie = useCookie('cvtoken')
 const isSearch = computed(() => route.path == "/Search/")
 const isFamilyPage = computed(() => route.path.includes("/Page/"))
-//console.log(isFamilyPage.value)
-//console.log(route.path + "path after donate")
-if(!cvCookie.value && !isSearch.value){ // || isFamilyPage.value) ){
-  //console.log(route.path + 'redirected to search')
+console.log(isFamilyPage.value)
+console.log(route.path + "path after donate")
+if(!cvCookie.value && !isSearch.value && !isFamilyPage.value){ // || isFamilyPage.value) ){
+  console.log(route.path + 'redirected to search')
   
   await navigateTo('/Search/?search=')
 }

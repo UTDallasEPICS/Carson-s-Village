@@ -17,6 +17,8 @@ export default defineEventHandler(async event => {
     const replaced_image_cuid = body.replacedImage.cuid
     console.log(replaced_image_cuid)
     console.log(body)
+    console.log(body.imageUploaded.url == body.replacedImage.url)
+    if(body.imageUploaded.url != body.replacedImage.url && body.replacedImage.url !== ""){
     try {
         // Replaces entry in the database in the image model for a specfic image
 
@@ -40,4 +42,6 @@ export default defineEventHandler(async event => {
     } catch (e) {
         console.error(e);
     }
+    }
+    return false
 })

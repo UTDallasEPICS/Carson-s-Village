@@ -9,10 +9,10 @@ const prisma = new PrismaClient()
 
 export default defineEventHandler(async event => {
 		const { cuid } = getQuery(event);
-
+		const role = event.context.user?.user_role || ""
 		if( (cuid as string) == "0" || cuid == undefined){
 			return false
-		  }
+		}
 		const queryRes = await prisma.page.findFirst({
        	where: {
 			cuid : cuid as string

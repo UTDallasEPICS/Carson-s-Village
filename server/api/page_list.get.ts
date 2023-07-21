@@ -1,4 +1,5 @@
 import { PrismaClient } from "@prisma/client"
+import {loginRedirectUrl} from "../api/auth0"
 const prisma = new PrismaClient()
 
 /*
@@ -14,16 +15,18 @@ export default defineEventHandler(async event => {
     //const cvData = JSON.parse(cvuser as string)
 
     //console.log(cvData.cuid)
-    if((family_cuid as string) == "0"  || family_cuid == undefined){ //||  family_cuid !== cvData.cuid || cvData.user_role!="advocate"){
+    if((family_cuid as string) == "0"  || family_cuid == undefined){
         return []
     }
-    //if(event.context.user.user_role === "advocate" || event.context.user.cuid === family_cuid ){
-    const queryRes = await prisma.page.findMany({
-        where: {
-            familyCuid : family_cuid as string
-        }
-  });
-  return queryRes;
-  //}
-  //return [];
+    if(event.context.user.user_role === "advocate" || event.context.user?.cuid === family_cuid ){
+        const queryRes = await prisma.page.findMany({
+            where: {
+                familyCuid : family_cuid as string
+            }
+    });
+    return queryRes;
+  } else {
+    console.log("unauthorized")
+    return await sendRedirect(event, loginRedirectUrl());
+  }
 })

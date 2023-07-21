@@ -1,5 +1,6 @@
 import { PrismaClient } from "@prisma/client"
 const prisma = new PrismaClient()
+import {loginRedirectUrl} from "../api/auth0"
 import { nanoid } from "nanoid"
 import Stripe from "stripe"
 const runtime = useRuntimeConfig()
@@ -12,6 +13,7 @@ export default defineEventHandler(async event => {
         const body = await readBody(event)
         body.amount_to_record = Math.trunc(body.amount_to_record * 100)
         //console.log(body)
+        if(event.context.user?.user_role == "advocate"){
         try{
 
           // update success flag in transaction
@@ -48,7 +50,10 @@ export default defineEventHandler(async event => {
           console.error(e)
     
           }
-    
+        } else{
+          console.log("unauthorized")
+          return await sendRedirect(event, loginRedirectUrl());
+        }
     });
     
     

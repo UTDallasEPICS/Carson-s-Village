@@ -6,7 +6,7 @@ const cvtoken = useCookie('cvtoken');
 
 const isAdmin = computed(() => cvuser.value?.user_role == "advocate")
 const cuid = computed(() => cvuser.value?.cuid)
-const isLoggedIn = computed(() => cvuser.value != undefined)
+const isLoggedIn = computed(() => cvuser.value)
 //const isNotLoggedIn = !isLoggedIn
 const pages = ref<Page[]>([])
 const searchQuery = ref('');
