@@ -23,7 +23,7 @@ jobs:
           username: ubuntu
           key: ${{ secrets.CARSONS_AWS_API_PRIVATE_KEY }}
           source: ./.output
-          target: ~/carsons-village-stage/.output
+          target: ~/carsons-village-stage
           overwrite: true
       - name: Execute
         uses: appleboy/ssh-action@v0.1.4
