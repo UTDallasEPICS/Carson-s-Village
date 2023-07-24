@@ -33,6 +33,7 @@ jobs:
             git checkout stage
             git pull
             npm install
+            cp .env ./.output/server/.env
             npx prisma migrate deploy
             pm2 restart all
           host: ec2-52-34-213-210.us-west-2.compute.amazonaws.com
