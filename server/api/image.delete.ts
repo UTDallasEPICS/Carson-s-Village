@@ -13,6 +13,7 @@ export default defineEventHandler(async event => {
   const body = await readBody(event);
   const image = body.image as Image;
   console.log(image.cuid)
+  //if(event.context.user.user_role === "advocate"){ //|| event.context.user.cuid === body.image.pageCuid){
 try {
     // Deletes an image from the database.
     const queryRes = await prisma.image.delete({
@@ -27,4 +28,5 @@ try {
   console.log(e)
   return false;
   } 
+//}
 });

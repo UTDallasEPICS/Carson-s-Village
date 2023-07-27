@@ -21,7 +21,7 @@ export default defineEventHandler(async (event) => {
     const url = body.url
     const pageCuid = body.pageCuid;
   //delete body.cuid;
-
+//if(event.context.user.user_role === "advocate"){ //|| event.context.user.cuid === pageCuid){
   //try{
   // Creates a new entry in the database in the page model to a specfic user
   const image = await prisma.image.create({
@@ -42,6 +42,7 @@ export default defineEventHandler(async (event) => {
       uploadUrl: await getSignedFileUrl(data.contentLength, data.contentType, key),
       image
     }
+  //}
   /*} catch(e){
     console.error(e)
   }*/

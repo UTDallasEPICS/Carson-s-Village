@@ -28,12 +28,12 @@ export default defineEventHandler(async event => {
         ...data
       }
     });
-
  // return []
   } catch (e) {
     console.error(e);
+    return false
   }
-  return true;
+  return true
 } else{
   console.log("unauthorized")
   return await sendRedirect(event, loginRedirectUrl());

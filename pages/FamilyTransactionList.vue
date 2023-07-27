@@ -158,12 +158,16 @@ const save = async () => {
 }
 
 const setWholeAmount = function(){
-    console.log("this does stuff")
     data_payout.value.amount_to_record = ((thePage.value.amount_raised as number) - (thePage.value.amount_distributed as number)) / 100.0
 }
 
 if ((isAdmin.value as boolean)) {
     getDataUsers()
+}
+
+const loadData = async(pagesBackend: Page[], donationBackend: PageDonation[]) => {
+    pages.value = pagesBackend
+    donations.value = donationBackend
 }
 </script>
 
@@ -174,6 +178,7 @@ if ((isAdmin.value as boolean)) {
         TitleComp Family Transaction List
         .bar.mx-9(style="border-top: 0.5px solid #646464;")
         br
+        DonationManagment(@dataLoaded="loadData")
         .py-4.grid(class="sm:grid-cols-7")
             CVLabel Select the Family to View
             .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")

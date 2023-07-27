@@ -26,10 +26,10 @@ const props = defineProps({
 
 // actually uploads images using presigned url to s3 bucket
 const onFile = async (event: Event) => {
-  console.log(props.isImageReplace)
+  //console.log(props.isImageReplace)
   const Files = event?.target?.files
   //console.log(file)
-  console.log(Files)
+  //console.log(Files)
   for(let i = 0 ; i < Files.length; i++){
     const file = Files[i];
     const { data: imageData } = await useFetch('/api/image_upload', {

@@ -46,6 +46,7 @@ const data = ref<Page>({
 })
 
 const imageData = ref<Image[]>([])
+//console.log(typeof imageData)
 const profile_image = ref("")
 //const imageLink = ref("")
 const selectedImageObj = ref<Image>({
@@ -72,12 +73,15 @@ const idExist = computed(() => router.params.EditPageId !== "0")
 
 // Method that saves form data to the database for a page that has cuid: router.params.EditPageId
 const save = async () => {
-    await useFetch('/api/page', {
+    const { data: saveSuccess } = await useFetch('/api/page', {
         // Checks if there is a pre-existing page to edit or if to create a new page    
         method: router.params.EditPageId !== "0" ? 'PUT' : 'POST',
         body: ({ ...data.value})
     }
     )
+    if((saveSuccess as unknown as boolean)){
+        await navigateTo('/PageList/' + family_cuid)
+    }
 };
 
 // Method to populate the form when editing a pre-existing page
@@ -125,30 +129,9 @@ const getData = async (cuid: string) => {
     }
     console.log(data.value.donation_goal)
 }
-//}
 
-/*const getImages = async (pageCuid: string) => {
-    const { data: imageDataBackend } = await useFetch('/api/image', {
-        method: 'GET',
-        query: ({ pageCuid: pageCuid})
-    }
-    )
-
-    if(imageDataBackend.value){
-        imageData.value = imageDataBackend.value as unknown as Image[]
-        
-    }
-}
-*/   
-
-// Method that calls the backend to handle uploading the image urls to the database
+// Method that saves images to the frontend on image upload.
 const saveImage = async (theImage: Image) => {
-    /*await useFetch('/api/image', {
-        method: 'post',
-        body: ({ url: theImage.url, page_cuid: pageCuid.value as string})
-    }
-    )*/
-
     imageData.value.push(theImage)
     // Creates a selected image for the first image uploaded
     if(selectedImageObj.value.cuid === ""){
@@ -168,7 +151,6 @@ const removeImage = async (theImage: Image) => {
     
     for(let i = 0 ; i < imageData.value.length; i++){
         if(imageData.value[i].cuid === theImage.cuid){
-            console.log(i)
             imageData.value.splice(i, 1)
             if(selectedImageObj.value.cuid === theImage.cuid && imageData.value.length !=0 ){
                 selectedImageObj.value.url = imageData.value[0].url
@@ -204,9 +186,6 @@ const setProfileImage = async (theImage: Image) => {
 
 // Method that uploads an image to replace the image that is on the left, the selected image, and replaces it.
 const replaceImage = async (theImage: Image) => {
-    console.log(theImage.url)
-    console.log("console 1")
-    console.log(selectedImageObj.value.url) 
     await useFetch('/api/image', {
         method: 'put',
         body: ({ imageUploaded: theImage, replacedImage: selectedImageObj, page_cuid: pageCuid.value as string })
@@ -238,13 +217,7 @@ const selectImage = function(theImage: Image){
     selectedImageObj.value = theImage as unknown as Image
     selectedImageObjCopy = {...selectedImageObj.value}
 }
-// bad hack 
-const anotation_for_image_upload = 'false'
-const anotation_for_image_replace = 'true'
 
-
-//const images = ["../blue_image.png", "../profile.png", "../profile.png", "../media2.png", "../media2.png", "../media2.png", "../media3.png", "../media4.png", "../media2.png", "https://images-dev.carsonsvillage.org/3302bbef4ae68777a7d18c0e6914b25e"]
-//const selectedImage = [images[1]];
 await getData(useRoute().params.EditPageId as string)
 </script>
 
@@ -265,56 +238,23 @@ CVContainer
         .py-4.grid(class="sm:grid-cols-3") 
             CVLabel Page Name
             .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
-                CVInput(v-model='data.page_name' placeholder="required") 
-        //.information.bg-gray-300.rounded-md.mx-9.my-2.text-center(class="sm:text-start")
-            CVLegend Image Preview
-        //.py-4.grid.flex-box.flex-row.item-centered.gap-1(v-if="imageData.length!= 0" class="sm:grid-cols-3" style="line-height: 0px;text-align: center")
-            .div(style='position: relative;') 
-                img.cursor-pointer.object-cover.align-middle.rounded-lg(class="hover:opacity-1/2 w-40 sm:w-64" :src = "`${selectedImageObj.url}`")
-                .form-horizontal(style='position: absolute; top: 5px; right: 5px')
-                    button.bg-red-500(style="display: flex;align-items: center;justify-content: center;line-height: 0px;text-align: center; color: white; font-weight: 450; positon: absolute; top:0px; left: 0px; width: 30px; height: 30px; border-radius: 50%;" @click = "removeImage(selectedImageObjCopy)") x
-            
-            .col-md-8(class="sm:col-span-2 sm:mr-11")
-                .row.gallery.flex.flex-wrap.gap-1.items-center.justify-center(class="basis-1/2 sm:basis-1/4 sm:gap-3 sm:m-8" style="overflow-x: auto; width:250px; height:150px;")
-                    .div(style="position:relative; width:30%; height: auto;" v-for="(image,i) in imageData" :key="i") 
-                        img.object-cover.align-middle.rounded-lg.cursor-pointer(class="hover:opacity-1/2 w-40 sm:w-64" :src = "`${image.url}`" @click="selectImage(image)")
-                        .form-horizontal(style='position: absolute; top: 5px; right: 5px')
-                            button.bg-red-500(style="display: flex;align-items: center;justify-content: center;line-height: 0px;text-align: center ; color: white; font-weight: 300; positon: absolute; top:0px; left: 0px; width: 15px; height: 15px; border-radius: 50%;" @click = "removeImage(image)") x
-        //.information.bg-gray-300.rounded-md.mx-9.my-2.text-center(class="sm:text-start")
-            CVLegend Image Preview Dev
-            .div(style='position: relative') 
-                img.object-cover.align-middle.rounded-lg( class="w-40 sm:w-64" :src = "`${selectedImageObj.url}`")
-                .form-horizontal(style='position: absolute; top: 5px; right: 5px')
-                    button#remove.bg-red-500(style="display: flex;align-items: center;justify-content: center;line-height: 0px;text-align: center; color: white; font-weight: 450; positon: absolute; top:0px; left: 0px; width: 30px; height: 30px; border-radius: 50%;" @click = "removeImage(selectedImageObjCopy)") x
-          .py-4.grid(v-if="imageData.length !== 0" class="sm:grid-cols-3" style="line-height: 0px;text-align: center;")
-          .col-md-8(class="sm:col-span-2 sm:mr-11")
-                .row.flex.gallery.flex-box.flex-directional-row(class="basis-1/2 sm:basis-1/4 sm:gap-3 sm:m-8" style="overflow-y: scroll; justify-content: start-flex; display: flex; width:250px")
-                    .div(style='position: relative;' v-for="(image,i) in imageData" :key="i") 
-                        img.object-cover.align-middle.rounded-lg(class="w-40 sm:w-64" style="width:150px; height:75px;" :src = "`${image.url}`")
-                        .form-horizontal(style='position: absolute; top: 5px; right: 5px')
-                            button#remove.bg-red-500(style="display: flex;align-items: center;justify-content: center;line-height: 0px;text-align: center ; color: white; font-weight: 300; positon: absolute; top:0px; left: 0px; width: 15px; height: 15px; border-radius: 50%;" @click = "removeImage(image)") x
-        //.information.bg-gray-300.rounded-md.mx-9.my-2.text-center(class="sm:text-start")
-            CVLegend Image Preview Developer
-        //div(v-for="(image,i) in images" :key="i" style="background-color: #333; overflow: auto; white-space: nowrap; padding: 10px;")
-            img.rounded-lg(style="padding: 10px;" :src = "`${image}`")
-            .form-horizontal(style='position: absolute; top: 5px; right: 5px')
-                button#remove.bg-red-500(style="display: flex;align-items: center;justify-content: center;line-height: 0px;text-align: center ; color: white; font-weight: 300; positon: absolute; top:0px; left: 0px; width: 15px; height: 15px; border-radius: 50%;" @click = "removeImage(image)") x
-                .container.gap-1(style="width:150px" class="basis-1/2 sm:basis-1/4 sm:gap-3 sm:m-8")
+                CVInput(v-model='data.page_name' placeholder="required")
+        ImagePreview(:profileImage= "profile_image" :selectedImageObject = "selectedImageObj" :images = "imageData")
         .information.bg-gray-300.rounded-md.mx-9.my-2.text-center(class="sm:text-start")
             CVLegend Image Preview
         .py-4.grid.flex-box.flex-row.item-centered.gap-1(v-if="imageData.length!= 0" class="sm:grid-cols-3" style="line-height: 0px;text-align: center")
-            .div(style='position: relative;') 
+            div(style='position: relative; flex-shrink: 0;') 
                 img.cursor-pointer.object-cover.align-middle.rounded-lg(class="hover:opacity-1/2 w-40 sm:w-64" :src = "`${selectedImageObj.url}`")
-                .form-horizontal(style='position: absolute; top: 5px; right: 5px')
-                    button.bg-red-500(style="display: flex;align-items: center;justify-content: center;line-height: 0px;text-align: center; color: white; font-weight: 450; positon: absolute; top:0px; left: 0px; width: 30px; height: 30px; border-radius: 50%;" @click = "removeImage(selectedImageObjCopy)") x
+                .form-horizontal(style='position: absolute; top: 10px; right: 150px')
+                    button.bg-red-500(class='w-40 sm:64' style="display: flex;align-items: center;justify-content: center;line-height: 2;text-align: center; color: white; font-weight: 450; positon: absolute; top:0px; left: 0px; width: 30px; height: 2rem; border-radius: 50%; padding-bottom: 4px;" @click = "removeImage(selectedImageObjCopy)") x
             
             .col-md-8(class="sm:col-span-2 sm:mr-11")
-                div(style="width:300px" class="")
+                div(style="width:800px" class="")
                     div(class="flex" style="overflow-x: auto")
                         .div(v-for="(image,i) in imageData" :key="i" style="flex-shrink: 0; position: relative;") 
                             img.object-cover.align-middle.rounded-lg.cursor-pointer(class="w-40 sm:w-64" style="margin-right:5px" :src = "`${image.url}`" @click="selectImage(image)")
                             .form-horizontal(style='position: absolute; top: 10px; right: 10px')
-                                button.bg-red-500(style="display: flex;align-items: center;justify-content: center;line-height: 0px;text-align: center ; color: white; font-weight: 300; positon: absolute; top:0px; left: 0px; width: 30px; height: 30px; border-radius: 50%;" @click = "removeImage(image)") x
+                                button.bg-red-500(style="display: flex;align-items: center;justify-content: center;line-height: 2;text-align: center ; color: white; font-weight: 300; positon: absolute; top:0px; left: 0px; width: 30px; height: 2rem; border-radius: 50%; padding-bottom: 4px;" @click = "removeImage(image)") x
         .py-4.grid(class="sm:grid-cols-3") 
             a.ml-10.pt-1(style="text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") image upload
             .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
@@ -328,8 +268,7 @@ CVContainer
         .py-4.grid(class="sm:grid-cols-3") 
             CVLabel Profile Image
             .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
-                Listbox.rounded-md.outline-0.border-box.w-full.p-2.bg-white(style="border: 1px solid #c4c4c4;" v-model="profile_image" as="div") 
-                    // Make into data.profile_image
+                Listbox.rounded-md.outline-0.border-box.w-full.p-2.bg-white(style="width:350px; border: 1px solid #c4c4c4;" v-model="profile_image" as="div") 
                     ListboxButton
                         img.rounded-lg(style="padding: 10px;" :src = "`${profile_image}`")
                         ListboxOptions(v-for="(image,k) in imageData" :key="k" :value="image" @click="setProfileImage(image)")
@@ -338,20 +277,16 @@ CVContainer
             CVLabel Day of Birth
             .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
                 CVDatepicker(v-model='data.day_of_birth')
-                //Datepicker.rounded-md.outline-0.border-box.w-full.p-2(style="border: 1px solid #c4c4c4;" v-model='data.day_of_birth')
         .py-4.grid(class="sm:grid-cols-3") 
             CVLabel Day of Passing 
             .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
                 CVDatepicker(v-model='data.day_of_passing')
-                //Datepicker.rounded-md.outline-0.border-box.w-full.p-2(style="border: 1px solid #c4c4c4;" v-model='data.day_of_passing')  
-
         .information.bg-gray-300.rounded-md.mx-9.my-2.text-center(class="sm:text-start")
             CVLegend Visitation Information 
         .py-4.grid(class="sm:grid-cols-3") 
             CVLabel Date
             .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
                 CVDatepicker(v-model='data.visitation_date')
-                //Datepicker.rounded-md.outline-0.border-box.w-full.p-2(style="border: 1px solid #c4c4c4;" v-model='data.visitation_date')
         .py-4.grid(class="sm:grid-cols-3")
             CVLabel Location 
             .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
@@ -367,7 +302,6 @@ CVContainer
             CVLabel Date    
             .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
                 CVDatepicker(v-model='data.funeral_date')
-                //Datepicker.rounded-md.outline-0.border-box.w-full.p-2(style="border: 1px solid #c4c4c4;" v-model='data.funeral_date')
         .py-4.grid(class="sm:grid-cols-3")
             CVLabel Location 
             .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
@@ -393,12 +327,11 @@ CVContainer
                 CVDatepicker(v-model='data.deadline')
         .ml-9.mb-9.py-7.flex.flex-wrap.gap-2
             .col-md-10.px-2.mt-2
-                ActionButton.mx-auto.text-white.font-poppins.font-bold.w-fit(@click="save") Save
+                ActionButton(@click="save") Save
             .col-md-10.py-2.mt-2
-                LinkButton(v-if="idExist" :to="`/Page/${cuid}`") View Page <!-- v-if id!=null--> 
+                LinkButton(v-if="pageCuid!=0" :to="`/Page/${cuid}`") View Page
             .col-md-10.p-2.pt-6.mt-2(class="sm:pt-2 sm:ml-auto sm:mr-6")
-                LinkButton(v-if="idExist" to='#') Delete Page <!-- v-if id!=null-->      
-                //.row.gallery.flex.flex-wrap.gap-1.items-center.justify-center(class="basis-1/2 sm:basis-1/4 sm:gap-3 sm:m-8")
+                LinkButton(v-if="pageCuid!=0" to='#') Delete Page  
 </template>
 
 <style scoped></style>
