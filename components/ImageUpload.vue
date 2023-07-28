@@ -65,8 +65,7 @@ const onFile = async (event: Event) => {
 
 
 <template lang="pug">
-input#images.rounded-md.outline-0.border-box.p-2(
-  class="sm:ml-2" 
+input#images.rounded-md.outline-0.border-box.p-2( 
   style="border: 1px solid #c4c4c4;" 
   type="file"  
   @change="onFile"

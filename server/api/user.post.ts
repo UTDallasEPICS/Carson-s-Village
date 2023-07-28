@@ -49,7 +49,7 @@ const body = await readBody(event)
 console.log(event.context.user)
 if(event.context.user?.user_role == "advocate"){
 try{
-  await sendEmail(body.email, "invitation", "Invitation to Carson's village", ({...body, url: `${runtime.BASEURL}/api/login`}))
+  await sendEmail(body.email, "invitation", "Invitation to Carson's village", ({...body, url: `${runtime.BASEURL}api/login`}))
   // creates a new user entry in the user model/table.
   const queryRes = await prisma.user.create({
     data: {

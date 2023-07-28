@@ -55,7 +55,7 @@ await getDataPageList()
   table(style="table-layout: auto;")
     thead
       tr 
-        th.font-poppins.font-bold.p-2(style="--tw-bg-opacity: 1; background-color: rgb(110 171 191 / var(--tw-bg-opacity));overflow: hidden; border-radius: 60px 0px 0px 0px; width:30%; ")  Page Name
+        th.font-poppins.font-bold.p-2(style="--tw-bg-opacity: 1; background-color: rgb(110 171 191 / var(--tw-bg-opacity)); overflow: hidden; border-radius: 60px 0px 0px 0px; width:30%; ")  Page Name
         th.font-poppins.font-bold.overflow-hidden(v-if="isAdmin" style="width:15%;--tw-bg-opacity: 1; background-color: rgb(110 171 191 / var(--tw-bg-opacity));") User ID
         th.font-poppins.font-bold(style="width:35%; --tw-bg-opacity: 1; background-color: rgb(110 171 191 / var(--tw-bg-opacity));") Donation Deadline
         th.font-poppins.font-bold(style="width:30%; --tw-bg-opacity: 1; background-color: rgb(110 171 191 / var(--tw-bg-opacity));") Page Edit
@@ -63,13 +63,13 @@ await getDataPageList()
       tr(v-for="(item, i) in pages" 
       :key="i" 
       )
-        td.font-poppins.text-gray-dark.font-bold(style="text-align: center") {{ item.page_name }}
+        td.font-poppins.text-gray-dark.font-bold(style="text-align: center;") {{ item.page_name }}
         td.font-poppins.text-gray-dark.font-bold(style="text-align: center" v-if="isAdmin") {{ item.familyCuid }}
         td.font-poppins.text-gray-dark.font-bold(style="text-align: center") {{ dateFormat(item.deadline) }}
         td
-            LinkButton(class="sm:my-2" style="white-space: nowrap; display: flex; flex-direction: row; padding: 14px 24px; gap: 10px;" :to="`/EditPage/${item.cuid}`") Edit
+            LinkButton(class="sm:my-2" style="--tw-bg-opacity: 1; background-color: rgb(110 171 191 / var(--tw-bg-opacity));white-space: nowrap; display: flex; flex-direction: row; padding: 14px 24px; gap: 10px;" :to="`/EditPage/${item.cuid}`") Edit
         td
-            LinkButton(class="sm:my-2" style="white-space: nowrap; display: flex; flex-direction: row; padding: 14px 24px; gap: 10px;" :to="`/Page/${item.cuid}`") View
+            LinkButton(class="sm:my-2" style="--tw-bg-opacity: 1; background-color: rgb(110 171 191 / var(--tw-bg-opacity)); white-space: nowrap; display: flex; flex-direction: row; padding: 14px 24px; gap: 10px;" :to="`/Page/${item.cuid}`") View
   .container.bg-blue-300.mx-auto(class="w-auto sm:w-[1000px]" style="--tw-bg-opacity: 1; background-color: rgb(110 171 191 / var(--tw-bg-opacity));height: 50px; border-radius: 0px 0px 60px 60px;")
 </template>
 

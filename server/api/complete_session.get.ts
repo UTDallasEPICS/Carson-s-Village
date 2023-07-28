@@ -58,10 +58,6 @@ export default defineEventHandler(async event => {
       //console.log(pageLink)
       await sendRedirect(event, pageLink)
       return true;
-      //console.log(pageLink);
-      //const pageLinker = () => `${runtime.BASEURL}/page/${transaction?.pageCuid}`
-      //return pageLink;
-      
     } catch (e) {
       console.error(e)
 

@@ -19,10 +19,20 @@ export default defineEventHandler(async event => {
         )
         event.context.client = client
         event.context.claims = claims
-        event.context.user = await event.context.client.user.findFirst({where:{ email: claims.email }})
+        event.context.user = await event.context.client.user.findFirst(
+          {
+            where:{ email: claims.email }
+          ,
+          include: {
+            Pages: {
+              select: {
+                cuid: true
+              }
+            }
+          }
+          })
         // include pages ids to check if that's the family's page. 
         setCookie(event, "cvuser", JSON.stringify(event.context.user))
-        console.log(event.context.user.user_role)
         console.log(event.node.req.url);
         /*if(event.context.user.user_role ==='family' && (event.node.req.url?.includes('/EditPage/') || event.node.req.url?.includes('/PageList/'))){
           if((event.node.req.url?.includes('/EditPage/') && (!(event.node.req.url?.includes('/EditPage/0'))))){
