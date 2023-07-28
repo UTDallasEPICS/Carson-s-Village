@@ -33,11 +33,12 @@ export default defineEventHandler(async event => {
           }
         }
       });
-      return queryRes.cuid
+      return true
     //}
     //return []
     } catch(e) {
       console.error(e);
+      return false
     }
   } else {
     console.log("unauthorized")
