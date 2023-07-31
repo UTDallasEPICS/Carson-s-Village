@@ -2,12 +2,11 @@
 import type { User, Page } from "@/types.d.ts"
 import { donationFormat, dateFormat } from '@/utils'
 const cvuser = useCookie<User>('cvuser');
+//const cvuser2 = useCookie('cvuser');
 const cvtoken = useCookie('cvtoken');
-
 const isAdmin = computed(() => cvuser.value?.user_role == "advocate")
 const cuid = computed(() => cvuser.value?.cuid)
 const isLoggedIn = computed(() => cvuser.value)
-//const isNotLoggedIn = !isLoggedIn
 const pages = ref<Page[]>([])
 const searchQuery = ref('');
 const route = useRoute()
@@ -15,6 +14,10 @@ const isNotSearch = computed(() => route.path !== "/Search/")
 //console.log(route.path +"route path")
 //console.log(cuid);
 console.log(isLoggedIn.value)
+//console.log("here")
+
+//const props = defineProps<{ logedIn: boolean }>()
+//console.log(props.logedIn)
 const logout = async () => {
   await useFetch("/api/logout", {
     method: 'GET',
@@ -43,7 +46,7 @@ const logout = async () => {
       p.uppercase.white.w-max PROFILE
     NavLinkButton(v-if="isAdmin" to='/FamilyTransactionList') 
       p.uppercase.white.w-max See Family Donations
-  div.max-w-min.mx-auto.flex(v-else-if="!isLoggedIn")
+  div.max-w-min.mx-auto.flex(v-else)
     a.items-center.px-2.py-2.text-base.font-medium.rounded-md.text-green-600.cursor-pointer(style="border: 1px solid #c4c4c4;"
     class='hover:text-white hover:bg-gray-600'  
     href="/api/login"

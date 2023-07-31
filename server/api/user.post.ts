@@ -47,24 +47,24 @@ const sendEmail = async (to:string, template:string, subject:string, data:string
 const body = await readBody(event)
 //delete body.cuid
 console.log(event.context.user)
+delete body.Pages
 if(event.context.user?.user_role == "advocate"){
 try{
-  await sendEmail(body.email, "invitation", "Invitation to Carson's village", ({...body, url: `${runtime.BASEURL}/api/login`}))
+  await sendEmail(body.email, "invitation", "Invitation to Carson's village", ({...body, url: `${runtime.BASEURL}api/login`}))
   // creates a new user entry in the user model/table.
   const queryRes = await prisma.user.create({
     data: {
       ...body,cuid:undefined,
       }
     });
-  return queryRes.cuid;
+  return true
   //}else{
   //  alert("not allowed")
   //}
   } catch(e){
     console.error(e);
+    return false
   }
-
-  return true;
 } else{
   console.log("unauthorized")
   return await sendRedirect(event, loginRedirectUrl());

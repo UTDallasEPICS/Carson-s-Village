@@ -23,10 +23,11 @@ const router = useRouter()
 const routes = ref(router.getRoutes())
 const route = useRoute()
 const cvCookie = useCookie('cvtoken')
+const cvuser = useCookie('cvuser')
 const isSearch = computed(() => route.path == "/Search/")
 const isFamilyPage = computed(() => route.path.includes("/Page/"))
-console.log(isFamilyPage.value)
-console.log(route.path + "path after donate")
+
+console.log(route.path + "path after donation")
 if(!cvCookie.value && !isSearch.value && !isFamilyPage.value){
   console.log(route.path + 'redirected to search')
   

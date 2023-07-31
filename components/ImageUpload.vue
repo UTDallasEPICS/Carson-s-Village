@@ -14,10 +14,6 @@ type imageLinkTypes = {
 }
 // we need to know what page we are adding images to
 const props = defineProps({
-    pageCuid: {
-        type: String,
-        default: "",
-    },
     isImageReplace: {
       type: String,
       default: 'false',
@@ -34,7 +30,7 @@ const onFile = async (event: Event) => {
     const file = Files[i];
     const { data: imageData } = await useFetch('/api/image_upload', {
       method: 'POST',
-      body: { contentLength: file.size, contentType: file.type, file, pageCuid: props.pageCuid }
+      body: { contentLength: file.size, contentType: file.type, file }
     });
   const { uploadUrl, image} = imageData.value as unknown as imageLinkTypes;
   //console.log(uploadUrl)

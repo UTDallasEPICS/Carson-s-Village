@@ -1,5 +1,6 @@
 import { PrismaClient } from "@prisma/client"
 import { donationFormat } from "@/utils"
+import type { Image } from "@/types.d.ts"
 import {loginRedirectUrl} from "../api/auth0"
 const prisma = new PrismaClient()
 
@@ -33,6 +34,31 @@ export default defineEventHandler(async event => {
           }
         }
       });
+      /*if(Images.length != 0){
+        for(let i = 0 ; i < Images.length; i++){
+          await prisma.image.update({
+            where: {
+              cuid: Images[i].cuid
+            },
+            data:{
+              pageCuid: data.pageCuid
+            }
+          })
+        }
+      }*/
+
+      await Promise.all(
+        Images.map(async (image: Image) => 
+          await prisma.image.update({
+            where: {
+              cuid: image.cuid
+            },
+            data:{
+              pageCuid: data.pageCuid
+            }
+          })
+        ))
+  
       return true
     //}
     //return []
