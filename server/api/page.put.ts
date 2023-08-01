@@ -16,8 +16,6 @@ export default defineEventHandler(async event => {
   
   data.donation_goal = Math.trunc(parseInt(data.donation_goal.replace(",","")) * 100);
   data.amount_raised = Math.trunc(parseInt(data.amount_raised.replace(",","")) * 100);
-  console.log(data.donation_goal)
-  console.log(data.pageCuid)
   if(event.context.user.user_role === "advocate" || event.context.user.cuid === familyCuid ){
   try {
     // updates a pre-existing page

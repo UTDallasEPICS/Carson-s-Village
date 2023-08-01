@@ -18,12 +18,7 @@ console.log(isLoggedIn.value)
 
 //const props = defineProps<{ logedIn: boolean }>()
 //console.log(props.logedIn)
-const logout = async () => {
-  await useFetch("/api/logout", {
-    method: 'GET',
-    query: { id_token: cvtoken.value as string}
-  })
-} 
+
 </script>
 
 <template lang="pug">

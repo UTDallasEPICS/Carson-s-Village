@@ -15,9 +15,6 @@ const prisma = new PrismaClient()
 export default defineEventHandler(async event => {
     const body = await readBody(event)
     const replaced_image_cuid = body.replacedImage.cuid
-    console.log(replaced_image_cuid)
-    console.log(body)
-    console.log(body.imageUploaded.url == body.replacedImage.url)
     if(body.imageUploaded.url != body.replacedImage.url && body.replacedImage.url !== ""){
     try {
         // Replaces entry in the database in the image model for a specfic image
