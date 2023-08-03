@@ -29,7 +29,6 @@ try{
     console.log(e)
   }
 } else{
-  console.log("unauthorized")
   return await sendRedirect(event, loginRedirectUrl());
 }
 })

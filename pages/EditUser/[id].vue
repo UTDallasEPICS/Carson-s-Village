@@ -9,14 +9,6 @@
 *		Located under "/EditUser/"
 */
 
-
-// Placeholder annotations for the insert user form.
-/*const first_name = '(user defined)'
-const last_name = '(user defined)'
-const email = '(user defined)'
-const middle_name = '(user defined, optional)'
-const phone = '(user defined, optional)'*/
-
 import type { User } from '@/types.d.ts'
 
 const data_user = ref<User>({
@@ -33,7 +25,6 @@ const data_user = ref<User>({
 })
 
 const cvuser = useCookie('cvuser');
-//const cvData = computed(() => JSON.parse(cvuser.value || "{}"))
 const router = useRoute()
 const cuid = computed(() => router.params.id as string);
 

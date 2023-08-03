@@ -44,7 +44,7 @@ const saveImage = async (theImage: Image) => {
   emit("update:images", props.images.push(theImage));
   // Creates a profile image for the first image uploaded
   if (!props.profileImage) {
-    emit("update:profileImage", theImage);
+    emit("update:profileImage", theImage.cuid);
   }
 }
 </script>
@@ -74,7 +74,7 @@ const saveImage = async (theImage: Image) => {
         .absolute(style='top: 10px; right: 150px')
             button.bg-red-500(class='w-40 sm:64' style="align-items: center;justify-content: center;line-height: 1;text-align: center; color: white; font-weight: 450; positon: absolute; top:0px; left: 0px; width: 30px; height: 2rem; border-radius: 50%; padding-bottom: 4px;" @click = "removeImage(previewCuid)") x
     a.ml-10.pt-1(style="text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") image upload
-        ImageUpload(@imageUploaded="saveImage" :pageCuid="cuid" isImageReplace="false")
+        ImageUpload(@imageUploaded="saveImage")
 .py-4.grid.flex-box.flex-row.item-centered.gap-1(v-if="images.length!= 0" class="sm:grid-cols-3" style="line-height: 0px;text-align: center")
     div(style="width:1200px" class="")
         div(class="flex" style="overflow-x: auto")

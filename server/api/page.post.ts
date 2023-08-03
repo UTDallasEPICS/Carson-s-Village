@@ -15,14 +15,16 @@ export default defineEventHandler(async event => {
   const {Images, ...data} = await readBody(event)
   const familyCuid = data.familyCuid;
   delete data.familyCuid;
-  console.log(data)
+ 
   data.donation_goal = Math.trunc(data.donation_goal * 100);
   data.amount_raised = Math.trunc(data.amount_raised * 100);
-  console.log(data.donation_goal)
+  //console.log("asd", data.donation_goal)
   if(event.context.user?.user_role === "advocate" || event.context.user.cuid === familyCuid ){
     try{
     // Creates a new entry in the database in the page model to a specfic user
-
+    console.log(data)
+    console.log("debugging images")
+    console.log(Images)
     const queryRes = await prisma.page.create({
       data: {
         ...data,cuid: undefined,
@@ -46,7 +48,9 @@ export default defineEventHandler(async event => {
           })
         }
       }*/
-
+      console.log(queryRes)
+      // Initially the images are not linked to a family page, so we add it here 
+      // Reason: the cuid for the family page is created in the above in the creation query
       await Promise.all(
         Images.map(async (image: Image) => 
           await prisma.image.update({
@@ -54,20 +58,17 @@ export default defineEventHandler(async event => {
               cuid: image.cuid
             },
             data:{
-              pageCuid: data.pageCuid
+              pageCuid: queryRes.cuid
             }
           })
         ))
   
       return true
-    //}
-    //return []
     } catch(e) {
       console.error(e);
       return false
     }
   } else {
-    console.log("unauthorized")
     return await sendRedirect(event, loginRedirectUrl());
   }
 });

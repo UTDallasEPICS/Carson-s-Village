@@ -12,20 +12,13 @@ type imageLinkTypes = {
   uploadUrl: string,
   image: Image
 }
-// we need to know what page we are adding images to
+
 const props = defineProps({
-    isImageReplace: {
-      type: String,
-      default: 'false',
-    }
 });
 
 // actually uploads images using presigned url to s3 bucket
 const onFile = async (event: Event) => {
-  //console.log(props.isImageReplace)
   const Files = event?.target?.files
-  //console.log(file)
-  //console.log(Files)
   for(let i = 0 ; i < Files.length; i++){
     const file = Files[i];
     const { data: imageData } = await useFetch('/api/image_upload', {
@@ -48,13 +41,7 @@ const onFile = async (event: Event) => {
     throw new Error("Failed to upload data")
     
   }
-
-  //console.log(image.url)
-  //console.log("content url")
   emit('imageUploaded', image)
-  if(props.isImageReplace === 'true'){
-    break;
-  }
   }
 } 
 </script>

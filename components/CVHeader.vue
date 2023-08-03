@@ -2,7 +2,6 @@
 import type { User, Page } from "@/types.d.ts"
 import { donationFormat, dateFormat } from '@/utils'
 const cvuser = useCookie<User>('cvuser');
-//const cvuser2 = useCookie('cvuser');
 const cvtoken = useCookie('cvtoken');
 const isAdmin = computed(() => cvuser.value?.user_role == "advocate")
 const cuid = computed(() => cvuser.value?.cuid)
@@ -11,19 +10,7 @@ const pages = ref<Page[]>([])
 const searchQuery = ref('');
 const route = useRoute()
 const isNotSearch = computed(() => route.path !== "/Search/")
-//console.log(route.path +"route path")
-//console.log(cuid);
 console.log(isLoggedIn.value)
-//console.log("here")
-
-//const props = defineProps<{ logedIn: boolean }>()
-//console.log(props.logedIn)
-const logout = async () => {
-  await useFetch("/api/logout", {
-    method: 'GET',
-    query: { id_token: cvtoken.value as string}
-  })
-} 
 </script>
 
 <template lang="pug">
