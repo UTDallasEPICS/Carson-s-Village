@@ -33,6 +33,7 @@ export default defineEventHandler(async event => {
         })
         if(event.context.user){
         setCookie(event, "cvuser", JSON.stringify(event.context.user))
+
         }
         } catch (e) {
         console.error(e)

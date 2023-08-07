@@ -18,19 +18,11 @@ const runtime = useRuntimeConfig()
 export default defineEventHandler(async event => {
     const transaction_id = nanoid();
     const { req, res } = event;
-    //const stripe = await loadStripe(runtime.STRIPE_PUBLIC ? runtime.STRIPE_PUBLIC : '');
     const stripe = new Stripe(runtime.STRIPE_SECRET, { apiVersion:"2022-11-15"})
     const body = await readBody(event)
     const family_cuid = body.family_cuid
     const page_cuid = body.cuid
-    //const price_in_cents = Math.round(body.amount_raised * 100)
     const state = {}; 
-    //const transaction_id = () => { const s = nanoid(); state[s] = 1;  return s}
-   // transaction_id = nanoid();
-    
-  
-  
-  //setCookie(event, 'cvuser',(JSON.stringify(body)))
   try{
     const page = await prisma.page.findFirst({
       where: {

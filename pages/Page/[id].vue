@@ -124,7 +124,8 @@ const profile = images[1];
 const theImage = images[1];
 const clock = pageImages[1]
 const location = pageImages[0]
-const temp = ref([
+// images for testing if needed.
+/*const temp = ref([
 {url:"https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fm.media-amazon.com%2Fimages%2FI%2F61c8jg5GogL._AC_SS450_.jpg&f=1&nofb=1&ipt=3e12836a0e8c59555ce3cc5c3ba1941d4ebacfe86377cb3aee4ca65c81ac5cb0&ipo=images"},
 {url:"https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fi.redd.it%2Fbwc57i93rum21.jpg&f=1&nofb=1&ipt=6cd8c33a4e48d6262d33f9672b6305dff1c96c86a5514ffa9ab39d4216355d94&ipo=images"},
 {url:"https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fm.media-amazon.com%2Fimages%2FI%2F61c8jg5GogL._AC_SS450_.jpg&f=1&nofb=1&ipt=3e12836a0e8c59555ce3cc5c3ba1941d4ebacfe86377cb3aee4ca65c81ac5cb0&ipo=images"},
@@ -132,22 +133,24 @@ const temp = ref([
 {url:"https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fm.media-amazon.com%2Fimages%2FI%2F61c8jg5GogL._AC_SS450_.jpg&f=1&nofb=1&ipt=3e12836a0e8c59555ce3cc5c3ba1941d4ebacfe86377cb3aee4ca65c81ac5cb0&ipo=images"},
 {url:"https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fm.media-amazon.com%2Fimages%2FI%2F61c8jg5GogL._AC_SS450_.jpg&f=1&nofb=1&ipt=3e12836a0e8c59555ce3cc5c3ba1941d4ebacfe86377cb3aee4ca65c81ac5cb0&ipo=images"},
 {url:"https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fm.media-amazon.com%2Fimages%2FI%2F61c8jg5GogL._AC_SS450_.jpg&f=1&nofb=1&ipt=3e12836a0e8c59555ce3cc5c3ba1941d4ebacfe86377cb3aee4ca65c81ac5cb0&ipo=images"},
-])
+])*/
 
 const currentImage = ref(0)
 // TODO: if we reach either end we need to loop around
 // TODO: setup auto cycle on a timer
 const nextImage = () => { 
-    if(currentImage.value === temp.value.length - 1){
-        currentImage.value = -1
-    }
-    currentImage.value++ 
+    if(currentImage.value === imageData.value.length - 1){
+        currentImage.value = 0
+    } else {
+        currentImage.value++
+    } 
 }
 const prevImage = () => {
     if(currentImage.value === 0){
-        currentImage.value = temp.value.length
+        currentImage.value = imageData.value.length -1
+    } else {
+        currentImage.value--
     }
-    currentImage.value--
     }
     </script>
 

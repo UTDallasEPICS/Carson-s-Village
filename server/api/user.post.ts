@@ -46,6 +46,7 @@ const sendEmail = async (to:string, template:string, subject:string, data:string
 
 const body = await readBody(event)
 //delete body.cuid
+
 delete body.Pages
 if(event.context.user?.user_role == "advocate"){
 try{
@@ -57,15 +58,11 @@ try{
       }
     });
   return true
-  //}else{
-  //  alert("not allowed")
-  //}
   } catch(e){
     console.error(e);
     return false
   }
 } else{
-  console.log("unauthorized")
   return await sendRedirect(event, loginRedirectUrl());
 }
 })

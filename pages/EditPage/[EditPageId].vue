@@ -87,7 +87,7 @@ const getData = async (cuid: string) => {
     }
     
     //console.log(data)
-    console.log(data.value.donation_goal as string)
+    //console.log(data.value.donation_goal as string)
     /* 
     * Checking if donation_goal and conversly amount raised is of type number in order to prevent
     * donation_goal and amount_raised from becoming NaN due to applying the donationFormat function to a string. 
@@ -96,15 +96,16 @@ const getData = async (cuid: string) => {
     data.value.amount_raised = donationFormat(data.value.amount_raised as unknown as number).replace("$","") ;
     data.value.donation_goal = donationFormat(data.value.donation_goal as unknown as number).replace("$","") ;
     }
-    console.log(data.value.donation_goal)
+    //console.log(data.value.donation_goal)
 }
 }
 
 const profileImage = computed(()=> imageData.value?.find((i:Image) => i.cuid == data.value?.profileImageCuid))
-profile_image.value = profileImage.value?.url as string
+profile_image.value = profileImage.value?.url as string // TODO: depreciate?
 // Method that saves images to the frontend on image upload.
 const saveImage = async (theImage: Image) => {
   imageData.value.push(theImage)
+  data.value.Images = imageData.value as unknown as Image[]
   // Creates a profile image for the first image uploaded
   if (!data.value.profileImageCuid) {
     data.value.profileImageCuid = theImage.cuid;
@@ -118,6 +119,12 @@ const setProfileImage = async (theImage: Image) => {
     //profileImage.value = theImage as Image
 }
 
+watchEffect(async(ImageData) => {
+    if(ImageData.length == 0) {
+        data.value.profileImageCuid = "";
+    }
+
+})
 // Use watcher on for images to handle profile image on here to handle image remove edge cases.
 await getData(useRoute().params.EditPageId as string)
 </script>
@@ -137,16 +144,12 @@ CVContainer
         .py-4.grid(class="sm:grid-cols-3") 
             CVLabel Page Name
             .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
-                CVInput(v-model='data.page_name' placeholder="required")
-        ImagePreview(v-model:images="imageData" :profile_image="profile_Image")
+                CVInput(v-model='data.page_name' placeholder="required" required)
+        ImagePreview(v-model:images="imageData" v-model:profileImage="data.profileImageCuid" :profile_image="profileImage")
         .py-4.grid(class="sm:grid-cols-3") 
             a.ml-10.pt-1(style="text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") image upload
             .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
-                ImageUpload(@imageUploaded="saveImage" isImageReplace="false")
-        //.py-4.grid(class="sm:grid-cols-3") 
-            a.ml-10.pt-1(style="text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") image replace
-            .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
-                ImageUpload(:pageCuid="cuid" @imageUploaded="replaceImage" isImageReplace="true")
+                ImageUpload(@imageUploaded="saveImage")
         .information.bg-gray-300.rounded-md.mx-9.my-2.text-center(class="sm:text-start")
             legend.ml-2(class="sm:py-1" style="font-weight: 700; text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") Profile Image Selection        
         .py-4.grid(class="sm:grid-cols-3") 
