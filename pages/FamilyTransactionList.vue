@@ -26,8 +26,8 @@ const data_user = ref<User>({
     email: "",
     middle_name: "",
     user_role: "{}",
-    phone: ""
-    //Pages: [],
+    phone: "",
+    Pages: [],
     //PageDonations: [],
     //DonationPayouts: []
 })
@@ -157,6 +157,42 @@ const save = async () => {
     }
 }
 
+watch(data_user, async() => {
+    data_payout.value.familyCuid = data_user.value.cuid as unknown as string; 
+    totalUserDonations.value = 0;
+    amount_distributed.value = 0;
+    const { data: userDonationData } = await useFetch('/api/family_donation', {
+        method: 'GET',
+        query: { familyCuid: data_user.value.cuid }
+    })
+
+    const { data: userData } = await useFetch('/api/user', {
+        method: 'GET',
+        query: { cuid: data_user.value.cuid }
+    })
+
+
+    const { data: pageData } = await useFetch('/api/page_list', {
+        method: 'GET',
+        query: { family_cuid: data_user.value.cuid }
+    })
+    
+   
+    pages.value = pageData.value as unknown as Page[];
+    donations.value = userDonationData.value as unknown as PageDonation[];
+    data_user.value = userData.value as unknown as User;
+    donations.value.forEach(element => {
+        totalUserDonations.value += parseFloat((element.amount) as unknown as string);
+    });
+
+    pages.value.forEach(element => {
+            amount_distributed.value += parseFloat(element.amount_distributed as unknown as string)
+        } 
+    );
+    amount_remaining.value = (totalUserDonations.value-parseFloat(amount_distributed.value as unknown as string))
+    //console.log(amount_distributed.value);
+    //console.log(amount_remaining.value);
+},{deep:true})
 const setWholeAmount = function(){
     data_payout.value.amount_to_record = ((thePage.value.amount_raised as number) - (thePage.value.amount_distributed as number)) / 100.0
 }
@@ -184,7 +220,7 @@ const loadData = async(pagesBackend: Page[], donationBackend: PageDonation[]) =>
             .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
                 Listbox.rounded-md.outline-0.border-box.w-full.p-2.bg-white(style="border: 1px solid #c4c4c4;" v-model="data_user.cuid")
                     ListboxButton {{ data_user.first_name + " " + data_user.last_name }}
-                        ListboxOptions(v-for="item in users" :key="item.cuid" @click="getDataUserDonations(item.cuid)") {{ item.first_name + " " + item.last_name }}
+                        ListboxOptions(v-for="item in users" :key="item.cuid" ) {{ item.first_name + " " + item.last_name }}
             .col-md-8.mx-9(class="sm:col-span-1 sm:mr-11")
             CVLabel Transaction Recording Date    
             .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
@@ -244,6 +280,7 @@ const loadData = async(pagesBackend: Page[], donationBackend: PageDonation[]) =>
                     th.px-8(style="--tw-bg-opacity: 1; background-color: rgb(110 171 191 / var(--tw-bg-opacity));border-radius: 60px 0px 0px 0px; width:25%; overflow: hidden") Transaction id
                     th.px-8(style="width:25%; --tw-bg-opacity: 1; background-color: rgb(110 171 191 / var(--tw-bg-opacity));") Donation cuid
                     th.font-poppins.font-bold(style="--tw-bg-opacity: 1; background-color: rgb(110 171 191 / var(--tw-bg-opacity));") Page Name
+                    th.font-poppins.font-bold(style="--tw-bg-opacity: 1; background-color: rgb(110 171 191 / var(--tw-bg-opacity));") The Donation went Through
                     th.px-8(style="width:25%; --tw-bg-opacity: 1; border-radius: 0px 60px 0px 0px; background-color: rgb(110 171 191 / var(--tw-bg-opacity));") Amounts
                 tr(v-for="(item, i) in donations" 
                     :key="i" 
@@ -251,6 +288,7 @@ const loadData = async(pagesBackend: Page[], donationBackend: PageDonation[]) =>
                     td.font-poppins.text-gray-dark.font-bold(style="text-align: center")  {{ item.transaction_id }}
                     td.font-poppins.text-gray-dark.font-bold(style="text-align: center")  {{ item.cuid }}
                     td.font-poppins.text-gray-dark.font-bold(style="text-align: center")  {{ item.Page.page_name }}
+                    td.font-poppins.text-gray-dark.font-bold(style="text-align: center")  {{ item.success }}
                     td.font-poppins.text-gray-dark.font-bold(style="text-align: center")  {{ donationFormat(item.amount) }}
         //.container(style="--tw-bg-opacity: 1; background-color: rgb(110 171 191 / var(--tw-bg-opacity));height: 50px; border-radius: 0px 0px 60px 60px;")
 </template>

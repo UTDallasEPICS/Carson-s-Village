@@ -26,7 +26,6 @@ export default defineEventHandler(async event => {
     });
     return queryRes;
   } else {
-    console.log("unauthorized")
     return await sendRedirect(event, loginRedirectUrl());
   }
 })

@@ -1,5 +1,6 @@
 generator client {
-  provider = "prisma-client-js"
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "debian-openssl-3.0.x"]
 }
 
 datasource db {
@@ -79,9 +80,9 @@ model PageDonation {
 model Image {
   cuid     String @id @default(cuid())
   url      String
-  pageCuid String
-  Page     Page   @relation(fields: [pageCuid], references: [cuid])
+  pageCuid String?
+  Page     Page?   @relation(fields: [pageCuid], references: [cuid])
 
-  @@unique([pageCuid, url])
+  //@@unique([pageCuid, url])
   @@map("images")
 }

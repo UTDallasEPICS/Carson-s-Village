@@ -1,3 +1,25 @@
+/*import {
+  User as PUser,
+  Page as PPage,
+  UserToPage as PUserToPage
+} from '@/prisma/client';
+import { DonationPayout } from '@prisma/client';
+
+export type User = PUser & {
+  Pages?: UserToPage;
+  PageDonations?: PageDonation[];
+  DonationPayout?: DonationPayout[];
+};
+export type Page = PPage & {
+  Pages?: UserToPage;
+  PageDonations?: PageDonation[];
+  DonationPayout?: DonationPayout[];
+};
+export type PageDonation = PPageDonation & {
+  Pages?: UserToPage;
+  PageDonations?: PageDonation[];
+  DonationPayout?: DonationPayout[];
+};*/
 // TODO: import types from prisma, export them with relations added
 export type Page = {
     page_name: string,
@@ -28,10 +50,11 @@ export type User = {
     email: string,
     middle_name: string,
     phone: string,
-    //Pages: Page[]
+    Pages: Page[]
     //PageDonations: PageDonation[]
     //DonationPayouts: DonationPayout[]  
 }
+//Import user from prisma
 
 export type PageDonation = {
   cuid: string  

@@ -9,7 +9,7 @@ const prisma = new PrismaClient()
 
 export default defineEventHandler(async event => {
 const body = await readBody(event);
-
+delete body.pages
 if(event.context.user?.user_role == "advocate"){
 // updates the user
 try{ 
@@ -29,7 +29,6 @@ try{
     console.log(e)
   }
 } else{
-  console.log("unauthorized")
   return await sendRedirect(event, loginRedirectUrl());
 }
 })

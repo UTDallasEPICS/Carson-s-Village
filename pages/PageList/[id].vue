@@ -27,8 +27,8 @@ const data = ref<User>({
   user_role: "{}",
   email: "",
   middle_name: "",
-  phone: ""
-  //Pages: [],
+  phone: "",
+  Pages: [],
   //PageDonations: [],
   //DonationPayouts: []
 })
@@ -67,7 +67,7 @@ await getDataPageList()
         td.font-poppins.text-gray-dark.font-bold(style="text-align: center" v-if="isAdmin") {{ item.familyCuid }}
         td.font-poppins.text-gray-dark.font-bold(style="text-align: center") {{ dateFormat(item.deadline) }}
         td
-            LinkButton(class="sm:my-2" style="--tw-bg-opacity: 1; background-color: rgb(110 171 191 / var(--tw-bg-opacity));white-space: nowrap; display: flex; flex-direction: row; padding: 14px 24px; gap: 10px;" :to="`/EditPage/${item.cuid}`") Edit
+            LinkButton(class="sm:my-2" style="--tw-bg-opacity: 1; background-color: rgb(110 171 191 / var(--tw-bg-opacity)); white-space: nowrap; display: flex; flex-direction: row; padding: 14px 24px; gap: 10px;" :to="`/EditPage/${item.cuid}`") Edit
         td
             LinkButton(class="sm:my-2" style="--tw-bg-opacity: 1; background-color: rgb(110 171 191 / var(--tw-bg-opacity)); white-space: nowrap; display: flex; flex-direction: row; padding: 14px 24px; gap: 10px;" :to="`/Page/${item.cuid}`") View
   .container.bg-blue-300.mx-auto(class="w-auto sm:w-[1000px]" style="--tw-bg-opacity: 1; background-color: rgb(110 171 191 / var(--tw-bg-opacity));height: 50px; border-radius: 0px 0px 60px 60px;")

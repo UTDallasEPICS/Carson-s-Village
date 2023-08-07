@@ -34,33 +34,17 @@ export default defineEventHandler(async event => {
         // include pages ids to check if that's the family's page. 
         setCookie(event, "cvuser", JSON.stringify(event.context.user))
         console.log(event.node.req.url);
-        /*if(event.context.user.user_role ==='family' && (event.node.req.url?.includes('/EditPage/') || event.node.req.url?.includes('/PageList/'))){
+        if(event.context.user.user_role ==='family' && (event.node.req.url?.includes('/EditPage/') || event.node.req.url?.includes('/PageList/'))){
           if((event.node.req.url?.includes('/EditPage/') && (!(event.node.req.url?.includes('/EditPage/0'))))){
 
-            event.context.page = await event.context.client.page.findFirst({where:{ cuid: event.node.req.url.substring(event.node.req.url?.lastIndexOf('/')+1) }})
-            console.log(event.context.page)
-            if(event.context.page.familyCuid !== event.context.user.cuid){
-              console.log("not allowed")
-              return await sendRedirect(event, loginRedirectUrl());
-            }
-          }
-          }
-        if(event.context.user.user_role !=='advocate' && (event.node.req.url?.includes('/Users') || event.node.req.url?.includes('/EditUser') || event.node.req.url?.includes('/FamilyTransactionList'))){
-          console.log("user not allowed")
-          return await sendRedirect(event, loginRedirectUrl());
         }
-        } else 
-          } else if((event.node.req.url?.includes('/PageList/') && !(event.node.req.url?.includes('/PageList/' + event.context.user.cuid)))){
-            console.log("not allowed")
-            return await sendRedirect(event, loginRedirectUrl());
-            }
-
-        }*/
-        } catch (e) {
-        console.error(e)
+        }
+      } catch (e) {
+        console.error(e) 
         setCookie(event,'cvtoken','')
         setCookie(event,'cvuser','')
-        return await sendRedirect(event, loginRedirectUrl());
+    
+        return await sendRedirect(event, loginRedirectUrl())
       }
     }
   }

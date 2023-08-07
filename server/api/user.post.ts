@@ -46,7 +46,8 @@ const sendEmail = async (to:string, template:string, subject:string, data:string
 
 const body = await readBody(event)
 //delete body.cuid
-console.log(event.context.user)
+
+delete body.Pages
 if(event.context.user?.user_role == "advocate"){
 try{
   await sendEmail(body.email, "invitation", "Invitation to Carson's village", ({...body, url: `${runtime.BASEURL}api/login`}))
@@ -56,17 +57,12 @@ try{
       ...body,cuid:undefined,
       }
     });
-  return queryRes.cuid;
-  //}else{
-  //  alert("not allowed")
-  //}
+  return true
   } catch(e){
     console.error(e);
+    return false
   }
-
-  return true;
 } else{
-  console.log("unauthorized")
   return await sendRedirect(event, loginRedirectUrl());
 }
 })

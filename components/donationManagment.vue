@@ -18,8 +18,8 @@ const data_user = ref<User>({
     email: "",
     middle_name: "",
     user_role: "{}",
-    phone: ""
-    //Pages: [],
+    phone: "",
+    Pages: [],
     //PageDonations: [],
     //DonationPayouts: []
 })
@@ -106,7 +106,9 @@ const getDataUserDonations = async (cuid: string) => {
     donations.value = userDonationData.value as unknown as PageDonation[];
     data_user.value = userData.value as unknown as User;
     donations.value.forEach(element => {
-        totalUserDonations.value += parseFloat((element.amount) as unknown as string);
+        if(element.success === true){
+            totalUserDonations.value += parseFloat((element.amount) as unknown as string);
+        }
     });
    
     pages.value.forEach(element => {

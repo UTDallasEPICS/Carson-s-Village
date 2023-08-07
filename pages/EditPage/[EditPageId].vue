@@ -5,8 +5,8 @@
 *	ECS 3200
 *	Carson's Village: Automated Family Page
 *	EditPage.vue 
-*		Denotes functions specific to page insertion and page editing  
-*		Located under "/EditPage/"
+*	Denotes functions specific to page insertion and page editing  
+*	Located under "/EditPage/"
 */
 
 import ImageUpload from '@/components/ImageUpload.vue'
@@ -58,28 +58,17 @@ type User2 = {
 }
 
 const imageData = ref<Image[]>([])
-//console.log(typeof imageData)
 const profile_image = ref("")
-//const imageLink = ref("")
-const selectedImageObj = ref<Image>({
-    cuid: "",
-    url: "",
-    pageCuid: ""
-})
 
-var selectedImageObjCopy = undefined
 
-const imageLinkReplacement = ref("")
 const router = useRoute()
 const cvuser = useCookie<User>('cvuser');
 const cvuser2 = useCookie<User2>('cvuser')
 const cuid_data = computed(() => router.params.EditPageId);
 const cuid = cuid_data.value as string
-const image_cuid = "";
 const family_cuid_data = computed(() => cvuser.value?.cuid)
 const family_cuid = family_cuid_data.value as string
 const pageCuid = computed(() => router.params.EditPageId)
-const imageListIsNotEmpty = ref(false)
 data.value.cuid = cuid;
 data.value.familyCuid = family_cuid;
 const idExist = computed(() => router.params.EditPageId !== "0")
@@ -111,33 +100,13 @@ const getData = async (cuid: string) => {
         method: 'GET',
         query: { cuid: cuid }
     })
-    if(pageData.value != false){
+    if(pageData.value){
         data.value = pageData.value as unknown as Page;
         imageData.value = data.value?.Images as unknown as Image[] 
-        let profile_image_found = false;
-        // Loads the profile_image and selected images to the front end
-        if(imageData.value.length != 0){
-            for(let i = 0 ; i < imageData.value.length; i++){
-                if(imageData.value[i].cuid === data.value.profileImageCuid){
-                    profile_image.value = imageData.value[i].url
-                    profile_image_found = true
-                    break;
-                }
-            }
-            if(!profile_image_found){
-                profile_image.value = imageData.value[0].url
-            }
-            
-            selectedImageObj.value.url =  imageData.value[0].url
-            selectedImageObj.value.cuid =  imageData.value[0].cuid
-            selectedImageObj.value.pageCuid =  imageData.value[0].pageCuid
-            selectedImageObjCopy = {...selectedImageObj.value}
-            imageListIsNotEmpty.value = true;
-        }
     }
     
     //console.log(data)
-    console.log(data.value.donation_goal as string)
+    //console.log(data.value.donation_goal as string)
     /* 
     * Checking if donation_goal and conversly amount raised is of type number in order to prevent
     * donation_goal and amount_raised from becoming NaN due to applying the donationFormat function to a string. 
@@ -146,108 +115,45 @@ const getData = async (cuid: string) => {
     data.value.amount_raised = donationFormat(data.value.amount_raised as unknown as number).replace("$","") ;
     data.value.donation_goal = donationFormat(data.value.donation_goal as unknown as number).replace("$","") ;
     }
-    console.log(data.value.donation_goal)
+    //console.log(data.value.donation_goal)
+}
 }
 }
 
+const profileImage = computed(()=> imageData.value?.find((i:Image) => i.cuid == data.value?.profileImageCuid))
+profile_image.value = profileImage.value?.url as string // TODO: depreciate?
 // Method that saves images to the frontend on image upload.
 const saveImage = async (theImage: Image) => {
-    imageData.value.push(theImage)
-    // Creates a selected image for the first image uploaded
-    if(selectedImageObj.value.cuid === ""){
-        selectedImageObj.value = theImage as unknown as Image
-        selectedImageObjCopy = {...selectedImageObj.value}
-    }
-    // Creates a profile image for the first image uploaded
-    if(profile_image.value === ""){
-        profile_image.value = theImage.url 
-    }
-}
-
-// Method to remove a single image
-const removeImage = async (theImage: Image) => {
-    // Confirmation of image deletetion. If no is pressed nothing happens
-    if(confirm('Are you sure you want to delete this image?')){
-    
-    for(let i = 0 ; i < imageData.value.length; i++){
-        if(imageData.value[i].cuid === theImage.cuid){
-            imageData.value.splice(i, 1)
-            if(selectedImageObj.value.cuid === theImage.cuid && imageData.value.length !=0 ){
-                selectedImageObj.value.url = imageData.value[0].url
-                selectedImageObj.value.cuid = imageData.value[0].cuid
-                selectedImageObj.value.pageCuid = imageData.value[0].pageCuid
-                profile_image.value = imageData.value[0].url
-            } else if(imageData.value.length === 0){
-                profile_image.value = ""
-                selectedImageObj.value.cuid = ""
-                selectedImageObj.value.url = ""
-                selectedImageObj.value.pageCuid = ""
-            }
-            await useFetch('/api/image', {
-            method: 'delete',
-            body: ({ image : theImage })
-            })
-            if(theImage.url === profile_image.value && imageData.value.length !=0){
-                profile_image.value = imageData.value[0].url
-                data.value.profileImageCuid = imageData.value[0].cuid
-            }
-            return selectedImageObjCopy = {...selectedImageObj.value};
-            }
-    }
-}
-}
+  imageData.value.push(theImage)
+  data.value.Images = imageData.value as unknown as Image[]
+  // Creates a profile image for the first image uploaded
+  if (!data.value.profileImageCuid) {
+    data.value.profileImageCuid = theImage.cuid;
+  }
+};
 
 // Method to set an uploaded image as the profile image of a page
 // There is no network request because the profiile image cuid is saved with the rest of the form
 const setProfileImage = async (theImage: Image) => {
     data.value.profileImageCuid = theImage.cuid
-    profile_image.value = theImage.url
+    //profileImage.value = theImage as Image
 }
 
-// Method that uploads an image to replace the image that is on the left, the selected image, and replaces it.
-const replaceImage = async (theImage: Image) => {
-    await useFetch('/api/image', {
-        method: 'put',
-        body: ({ imageUploaded: theImage, replacedImage: selectedImageObj, page_cuid: pageCuid.value as string })
+watchEffect(async(ImageData) => {
+    if(ImageData.length == 0) {
+        data.value.profileImageCuid = "";
     }
-    )
-    if(imageData.value.length === 0){
-        imageData.value[0] = theImage
-        selectedImageObj.value = theImage
-        selectedImageObjCopy = {...selectedImageObj.value}
-        data.value.profileImageCuid = theImage.cuid
-        profile_image.value = theImage.url
-        return;
-    }
-    for(let i = 0 ; i < imageData.value.length; i++){
-        if(imageData.value[i].cuid == selectedImageObj.value.cuid){
-            imageData.value[i] = theImage
-            break;
-        }
-    }
-    if(selectedImageObj.value.url === profile_image.value){
-        data.value.profileImageCuid = imageData.value[0].cuid
-        profile_image.value = imageData.value[0].url
-    }
-    selectedImageObj.value = theImage   
-    selectedImageObjCopy = {...selectedImageObj.value}
-}
 
-const selectImage = function(theImage: Image){
-    selectedImageObj.value = theImage as unknown as Image
-    selectedImageObjCopy = {...selectedImageObj.value}
-}
-
+})
+// Use watcher on for images to handle profile image on here to handle image remove edge cases.
 await getData(useRoute().params.EditPageId as string)
 </script>
 
 <template lang="pug">
-//.row.p-3
-    LinkButton(:to="`/PageList/${family_cuid}`") Back
 CVContainer
     .well.well-sm
-        <!-- conditional rendering for page editing or page insert. This does not affect the function of Page editting. -->
-        TitleComp(v-if="idExist") Edit Family Page
+        //conditional rendering for page editing or page insert. This does not affect the function of Page editting.
+        TitleComp(v-if="pageCuid!=0") Edit Family Page
         TitleComp(v-else) Insert New Family Page
         br
         .bar.mx-9(style="border-top: 0.5px solid #646464;")
@@ -286,11 +192,11 @@ CVContainer
         .py-4.grid(class="sm:grid-cols-3") 
             CVLabel Profile Image
             .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
-                Listbox.rounded-md.outline-0.border-box.w-full.p-2.bg-white(style="width:350px; border: 1px solid #c4c4c4;" v-model="profile_image" as="div") 
+                Listbox.rounded-md.outline-0.border-box.w-full.p-2.bg-white(style="width:350px; border: 1px solid #c4c4c4;" v-model="data.profileImageCuid" as="div") 
                     ListboxButton
-                        img.rounded-lg(style="padding: 10px;" :src = "`${profile_image}`")
-                        ListboxOptions(v-for="(image,k) in imageData" :key="k" :value="image" @click="setProfileImage(image)")
-                            img.rounded-lg(style="padding: 10px;" :src = "`${image.url}`")                                            
+                        img.rounded-lg(style="padding: 10px;" :src="profileImage?.url")
+                        ListboxOptions(v-for="(image,k) in imageData" :key="k" :value="image.cuid" @click="setProfileImage(image)")
+                            img.rounded-lg(style="padding: 10px;" :src="image.url")                                            
         .py-4.grid(class="sm:grid-cols-3") 
             CVLabel Day of Birth
             .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")

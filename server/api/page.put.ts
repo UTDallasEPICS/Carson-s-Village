@@ -1,5 +1,6 @@
 import { PrismaClient } from "@prisma/client"
 import {loginRedirectUrl} from "../api/auth0"
+import type { Image } from "@/types.d.ts"
 const prisma = new PrismaClient()
 
 /*
@@ -15,11 +16,10 @@ export default defineEventHandler(async event => {
   
   data.donation_goal = Math.trunc(parseInt(data.donation_goal.replace(",","")) * 100);
   data.amount_raised = Math.trunc(parseInt(data.amount_raised.replace(",","")) * 100);
-  console.log(data.donation_goal)
+
   if(event.context.user.user_role === "advocate" || event.context.user.cuid === familyCuid ){
   try {
     // updates a pre-existing page
-   
     const queryRes = await prisma.page.update({
       where: {
         cuid: data.cuid
@@ -28,14 +28,27 @@ export default defineEventHandler(async event => {
         ...data
       }
     });
- // return []
+      console.log(Images)
+      console.log(data.cuid)
+      console.log("images debug puts")
+      // Initially the images are not linked to a family page, so we add it here 
+      // Reason: the cuid for the family page is created in the above in the creation query
+      await Promise.all(
+      Images.map(async (image: Image) => 
+        await prisma.image.update({
+          where: {
+            cuid: image.cuid
+          },
+          data:{
+            pageCuid: data.cuid
+          }
+      })))
   } catch (e) {
     console.error(e);
     return false
   }
   return true
 } else{
-  console.log("unauthorized")
   return await sendRedirect(event, loginRedirectUrl());
 }
 });

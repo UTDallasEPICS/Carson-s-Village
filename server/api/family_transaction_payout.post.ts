@@ -51,7 +51,6 @@ export default defineEventHandler(async event => {
     
           }
         } else{
-          console.log("unauthorized")
           return await sendRedirect(event, loginRedirectUrl());
         }
     });

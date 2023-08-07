@@ -15,9 +15,7 @@ const stripeSecretKey = runtime.STRIPE_SECRET;
 
 export default defineEventHandler(async event => {
   const stripe = new Stripe(stripeSecretKey as string, { apiVersion:"2022-11-15"} )
-  //const stripe = await loadStripe(runtime.STRIPE_PUBLIC ? runtime.STRIPE_PUBLIC : '');
     const query = await getQuery(event)
-    console.log(query)
     try{
       // get amount donated from transaction
       const transaction = await prisma.pageDonation.findFirst({
@@ -31,7 +29,7 @@ export default defineEventHandler(async event => {
         }
       })
 
-      // TODO: reject if the transactionid has already been completed
+      // rejects if the transactionid has already been completed
       // update success flag in transaction
       const checkTransaction = await prisma.pageDonation.findFirst({
         where: { transaction_id: query.transaction as string}
@@ -55,7 +53,6 @@ export default defineEventHandler(async event => {
       }
 
       const pageLink = "/Page/"+transaction?.pageCuid;
-      //console.log(pageLink)
       await sendRedirect(event, pageLink)
       return true;
     } catch (e) {
