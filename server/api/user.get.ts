@@ -9,12 +9,10 @@ const prisma = new PrismaClient()
 */
 
 export default defineEventHandler(async event => {
-  // check if role == advocate?
   const { cuid } = getQuery(event);
   if( (cuid as string) == "0" || cuid == undefined){
     return []
   }
-  //const role = event.context.user.Clients.find(o => o.clientCuid == clientCuid)
   // retrieves a single user
   if(event.context.user.user_role === "advocate" ){
     const queryRes = await prisma.user.findFirst({

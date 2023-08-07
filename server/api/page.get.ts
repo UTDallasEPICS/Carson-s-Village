@@ -21,6 +21,5 @@ export default defineEventHandler(async event => {
             Images: true
 		  }
 		});
-	  //console.log(queryRes)
 	  return queryRes;
 		})

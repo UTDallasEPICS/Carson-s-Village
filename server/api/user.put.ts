@@ -13,7 +13,6 @@ delete body.pages
 if(event.context.user?.user_role == "advocate"){
 // updates the user
 try{ 
-//if(event.context.user.user_role === "advocate"){
   const queryRes = await prisma.user.update({
     where: {
       cuid: body.cuid
@@ -24,7 +23,6 @@ try{
       });
 
     return true;
-//}
   } catch(e){
     console.log(e)
   }

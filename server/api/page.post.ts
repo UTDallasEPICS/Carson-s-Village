@@ -36,18 +36,7 @@ export default defineEventHandler(async event => {
           }
         }
       });
-      /*if(Images.length != 0){
-        for(let i = 0 ; i < Images.length; i++){
-          await prisma.image.update({
-            where: {
-              cuid: Images[i].cuid
-            },
-            data:{
-              pageCuid: data.pageCuid
-            }
-          })
-        }
-      }*/
+
       console.log(queryRes)
       // Initially the images are not linked to a family page, so we add it here 
       // Reason: the cuid for the family page is created in the above in the creation query

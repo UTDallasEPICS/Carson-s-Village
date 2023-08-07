@@ -1,6 +1,10 @@
 /*import {
   User as PUser,
   Page as PPage,
+  Image as PImage,
+  PageDonation as PPageDonation
+  DonationPayout as PDonationPayout
+
   UserToPage as PUserToPage
 } from '@/prisma/client';
 import { DonationPayout } from '@prisma/client';
