@@ -46,7 +46,7 @@ const sendEmail = async (to:string, template:string, subject:string, data:string
 
 const body = await readBody(event)
 //delete body.cuid
-//console.log(event.context.user)
+
 delete body.Pages
 if(event.context.user?.user_role == "advocate"){
 try{

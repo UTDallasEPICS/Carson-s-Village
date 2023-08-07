@@ -9,7 +9,6 @@ const prisma = new PrismaClient()
 */
 
 export default defineEventHandler(async event => {
-  console.log(event.context.user)
   //console.log(event.context.client.user)
   if(event.context.user.user_role === "advocate"){
     const queryRes = await prisma.user.findMany({
