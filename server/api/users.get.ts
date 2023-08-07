@@ -9,7 +9,7 @@ const prisma = new PrismaClient()
 */
 
 export default defineEventHandler(async event => {
-  //console.log(event.context.client.user)
+
   if(event.context.user.user_role === "advocate"){
     const queryRes = await prisma.user.findMany({
   });
@@ -17,5 +17,4 @@ export default defineEventHandler(async event => {
   } else {
     return await sendRedirect(event, loginRedirectUrl());
   }
-  //return []
 })

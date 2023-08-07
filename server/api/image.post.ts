@@ -12,8 +12,7 @@ export default defineEventHandler(async event => {
   const body = await readBody(event)
   const url = body.url
   const page_cuid = body.page_cuid;
-  //delete body.cuid;
-
+  
   try{
   // Creates a new entry in the database in the image model to a specfic image
   const queryRes = await prisma.image.create({

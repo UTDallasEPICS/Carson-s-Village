@@ -11,6 +11,8 @@ import {
 import type { User, Page, PageDonation, donation_payout } from "@/types.d.ts"
 import { donationFormat } from "@/utils"
 
+const user_cuid = ref("")
+const page_cuid = ref("")
 const data_user = ref<User>({
     cuid: "",
     first_name: "",
@@ -143,14 +145,66 @@ const getDataUsers = async () => {
 // Method that records donation payouts and increases the amount distributed for each page.
 const save = async () => {
     if(isAdmin){
-    await useFetch('/api/family_transaction_payout', {
-        method: 'POST',
-        body: ({ ...data_payout.value })
-    })
-    getDataPageDonations(data_payout.value.cuid as string)
-    getDataUserDonations(data_payout.value.familyCuid as string)
+        await useFetch('/api/family_transaction_payout', {
+            method: 'POST',
+            body: ({ ...data_payout.value })
+        })
+        getDataPageDonations(data_payout.value.cuid as string)
+        getDataUserDonations(data_payout.value.familyCuid as string)
     }
 }
+
+watch(user_cuid, async() => {
+    console.log("hComp")
+    data_payout.value.familyCuid = user_cuid.value; 
+    totalUserDonations.value = 0;
+    amount_distributed.value = 0;
+    const { data: userDonationData } = await useFetch('/api/family_donation', {
+        method: 'GET',
+        query: { familyCuid: user_cuid.value }
+    })
+
+    const { data: userData } = await useFetch('/api/user', {
+        method: 'GET',
+        query: { cuid: user_cuid.value }
+    })
+
+
+    const { data: pageData } = await useFetch('/api/page_list', {
+        method: 'GET',
+        query: { family_cuid: user_cuid.value }
+    })
+   
+    pages.value = pageData.value as unknown as Page[];
+    donations.value = userDonationData.value as unknown as PageDonation[];
+    data_user.value = userData.value as unknown as User;
+    console.log(donations)
+    donations.value.forEach(element => {
+        if(element.success === true){
+            totalUserDonations.value += parseFloat((element.amount) as unknown as string);
+        }
+    });
+   
+    pages.value.forEach(element => {
+            amount_distributed.value += parseFloat(element.amount_distributed as unknown as string)
+        } 
+    );
+    emits('dataLoaded', pages.value, donations.value)
+    amount_remaining.value = (totalUserDonations.value-parseFloat(amount_distributed.value as unknown as string))
+    return true;
+})
+
+watch(page_cuid, async () => {
+    const { data : pageDataDB } = await useFetch('/api/page', {
+    method: 'GET',
+    query: { cuid: page_cuid.value }
+})
+recordWholeAmount.value = false
+data_payout.value.cuid = page_cuid.value
+thePage.value= pageDataDB.value as unknown as Page;
+return true;
+//console.log(thePage.value);
+})
 
 const setWholeAmount = function(){
     data_payout.value.amount_to_record = ((thePage.value.amount_raised as number) - (thePage.value.amount_distributed as number)) / 100.0
@@ -165,9 +219,9 @@ if ((isAdmin.value as boolean)) {
 .py-4.grid(class="sm:grid-cols-7")
     CVLabel Select the Family to View
     .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
-        Listbox.rounded-md.outline-0.border-box.w-full.p-2.bg-white(style="border: 1px solid #c4c4c4;" v-model="data_user.cuid")
+        Listbox.rounded-md.outline-0.border-box.w-full.p-2.bg-white(style="border: 1px solid #c4c4c4;")
             ListboxButton {{ data_user.first_name + " " + data_user.last_name }}
-                ListboxOptions(v-for="item in users" :key="item.cuid" @click="getDataUserDonations(item.cuid)") {{ item.first_name + " " + item.last_name }}
+                ListboxOptions(v-for="item in users" :key="item.cuid" @click="user_cuid=item.cuid") {{ item.first_name + " " + item.last_name }}
     .col-md-8.mx-9(class="sm:col-span-1 sm:mr-11")
     CVLabel Transaction Recording Date    
     .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
@@ -192,9 +246,9 @@ if ((isAdmin.value as boolean)) {
 .py-4.grid(class="sm:grid-cols-7")
     CVLabel Select Family Page
     .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
-        Listbox.rounded-md.outline-0.border-box.w-full.p-2.bg-white(style="border: 1px solid #c4c4c4;" v-model="data_payout.cuid")
+        Listbox.rounded-md.outline-0.border-box.w-full.p-2.bg-white(style="border: 1px solid #c4c4c4;")
             ListboxButton  {{ thePage.page_name }}
-                ListboxOptions(v-for="page in pages" :key="page.cuid" @click="getDataPageDonations(page.cuid)" ) {{ page.page_name }}
+                ListboxOptions(v-for="page in pages" :key="page.cuid" @click="page_cuid=page.cuid" ) {{ page.page_name }}
     .col-md-8.mx-9(class="sm:col-span-1 sm:mr-11")
     CVLabel Enter transaction id from Stripe
     .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")

@@ -34,18 +34,7 @@ const sendEmail = async (to:string, template:string, subject:string, data:string
   const res = await sesClient.send(sendEmailCommand)
 };
 
-/*  try {
-    await prisma.user.create({ data: event.context.body })
-		const queryRes = await prisma.user.findFirst({ where: {cuid: event.context.user_id} });
-    //const middleName = queryRes.middle_name ? ` ${queryRes.middle_name} ` : " "
-    //
-  } catch (e) {
-		console.error(e); 
-  }
-*/
-
 const body = await readBody(event)
-//delete body.cuid
 
 delete body.Pages
 if(event.context.user?.user_role == "advocate"){

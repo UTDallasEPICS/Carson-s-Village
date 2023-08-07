@@ -164,12 +164,12 @@ const prevImage = () => {
   img.mx-auto(v-if="profileImageLink" class="w-[122px] h-[122px] rounded-[8px]" :src="`${profileImageLink}`")
   .text-gray-dark.mx-auto.w-max.font-poppins.text-md {{ dateFormat(pageData.day_of_birth, true) + ' - ' + dateFormat(pageData.day_of_passing, true) }} 
   .flex.flex-col-reverse.gap-5(class="sm:grid sm:grid-cols-2")
-    .relative.h-96.w-96.border.border-2.border-grey.p-1(v-if="imageData.length != 0" )
+    .relative.w-96.border.border-2.border-grey.p-1(v-if="imageData.length != 0" )
       // TODO: icons instead of text, style to match existing page
       // to do: use object fit to place button accourding to image height
-      button.absolute.left-4.top-16.bg-gray-500.text-white(@click="prevImage" style="opacity:0.7; --tw-text-opacity: 1; width: 46px; height: 46px; border-radius:50%; align-items: center; justify-content: center; line-height: 2; text-align: center;color: white;") &#60;
-      button.absolute.right-8.top-16.bg-gray-500.text-white(@click="nextImage" style="opacity:0.7; --tw-text-opacity: 1; width: 46px; height: 46px; border-radius:50%; align-items: center; justify-content: center; line-height: 2; text-align: center;color: white;") &#62;
-      img.h-96.w-96.object-fit(:src="imageData[currentImage].url")
+      button.absolute.left-4.top-64.bg-black.text-white(@click="prevImage" style="opacity:0.7; --tw-text-opacity: 1; width: 46px; height: 46px; border-radius:50%; align-items: center; justify-content: center; line-height: 2; text-align: center;color: white;") &#60;
+      button.absolute.right-8.top-64.bg-black.text-white(@click="nextImage" style="opacity:0.7; --tw-text-opacity: 1; width: 46px; height: 46px; border-radius:50%; align-items: center; justify-content: center; line-height: 2; text-align: center;color: white;") &#62;
+      img.w-96(style="object-fit:cover" :src="imageData[currentImage].url")
     // services list
     .py-4.flex.flex-col.gap-5
       .text-gray-dark.font-poppins.text-2xl.text-left.font-bold(style="line-height: 36px; text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") Services

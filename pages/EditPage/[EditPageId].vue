@@ -88,14 +88,11 @@ const save = async () => {
 
 // Method to populate the form when editing a pre-existing page
 const getData = async (cuid: string) => {
-    console.log(cvuser2.value.Pages)
-    const containedPage = ref(false);
-    for(let i = 0 ; i < cvuser2.value.Pages.length; i++){
-        if(cvuser2.value.Pages[i].cuid == cuid){
-            containedPage.value = true
-        }
-    }
-    if(cvuser.value.user_role == "advocate" || containedPage.value == true){
+    //console.log(cuid + "cuid for edit page")
+    const pageFound = cvuser.value.Pages.find((i:Page)=> i.cuid == router.params.EditPageId) != undefined
+    // Allowing access to the user's EditPage only if user is an advocate or it is one of the family's family pages.
+    if(pageFound || cvuser.value.user_role == "advocate"){
+
     const { data: pageData } = await useFetch('/api/page', {
         method: 'GET',
         query: { cuid: cuid }
@@ -103,10 +100,17 @@ const getData = async (cuid: string) => {
     if(pageData.value){
         data.value = pageData.value as unknown as Page;
         imageData.value = data.value?.Images as unknown as Image[] 
-    }
-    
-    //console.log(data)
-    //console.log(data.value.donation_goal as string)
+        // Not nessesary with proper logic in watchers?
+        // 1st case is handling getting the profile image from the images in imageData
+        // 2nd case is handling corrupt values of profile image of if the profileImageCuid exists 
+        // but is not in imageData
+        if(imageData.value?.length != 0 && ( data.value.profileImageCuid == "" || imageData.value?.find((i:Image)=> i.cuid == data.value.profileImageCuid) == undefined ))
+            data.value.profileImageCuid = imageData.value[0].cuid;
+        // handling the case where all the images where deleted but the profile image was not cleared out
+        } else if(imageData.value?.length == 0 && data.value.profileImageCuid !== ""){
+            data.value.profileImageCuid = ""
+        }
+
     /* 
     * Checking if donation_goal and conversly amount raised is of type number in order to prevent
     * donation_goal and amount_raised from becoming NaN due to applying the donationFormat function to a string. 
@@ -127,7 +131,7 @@ const saveImage = async (theImage: Image) => {
   imageData.value.push(theImage)
   data.value.Images = imageData.value as unknown as Image[]
   // Creates a profile image for the first image uploaded
-  if (!data.value.profileImageCuid) {
+  if (data.value.profileImageCuid == "") {
     data.value.profileImageCuid = theImage.cuid;
   }
 };
@@ -139,12 +143,27 @@ const setProfileImage = async (theImage: Image) => {
     //profileImage.value = theImage as Image
 }
 
-watchEffect(async(ImageData) => {
-    if(ImageData.length == 0) {
+
+const setImagesPreview = async(Images: Image[]) => {
+    console.log("set Images executes")
+    console.log("asd",Images)
+    data.value.Images = Images
+    imageData.value = Images
+}
+
+watch(imageData,async() => {
+    if(imageData.value.length == 0) {
         data.value.profileImageCuid = "";
     }
 
-})
+},{deep:true})
+watch(data,async () => {
+    console.log("watch data executes")
+    const profileImageNotFound = data.value.Images.find((i:Image)=> i.cuid == data.value.profileImageCuid) == undefined
+    if(data.value.Images.length != 0 && (data.value.profileImageCuid == "" || profileImageNotFound) ){
+      data.value.profileImageCuid = data.value.Images[0].cuid
+    }
+}, {deep:true})
 // Use watcher on for images to handle profile image on here to handle image remove edge cases.
 await getData(useRoute().params.EditPageId as string)
 </script>
@@ -164,11 +183,9 @@ CVContainer
         .py-4.grid(class="sm:grid-cols-3") 
             CVLabel Page Name
             .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
-                CVInput(v-model='data.page_name' placeholder="required")
-        ImagePreview(:profileImage= "profile_image" :selectedImageObject = "selectedImageObj" :images = "imageData")
-        .information.bg-gray-300.rounded-md.mx-9.my-2.text-center(class="sm:text-start")
-            CVLegend Images
-        
+                CVInput(v-model='data.page_name' placeholder="required" required)
+        ImagePreview(v-model:images="imageData" :images="data.Images" :profileImage="profileImage" @profileImage="setProfileImage" @images="setImagesPreview")
+
         .py-4.grid(class="sm:grid-cols-3") 
             div(v-if="imageData.length !=0" style='position: relative;') 
                 img.cursor-pointer.object-cover.align-middle.rounded-lg(class="hover:opacity-1/2 w-40 sm:w-64" :src = "`${selectedImageObj.url}`")

@@ -79,7 +79,7 @@ const pagesPayout = ref<Page[]>([])
 const donations = ref<PageDonation[]>([])
 const cvuser = useCookie<User>('cvuser')
 const amount_distributed = ref(0);
-const amount_remaining = ref(0);
+/*const amount_remaining = ref(0);
 // Family cuid of the admin to ensure permissions to view the family transaction list
 const family_cuid_data = computed(() => cvuser.value?.cuid)
 // Current family cuid that is used for selecting a family
@@ -158,6 +158,7 @@ const save = async () => {
 }
 
 watch(data_user, async() => {
+    console.log("h")
     data_payout.value.familyCuid = data_user.value.cuid as unknown as string; 
     totalUserDonations.value = 0;
     amount_distributed.value = 0;
@@ -177,7 +178,6 @@ watch(data_user, async() => {
         query: { family_cuid: data_user.value.cuid }
     })
     
-   
     pages.value = pageData.value as unknown as Page[];
     donations.value = userDonationData.value as unknown as PageDonation[];
     data_user.value = userData.value as unknown as User;
@@ -199,7 +199,7 @@ const setWholeAmount = function(){
 
 if ((isAdmin.value as boolean)) {
     getDataUsers()
-}
+}*/
 
 const loadData = async(pagesBackend: Page[], donationBackend: PageDonation[]) => {
     pages.value = pagesBackend
@@ -215,17 +215,17 @@ const loadData = async(pagesBackend: Page[], donationBackend: PageDonation[]) =>
         .bar.mx-9(style="border-top: 0.5px solid #646464;")
         br
         DonationManagment(@dataLoaded="loadData")
-        .py-4.grid(class="sm:grid-cols-7")
+        //.py-4.grid(class="sm:grid-cols-7")
             CVLabel Select the Family to View
             .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
                 Listbox.rounded-md.outline-0.border-box.w-full.p-2.bg-white(style="border: 1px solid #c4c4c4;" v-model="data_user.cuid")
                     ListboxButton {{ data_user.first_name + " " + data_user.last_name }}
-                        ListboxOptions(v-for="item in users" :key="item.cuid" ) {{ item.first_name + " " + item.last_name }}
+                        ListboxOptions(v-for="item in users" :value="item" :key="item.cuid" @click="data_user.cuid=item.cuid") {{ item.first_name + " " + item.last_name }}
             .col-md-8.mx-9(class="sm:col-span-1 sm:mr-11")
             CVLabel Transaction Recording Date    
             .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
                 CVDatepicker(v-model='data_payout.transaction_recording_date')
-        .py-4.grid(class="sm:grid-cols-7")
+        //.py-4.grid(class="sm:grid-cols-7")
             CVLabel Total Donations
             .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
               .px-5.pt-2.pb-8.font-outfit.text-dark-blue(style="font-size: 20px; line-height: 30px;") {{ donationFormat(totalUserDonations) }}
@@ -234,7 +234,7 @@ const loadData = async(pagesBackend: Page[], donationBackend: PageDonation[]) =>
             .col-md-8.flex.mx-9(class="sm:col-span-2 sm:mr-11")
                 span.rounded-l-md.bg-gray-200.text-lg.p-2(style="text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25); border: 1px solid #c4c4c4;") $
                 input.outline-0.rounded-r-md.border-box.w-full.p-2(style="border: 1px solid #c4c4c4;" min="0.00" step="0.01" v-model='data_payout.amount_to_record' onblur="(this.type='number')" onfocus="(this.type='number')" required)
-        .py-4.grid(class="sm:grid-cols-7")
+        //.py-4.grid(class="sm:grid-cols-7")
             CVLabel Amount left to distribute to family
             .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
                 .px-5.pt-2.pb-8.font-outfit.text-dark-blue(style="font-size: 20px; line-height: 30px;") {{ donationFormat(amount_remaining) }}
@@ -242,7 +242,7 @@ const loadData = async(pagesBackend: Page[], donationBackend: PageDonation[]) =>
             .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
                 input(type='checkbox' class="sm:ml-1" name='allFunds' value='Bike' v-model="recordWholeAmount" @click="setWholeAmount")
                 label.mt-4.ml-4.text-md(for='allFunds' class="sm:mt-0" style="letter-spacing: 0.35px;") Record all of amount left to distribute
-        .py-4.grid(class="sm:grid-cols-7")
+        //.py-4.grid(class="sm:grid-cols-7")
             CVLabel Select Family Page
             .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
                 Listbox.rounded-md.outline-0.border-box.w-full.p-2.bg-white(style="border: 1px solid #c4c4c4;" v-model="data_payout.cuid")
@@ -252,7 +252,7 @@ const loadData = async(pagesBackend: Page[], donationBackend: PageDonation[]) =>
             CVLabel Enter transaction id from Stripe
             .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
                 CVInput(v-model='data_payout.transaction_id')
-        .py-4.grid(class="sm:grid-cols-7")
+        //.py-4.grid(class="sm:grid-cols-7")
             CVLabel Amount left to distribute to family page
             .col-md-8.mx-9(class="sm:col-span-3 sm:mr-11")
                 .px-5.pt-2.pb-8.font-outfit.text-dark-blue(style="font-size: 20px; line-height: 30px;") {{ donationFormat(thePage.amount_raised-thePage.amount_distributed) }}
