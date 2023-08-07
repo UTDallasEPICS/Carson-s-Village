@@ -19,10 +19,10 @@ export default defineEventHandler(async event => {
         )
         event.context.client = client
         event.context.claims = claims
-        // including pages cuids to check if that's the family's page. 
         event.context.user = await event.context.client.user.findFirst(
-        { where:
-          { email: claims.email },
+          {
+            where:{ email: claims.email }
+          ,
           include: {
             Pages: {
               select: {
@@ -30,16 +30,19 @@ export default defineEventHandler(async event => {
               }
             }
           }
-        })
-        if(event.context.user){
+          })
+        // include pages ids to check if that's the family's page. 
         setCookie(event, "cvuser", JSON.stringify(event.context.user))
-        //console.log(event.context.user.user_role)
-        //console.log(event.node.req.url);
+        console.log(event.node.req.url);
+        if(event.context.user.user_role ==='family' && (event.node.req.url?.includes('/EditPage/') || event.node.req.url?.includes('/PageList/'))){
+          if((event.node.req.url?.includes('/EditPage/') && (!(event.node.req.url?.includes('/EditPage/0'))))){
+
         }
-        } catch (e) {
-        console.error(e)
-        //setCookie(event,'cvtoken','')
-        //setCookie(event,'cvuser','')
+        }
+      } catch (e) {
+        console.error(e) 
+        setCookie(event,'cvtoken','')
+        setCookie(event,'cvuser','')
     
         return await sendRedirect(event, loginRedirectUrl())
       }

@@ -55,7 +55,6 @@ export default defineEventHandler(async event => {
       const pageLink = "/Page/"+transaction?.pageCuid;
       await sendRedirect(event, pageLink)
       return true;
-      
     } catch (e) {
       console.error(e)
 

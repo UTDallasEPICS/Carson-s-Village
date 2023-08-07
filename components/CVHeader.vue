@@ -11,6 +11,7 @@ const searchQuery = ref('');
 const route = useRoute()
 const isNotSearch = computed(() => route.path !== "/Search/")
 console.log(isLoggedIn.value)
+
 </script>
 
 <template lang="pug">
