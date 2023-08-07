@@ -5,8 +5,8 @@
 *	ECS 3200
 *	Carson's Village: Automated Family Page
 *	EditPage.vue 
-*		Denotes functions specific to page insertion and page editing  
-*		Located under "/EditPage/"
+*	Denotes functions specific to page insertion and page editing  
+*	Located under "/EditPage/"
 */
 
 import ImageUpload from '@/components/ImageUpload.vue'
@@ -76,7 +76,7 @@ const save = async () => {
 // Method to populate the form when editing a pre-existing page
 const getData = async (cuid: string) => {
     //console.log(cuid + "cuid for edit page")
-    //if(cvuser.value.cuid === router.params.EditPageId || cvuser.value.user_role == "advocate"){
+    if(cvuser.value.cuid === router.params.EditPageId || cvuser.value.user_role == "advocate"){
     const { data: pageData } = await useFetch('/api/page', {
         method: 'GET',
         query: { cuid: cuid }
@@ -98,7 +98,10 @@ const getData = async (cuid: string) => {
     }
     console.log(data.value.donation_goal)
 }
+}
+
 const profileImage = computed(()=> imageData.value?.find((i:Image) => i.cuid == data.value?.profileImageCuid))
+profile_image.value = profileImage.value?.url as string
 // Method that saves images to the frontend on image upload.
 const saveImage = async (theImage: Image) => {
   imageData.value.push(theImage)
@@ -108,17 +111,22 @@ const saveImage = async (theImage: Image) => {
   }
 };
 
+// Method to set an uploaded image as the profile image of a page
+// There is no network request because the profiile image cuid is saved with the rest of the form
+const setProfileImage = async (theImage: Image) => {
+    data.value.profileImageCuid = theImage.cuid
+    //profileImage.value = theImage as Image
+}
 
+// Use watcher on for images to handle profile image on here to handle image remove edge cases.
 await getData(useRoute().params.EditPageId as string)
 </script>
 
 <template lang="pug">
-//.row.p-3
-    LinkButton(:to="`/PageList/${family_cuid}`") Back
 CVContainer
     .well.well-sm
         //conditional rendering for page editing or page insert. This does not affect the function of Page editting.
-        TitleComp(v-if="idExist") Edit Family Page
+        TitleComp(v-if="pageCuid!=0") Edit Family Page
         TitleComp(v-else) Insert New Family Page
         br
         .bar.mx-9(style="border-top: 0.5px solid #646464;")
@@ -130,11 +138,11 @@ CVContainer
             CVLabel Page Name
             .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
                 CVInput(v-model='data.page_name' placeholder="required")
-        ImagePreview(v-model:images="imageData")
+        ImagePreview(v-model:images="imageData" :profile_image="profile_Image")
         .py-4.grid(class="sm:grid-cols-3") 
             a.ml-10.pt-1(style="text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") image upload
             .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
-                ImageUpload(@imageUploaded="saveImage" :pageCuid="cuid" isImageReplace="false")
+                ImageUpload(@imageUploaded="saveImage" isImageReplace="false")
         //.py-4.grid(class="sm:grid-cols-3") 
             a.ml-10.pt-1(style="text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") image replace
             .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")

@@ -80,9 +80,9 @@ model PageDonation {
 model Image {
   cuid     String @id @default(cuid())
   url      String
-  pageCuid String
-  Page     Page   @relation(fields: [pageCuid], references: [cuid])
+  pageCuid String?
+  Page     Page?   @relation(fields: [pageCuid], references: [cuid])
 
-  @@unique([pageCuid, url])
+  //@@unique([pageCuid, url])
   @@map("images")
 }

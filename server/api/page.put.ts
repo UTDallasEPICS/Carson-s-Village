@@ -1,5 +1,6 @@
 import { PrismaClient } from "@prisma/client"
 import {loginRedirectUrl} from "../api/auth0"
+import type { Image } from "@/types.d.ts"
 const prisma = new PrismaClient()
 
 /*
@@ -15,7 +16,6 @@ export default defineEventHandler(async event => {
   
   data.donation_goal = Math.trunc(parseInt(data.donation_goal.replace(",","")) * 100);
   data.amount_raised = Math.trunc(parseInt(data.amount_raised.replace(",","")) * 100);
-  console.log(data.donation_goal)
   if(event.context.user.user_role === "advocate" || event.context.user.cuid === familyCuid ){
   try {
     // updates a pre-existing page
@@ -28,6 +28,19 @@ export default defineEventHandler(async event => {
         ...data
       }
     });
+    //if(Images.length != 0){
+      await Promise.all(
+      Images.map(async (image: Image) => {
+        await prisma.image.update({
+          where: {
+            cuid: image.cuid
+          },
+          data:{
+            pageCuid: data.pageCuid
+          }
+        })
+      }))
+    
  // return []
   } catch (e) {
     console.error(e);

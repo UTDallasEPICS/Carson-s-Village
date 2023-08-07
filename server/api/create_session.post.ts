@@ -60,7 +60,7 @@ export default defineEventHandler(async event => {
 			target_page_cuid: page?.cuid as string,
 		},
 		success_url: `${runtime.BASEURL}/api/complete_session?transaction=${transaction_id}`,
-		cancel_url: `${runtime.BASEURL}/page/${page_cuid}`,
+		cancel_url: `${runtime.BASEURL}page/${page_cuid}`,
 	});
 	
     const queryRes = await prisma.pageDonation.create({
@@ -79,17 +79,6 @@ export default defineEventHandler(async event => {
         }
     }})
 
-    //res.setHeader('Access-Control-Allow-Origin', session.url);
-    //await res.setResponseHeader("Access-Control-Allow-Origin", session.url);
-   /* await handleCors(event,  {
-      origin: "*",
-      methods: "*",
-      allowHeaders: [session.url]
-    })*/
-    //console.log(session.url);
-    //console.log(queryRes.transaction_id);
-    //await sendRedirect(event, session.url || "", 302)
-    
     return session.url;
   }catch(e) {
     console.error(e);

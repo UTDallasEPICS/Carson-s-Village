@@ -26,8 +26,8 @@ const data_user = ref<User>({
     email: "",
     middle_name: "",
     user_role: "{}",
-    phone: ""
-    //Pages: [],
+    phone: "",
+    Pages: [],
     //PageDonations: [],
     //DonationPayouts: []
 })
@@ -39,10 +39,13 @@ const cuid = computed(() => router.params.id as string);
 
 // Method that creates a new user on the database on the backend
 const save = async () => {
-    await useFetch('/api/user', {
+    const { data: result } = await useFetch('/api/user', {
         method: (cuid.value as string) !== "0" ? 'PUT' : 'POST',
         body: ({ ...data_user.value, cuid: cuid.value as string })
     })
+    if(result){
+        await navigateTo('/Users')
+    }
 
 }
 
@@ -69,7 +72,7 @@ CVContainer
         .py-4.grid(class="sm:grid-cols-3")
             CVLabel Email
             .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
-                CVInput(v-model='data_user.email' placeholder="(user defined)")
+                CVInput(v-model='data_user.email' placeholder="(user defined)" required)
         .py-4.grid(class="sm:grid-cols-3")
             CVLabel User Role
             .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
@@ -79,7 +82,7 @@ CVContainer
         .py-4.grid(class="sm:grid-cols-3")
             CVLabel First Name
             .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
-                CVInput(v-model='data_user.first_name' placeholder="(user-defined")
+                CVInput(v-model='data_user.first_name' placeholder="(user-defined" required)
         .py-4.grid(class="sm:grid-cols-3")
             CVLabel Middle Name
             .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
@@ -87,7 +90,7 @@ CVContainer
         .py-4.grid(class="sm:grid-cols-3")
             CVLabel Last Name
             .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
-                CVInput(v-model='data_user.last_name' placeholder="(user-defined)" )
+                CVInput(v-model='data_user.last_name' placeholder="(user-defined)" required)
         .py-4.grid(class="sm:grid-cols-3")
             CVLabel Phone
             .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
