@@ -8,7 +8,7 @@ export function dateFormat(date: string, justDate = false) {
 
 // Function that converts the donation amounts in cents to a string in the form
 // $ whole dollars.xx
-export function donationFormat(amount: number){
+export function donationFormat(amount = 0){
     const amountInCents = amount / 100
     return amountInCents.toLocaleString(undefined, {
     minimumFractionDigits: 2,

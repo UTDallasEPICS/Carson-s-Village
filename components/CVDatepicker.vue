@@ -1,5 +1,5 @@
 <template lang="pug">
-Datepicker.rounded-md.outline-0.border-box.p-2(style="border: 1px solid #c4c4c4;" type="String" v-model="value")
+Datepicker.rounded-md.p-2(type="String" v-model="value")
 </template>
         
 <script setup lang="ts">

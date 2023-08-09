@@ -11,7 +11,6 @@ export default defineEventHandler(async event => {
       //const stripe = await loadStripe(runtime.STRIPE_PUBLIC ? runtime.STRIPE_PUBLIC : '');
         //const query = await getQuery(event)
         const body = await readBody(event)
-        body.amount_to_record = Math.trunc(body.amount_to_record * 100)
         //console.log(body)
         if(event.context.user?.user_role == "advocate"){
         try{
@@ -22,8 +21,8 @@ export default defineEventHandler(async event => {
             prisma.donationPayout.create({
               data: {
                 transaction_id: body.transaction_id,
-                amount: body.amount_to_record, 
-                distributionDate: body.transaction_recording_date,
+                amount: body.amount, 
+                distributionDate: body.distributionDate,
                 User: {
                   connect: {
                     cuid: body.familyCuid
@@ -31,15 +30,15 @@ export default defineEventHandler(async event => {
                 },
                 Page: {
                   connect: {
-                    cuid: body.cuid,
+                    cuid: body.pageCuid,
                   }
                 }
             }}),
             prisma.page.update({
               where: {
-                cuid: body.cuid as string
+                cuid: body.pageCuid as string
               },
-              data: {amount_distributed: {increment: body.amount_to_record}}
+              data: {amount_distributed: {increment: body.amount}}
             })
           ]) 
           

@@ -1,8 +1,9 @@
 
 <template lang="pug">
-CVHeader
-NuxtPage
-CVFooter.mt-4
+.flex.flex-col.gap-5.min-h-screen
+  CVHeader
+  NuxtPage.grow
+  CVFooter
 </template>
 
 <script setup lang="ts">

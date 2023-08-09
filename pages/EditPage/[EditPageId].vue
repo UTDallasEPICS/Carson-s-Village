@@ -122,7 +122,6 @@ const getData = async (cuid: string) => {
     //console.log(data.value.donation_goal)
 }
 }
-}
 
 const profileImage = computed(()=> imageData.value?.find((i:Image) => i.cuid == data.value?.profileImageCuid))
 profile_image.value = profileImage.value?.url as string // TODO: depreciate?
@@ -156,7 +155,8 @@ watch(imageData,async() => {
         data.value.profileImageCuid = "";
     }
 
-},{deep:true})
+}, { deep: true })
+
 watch(data,async () => {
     console.log("watch data executes")
     const profileImageNotFound = data.value.Images.find((i:Image)=> i.cuid == data.value.profileImageCuid) == undefined
@@ -166,6 +166,7 @@ watch(data,async () => {
 }, {deep:true})
 // Use watcher on for images to handle profile image on here to handle image remove edge cases.
 await getData(useRoute().params.EditPageId as string)
+
 </script>
 
 <template lang="pug">
