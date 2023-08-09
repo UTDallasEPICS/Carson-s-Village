@@ -60,7 +60,6 @@ type User2 = {
 const imageData = ref<Image[]>([])
 const profile_image = ref("")
 
-
 const router = useRoute()
 const cvuser = useCookie<User>('cvuser');
 const cvuser2 = useCookie<User2>('cvuser')
@@ -81,8 +80,10 @@ const save = async () => {
         body: ({ ...data.value})
     }
     )
-    if((saveSuccess as unknown as boolean)){
+    if(saveSuccess.value == true){
         await navigateTo('/PageList/' + family_cuid)
+    } else {
+        alert("Error in creating a page")
     }
 };
 
@@ -116,8 +117,8 @@ const getData = async (cuid: string) => {
     * donation_goal and amount_raised from becoming NaN due to applying the donationFormat function to a string. 
     */ 
     if(typeof data.value.donation_goal === 'number'){
-    data.value.amount_raised = donationFormat(data.value.amount_raised as unknown as number).replace("$","") ;
-    data.value.donation_goal = donationFormat(data.value.donation_goal as unknown as number).replace("$","") ;
+        data.value.amount_raised = donationFormat(data.value.amount_raised as unknown as number).replace("$","") ;
+        data.value.donation_goal = donationFormat(data.value.donation_goal as unknown as number).replace("$","") ;
     }
     //console.log(data.value.donation_goal)
 }
@@ -163,7 +164,7 @@ watch(data,async () => {
     if(data.value.Images.length != 0 && (data.value.profileImageCuid == "" || profileImageNotFound) ){
       data.value.profileImageCuid = data.value.Images[0].cuid
     }
-}, {deep:true})
+}, { deep:true})
 // Use watcher on for images to handle profile image on here to handle image remove edge cases.
 await getData(useRoute().params.EditPageId as string)
 
@@ -186,25 +187,6 @@ CVContainer
             .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
                 CVInput(v-model='data.page_name' placeholder="required" required)
         ImagePreview(v-model:images="imageData" :images="data.Images" :profileImage="profileImage" @profileImage="setProfileImage" @images="setImagesPreview")
-
-        .py-4.grid(class="sm:grid-cols-3") 
-            div(v-if="imageData.length !=0" style='position: relative;') 
-                img.cursor-pointer.object-cover.align-middle.rounded-lg(class="hover:opacity-1/2 w-40 sm:w-64" :src = "`${selectedImageObj.url}`")
-                .absolute(style='top: 10px; right: 150px')
-                    button.bg-red-500(class='w-40 sm:64' style="align-items: center;justify-content: center;line-height: 1;text-align: center; color: white; font-weight: 450; positon: absolute; top:0px; left: 0px; width: 30px; height: 2rem; border-radius: 50%; padding-bottom: 4px;" @click = "removeImage(selectedImageObjCopy)") x
-            a.ml-10.pt-1(style="text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") image upload
-                ImageUpload(@imageUploaded="saveImage" :pageCuid="cuid" isImageReplace="false")
-        .py-4.grid.flex-box.flex-row.item-centered.gap-1(v-if="imageData.length!= 0" class="sm:grid-cols-3" style="line-height: 0px;text-align: center")
-            div(style="width:1200px" class="")
-                div(class="flex" style="overflow-x: auto")
-                    .div(v-for="(image,i) in imageData" :key="i" style="flex-shrink: 0; position: relative;") 
-                        img.object-cover.align-middle.rounded-lg.cursor-pointer(class="w-40 sm:w-64" style="margin-right:5px" :src = "`${image.url}`" @click="selectImage(image)")
-                        .form-horizontal(style='position: absolute; top: 10px; right: 10px')
-                            button.bg-red-500(style="display: flex;align-items: center;justify-content: center;line-height: 2;text-align: center ; color: white; font-weight: 300; positon: absolute; top:0px; left: 0px; width: 30px; height: 2rem; border-radius: 50%; padding-bottom: 4px;" @click = "removeImage(image)") x
-        //.py-4.grid(class="sm:grid-cols-3") 
-            a.ml-10.pt-1(style="text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") image replace
-            .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
-                ImageUpload(:pageCuid="cuid" @imageUploaded="replaceImage" isImageReplace="true")
         .information.bg-gray-300.rounded-md.mx-9.my-2.text-center(class="sm:text-start")
             legend.ml-2(class="sm:py-1" style="font-weight: 700; text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") Profile Image Selection        
         .py-4.grid(class="sm:grid-cols-3") 

@@ -32,7 +32,7 @@ const currentUser = computed(() => users.value?.find(({ cuid }: User) => cuid ==
 
 currentUserCuid.value = users.value![0]?.cuid || ""
 
-const { data: pages } = await useFetch<Page[]>('/api/pages', {
+const { data: pages } = await useFetch<Page[]>('/api/page_list', {
   method: 'GET',
   query: { family_cuid: currentUserCuid.value },
   default() {
@@ -43,10 +43,10 @@ const { data: pages } = await useFetch<Page[]>('/api/pages', {
 const currentPageCuid = ref<string>("");
 const currentPage = computed(() => pages.value?.find(({ cuid }: Page) => cuid == currentPageCuid.value) || {});
 watchEffect(() => currentPageCuid.value = pages.value![0].cuid || "");
-
+console.log("ted",currentUserCuid.value as string);
 const { data: donations } = await useFetch<PageDonation[]>('/api/family_donation', {
   method: 'GET',
-  query: { family_cuid: currentUserCuid.value },
+  query: { family_cuid: currentUserCuid.value as string},
   default() {
     return [] as any;
   },
@@ -73,7 +73,7 @@ const totalRemaining = computed(() => totalPageDonations.value - totalDistribute
             leave-to-class='opacity-0'
           )
             ListboxOptions(as='div' class='w-full absolute z-10 mt-10 bg-white shadow-lg max-h-60 rounded-md px-2 py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm' )
-              ListboxOption(as='div' v-for="item in users" :key="item.cuid" :value="item.cuid" class="px-2 border border-grey-500 py-1 my-1") {{ item.first_name + " " + item.last_name }}
+              ListboxOption(as='div' v-for="user in users" :key="user.cuid" :value="user.cuid" class="px-2 border border-grey-500 py-1 my-1") {{ user.first_name + " " + user.last_name }}
         ListboxButton(class='text-left bg-white relative rounded-md pl-2 pr-10 py-2 sm:text-sm w-96') {{ currentUserCuid ? currentUser.first_name + " " + currentUser.last_name : 'Select User' }}
     
     .flex.gap-5

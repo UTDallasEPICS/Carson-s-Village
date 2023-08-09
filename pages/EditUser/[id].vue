@@ -5,8 +5,8 @@
 *	ECS 3200
 *	Carson's Village: Automated Family Page
 *	EditUser.vue 
-*		Denotes functions specific to user insertion  
-*		Located under "/EditUser/"
+*	Denotes functions specific to user insertion  
+*	Located under "/EditUser/"
 */
 
 import type { User } from '@/types.d.ts'
@@ -34,8 +34,10 @@ const save = async () => {
         method: (cuid.value as string) !== "0" ? 'PUT' : 'POST',
         body: ({ ...data_user.value, cuid: cuid.value as string })
     })
-    if(result){
+    if(result.value == true){
         await navigateTo('/Users')
+    } else {
+        alert("Error in Creating User in the system.")
     }
 
 }

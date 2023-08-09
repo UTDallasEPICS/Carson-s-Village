@@ -11,7 +11,8 @@ const prisma = new PrismaClient()
 
 export default defineEventHandler(async event => {
   const {cuid} = await readBody(event);
-  //if(event.context.user.user_role === "advocate"){ //|| event.context.user.cuid === body.image.pageCuid){
+  if(event.context.user.cuid != ""){ 
+  // event.context.user.user_role === "advocate" || body.pageCuid === event.context.user.cuid
 try {
     // Deletes an image from the database.
     const queryRes = await prisma.image.delete({
@@ -26,5 +27,5 @@ try {
   console.log(e)
   return false;
   } 
-//}
+  }
 });

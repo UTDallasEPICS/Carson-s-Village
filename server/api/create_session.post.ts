@@ -51,7 +51,7 @@ export default defineEventHandler(async event => {
 			target_page_name: page?.page_name as string,
 			target_page_cuid: page?.cuid as string,
 		},
-		success_url: `${runtime.BASEURL}/api/complete_session?transaction=${transaction_id}`,
+		success_url: `${runtime.BASEURL}api/complete_session?transaction=${transaction_id}`,
 		cancel_url: `${runtime.BASEURL}page/${page_cuid}`,
 	});
 	

@@ -42,7 +42,7 @@ const removeImage = async (cuid:string, isPreview: boolean) => {
     body: ({ cuid })
     });
     let imagesTemp = props.images.filter((i:Image) => i.cuid != cuid) 
-    emit("update:images", props.images.filter((i:Image) => i.cuid != cuid));
+    emit("images", props.images.filter((i:Image) => i.cuid != cuid));
     
     console.log(imagesTemp.length)
     if(isPreview && imagesTemp.length !=0){
