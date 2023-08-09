@@ -14,6 +14,9 @@ SET DATA TYPE INTEGER;
 
 -- AlterTable
 
+ALTER TABLE "pages"
+ADD
+    COLUMN "amount_distributed" INTEGER NOT NULL DEFAULT 0,
 ADD
     COLUMN "profile_image_cuid" TEXT NOT NULL,
 ALTER COLUMN "donation_goal"
