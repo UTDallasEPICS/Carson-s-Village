@@ -16,6 +16,8 @@ SET DATA TYPE INTEGER;
 
 ALTER TABLE "pages"
 ADD
+    COLUMN "amount_distributed" INTEGER NOT NULL DEFAULT 0,
+ADD
     COLUMN "profile_image_cuid" TEXT NOT NULL,
 ALTER COLUMN "donation_goal"
 SET DEFAULT 0,
