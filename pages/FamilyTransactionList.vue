@@ -35,6 +35,7 @@ currentUserCuid.value = users.value![0]?.cuid || ""
 const { data: pages } = await useFetch<Page[]>('/api/pages', {
   method: 'GET',
   query: { family_cuid: currentUserCuid.value },
+  watch: [currentUserCuid],
   default() {
     return [] as any;
   },
@@ -47,6 +48,7 @@ watchEffect(() => currentPageCuid.value = pages.value![0].cuid || "");
 const { data: donations } = await useFetch<PageDonation[]>('/api/family_donation', {
   method: 'GET',
   query: { family_cuid: currentUserCuid.value },
+  watch: [currentUserCuid],
   default() {
     return [] as any;
   },
