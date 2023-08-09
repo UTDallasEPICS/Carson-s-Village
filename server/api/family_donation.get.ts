@@ -8,13 +8,14 @@ const prisma = new PrismaClient()
 */
 
 export default defineEventHandler(async event => {
-    const { familyCuid } = await getQuery(event);
-    if((familyCuid as string) == "0" || familyCuid == undefined) {
+    const { family_cuid } = getQuery(event);
+    console.log(family_cuid)
+    if((family_cuid as string) == "0" || family_cuid == undefined) {
         return []
     }
     const queryRes = await prisma.pageDonation.findMany({
         where: {
-        familyCuid: familyCuid as string,
+        familyCuid: family_cuid as string,
           success:true
         },
         include: {
