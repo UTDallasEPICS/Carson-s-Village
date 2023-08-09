@@ -43,7 +43,7 @@ const { data: pages } = await useFetch<Page[]>('/api/pages', {
 
 const currentPageCuid = ref<string>("");
 const currentPage = computed(() => pages.value?.find(({ cuid }: Page) => cuid == currentPageCuid.value) || {});
-watchEffect(() => currentPageCuid.value = pages.value![0].cuid || "");
+watchEffect(() => currentPageCuid.value = pages.value![0]?.cuid || "");
 
 const { data: donations } = await useFetch<PageDonation[]>('/api/family_donation', {
   method: 'GET',
