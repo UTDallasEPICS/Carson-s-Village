@@ -14,22 +14,23 @@ import { donationFormat, dateFormat } from '@/utils'
 
 const pages = ref<Page[]>([])
 const router = useRoute();
-// we use either the search query from either the input field or the url depending on which one was used 
-// to call Search.vue
-const searchQueryURL = computed(() =>  router.query.search);
+// We use the search query from the url from nav based searches, and we use the input field when on the search page.
+// to call /api/pages
+
 const searchQueryInput = ref("");
 
 // Method to populate search results for pages
-const pageSearch = async() => { 
+const pageSearch = async( searchQuery: string) => { 
     const { data : pageData } = await useFetch('/api/pages', {
     method: 'GET',
-    query: {searchQuery: searchQueryInput.value || searchQueryURL.value}    
+    query: {searchQuery: searchQuery}    
     })
     pages.value = pageData.value as unknown as Page[]
 }
 
-searchQueryInput.value = searchQueryURL.value as string        
-pageSearch()    
+onMounted(() => {  
+  pageSearch(router.query.search as string)    
+})
 </script>
 
 <template lang="pug">
@@ -39,7 +40,7 @@ pageSearch()
   br
   legend(class='text-m indent-8') Search memorial pages
   input(class="border border-gray-300 py-2 px-4 ml-8 rounded-lg focus:outline-none focus:border-black-500" type="search" placeholder=" " v-model="searchQueryInput")
-  button(class='text-m bg-gray-300 p-2 mt-1 mb-2' @click='pageSearch') SEARCH
+  button(class='text-m bg-gray-300 p-2 mt-1 mb-2' @click='pageSearch(searchQueryInput)') SEARCH
   .container
   br
   b(class="ml-8 text-xl")     Search Results 
