@@ -34,7 +34,7 @@ currentUserCuid.value = users.value![0]?.cuid || ""
 
 const { data: pages, refresh: refreshPages } = await useFetch<Page[]>('/api/page_list', {
   method: 'GET',
-  query: { family_cuid: currentUserCuid},
+  query: { family_cuid: currentUserCuid },
   watch: [currentUserCuid],
   default() {
     return [] as any;
@@ -45,7 +45,7 @@ const currentPageCuid = ref<string>("");
 const currentPage = computed(() => pages.value?.find(({ cuid }: Page) => cuid == currentPageCuid.value) || {});
 watchEffect(() => currentPageCuid.value = pages.value![0]?.cuid || "");
 console.log("ted",currentUserCuid.value as string);
-const { data: donations, refresh: refreshDonations } = await useFetch<PageDonation[]>('/api/family_donation', {
+const { data: donations } = await useFetch<PageDonation[]>('/api/family_donation', {
   method: 'GET',
   query: { family_cuid: currentUserCuid },
   watch: [currentUserCuid],
