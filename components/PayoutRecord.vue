@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-// TODO: Taz look at this
 import Datepicker from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css';
 

@@ -21,13 +21,14 @@ const onFile = async (event: Event) => {
   const Files = event?.target?.files
   for(let i = 0 ; i < Files.length; i++){
     const file = Files[i];
+    // Creates the presigned url and enters the image into the database
     const { data: imageData } = await useFetch('/api/image_upload', {
       method: 'POST',
       body: { contentLength: file.size, contentType: file.type, file }
     });
   const { uploadUrl, image} = imageData.value as unknown as imageLinkTypes;
-  //console.log(uploadUrl)
-  //console.log(imageData.value)
+
+  // Executing the image upload by using the presigned url and file as well as its size and type in the request
   const response = await fetch(uploadUrl, {
     method: "PUT",
     headers: {
@@ -38,9 +39,9 @@ const onFile = async (event: Event) => {
   })
   if (!response.ok) {
     console.log("Failed to upload a file")
-    throw new Error("Failed to upload data")
-    
+    throw new Error("Failed to upload data")  
   }
+
   emit('imageUploaded', image)
   }
 } 

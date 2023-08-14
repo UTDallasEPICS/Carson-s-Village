@@ -15,7 +15,7 @@ const stripeSecretKey = runtime.STRIPE_SECRET;
 
 export default defineEventHandler(async event => {
   const stripe = new Stripe(stripeSecretKey as string, { apiVersion:"2022-11-15"} )
-    const query = await getQuery(event)
+    const query = getQuery(event)
     try{
       // get amount donated from transaction
       const transaction = await prisma.pageDonation.findFirst({

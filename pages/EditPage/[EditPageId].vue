@@ -70,7 +70,6 @@ const family_cuid = family_cuid_data.value as string
 const pageCuid = computed(() => router.params.EditPageId)
 data.value.cuid = cuid;
 data.value.familyCuid = family_cuid;
-const idExist = computed(() => router.params.EditPageId !== "0")
 
 // Method that saves form data to the database for a page that has cuid: router.params.EditPageId
 const save = async () => {
@@ -89,7 +88,6 @@ const save = async () => {
 
 // Method to populate the form when editing a pre-existing page
 const getData = async (cuid: string) => {
-    //console.log(cuid + "cuid for edit page")
     const pageFound = cvuser.value.Pages.find((i: Page) => i.cuid == router.params.EditPageId) != undefined
     // Allowing access to the user's EditPage only if user is an advocate or it is one of the family's family pages.
     if (pageFound || cvuser.value.user_role == "advocate") {
@@ -101,13 +99,13 @@ const getData = async (cuid: string) => {
         if (pageData.value) {
             data.value = pageData.value as unknown as Page;
             imageData.value = data.value?.Images as unknown as Image[]
-            // Not nessesary with proper logic in watchers?
-            // 1st case is handling getting the profile image from the images in imageData
-            // 2nd case is handling corrupt values of profile image of if the profileImageCuid exists 
-            // but is not in imageData
-            if (imageData.value?.length != 0 && (data.value.profileImageCuid == "" || imageData.value?.find((i: Image) => i.cuid == data.value.profileImageCuid) == undefined))
-                data.value.profileImageCuid = imageData.value[0].cuid;
-            // handling the case where all the images where deleted but the profile image was not cleared out
+        // Not nessesary with proper logic in watchers?
+        // 1st case is handling getting the profile image from the images in imageData
+        // 2nd case is handling corrupt values of profile image of if the profileImageCuid exists 
+        // but is not in imageData
+        if (imageData.value?.length != 0 && (data.value.profileImageCuid == "" || imageData.value?.find((i: Image) => i.cuid == data.value.profileImageCuid) == undefined))
+            data.value.profileImageCuid = imageData.value[0].cuid;
+        // handling the case where all the images where deleted but the profile image was not cleared out
         } else if (imageData.value?.length == 0 && data.value.profileImageCuid !== "") {
             data.value.profileImageCuid = ""
         }
@@ -120,12 +118,9 @@ const getData = async (cuid: string) => {
             data.value.amount_raised = donationFormat(data.value.amount_raised as unknown as number).replace("$", "");
             data.value.donation_goal = donationFormat(data.value.donation_goal as unknown as number).replace("$", "");
         }
-        //console.log(data.value.donation_goal)
     }
 }
 
-const profileImage = computed(() => imageData.value?.find((i: Image) => i.cuid == data.value?.profileImageCuid))
-profile_image.value = profileImage.value?.url as string // TODO: depreciate?
 // Method that saves images to the frontend on image upload.
 const saveImage = async (theImage: Image) => {
     imageData.value.push(theImage)
@@ -140,13 +135,9 @@ const saveImage = async (theImage: Image) => {
 // There is no network request because the profiile image cuid is saved with the rest of the form
 const setProfileImage = async (theImage: Image) => {
     data.value.profileImageCuid = theImage.cuid
-    //profileImage.value = theImage as Image
 }
 
-
 const setImagesPreview = async (Images: Image[]) => {
-    console.log("set Images executes")
-    console.log("asd", Images)
     data.value.Images = Images
     imageData.value = Images
 }
@@ -159,15 +150,15 @@ watch(imageData, async () => {
 }, { deep: true })
 
 watch(data, async () => {
-    console.log("watch data executes")
     const profileImageNotFound = data.value.Images.find((i: Image) => i.cuid == data.value.profileImageCuid) == undefined
     if (data.value.Images.length != 0 && (data.value.profileImageCuid == "" || profileImageNotFound)) {
         data.value.profileImageCuid = data.value.Images[0].cuid
     }
 }, { deep: true })
+
 // Use watcher on for images to handle profile image on here to handle image remove edge cases.
 await getData(useRoute().params.EditPageId as string)
-
+const profileImage = computed(() => data.value?.Images.find((i: Image) => i.cuid == data.value?.profileImageCuid))
 </script>
 
 <template lang="pug">

@@ -32,7 +32,7 @@ const currentUser = computed(() => users.value?.find(({ cuid }: User) => cuid ==
 
 currentUserCuid.value = users.value![0]?.cuid || ""
 
-const { data: pages, refresh: refreshPages } = await useFetch<Page[]>('/api/page_list', {
+const { data: pages } = await useFetch<Page[]>('/api/page_list', {
   method: 'GET',
   query: { family_cuid: currentUserCuid },
   watch: [currentUserCuid],
@@ -44,7 +44,6 @@ const { data: pages, refresh: refreshPages } = await useFetch<Page[]>('/api/page
 const currentPageCuid = ref<string>("");
 const currentPage = computed(() => pages.value?.find(({ cuid }: Page) => cuid == currentPageCuid.value) || {});
 watchEffect(() => currentPageCuid.value = pages.value![0]?.cuid || "");
-console.log("ted",currentUserCuid.value as string);
 const { data: donations } = await useFetch<PageDonation[]>('/api/family_donation', {
   method: 'GET',
   query: { family_cuid: currentUserCuid },
@@ -116,7 +115,7 @@ const totalRemaining = computed(() => totalPageDonations.value - totalDistribute
           p.text-center.mt-2 {{ donationFormat(currentPage.amount_distributed) }}
         .border.border-grey-500.p-5
           p.self-center.text-center Remaining
-          p.text-center.mt-2 {{ donationFormat(currentPage.amount_raised - currentPage.amount_distributed) }}
+          p.text-center.mt-2 {{ donationFormat(currentPage?.amount_raised - currentPage?.amount_distributed) }}
     div(class="basis-1/3")
       PayoutRecord(:currentPage="currentPage" :currentUser="currentUser")
 

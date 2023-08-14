@@ -28,8 +28,10 @@ const pageSearch = async( searchQuery: string) => {
     pages.value = pageData.value as unknown as Page[]
 }
 
+// Calling the search method using the url from the nav when the user searches from the nav. This is only called once.
 onMounted(() => {  
   pageSearch(router.query.search as string)    
+  searchQueryInput.value = router.query.search as string
 })
 </script>
 
