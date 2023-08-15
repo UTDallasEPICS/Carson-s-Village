@@ -8,15 +8,11 @@ const runtime = useRuntimeConfig()
 const stripeSecretKey = runtime.STRIPE_SECRET;
 export default defineEventHandler(async event => {
       const stripe = new Stripe(stripeSecretKey as string, { apiVersion:"2022-11-15"} )
-      //const stripe = await loadStripe(runtime.STRIPE_PUBLIC ? runtime.STRIPE_PUBLIC : '');
-        //const query = await getQuery(event)
         const body = await readBody(event)
-        //console.log(body)
-        if(event.context.user?.user_role == "advocate"){
+        
         try{
-
+          if(event.context.user?.user_role == "advocate"){
           // update success flag in transaction
-          //if(event.context.user.user_role === "advocate"){
           await prisma.$transaction([
             prisma.donationPayout.create({
               data: {
@@ -43,15 +39,12 @@ export default defineEventHandler(async event => {
           ]) 
           
           return true;
-        //}
-        //  return false
+        }
+          return await sendRedirect(event, loginRedirectUrl());
         } catch (e) {
           console.error(e)
-    
+          return false;
           }
-        } else{
-          return await sendRedirect(event, loginRedirectUrl());
-        }
     });
     
     

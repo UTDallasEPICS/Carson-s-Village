@@ -9,9 +9,6 @@ export default defineEventHandler(async (event) => {
     // Read the request body
     const data = await readBody(event)
 
-    // Log the incoming request body
-    //console.log(data)
-    //console.log("image data logging")
     // key used to retrieve image later on
     const key = nanoid()
     // gets presigned URL from aws.ts and returns it to the call from vue
@@ -19,8 +16,7 @@ export default defineEventHandler(async (event) => {
     const contentUrl=  "https://" + runtime.AWS_S3_BUCKET_NAME + "/" + key;
     const body = await readBody(event)
     const url = body.url
-    //const pageCuid = body.pageCuid;
-  //delete body.cuid;
+
   if(event.context.user.cuid != ""){
   //try{
   // Creates a new entry in the database in the page model to a specfic user

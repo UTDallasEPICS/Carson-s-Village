@@ -12,7 +12,6 @@ import type { User } from "@/types.d.ts"
 
 const users = ref<User[]>([])
 const cvuser = useCookie<User>('cvuser')
-//const family_cuid_data = computed(() => cvuser.value?.cuid)
 const isAdmin = computed(() => cvuser.value?.user_role == "advocate")
 
 // Method that retrieves all the authenticated users on the website (advocates and family members)

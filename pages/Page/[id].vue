@@ -12,7 +12,6 @@
 import type { Page, PageDonation, Image } from '@/types.d.ts'
 import {  dateFormat, donationFormat } from '@/utils'
 
-// shrink profile image selection to 100px, expand image gallery, place image upload next to selected image
 const pageData = ref<Page>({
     cuid: "",
     familyCuid: "",
@@ -96,9 +95,8 @@ if(pageDataDB.value !== false){
     family_cuid.value = pageData.value.familyCuid as string;
     familyCuid = family_cuid.value as string
 
-    console.log(donated_percentage.value as string)
     // Sets the front end images including the profile image
-    if(pageData.value.Images?.length!=0)
+    if(pageData.value.Images?.length != 0)
         imageData.value = pageData.value.Images as unknown as Image[] 
         for(let i = 0; i < imageData.value?.length; i++){
             if(imageData.value[i].cuid === pageData.value.profileImageCuid){
@@ -109,21 +107,8 @@ if(pageDataDB.value !== false){
 }
 }
 
-onMounted(() => { 
-    const progress=(document.querySelector('.progress') || document.createElement("null")) as HTMLElement ;
-    progress.style.width=progress?.getAttribute('donated-amount') + "%";
-    progress.style.opacity="1";
-})
-
 await getDataPage(id.value as string)
-// use flex for services 3 rows, justify-center: space-between
-// Use 2x2 grid to place donation entry component bellow images, and place obituary right next to that
-const images = ["../blue_image.png", "../profile.png", "../media2.png", "../media3.png", "../media4.png", "../media2.png"]
-const pageImages = ["../location_icon.png", "../clock_icon.png"]
-const profile = images[1];
-const theImage = images[1];
-const clock = pageImages[1]
-const location = pageImages[0]
+
 // images for testing if needed.
 /*const temp = ref([
 {url:"https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fm.media-amazon.com%2Fimages%2FI%2F61c8jg5GogL._AC_SS450_.jpg&f=1&nofb=1&ipt=3e12836a0e8c59555ce3cc5c3ba1941d4ebacfe86377cb3aee4ca65c81ac5cb0&ipo=images"},
@@ -136,7 +121,6 @@ const location = pageImages[0]
 ])*/
 
 const currentImage = ref(0)
-// TODO: if we reach either end we need to loop around
 // TODO: setup auto cycle on a timer
 const nextImage = () => { 
     if(currentImage.value === imageData.value.length - 1){
@@ -165,8 +149,6 @@ const prevImage = () => {
   .text-gray-dark.mx-auto.w-max.font-poppins.text-md {{ dateFormat(pageData.day_of_birth, true) + ' - ' + dateFormat(pageData.day_of_passing, true) }} 
   .flex.flex-col-reverse.gap-5(class="sm:grid sm:grid-cols-2")
     .relative.w-96.border.border-2.border-grey.p-1(v-if="imageData.length != 0" )
-      // TODO: icons instead of text, style to match existing page
-      // to do: use object fit to place button accourding to image height
       button.absolute.left-4.top-64.bg-black.text-white(@click="prevImage" style="opacity:0.7; --tw-text-opacity: 1; width: 46px; height: 46px; border-radius:50%; align-items: center; justify-content: center; line-height: 2; text-align: center;color: white;") &#60;
       button.absolute.right-8.top-64.bg-black.text-white(@click="nextImage" style="opacity:0.7; --tw-text-opacity: 1; width: 46px; height: 46px; border-radius:50%; align-items: center; justify-content: center; line-height: 2; text-align: center;color: white;") &#62;
       img.w-96(style="object-fit:cover" :src="imageData[currentImage].url")
@@ -207,22 +189,4 @@ const prevImage = () => {
         
     .col-md-8.mx-9(class="sm:col-span-1 sm:mr-11")
         .div.px-8.py-4(style="color: #6E6E6E; font-weight: 500; font-size: 14px; line-height: 28px; letter-spacing: -0.078px; word-break: break-word;" id="obituary") {{ pageData.obituary }}
-    //.form-horizontal()
-        .col-md-8.ml-4.pt-1.pr-5(class="sm:mx-4 sm:w-full sm:py-2")
-            CVInput(name='first_name' type='text' v-model="donorInfo.first_name" placeholder='First Name' required)
-        .col-md-8.ml-4.pt-1.pr-5(class="sm:mx-4 sm:w-full sm:py-2")
-            CVInput(name='last_name' type='text' v-model="donorInfo.last_name" placeholder='Last Name' required)
-        .col-md-8.ml-4.pt-4.pr-5.flex
-            input#anonymous(type='checkbox' class="sm:ml-1" name='anonymous' value='Bike')
-            label.mt-4.ml-4.text-md(for='anonymous' class="sm:mt-0" style="letter-spacing: 0.35px;")  Make this an anonymous donation
-        .col-md-8.ml-4.pt-4.pr-5.flex(class="sm:mx-4 sm:w-full sm:py-2")
-            textarea#comments.rounded-md.outline-0.border-box.w-full.p-2(style="border: 1px solid #c4c4c4;" name='comments' rows='3' v-model="donorInfo.comments" placeholder='Comments' required)
-        .col-md-8.ml-4.pt-4.pr-5.grid.grid-cols-3(class="sm:mx-4 sm:w-full sm:py-2")
-            span.rounded-l-md.p-3.col-span-2(style="text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25); border: 1px solid #c4c4c4;") Donation Amount
-            .flex
-                span.bg-gray-light.py-2.px-1.text-lg(style="text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25); border: 1px solid #c4c4c4; border-right:none;") $
-                input#donation_amount.bg-gray-light.outline-0.rounded-r-md.border-box.w-full.p-2(style="border: 1px solid #c4c4c4; border-left:none;" name='donation_amount' type="number" min="0.00" step="0.01" v-model="donationData.amount" required)
-        .col-md-8.ml-4.pt-6.pr-5.flex.items-center.justify-center
-            ActionButton.mx-auto.text-md(name='submit' @click="create_checkout_session") DONATE NOW
-//.div.px-8.py-4(style="color: #6E6E6E; font-weight: 500; font-size: 14px; line-height: 28px; letter-spacing: -0.078px; word-break: break-word;" id="obituary") {{ pageData.obituary }}
 </template>

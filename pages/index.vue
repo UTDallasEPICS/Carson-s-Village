@@ -28,12 +28,6 @@ const isAdmin = computed(() => cvuser.value?.user_role == "advocate")
     TextGrayField {{ cvuser?.email}}
     TextGrayField(class="sm:mx-auto") Phone:
     TextGrayField {{ cvuser?.phone}}
-  //.buttons.flex.flex-wrap.gap-3(class=" sm:gap-10 space-between  sm:my-24" )
-    LinkButton(:to="`/PageList/${cuid}`") List of client pages
-    LinkButton(to='/EditPage/0') Insert new page
-    LinkButton(v-if="isAdmin" to='/Users') See all users
-    LinkButton(v-if="isAdmin" to='/EditUser/0') Invite user
-    LinkButton(v-if="isAdmin" to='/FamilyTransactionList') See Family Donations
 </template>
 
 <style scoped></style>
