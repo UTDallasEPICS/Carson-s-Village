@@ -17,8 +17,6 @@ const isSearch = computed(() => route.path == "/Search/")
 const isFamilyPage = computed(() => route.path.includes("/Page/"))
 
 if(!cvCookie.value && !isSearch.value && !isFamilyPage.value){
-  console.log(route.path + 'redirected to search')
-  
   await navigateTo('/Search/?search=')
 }
 

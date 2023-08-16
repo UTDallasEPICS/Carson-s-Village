@@ -9,7 +9,6 @@ const prisma = new PrismaClient()
 
 export default defineEventHandler(async event => {
     const { family_cuid } = getQuery(event);
-    console.log(family_cuid)
     if((family_cuid as string) == "0" || family_cuid == undefined) {
         return []
     }

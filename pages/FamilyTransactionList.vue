@@ -113,7 +113,7 @@ const totalRemaining = computed(() => totalPageDonations.value - totalDistribute
           p.text-center.mt-2 {{ donationFormat(currentPage.amount_distributed) }}
         .border.border-grey-500.p-5
           p.self-center.text-center Remaining
-          p.text-center.mt-2 {{ donationFormat(currentPage.amount_raised - currentPage.amount_distributed) }}
+          p.text-center.mt-2 {{ donationFormat(currentPage?.amount_raised - currentPage?.amount_distributed) }}
     div(class="basis-1/3")
       PayoutRecord(:currentPage="currentPage" :currentUser="currentUser")
 

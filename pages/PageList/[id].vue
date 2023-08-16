@@ -49,8 +49,6 @@ await getDataPageList()
 </script>
 
 <template lang ="pug">
-//.row.p-3
-  LinkButton(to='/') Back
 .mx-auto.mt-1(class="w-11/12 sm:w-[1000px]" )
   table(style="table-layout: auto;")
     thead

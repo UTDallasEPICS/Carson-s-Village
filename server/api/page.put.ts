@@ -28,9 +28,6 @@ export default defineEventHandler(async event => {
         ...data
       }
     });
-      console.log(Images)
-      console.log(data.cuid)
-      console.log("images debug puts")
       // Initially the images are not linked to a family page, so we add it here 
       // Reason: the cuid for the family page is created in the above in the creation query
       await Promise.all(

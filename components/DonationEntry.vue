@@ -56,11 +56,8 @@ const props = defineProps({
     }
 })
 
-//const family_cuid = ref("0")
 const stripeLink_ref = ref("")
 const create_checkout_session = async () => {
-
-    //console.log("create session")
     const { data : sessionInfo } = await useFetch('/api/create_session', {
         method: 'POST',
         body: {cuid: props.pageCuid, family_cuid: props.familyCuid, amount_raised: Math.trunc(parseFloat(donationData.value.amount as unknown as string) * 100) as number}

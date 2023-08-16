@@ -20,9 +20,6 @@ export default defineEventHandler(async event => {
   if(event.context.user?.user_role === "advocate" || event.context.user.cuid === familyCuid ){
     try{
     // Creates a new entry in the database in the page model to a specfic user
-    console.log(data)
-    console.log("debugging images")
-    console.log(Images)
     const queryRes = await prisma.page.create({
       data: {
         ...data,cuid: undefined,
@@ -35,7 +32,6 @@ export default defineEventHandler(async event => {
         }
       });
 
-      console.log(queryRes)
       // Initially the images are not linked to a family page, so we add it here 
       // Reason: the cuid for the family page is created in the above in the creation query
       await Promise.all(

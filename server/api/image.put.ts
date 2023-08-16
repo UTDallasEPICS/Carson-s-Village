@@ -1,5 +1,5 @@
 // This file contains the code for handling the POST request to the image upload endpoint
-
+// Unused, but it works pretty well.
 import { nanoid } from "nanoid"
 import { getSignedFileUrl } from "./integrations/aws"
 import { PrismaClient } from "@prisma/client"
@@ -18,7 +18,6 @@ export default defineEventHandler(async event => {
     if(body.imageUploaded.url != body.replacedImage.url && body.replacedImage.url !== ""){
     try {
         // Replaces entry in the database in the image model for a specfic image
-
         await prisma.$transaction([
             prisma.image.delete({
             where: {
