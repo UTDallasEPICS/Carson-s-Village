@@ -24,6 +24,7 @@ const EmailTemplates = new emailTemplates({
     },
   },
 })
+
 const sendEmail = async (to:string, template:string, subject:string, data:string) => {
   const { html, text } = await EmailTemplates.renderAll(template, data)
   const sendEmailCommand = new SendEmailCommand({
@@ -35,22 +36,48 @@ const sendEmail = async (to:string, template:string, subject:string, data:string
 };
 
 const body = await readBody(event)
-
-delete body.Pages
-if(event.context.user?.user_role == "advocate"){
-try{
-  await sendEmail(body.email, "invitation", "Invitation to Carson's village", ({...body, url: `${runtime.BASEURL}api/login`}))
-  // creates a new user entry in the user model/table.
-  const queryRes = await prisma.user.create({
-    data: {
-      ...body,cuid:undefined,
+const now = (new Date()).toString();
+//delete body.page
+if(event.context.user?.user_role == "advocate" || event.context.user.user_role === "admin"){
+  try{
+    await sendEmail(body.email, "invitation", "Invitation to Carson's village", ({...body, url: `${runtime.BASEURL}api/login`}))
+    // creates a new user entry in the user model/table.
+    if(body.user_role == "advocate") {
+      delete body.Pages
+      const queryRes = await prisma.user.create({
+        data: {
+          ...body, cuid: undefined,
+          }
+        });
+      } else if( body.user_role == "family") {
+        const queryRes = await prisma.family.create({
+          data: {
+            ...body,createdAt: now, updatedAt: "", cuid: undefined,
+            AdvocateResponsible: {
+              connect: {
+                  cuid: (event.context.user.cuid as string) || "0"
+            },
+            Page: {
+              connect: {
+                cuid: body.pageCuid
+              }
+            },
+            //FamilyMember // todo add family members
+            /* 
+            familyMembers: {
+              connect: {
+                cuid: 
+  
+            */
+          }
       }
-    });
-  return true
-  } catch(e){
-    console.error(e);
-    return false
-  }
+      })
+      }
+    return true
+    } catch(e){
+      console.error(e);
+      return false
+    }
 } else{
   return await sendRedirect(event, loginRedirectUrl());
 }

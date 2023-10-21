@@ -25,20 +25,25 @@ const data_user = ref<User>({
 })
 
 const cvuser = useCookie('cvuser');
+const cvuser2 = useCookie<User>('cvuser')
 const router = useRoute()
+const isAuthorized = computed(() => { cvuser2.value?.user_role as string == "advocate" || cvuser2.value?.user_role == "admin"})
 const cuid = computed(() => router.params.id as string);
-
+const errorInPage = ref(false); 
 // Method that creates a new user on the database on the backend
 const save = async () => {
+    if(isAuthorized){
     const { data: result } = await useFetch('/api/user', {
         method: (cuid.value as string) !== "0" ? 'PUT' : 'POST',
         body: ({ ...data_user.value, cuid: cuid.value as string })
     })
     if(result.value == true){
+        errorInPage.value = false;
         await navigateTo('/Users')
     } else {
-        alert("Error in Creating User in the system.")
+        errorInPage.value = true;
     }
+}
 
 }
 
@@ -72,6 +77,9 @@ CVContainer
                 select.rounded-md.outline-0.border-box.w-full.p-2.bg-white(style="border: 1px solid #c4c4c4;" v-model='data_user.user_role') Select User Role
                     option family
                     option advocate
+
+        //add list box here
+        
         .py-4.grid(class="sm:grid-cols-3")
             CVLabel First Name
             .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
@@ -90,6 +98,8 @@ CVContainer
                 CVInput(v-model='data_user.phone' placeholder="(user defined, optional)")
             .col-md-10.py-2
                 ActionButton(@click="save") Save    
+        .py-4.grid(class="sm:grid-cols-3" Style="color:red" v-if="errorInPage")
+            CVLabel Error in Creating User in the system.
 </template>
 
 <style scoped></style>

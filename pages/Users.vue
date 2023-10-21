@@ -12,7 +12,7 @@ import type { User } from "@/types.d.ts"
 
 const users = ref<User[]>([])
 const cvuser = useCookie<User>('cvuser')
-const isAdmin = computed(() => cvuser.value?.user_role == "advocate")
+const isAuthorized = computed(() => cvuser.value?.user_role == "advocate" || cvuser.value?.user_role == "admin")
 
 // Method that retrieves all the authenticated users on the website (advocates and family members)
 const getDataUsers = async () => {
@@ -22,7 +22,7 @@ const getDataUsers = async () => {
     users.value = usersData.value as unknown as User[];
 }
 
-if( (isAdmin.value as boolean) == true )
+if( (isAuthorized.value as boolean) == true )
   await getDataUsers()
 </script>
 

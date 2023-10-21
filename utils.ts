@@ -1,6 +1,9 @@
 // Function that converts each date from the TimeStamp object from the date picker to a human readable format
 // The timezone is computed automatically.
 export function dateFormat(date: string, justDate = false) {
+  if(date === ""){
+    return new Date("January 1, 1970 00:00:00").toLocaleString()
+  }
   const dateObj = new Date(date);
   if(justDate) return dateObj.toLocaleDateString()
   return dateObj.toLocaleString();

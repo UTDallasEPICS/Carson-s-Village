@@ -39,11 +39,6 @@ export default defineEventHandler(async event => {
         }
         // include pages ids to check if that's the family's page. 
         setCookie(event, "cvuser", JSON.stringify(event.context.user))
-        /*if(event.context.user.user_role ==='family' && (event.node.req.url?.includes('/EditPage/') || event.node.req.url?.includes('/PageList/'))){
-          if((event.node.req.url?.includes('/EditPage/') && (!(event.node.req.url?.includes('/EditPage/0'))))){
-
-        }
-        }*/
       } catch (e) {
         console.error(e) 
         setCookie(event,'cvtoken','')

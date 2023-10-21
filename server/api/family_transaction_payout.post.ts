@@ -11,36 +11,36 @@ export default defineEventHandler(async event => {
         const body = await readBody(event)
         
         try{
-          if(event.context.user?.user_role == "advocate"){
+          if(event.context.user?.user_role == "admin" || event.context.user?.user_role == "advocate"){ //to do: remove advoate
           // update success flag in transaction
-          await prisma.$transaction([
-            prisma.donationPayout.create({
-              data: {
-                transaction_id: body.transaction_id,
-                amount: body.amount, 
-                distributionDate: body.distributionDate,
-                User: {
-                  connect: {
-                    cuid: body.familyCuid
+            await prisma.$transaction([
+              prisma.donationPayout.create({
+                data: {
+                  transaction_id: body.transaction_id,
+                  amount: body.amount, 
+                  distributionDate: body.distributionDate,
+                  User: {
+                    connect: {
+                      cuid: body.familyCuid
+                    }
+                  },
+                  Page: {
+                    connect: {
+                      cuid: body.pageCuid,
+                    }
                   }
+              }}),
+              prisma.page.update({
+                where: {
+                  cuid: body.pageCuid as string
                 },
-                Page: {
-                  connect: {
-                    cuid: body.pageCuid,
-                  }
-                }
-            }}),
-            prisma.page.update({
-              where: {
-                cuid: body.pageCuid as string
-              },
-              data: {amount_distributed: {increment: body.amount}}
-            })
-          ]) 
-          
-          return true;
-        }
-          return await sendRedirect(event, loginRedirectUrl());
+                data: {amount_distributed: {increment: body.amount}}
+              })
+            ]) 
+            
+            return true;
+          }
+            return await sendRedirect(event, loginRedirectUrl());
         } catch (e) {
           console.error(e)
           return false;

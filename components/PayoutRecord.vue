@@ -29,8 +29,13 @@ const save = async () => {
   })
   window.location.reload()
 };
-const setWholeAmount = function(){
+const setWholeAmountPage = function(){
   amount.value = (((props.currentPage.amount_raised as number) - (props.currentPage.amount_distributed as number)) / 100.0) + ""
+}
+
+const setWholeAmountFamily = function(){
+  console.log((((props.currentUser.Pages.reduce((acc: number, curr: Page) => acc + (curr.amount_raised as number), 0) || 0)) - (props.currentUser.Pages.reduce((acc: number, curr: Page) => acc + (curr.amount_distributed as number), 0) || 0) / 100.0) + "");
+  amount.value = (((props.currentUser.Pages.reduce((acc: number, curr: Page) => acc + (curr.amount_raised as number), 0) || 0)) - (props.currentUser.Pages.reduce((acc: number, curr: Page) => acc + (curr.amount_distributed as number), 0) || 0)) /100.0 + ""
 }
 
 </script>
@@ -46,14 +51,19 @@ p.text-center.mt-10 Record Payout
     span.whitespace-nowrap
       span.rounded-l-md.bg-gray-200.text-lg.p-2(style="text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25); border: 1px solid #c4c4c4;") $
       input.outline-0.rounded-r-md.border-box.p-2(style="border: 1px solid #c4c4c4;" v-model='amount')
+      max-w-min.mx-auto.flex.gap-2
+  div.mx-auto.flex.gap-2.justify-between() 
+    button.p-3.px-6.pt-2.bg-orange-500.rounded-lg.text-white(@click="setWholeAmountFamily") Distribute All Remaining Family Funds
+      
+    button.p-3.px-6.pt-2.bg-orange-500.rounded-lg.text-white(@click="setWholeAmountPage") Distribute All Remaining Page Funds
 
-  button.p-3.px-6.pt-2.bg-orange-500.rounded-lg.text-white(@click="setWholeAmount") Distribute All Remaining
+  //button.p-3.px-6.pt-2.bg-orange-500.rounded-lg.text-white(@click="setWholeAmount") Distribute All Remaining
 
   .flex.gap-5.justify-between
     p.self-center Stripe Transaction ID
     CVInput(v-model='transaction_id')
 
-  button.p-3.px-6.pt-2.bg-orange-500.rounded-lg.text-white(@click="save") Record Transaction
+  button.p-3.px-6.pt-2.bg-orange-500.rounded-lg.text-white(@click="save") Perform Distribution
 </template>
 
 <style scoped></style>

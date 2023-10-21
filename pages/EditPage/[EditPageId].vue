@@ -28,16 +28,16 @@ const data = ref<Page>({
     cuid: "",
     familyCuid: "",
     page_name: "",
-    day_of_birth: new Date().toString(),
-    day_of_passing: new Date().toString(),
-    visitation_date: new Date().toString(),
+    day_of_birth: "",
+    day_of_passing:"",
+    visitation_date: "",
     visitation_location: "",
     visitation_description: "",
-    funeral_date: new Date().toString(),
+    funeral_date: "",
     funeral_description: "",
     funeral_location: "",
     obituary: "",
-    deadline: new Date().toString(),
+    deadline: "",
     donation_goal: 0,
     amount_raised: 0,
     amount_distributed: 0,
@@ -70,7 +70,7 @@ const family_cuid = family_cuid_data.value as string
 const pageCuid = computed(() => router.params.EditPageId)
 data.value.cuid = cuid;
 data.value.familyCuid = family_cuid;
-
+const errorInPage = ref(false)
 // Method that saves form data to the database for a page that has cuid: router.params.EditPageId
 const save = async () => {
     const { data: saveSuccess } = await useFetch('/api/page', {
@@ -80,9 +80,10 @@ const save = async () => {
     }
     )
     if (saveSuccess.value == true) {
+        errorInPage.value = false;
         await navigateTo('/PageList/' + family_cuid)
     } else {
-        alert("Error in creating a page")
+        errorInPage.value = true;
     }
 };
 
@@ -90,7 +91,7 @@ const save = async () => {
 const getData = async (cuid: string) => {
     const pageFound = cvuser.value.Pages.find((i: Page) => i.cuid == router.params.EditPageId) != undefined
     // Allowing access to the user's EditPage only if user is an advocate or it is one of the family's family pages.
-    if (pageFound || cvuser.value.user_role == "advocate") {
+    if (pageFound || cvuser.value.user_role == "advocate" || cvuser.value.user_role == "admin") {
 
         const { data: pageData } = await useFetch('/api/page', {
             method: 'GET',
@@ -207,11 +208,11 @@ CVContainer
         .py-4.grid(class="sm:grid-cols-3")
             CVLabel Location 
             .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
-                CVInput(v-model='data.visitation_location' placeholder="required")
+                CVInput(v-model='data.visitation_location' placeholder="optional")
         .py-4.grid(class="sm:grid-cols-3")
             CVLabel Description
             .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
-                CVTextArea(v-model='data.visitation_description' placeholder="required")
+                CVTextArea(v-model='data.visitation_description' placeholder="optional")
 
         .information.bg-gray-300.rounded-md.mx-9.my-2.text-center(class="sm:text-start")
             CVLegend Funeral Information       
@@ -222,15 +223,15 @@ CVContainer
         .py-4.grid(class="sm:grid-cols-3")
             CVLabel Location 
             .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
-                CVInput(v-model='data.funeral_location' placeholder="required")
+                CVInput(v-model='data.funeral_location' placeholder="optional")
         .py-4.grid(class="sm:grid-cols-3")
             CVLabel Description
             .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
-                CVTextArea(v-model='data.funeral_description' placeholder="required")
+                CVTextArea(v-model='data.funeral_description' placeholder="optional")
         .py-4.grid(class="sm:grid-cols-3")
             CVLabel Obituary
             .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
-                CVTextArea(v-model='data.obituary' placeholder="required")
+                CVTextArea(v-model='data.obituary' placeholder="optional")
         .information.bg-gray-300.rounded-md.mx-9.my-2.text-center(class="sm:text-start")
             CVLegend Fundraising Information
         .py-4.grid(class="sm:grid-cols-3")
@@ -248,7 +249,9 @@ CVContainer
             .col-md-10.py-2.mt-2
                 LinkButton(v-if="pageCuid!=0" :to="`/Page/${cuid}`") View Page
             .col-md-10.p-2.pt-6.mt-2(class="sm:pt-2 sm:ml-auto sm:mr-6")
-                LinkButton(v-if="pageCuid!=0" to='#') Delete Page  
+                LinkButton(v-if="pageCuid!=0" to='#') Delete Page
+        .py-4.grid(class="sm:grid-cols-3" Style="color:red" v-if="errorInPage")
+            CVLabel Error in Creating page in the system.  
 </template>
 
 <style scoped></style>

@@ -17,11 +17,44 @@ model User {
   last_name   String @default("")
   phone       String @default("")
 
+  Family          Family?
+  familyCuid      String @default("")
   Pages           Page[]
   PageDonations   PageDonation[]
   DonationPayouts DonationPayout[]
 
   @@map("user_accounts")
+}
+
+model ConnectedAccount {
+  cuid String @id @default(cuid())
+  accountId String // Account id in Stripe in the form of (acct_XXXXXXXX)
+  //account_type String // Type of connected account: i.e. Express, Standard, or Custom
+  //account_status String // Active, inactive, etc.
+  //accountCapabilities String[] // The abilities a user has when it comes to directly pulling out money with say a bank transfer.
+  //day_of_birth String // Not needed for Stripe Connected Account?
+country_of_residence String
+
+  @@map("connected_accounts")
+}
+
+model Family {
+cuid String @id @default(cuid())
+//Stripe_Account ConnectedAccount?     @relation(fields: [Stripe_Account_id], references: cuid)
+Stripe_Account_id String?
+Stripe_Accont_cuid String?
+//family_members     User[]              //@relation("family_members", fields: [family_member_cuids], references: cuid) 
+family_member_cuids   String[]
+family_relationship String
+family_role String
+created_at String @default("")
+updated_at String
+Pages Page[]
+advocateCuid       String             @map("advocate_cuid") @unique
+AdvocateResponsible User              @relation( fields: [advocateCuid], references: cuid) 
+
+//PageDonations PageDonation[]
+//DonationPayouts DonationPayout[]
 }
 
 model DonationPayout {
@@ -40,11 +73,11 @@ model Page {
   page_name              String
   day_of_birth           String
   day_of_passing         String
-  visitation_date        String
+  visitation_date        String?
   visitation_location    String
   visitation_description String
 
-  funeral_date        String
+  funeral_date        String?
   funeral_location    String
   funeral_description String
 
@@ -60,6 +93,8 @@ model Page {
   Images             Image[]
   amount_distributed Int              @default(0)
   profileImageCuid   String           @map("profile_image_cuid")
+  Family             Family           @relation(fields: [familiesCuid], references: cuid)
+  familiesCuid       String           @map("families_cuid")
 
   @@map("pages")
 }

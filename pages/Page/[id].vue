@@ -59,7 +59,8 @@ var familyCuid = "0"
 const profileImageLink = ref("")
 const imageData = ref<Image[]>([])
 const donated_percentage = ref("0");
-const donated_percentage_100 = ref(0)
+//const donated_percentage_100 = ref(0)
+const donation_goal_provided = ref(false)
 const family_cuid = ref("0")
 const router = useRoute();
 const id = computed(() =>  router.params.id);
@@ -94,7 +95,9 @@ if(pageDataDB.value !== false){
     donated_percentage.value = (((pageData.value.amount_raised as number) / (pageData.value.donation_goal as number )) * 100).toFixed(1) + "";
     family_cuid.value = pageData.value.familyCuid as string;
     familyCuid = family_cuid.value as string
-
+    if(pageData.value.donation_goal as number > 0){
+        donation_goal_provided.value = true
+    }
     // Sets the front end images including the profile image
     if(pageData.value.Images?.length != 0)
         imageData.value = pageData.value.Images as unknown as Image[] 
@@ -104,6 +107,7 @@ if(pageDataDB.value !== false){
                 break;
             }
         }
+        console.log(donation_goal_provided.value)
 }
 }
 
@@ -177,9 +181,9 @@ const prevImage = () => {
 //.container(class="sm:overflow-hidden sm:w-3/4 sm:mt-4 sm:mx-auto sm:place-content-center sm:max-w-xl sm:p-6 sm:rounded-card sm:shadow-card")
 .grid(class="sm:grid-cols-2")
     .container.m-4.place-content-center.font-poppins(class="w-5/6 sm:m-auto sm:py-3")
-        .text-md.text-center.ml-4.my-3(class="sm:text-xl sm:my-6" style="letter-spacing: 0.35px; font-weight: 600; color: #646464;") {{ donationFormat(pageData.amount_raised)  + " raised of " +  donationFormat(pageData.donation_goal) + " goal" }}
+        .text-md.text-center.ml-4.my-3(v-if="donation_goal_provided" class="sm:text-xl sm:my-6" style="letter-spacing: 0.35px; font-weight: 600; color: #646464;") {{ donationFormat(pageData.amount_raised)  + " raised of " +  donationFormat(pageData.donation_goal) + " goal" }}
         .py-4
-        .progress-bar.overflow-hidden.ml-4.h-5.rounded-full(style="30px; background-color:#b5b5b5;")
+        .progress-bar.overflow-hidden.ml-4.h-5.rounded-full(v-if="donation_goal_provided" style="30px; background-color:#b5b5b5;")
             CVProgress(v-if="donated_percentage >= 100" modelBarWidth="100") {{ donated_percentage  + "%" }}
             CVProgress(v-else-if="donated_percentage > 0 && donated_percentage < 100" :modelBarWidth="donated_percentage") {{ donated_percentage  + "%" }}
             CVProgress(v-else style="text-align:center;" modelBarWidth="0")  {{ donated_percentage   + "%" }}

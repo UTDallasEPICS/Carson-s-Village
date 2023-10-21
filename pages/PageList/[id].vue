@@ -18,8 +18,8 @@ const family_cuid_data = computed(() => router.params.id)
 family_cuid.value = family_cuid_data.value as string;
 const pages = ref<Page[]>([])
 const cvuser = useCookie<User>('cvuser')
-const isAdmin = computed(() => cvuser.value?.user_role == "advocate")
-
+const isAdmin = computed(() => cvuser.value?.user_role == "advocate" || cvuser.value?.user_role == "admin")
+const isAdvocate = computed(() => cvuser.value?.user_role == "advocate");
 const data = ref<User>({
   cuid: "",
   first_name: "",
@@ -35,7 +35,7 @@ const data = ref<User>({
 
 // Method to populate the page list with databased on the cuid of the user in the url
 const getDataPageList = async () => {
-  if(cvuser.value.cuid === family_cuid.value || cvuser.value.user_role == "advocate"){
+  if(cvuser.value.cuid === family_cuid.value || cvuser.value.user_role == "advocate" || cvuser.value.user_role == "admin" ){
   const { data: pagesData } = await useFetch('/api/page_list', {
     method: 'GET',
     query: { family_cuid }

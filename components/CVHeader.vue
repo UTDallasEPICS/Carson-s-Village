@@ -3,7 +3,7 @@ import type { User, Page } from "@/types.d.ts"
 import { donationFormat, dateFormat } from '@/utils'
 const cvuser = useCookie<User>('cvuser');
 const cvtoken = useCookie('cvtoken');
-const isAdmin = computed(() => cvuser.value?.user_role == "advocate")
+const isAdmin = computed(() => cvuser.value?.user_role == "advocate" || cvuser.value?.user_role == "admin")
 const cuid = computed(() => cvuser.value?.cuid)
 const isLoggedIn = computed(() => cvuser.value)
 const pages = ref<Page[]>([])

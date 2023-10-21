@@ -13,7 +13,7 @@ export default defineEventHandler(async event => {
     if((family_cuid as string) == "0"  || family_cuid == undefined){
         return []
     }
-    if(event.context.user.user_role === "advocate" || event.context.user?.cuid === family_cuid ){
+    if(event.context.user.user_role === "advocate"  || event.context.user?.user_role == "admin" || event.context.user?.cuid === family_cuid ){
         const queryRes = await prisma.page.findMany({
             where: {
                 familyCuid : family_cuid as string

@@ -18,49 +18,52 @@ import {
 } from '@headlessui/vue'
 import type { User, Page, PageDonation, donation_payout } from "@/types.d.ts"
 import { donationFormat } from "@/utils"
-
-const { data: users } = await useFetch<User[]>('/api/users', {
-  method: 'GET',
-  default() {
-    return [] as any
-  }, 
-});
-
 const cvuser = useCookie<User>('cvuser');
-const currentUserCuid = ref<string>("")
-const currentUser = computed(() => users.value?.find(({ cuid }: User) => cuid == currentUserCuid.value) || {})
+const isAdmin = computed(() => cvuser.value?.user_role == "admin")
+const isAdvocate = computed(() => cvuser.value?.user_role == "advocate")
+if(isAdmin || isAdvocate ) { // todo after semester: remove || isAdvocate. Advocates should not have access to this page
+  const { data: users } = await useFetch<User[]>('/api/users', {
+    method: 'GET',
+    default() {
+      return [] as any
+    }, 
+  });
 
-currentUserCuid.value = users.value![0]?.cuid || ""
 
-const { data: pages } = await useFetch<Page[]>('/api/page_list', {
-  method: 'GET',
-  query: { family_cuid: currentUserCuid },
-  watch: [currentUserCuid],
-  default() {
-    return [] as any;
-  },
-});
+  const currentUserCuid = ref<string>("")
+  const currentUser = computed(() => users.value?.find(({ cuid }: User) => cuid == currentUserCuid.value) || {})
 
-const currentPageCuid = ref<string>("");
-const currentPage = computed(() => pages.value?.find(({ cuid }: Page) => cuid == currentPageCuid.value) || {});
-watchEffect(() => currentPageCuid.value = pages.value![0]?.cuid || "");
-const { data: donations } = await useFetch<PageDonation[]>('/api/family_donation', {
-  method: 'GET',
-  query: { family_cuid: currentUserCuid },
-  watch: [currentUserCuid],
-  default() {
-    return [] as any;
-  },
-});
+  currentUserCuid.value = users.value![0]?.cuid || ""
 
-const totalPageDonations = computed(() => donations.value?.reduce((acc: number, curr: PageDonation) => acc + curr.amount, 0) || 0);
-const totalDistributed = computed(() => pages.value?.reduce((acc: number, curr: Page) => acc + (curr.amount_distributed as number), 0) || 0);
-const totalRemaining = computed(() => totalPageDonations.value - totalDistributed.value);
+  const { data: pages } = await useFetch<Page[]>('/api/page_list', {
+    method: 'GET',
+    query: { family_cuid: currentUserCuid },
+    watch: [currentUserCuid],
+    default() {
+      return [] as any;
+    },
+  });
 
+  const currentPageCuid = ref<string>("");
+  const currentPage = computed(() => pages.value?.find(({ cuid }: Page) => cuid == currentPageCuid.value) || {});
+  watchEffect(() => currentPageCuid.value = pages.value![0]?.cuid || "");
+  const { data: donations } = await useFetch<PageDonation[]>('/api/family_donation', {
+    method: 'GET',
+    query: { family_cuid: currentUserCuid },
+    watch: [currentUserCuid],
+    default() {
+      return [] as any;
+    },
+  });
+
+  const totalPageDonations = computed(() => donations.value?.reduce((acc: number, curr: PageDonation) => acc + curr.amount, 0) || 0);
+  const totalDistributed = computed(() => pages.value?.reduce((acc: number, curr: Page) => acc + (curr.amount_distributed as number), 0) || 0);
+  const totalRemaining = computed(() => totalPageDonations.value - totalDistributed.value);
+}
 </script>
 
 <template lang="pug">
-.px-10   
+.px-10(v-if="isAdmin || isAdvocate" )   
   TitleComp.border-1.border-black Family Transaction List
   .flex.flex-wrap.w-full.justify-center.gap-5.mt-10
     // these two list boxes can be a distinct reusable component
@@ -96,25 +99,25 @@ const totalRemaining = computed(() => totalPageDonations.value - totalDistribute
       p.text-center.mt-10 Family 
       .flex.flex-col.w-full.justify-center.gap-5.mt-5
         .border.border-grey-500.p-5
-          p.self-center.text-center Donations
+          p.self-center.text-center Total Donations 
           p.text-center.mt-2 {{ donationFormat(totalPageDonations) }}
         .border.border-grey-500.p-5
-          p.self-center.text-center Distributed
+          p.self-center.text-center All Funds Distributed
           p.text-center.mt-2 {{ donationFormat(totalDistributed) }}
         .border.border-grey-500.p-5
-          p.self-center.text-center Remaining
+          p.self-center.text-center Remaining Amount to Distribute
           p.text-center.mt-2 {{ donationFormat(totalRemaining) }}
     div
       p.text-center.mt-10 Page 
       .flex.flex-col.w-full.justify-center.gap-5.mt-5
         .border.border-grey-500.p-5
-          p.self-center.text-center Donations
+          p.self-center.text-center All Page Donations
           p.text-center.mt-2 {{ donationFormat(currentPage.amount_raised) }}
         .border.border-grey-500.p-5
-          p.self-center.text-center Distributed
+          p.self-center.text-center All Page Funds Distributed
           p.text-center.mt-2 {{ donationFormat(currentPage.amount_distributed) }}
         .border.border-grey-500.p-5
-          p.self-center.text-center Remaining
+          p.self-center.text-center Remaining Amount to Distribute
           p.text-center.mt-2 {{ donationFormat(currentPage?.amount_raised - currentPage?.amount_distributed) }}
     div(class="basis-1/3")
       PayoutRecord(:currentPage="currentPage" :currentUser="currentUser")

@@ -1,0 +1,12 @@
+//.flex.gap-5
+//p.self-center Family
+//Listbox.shadow-sm.border.border-1.rounded-lg(as='div' v-model="familyMemberCuid")
+//.relativet
+//Transition(
+//leave-active-class='transition ease-in duration-100'
+//leave-from-class='opacity-100'
+//leave-to-class='opacity-0'
+//)
+//ListboxOptions(as='div' class='w-full absolute z-10 mt-10 bg-white shadow-lg max-h-60 rounded-md px-2 py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm' )
+    ListboxOption(as='div' v-for="family in familyData" :key="family.cuid" :value="family.cuid" class="px-2 border border-grey-500 py-1 my-1") {{ family.users[0]?.last_name }}
+    ListboxButton(class='text-left bg-white relative rounded-md pl-2 pr-10 py-2 sm:text-sm w-96') {{ familyMember ? familyMember.user.first_name + familyMember.user.last_name : 'Select family to add the user to' }} -- >
