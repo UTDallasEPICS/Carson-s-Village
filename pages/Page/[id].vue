@@ -169,6 +169,12 @@ const prevImage = () => {
             .font-outfit {{ "Location:" }}
             .font-outfit.whitespace-normal {{ pageData.visitation_location }}
           .font-outfit {{ pageData.visitation_description }}
+        .flex.flex-col.gap-5(v-else)
+          .text-gray-dark.font-poppins.text-2xl.text-left.font-bold(style="line-height: 36px; text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") Visitation
+          .flex.justify-between.gap-5
+            .font-outfit {{ "Date: TBD"}}
+          .flex.justify-between.gap-5
+            .font-outfit {{ "Location: TBD" }}
         .flex.flex-col.gap-5(v-if="pageData.funeral_date")
             .text-gray-dark.font-poppins.text-2xl.text-left.font-bold(style="line-height: 36px; text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") Funeral
             .flex.justify-between.gap-5
@@ -178,6 +184,12 @@ const prevImage = () => {
               .font-outfit {{ "Location:" }}
               .font-outfit.whitespace-normal {{ pageData.funeral_location }}
             .font-outfit {{ pageData.funeral_description }}
+        .flex.flex-col.gap-5(v-else)
+            .text-gray-dark.font-poppins.text-2xl.text-left.font-bold(style="line-height: 36px; text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") Funeral
+            .flex.justify-between.gap-5
+              .font-outfit {{ "Date: TBD" }}
+            .flex.justify-between.gap-5
+              .font-outfit {{ "Location: TBD" }}
 //.container(class="sm:overflow-hidden sm:w-3/4 sm:mt-4 sm:mx-auto sm:place-content-center sm:max-w-xl sm:p-6 sm:rounded-card sm:shadow-card")
 .grid(class="sm:grid-cols-2")
     .container.m-4.place-content-center.font-poppins(class="w-5/6 sm:m-auto sm:py-3")

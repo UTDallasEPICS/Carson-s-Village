@@ -2,7 +2,7 @@
 // The timezone is computed automatically.
 export function dateFormat(date: string, justDate = false) {
   if(date === ""){
-    return new Date("January 1, 1970 00:00:00").toLocaleString()
+    return ""
   }
   const dateObj = new Date(date);
   if(justDate) return dateObj.toLocaleDateString()

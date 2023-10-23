@@ -17,8 +17,10 @@ model User {
   last_name   String @default("")
   phone       String @default("")
 
-  Family          Family?
-  familyCuid      String @default("")
+  //FamilyAdvocate  Family? @relation("advocate_family", fields: [advocateCuid], references: cuid) // Unwanted. Put this here for oposit relationship for AdvocateResponsible in Family
+  //Family          Family? @relation(fields: [familyCuid], references: cuid) blocker
+  //familyCuid      String? @default("")
+  //advocateCuid    String @default("")
   Pages           Page[]
   PageDonations   PageDonation[]
   DonationPayouts DonationPayout[]
@@ -29,6 +31,8 @@ model User {
 model ConnectedAccount {
   cuid String @id @default(cuid())
   accountId String // Account id in Stripe in the form of (acct_XXXXXXXX)
+  //Family Family  @relation(fields: [familyCuid], references: [cuid])
+  //familyCuid String @unique
   //account_type String // Type of connected account: i.e. Express, Standard, or Custom
   //account_status String // Active, inactive, etc.
   //accountCapabilities String[] // The abilities a user has when it comes to directly pulling out money with say a bank transfer.
@@ -40,18 +44,16 @@ country_of_residence String
 
 model Family {
 cuid String @id @default(cuid())
-//Stripe_Account ConnectedAccount?     @relation(fields: [Stripe_Account_id], references: cuid)
+//Stripe_Account ConnectedAccount? blocker     
 Stripe_Account_id String?
 Stripe_Accont_cuid String?
-//family_members     User[]              //@relation("family_members", fields: [family_member_cuids], references: cuid) 
-family_member_cuids   String[]
-family_relationship String
-family_role String
+//family_members     User[] // need to implement this: blocker
+//family_member_cuids   String[]
 created_at String @default("")
-updated_at String
+updated_at String @default("")
 Pages Page[]
-advocateCuid       String             @map("advocate_cuid") @unique
-AdvocateResponsible User              @relation( fields: [advocateCuid], references: cuid) 
+advocateCuid       String @map("advocate_cuid")
+//AdvocateResponsible User?             @relation("advocate_family") 
 
 //PageDonations PageDonation[]
 //DonationPayouts DonationPayout[]
@@ -93,8 +95,8 @@ model Page {
   Images             Image[]
   amount_distributed Int              @default(0)
   profileImageCuid   String           @map("profile_image_cuid")
-  Family             Family           @relation(fields: [familiesCuid], references: cuid)
-  familiesCuid       String           @map("families_cuid")
+  Family             Family?           @relation(fields: [familiesCuid], references: cuid)
+  familiesCuid       String?           @map("families_cuid")
 
   @@map("pages")
 }
@@ -118,6 +120,6 @@ model Image {
   pageCuid String?
   Page     Page?   @relation(fields: [pageCuid], references: [cuid])
 
-  //@@unique([pageCuid, url])
+  @@unique([pageCuid, url])
   @@map("images")
 }

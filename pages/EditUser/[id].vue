@@ -10,6 +10,7 @@
 */
 
 import type { User } from '@/types.d.ts'
+import { Family } from '@prisma/client';
 
 const data_user = ref<User>({
     cuid: "",
@@ -23,6 +24,7 @@ const data_user = ref<User>({
     //PageDonations: [],
     //DonationPayouts: []
 })
+const data_all_users = ref<Family[]>([])
 
 const cvuser = useCookie('cvuser');
 const cvuser2 = useCookie<User>('cvuser')
@@ -33,7 +35,7 @@ const errorInPage = ref(false);
 // Method that creates a new user on the database on the backend
 const save = async () => {
     if(isAuthorized){
-    const { data: result } = await useFetch('/api/user', {
+        const { data: result } = await useFetch('/api/user', {
         method: (cuid.value as string) !== "0" ? 'PUT' : 'POST',
         body: ({ ...data_user.value, cuid: cuid.value as string })
     })
@@ -56,8 +58,31 @@ const getData = async (cuid: string) => {
     data_user.value = userData.value as unknown as User;
 }
 
-if ((cuid.value as string) !== "0")
+
+const getUsers = async () => {
+    const { data: userData } = await useFetch('/api/family', {
+        method: 'GET',
+    })
+    data_all_users.value = userData.value as unknown as Family[];
+    console.log(data_all_users.value);
+}
+if ((cuid.value as string) !== "0") {
     await getData(cuid.value as string);
+}
+    await getUsers()
+//add to template when family Backend done
+/*.flex.gap-5
+p.self-center Family
+Listbox.shadow-sm.border.border-1.rounded-lg(as='div' v-model="familyMemberCuid")
+.relative
+Transition(
+leave-active-class='transition ease-in duration-100'
+leave-from-class='opacity-100'
+leave-to-class='opacity-0'
+)
+ListboxOptions(as='div' class='w-full absolute z-10 mt-10 bg-white shadow-lg max-h-60 rounded-md px-2 py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm' )
+ListboxOption(as='div' v-for="family in familyData" :key="family.cuid" :value="family.cuid" class="px-2 border border-grey-500 py-1 my-1") {{ family.users[0]?.last_name }}
+    ListboxButton(class='text-left bg-white relative rounded-md pl-2 pr-10 py-2 sm:text-sm w-96') {{ familyMember ? familyMember.user.first_name + familyMember.user.last_name : 'Select family to add the user to' }} */
 </script>
 
 <template lang="pug">

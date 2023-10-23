@@ -50,18 +50,26 @@ if(event.context.user?.user_role == "advocate" || event.context.user.user_role =
           }
         });
       } else if( body.user_role == "family") {
+        const pages = body.pages
+        delete body.Pages
+        const userRes = await prisma.user.create({
+          data: {
+            ...body, cuid: undefined,
+            }})
+        
         const queryRes = await prisma.family.create({
           data: {
-            ...body,createdAt: now, updatedAt: "", cuid: undefined,
-            AdvocateResponsible: {
+            advocateCuid:event.context.user.cuid, Pages:pages, created_at: now, updated_at: "", cuid: undefined
+            /*,AdvocateResponsible: {
               connect: {
                   cuid: (event.context.user.cuid as string) || "0"
-            },
-            Page: {
-              connect: {
-                cuid: body.pageCuid
-              }
-            },
+            }
+          }*/
+            //User: {
+              //connect: {
+               // cuid: userRes.cuid
+              //}
+            //}
             //FamilyMember // todo add family members
             /* 
             familyMembers: {
@@ -70,9 +78,9 @@ if(event.context.user?.user_role == "advocate" || event.context.user.user_role =
   
             */
           }
-      }
-      })
-      }
+      })}
+      //})
+      //}
     return true
     } catch(e){
       console.error(e);
