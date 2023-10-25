@@ -67,6 +67,10 @@ export type PageDonation = {
   success: boolean 
   transaction_id: string  
   amount: number
+  donorFirstName: string
+  donorLastName: string
+  isAnonymous: boolean
+  comments: string
   //Page: Page
   //User: User
 }
@@ -87,4 +91,11 @@ export type Image = {
   url: string
   pageCuid: string
   //Page: Page
+}
+
+export type Reply = {
+  cuid: string,
+  pageCuid: string
+  name: string
+  reply: string
 }

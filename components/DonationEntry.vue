@@ -42,7 +42,11 @@ const donationData = ref<PageDonation>({
     cuid: "",
     pageCuid: "",
     familyCuid: "",
-    transaction_id : ""
+    transaction_id : "",
+    donorFirstName: "",
+    donorLastName: "",
+    comments: "", 
+    isAnonymous : false
 });
 
 const props = defineProps({

@@ -11,6 +11,7 @@
 
 import type { Page, PageDonation, Image } from '@/types.d.ts'
 import {  dateFormat, donationFormat } from '@/utils'
+import CVCommentSystem from '@/components/CVCommentSystem.vue'
 
 const pageData = ref<Page>({
     cuid: "",
@@ -52,7 +53,11 @@ const donationData = ref<PageDonation>({
     cuid: "",
     pageCuid: "",
     familyCuid: "",
-    transaction_id : ""
+    transaction_id : "",
+    donorFirstName: "",
+    donorLastName: "",
+    comments: "", 
+    isAnonymous : false
 });
 
 var familyCuid = "0"
@@ -186,7 +191,7 @@ const prevImage = () => {
         .well.well-sm
             h1.ml-4.pt-9.text-2xl.text-gray-dark(class="sm:text-3xl" style="font-weight: 600; letter-spacing: 0.35px;") Donor Information
         DonationEntry(:donationData="donationData" :pageCuid="pageCuid" :familyCuid="familyCuid")
-        
+        CVCommentSystem
     .col-md-8.mx-9(class="sm:col-span-1 sm:mr-11")
         .div.px-8.py-4(style="color: #6E6E6E; font-weight: 500; font-size: 14px; line-height: 28px; letter-spacing: -0.078px; word-break: break-word;" id="obituary") {{ pageData.obituary }}
 </template>
