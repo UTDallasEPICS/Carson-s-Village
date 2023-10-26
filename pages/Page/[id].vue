@@ -164,10 +164,10 @@ const prevImage = () => {
           .text-gray-dark.font-poppins.text-2xl.text-left.font-bold(style="line-height: 36px; text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") Visitation
           .flex.justify-between.gap-5
             .font-outfit {{ "Date:" }}
-            .font-outfit {{ dateFormat(pageData.visitation_date, true) }}
+            .font-outfit {{ pageData.visition_date ? dateFormat(pageData.visitation_date, true) : "TBD" }}
           .flex.justify-between.gap-5
             .font-outfit {{ "Location:" }}
-            .font-outfit.whitespace-normal {{ pageData.visitation_location }}
+            .font-outfit.whitespace-normal {{ pageData.visitation_location ? pageData.visitation_location : "TBD" }}
           .font-outfit {{ pageData.visitation_description }}
         .flex.flex-col.gap-5(v-else)
           .text-gray-dark.font-poppins.text-2xl.text-left.font-bold(style="line-height: 36px; text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") Visitation

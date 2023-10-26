@@ -1,5 +1,5 @@
 import { PrismaClient } from "@prisma/client"
-import {loginRedirectUrl} from "../api/auth0"
+import {loginRedirectUrl} from "./auth0"
 const prisma = new PrismaClient()
 
 /*
@@ -13,8 +13,8 @@ export default defineEventHandler(async event => {
   if(event.context.user.user_role === "advocate"  || event.context.user.user_role === "admin"){
     const queryRes = await prisma.family.findMany({
       include: {
-        Pages: true//,
-        //AdvocateResponsible: true
+        Pages: true,
+        AdvocateResponsible: true
     }
   });
   return queryRes;

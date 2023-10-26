@@ -27,10 +27,15 @@ export default defineEventHandler(async event => {
           connect: {
             cuid : familyCuid || "0"
           }
+        }
+        //,
+        /*Famiy: {
+          connect: {
+            cuid: 
+          }*/
         
           }
-        }
-      });
+        });
 
       // Initially the images are not linked to a family page, so we add it here 
       // Reason: the cuid for the family page is created in the above in the creation query

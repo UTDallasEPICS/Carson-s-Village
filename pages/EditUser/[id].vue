@@ -60,7 +60,7 @@ const getData = async (cuid: string) => {
 
 
 const getUsers = async () => {
-    const { data: userData } = await useFetch('/api/family', {
+    const { data: userData } = await useFetch('/api/families', {
         method: 'GET',
     })
     data_all_users.value = userData.value as unknown as Family[];

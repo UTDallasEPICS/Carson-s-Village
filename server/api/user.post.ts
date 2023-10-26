@@ -56,31 +56,19 @@ if(event.context.user?.user_role == "advocate" || event.context.user.user_role =
           data: {
             ...body, cuid: undefined,
             }})
-        
+              
         const queryRes = await prisma.family.create({
           data: {
-            advocateCuid:event.context.user.cuid, Pages:pages, created_at: now, updated_at: "", cuid: undefined
-            /*,AdvocateResponsible: {
+            advocateCuid: event.context.user.cuid, Pages:pages, created_at: now, updated_at: "", cuid: undefined,
+            family_members: {
               connect: {
-                  cuid: (event.context.user.cuid as string) || "0"
-            }
-          }*/
-            //User: {
-              //connect: {
-               // cuid: userRes.cuid
-              //}
-            //}
-            //FamilyMember // todo add family members
-            /* 
-            familyMembers: {
-              connect: {
-                cuid: 
-  
-            */
-          }
-      })}
-      //})
-      //}
+                cuid: userRes.cuid
+              }
+            }, 
+        }
+      }
+       )}
+       
     return true
     } catch(e){
       console.error(e);
