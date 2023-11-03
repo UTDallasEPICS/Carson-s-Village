@@ -21,8 +21,14 @@ import {
     ListboxOption,
 } from '@headlessui/vue'
 
+
 import type { Image, Page, User } from '@/types.d.ts'
+import { Family } from "@prisma/client"
 import { donationFormat } from '@/utils'
+
+const router = useRoute()
+const cvuser = useCookie<User>('cvuser');
+const cvuser2 = useCookie<User2>('cvuser')
 
 const data = ref<Page>({
     cuid: "",
@@ -42,7 +48,8 @@ const data = ref<Page>({
     amount_raised: 0,
     amount_distributed: 0,
     profileImageCuid: "",
-    Images: []
+    Images: [], 
+    familiesCuid: ""
 })
 type User2 = {
     cuid: string
@@ -56,23 +63,41 @@ type User2 = {
     //PageDonations: PageDonation[]
     //DonationPayouts: DonationPayout[]  
 }
+const data_family = ref<Family>({
+    cuid: "",
+    Stripe_Account_id: "",
+    Stripe_Accont_cuid: "",
+    created_at: "",
+    updated_at: Date.toString(),
+    family_name: "",
+    advocateCuid: cvuser2.value.cuid 
+
+})
+
+const isAdvocate = computed(() => cvuser.value?.user_role == "advocate")
+const data_all_users = ref<Family[]>([])
 
 const imageData = ref<Image[]>([])
 const profile_image = ref("")
 
-const router = useRoute()
-const cvuser = useCookie<User>('cvuser');
-const cvuser2 = useCookie<User2>('cvuser')
+const familiesCuid = ref("")
 const cuid_data = computed(() => router.params.EditPageId);
 const cuid = cuid_data.value as string
 const family_cuid_data = computed(() => cvuser.value?.cuid)
+console.log(cvuser.value);
 const family_cuid = family_cuid_data.value as string
 const pageCuid = computed(() => router.params.EditPageId)
 data.value.cuid = cuid;
 data.value.familyCuid = family_cuid;
+console.log(data.value)
 const errorInPage = ref(false)
 // Method that saves form data to the database for a page that has cuid: router.params.EditPageId
 const save = async () => {
+    if(isAdvocate.value) {
+        data.value.familiesCuid = familiesCuid.value
+    } else {
+        data.value.familiesCuid = cvuser.value.familyCuid
+    }
     const { data: saveSuccess } = await useFetch('/api/page', {
         // Checks if there is a pre-existing page to edit or if to create a new page    
         method: router.params.EditPageId !== "0" ? 'PUT' : 'POST',
@@ -86,13 +111,15 @@ const save = async () => {
         errorInPage.value = true;
     }
 };
-
+const currentFamily = computed(() => data_all_users.value?.find(({ cuid }: Family) => cuid == familiesCuid.value) || {});
+console.log(currentFamily)
 // Method to populate the form when editing a pre-existing page
 const getData = async (cuid: string) => {
     const pageFound = cvuser.value.Pages.find((i: Page) => i.cuid == router.params.EditPageId) != undefined
+    
+    console.log(data_all_users)
     // Allowing access to the user's EditPage only if user is an advocate or it is one of the family's family pages.
     if (pageFound || cvuser.value.user_role == "advocate" || cvuser.value.user_role == "admin") {
-
         const { data: pageData } = await useFetch('/api/page', {
             method: 'GET',
             query: { cuid: cuid }
@@ -103,7 +130,7 @@ const getData = async (cuid: string) => {
         // Not nessesary with proper logic in watchers?
         // 1st case is handling getting the profile image from the images in imageData
         // 2nd case is handling corrupt values of profile image of if the profileImageCuid exists 
-        // but is not in imageData
+        // but is not in imageDaconst currentFamily = computed(() => data_all_users.value?.find(({ cuid }: Family) => cuid == familyCuid.value) || {});ta
         if (imageData.value?.length != 0 && (data.value.profileImageCuid == "" || imageData.value?.find((i: Image) => i.cuid == data.value.profileImageCuid) == undefined))
             data.value.profileImageCuid = imageData.value[0].cuid;
         // handling the case where all the images where deleted but the profile image was not cleared out
@@ -157,6 +184,13 @@ watch(data, async () => {
     }
 }, { deep: true })
 
+if( isAdvocate.value ) {
+        const { data: Families } = await useFetch('/api/families', {
+            method: 'GET'
+        })
+        data_all_users.value = Families.value as unknown as Family[]
+}
+
 // Use watcher on for images to handle profile image on here to handle image remove edge cases.
 await getData(useRoute().params.EditPageId as string)
 const profileImage = computed(() => data.value?.Images.find((i: Image) => i.cuid == data.value?.profileImageCuid))
@@ -178,6 +212,19 @@ CVContainer
             CVLabel Page Name
             .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
                 CVInput(v-model='data.page_name' placeholder="required" required)
+        .py-4.grid(class="sm:grid-cols-3" v-if="isAdvocate")
+            CVLabel Family
+            .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
+                Listbox.shadow-sm.border.border-1.rounded-lg(as='div' v-model="familiesCuid")
+                    .relative
+                        Transition(
+                    leave-active-class='transition ease-in duration-100'
+                    leave-from-class='opacity-100'
+                    leave-to-class='opacity-0'
+                )
+                            ListboxOptions(as='div' class='w-full absolute z-10 mt-10 bg-white shadow-lg max-h-60 rounded-md px-2 py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm' )
+                                ListboxOption(as='div' v-for="family in data_all_users" :key="family.cuid" :value="family.cuid" class="px-2 border border-grey-500 py-1 my-1") {{ family.family_name }}
+                    ListboxButton(class='text-left bg-white relative rounded-md pl-2 pr-10 py-2 sm:text-sm w-96') {{ familiesCuid ? currentFamily.family_name : 'Select family to add the page to' }}
         ImagePreview(v-model:images="imageData" :images="data.Images" :profileImage="profileImage" @profileImage="setProfileImage" @images="setImagesPreview")
         .information.bg-gray-300.rounded-md.mx-9.my-2.text-center(class="sm:text-start")
             legend.ml-2(class="sm:py-1" style="font-weight: 700; text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") Profile Image Selection        

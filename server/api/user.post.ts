@@ -46,7 +46,7 @@ if(event.context.user?.user_role == "advocate" || event.context.user.user_role =
       delete body.Pages
       const queryRes = await prisma.user.create({
         data: {
-          ...body, cuid: undefined,
+          ...body, cuid: undefined, familyCuid: undefined
           }
         });
       } else if( body.user_role == "family") {
@@ -56,10 +56,10 @@ if(event.context.user?.user_role == "advocate" || event.context.user.user_role =
           data: {
             ...body, cuid: undefined,
             }})
-              
-        const queryRes = await prisma.family.create({
+        const queryRes = await prisma.family.update({
+          where: { cuid: body.familyCuid },
           data: {
-            advocateCuid: event.context.user.cuid, Pages:pages, created_at: now, updated_at: "", cuid: undefined,
+            Pages:pages, updated_at: now,
             family_members: {
               connect: {
                 cuid: userRes.cuid

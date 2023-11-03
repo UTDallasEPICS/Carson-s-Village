@@ -45,10 +45,11 @@ model ConnectedAccount {
 
 model Family {
 cuid String @id @default(cuid())
-//Stripe_Account ConnectedAccount? blocker     
+family_name String
+//Stripe_Account ConnectedAccount? 
 Stripe_Account_id String?
 Stripe_Accont_cuid String?
-family_members     User[] @relation("family_member") // need to implement this: blocker
+family_members     User[] @relation("family_member")
 created_at String @default("")
 updated_at String @default("")
 Pages Page[]
@@ -72,8 +73,8 @@ model DonationPayout {
 model Page {
   cuid                   String @id @default(cuid())
   page_name              String
-  day_of_birth           String
-  day_of_passing         String
+  day_of_birth           String?
+  day_of_passing         String?
   visitation_date        String?
   visitation_location    String
   visitation_description String

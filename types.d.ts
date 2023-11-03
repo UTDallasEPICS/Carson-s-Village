@@ -43,7 +43,8 @@ export type Page = {
     amount_raised: number | string
     amount_distributed: number | string
     profileImageCuid: string
-    Images: Image[]
+    Images: Image[],
+    familiesCuid: String
   }
   
 export type User = {
@@ -54,7 +55,8 @@ export type User = {
     email: string,
     middle_name: string,
     phone: string,
-    Pages: Page[]
+    Pages: Page[],
+    familyCuid: String
     //PageDonations: PageDonation[]
     //DonationPayouts: DonationPayout[]  
 }

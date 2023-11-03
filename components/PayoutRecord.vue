@@ -34,7 +34,6 @@ const setWholeAmountPage = function(){
 }
 
 const setWholeAmountFamily = function(){
-  console.log((((props.currentUser.Pages.reduce((acc: number, curr: Page) => acc + (curr.amount_raised as number), 0) || 0)) - (props.currentUser.Pages.reduce((acc: number, curr: Page) => acc + (curr.amount_distributed as number), 0) || 0) / 100.0) + "");
   amount.value = (((props.currentUser.Pages.reduce((acc: number, curr: Page) => acc + (curr.amount_raised as number), 0) || 0)) - (props.currentUser.Pages.reduce((acc: number, curr: Page) => acc + (curr.amount_distributed as number), 0) || 0)) /100.0 + ""
 }
 

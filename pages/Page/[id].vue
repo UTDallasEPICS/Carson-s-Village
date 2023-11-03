@@ -30,7 +30,8 @@ const pageData = ref<Page>({
     amount_raised: 0,
     amount_distributed: 0,
     profileImageCuid: "",
-    Images: []
+    Images: [],
+    familiesCuid: ""
 });
 
 type donor = {
@@ -164,7 +165,7 @@ const prevImage = () => {
           .text-gray-dark.font-poppins.text-2xl.text-left.font-bold(style="line-height: 36px; text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") Visitation
           .flex.justify-between.gap-5
             .font-outfit {{ "Date:" }}
-            .font-outfit {{ pageData.visition_date ? dateFormat(pageData.visitation_date, true) : "TBD" }}
+            .font-outfit {{ dateFormat(pageData.visitation_date, true) }}
           .flex.justify-between.gap-5
             .font-outfit {{ "Location:" }}
             .font-outfit.whitespace-normal {{ pageData.visitation_location ? pageData.visitation_location : "TBD" }}

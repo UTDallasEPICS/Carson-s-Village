@@ -31,6 +31,8 @@ ClientOnly
         p.uppercase.white.w-max Users
       NavLinkButton( v-if="isAdmin" to='/EditUser/0') 
         p.uppercase.white.w-max Invite user
+      NavLinkButton( v-if="isAdmin" to='/EditFamily') 
+        p.uppercase.white.w-max Create Family
       NavLinkButton(to="/") 
         p.uppercase.white.w-max Home
       NavLinkButton(v-if="isAdmin" to='/FamilyTransactionList') 

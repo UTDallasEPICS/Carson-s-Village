@@ -21,14 +21,14 @@ import { donationFormat } from "@/utils"
 const cvuser = useCookie<User>('cvuser');
 const isAdmin = computed(() => cvuser.value?.user_role == "admin")
 const isAdvocate = computed(() => cvuser.value?.user_role == "advocate")
-if(isAdmin || isAdvocate ) { // todo after semester: remove || isAdvocate. Advocates should not have access to this page
+//if(isAdmin || isAdvocate ) { // todo after semester: remove || isAdvocate. Advocates should not have access to this page
   const { data: users } = await useFetch<User[]>('/api/users', {
     method: 'GET',
     default() {
       return [] as any
     }, 
   });
-
+console.log(users.value);
 
   const currentUserCuid = ref<string>("")
   const currentUser = computed(() => users.value?.find(({ cuid }: User) => cuid == currentUserCuid.value) || {})
@@ -59,7 +59,7 @@ if(isAdmin || isAdvocate ) { // todo after semester: remove || isAdvocate. Advoc
   const totalPageDonations = computed(() => donations.value?.reduce((acc: number, curr: PageDonation) => acc + curr.amount, 0) || 0);
   const totalDistributed = computed(() => pages.value?.reduce((acc: number, curr: Page) => acc + (curr.amount_distributed as number), 0) || 0);
   const totalRemaining = computed(() => totalPageDonations.value - totalDistributed.value);
-}
+//}
 </script>
 
 <template lang="pug">
@@ -90,7 +90,7 @@ if(isAdmin || isAdvocate ) { // todo after semester: remove || isAdvocate. Advoc
             leave-to-class='opacity-0'
           )
             ListboxOptions(as='div' class='w-full absolute z-10 mt-10 bg-white shadow-lg max-h-60 rounded-md px-2 py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm' )
-              ListboxOption(as='div' v-for="page in pages" :key="page.cuid" :value="page.cuid" class="px-2 border border-grey-500 py-1 my-1") {{ page.page_name }} | {{ donationFormat(page.amount_raised - page.amount_distributed) }}
+              ListboxOption(as='div' v-for="page in pages" :key="page.cuid" :value="page.cuid" class="px-2 border border-grey-500 py-1 my-1") {{ page.page_name }} | {{ donationFormat(page?.amount_raised - page?.amount_distributed) }}
         ListboxButton(class='text-left bg-white relative rounded-md pl-2 pr-10 py-2 sm:text-sm w-96') {{ currentPageCuid ? currentPage.page_name : 'Select Page' }}
   
   .flex.gap-5.justify-around
@@ -112,10 +112,10 @@ if(isAdmin || isAdvocate ) { // todo after semester: remove || isAdvocate. Advoc
       .flex.flex-col.w-full.justify-center.gap-5.mt-5
         .border.border-grey-500.p-5
           p.self-center.text-center All Page Donations
-          p.text-center.mt-2 {{ donationFormat(currentPage.amount_raised) }}
+          p.text-center.mt-2 {{ donationFormat(currentPage?.amount_raised) }}
         .border.border-grey-500.p-5
           p.self-center.text-center All Page Funds Distributed
-          p.text-center.mt-2 {{ donationFormat(currentPage.amount_distributed) }}
+          p.text-center.mt-2 {{ donationFormat(currentPage?.amount_distributed) }}
         .border.border-grey-500.p-5
           p.self-center.text-center Remaining Amount to Distribute
           p.text-center.mt-2 {{ donationFormat(currentPage?.amount_raised - currentPage?.amount_distributed) }}
@@ -132,6 +132,7 @@ if(isAdmin || isAdvocate ) { // todo after semester: remove || isAdvocate. Advoc
               th.px-8(style="width:25%; --tw-bg-opacity: 1; border-radius: 0px 60px 0px 0px; background-color: rgb(110 171 191 / var(--tw-bg-opacity));") Page Cuid
           tr(v-for="(item, i) in pages" 
               :key="i" 
+              :class="{'bg-gray-200': (i+1) % 2}"
           )
               td.font-poppins.text-gray-dark.font-bold(style="text-align: center")  {{ item?.page_name }}
               td.font-poppins.text-gray-dark.font-bold(style="text-align: center")  {{ donationFormat(item.amount_raised) }}
@@ -148,6 +149,7 @@ if(isAdmin || isAdvocate ) { // todo after semester: remove || isAdvocate. Advoc
               th.px-8(style="width:25%; --tw-bg-opacity: 1; border-radius: 0px 60px 0px 0px; background-color: rgb(110 171 191 / var(--tw-bg-opacity));") Amount
           tr(v-for="(item, i) in donations" 
               :key="i" 
+              :class="{'bg-gray-200': (i+1) % 2}"
           )
               td.font-poppins.text-gray-dark.font-bold(style="text-align: center")  {{ item.transaction_id }}
               td.font-poppins.text-gray-dark.font-bold(style="text-align: center")  {{ item.cuid }}
