@@ -93,7 +93,7 @@ export type Image = {
   //Page: Page
 }
 
-export type Reply = {
+export type CVReply = {
   cuid: string,
   pageCuid: string
   name: string

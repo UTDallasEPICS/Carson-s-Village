@@ -60,6 +60,8 @@ model Page {
   Images             Image[]
   amount_distributed Int              @default(0)
   profileImageCuid   String           @map("profile_image_cuid")
+  Reply              Reply[]          
+
 
   @@map("pages")
 }
@@ -68,9 +70,9 @@ model PageDonation {
   cuid           String  @id @default(cuid())
   familyCuid     String  @map("family_cuid")
   pageCuid       String  @map("page_cuid")
-  donorFirstName String
-  donorLastName  String
-  comments       String
+  donorFirstName String  @default("")
+  donorLastName  String  @default("")
+  comments       String  @default("")
   isAnonymous    Boolean @default(false)
   success        Boolean @default(false)
   transaction_id String  @unique
