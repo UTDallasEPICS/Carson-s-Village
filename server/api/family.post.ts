@@ -46,7 +46,7 @@ if(event.context.user?.user_role == "advocate" || event.context.user.user_role =
       const queryRes = await prisma.family.create({
         data: {
           family_name: family_name, advocateCuid: event.context.user.cuid, created_at: now, updated_at: "", cuid: undefined,
-          family_members: {
+          FamilyMembers: {
             create: {
               ...body, cuid: undefined
             }

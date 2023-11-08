@@ -44,17 +44,19 @@ model ConnectedAccount {
 }
 
 model Family {
-cuid String @id @default(cuid())
-family_name String
+cuid String               @id @default(cuid())
+family_name               String
 //Stripe_Account ConnectedAccount? 
-Stripe_Account_id String?
-Stripe_Accont_cuid String?
-family_members     User[] @relation("family_member")
-created_at String @default("")
-updated_at String @default("")
-Pages Page[]
-advocateCuid       String @map("advocate_cuid")
-AdvocateResponsible User? @relation("advocate_family", fields: [advocateCuid], references: [cuid]) 
+Stripe_Account_id         String?
+Stripe_Accont_cuid        String?
+FamilyMembers             User[] @relation("family_member")
+created_at                String @default("")
+updated_at                String @default("")
+Pages                     Page[]
+FamilyDonations           PageDonation[]
+FamilyDonationPayouts     DonationPayout[]
+advocateCuid              String @map("advocate_cuid")
+AdvocateResponsible       User? @relation("advocate_family", fields: [advocateCuid], references: [cuid]) 
 //PageDonations PageDonation[]
 //DonationPayouts DonationPayout[]
 }
@@ -62,10 +64,12 @@ AdvocateResponsible User? @relation("advocate_family", fields: [advocateCuid], r
 model DonationPayout {
   cuid             String @id @default(cuid())
   familyCuid       String @map("family_cuid")
+  familiesCuid     String @map("families_cuid")
   pageCuid         String @map("page_cuid")
   transaction_id   String @unique
   amount           Int    @default(0)
   distributionDate String
+  Family           Family @relation(fields: [familiesCuid], references: cuid)
   Page             Page   @relation(fields: [pageCuid], references: cuid)
   User             User   @relation(fields: [familyCuid], references: cuid)
 }
@@ -103,10 +107,12 @@ model Page {
 model PageDonation {
   cuid           String  @id @default(cuid())
   familyCuid     String  @map("family_cuid")
+  familiesCuid   String @map("families_cuid")
   pageCuid       String  @map("page_cuid")
   success        Boolean @default(false)
   transaction_id String  @unique
   amount         Int //In cents
+  Family           Family @relation(fields: [familiesCuid], references: cuid)
   Page           Page    @relation(fields: [pageCuid], references: cuid)
   User           User    @relation(fields: [familyCuid], references: cuid)
 

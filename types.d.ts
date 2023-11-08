@@ -24,6 +24,9 @@ export type PageDonation = PPageDonation & {
   PageDonations?: PageDonation[];
   DonationPayout?: DonationPayout[];
 };*/
+
+import { DonationPayout } from "@prisma/client"
+
 // TODO: import types from prisma, export them with relations added
 export type Page = {
     page_name: string,
@@ -46,12 +49,27 @@ export type Page = {
     Images: Image[],
     familiesCuid: String
   }
-  
+
+export type Family = {
+  cuid: string;
+  family_name: string;
+  Stripe_Account_id: string | null;
+  Stripe_Accont_cuid: string | null;
+  created_at: string;
+  updated_at: string;
+  advocateCuid: string;
+  Pages: Page[];
+  FamilyMembers: User[];
+  AdvocateResponsible: User;
+  FamilyDonations: PageDonation[];
+  FamilyDonationPayouts: DonationPayout[];
+}
+
 export type User = {
     cuid: string
     first_name: string,
     last_name: string,
-    user_role: Object,
+    user_role: string,
     email: string,
     middle_name: string,
     phone: string,
@@ -64,7 +82,8 @@ export type User = {
 
 export type PageDonation = {
   cuid: string  
-  familyCuid: string  
+  familyCuid: string,
+  familiesCuid: String  
   pageCuid: string  
   success: boolean 
   transaction_id: string  

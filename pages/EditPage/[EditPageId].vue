@@ -104,9 +104,11 @@ const save = async () => {
         body: ({ ...data.value })
     }
     )
-    if (saveSuccess.value == true) {
+    if (saveSuccess.value == true && isAdvocate.value) {
         errorInPage.value = false;
-        await navigateTo('/PageList/' + family_cuid)
+        await navigateTo('/PageList/' + family_cuid + '?fromUsers=1')
+    } else if(saveSuccess.value == true && !isAdvocate.value){
+        await navigateTo('/PageList/' + data.value.familiesCuid + '?fromUsers=0')
     } else {
         errorInPage.value = true;
     }
