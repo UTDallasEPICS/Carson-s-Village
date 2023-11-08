@@ -37,6 +37,8 @@ model Family {
   AdvocateResponsible User?            @relation("advocate_family", fields: [advocateCuid], references: [cuid])
   PageDonations       PageDonation[]
   DonationPayouts     DonationPayout[]
+
+  @@map("family")
 }
 
 model DonationPayout {
@@ -48,6 +50,8 @@ model DonationPayout {
   Page             Page    @relation(fields: [pageCuid], references: cuid)
   Family           Family? @relation(fields: [familyCuid], references: [cuid])
   familyCuid       String?
+
+  @@map("donation_payout")
 }
 
 model Page {
@@ -75,7 +79,7 @@ model Page {
   amount_distributed Int              @default(0)
   profileImageCuid   String           @map("profile_image_cuid")
   Family             Family?          @relation(fields: [familyCuid], references: cuid)
-  familyCuid         String?          @map("families_cuid")
+  familyCuid         String?          @map("family_cuid")
 
   @@map("pages")
 }
