@@ -2,7 +2,7 @@
 import CVTextArea from './CVTextArea.vue';
 import CVInput from './CVInput.vue';
 import ActionButton from './ActionButton.vue';
-import type {CVReply} from '@/types.d.ts'
+import type {Reply} from '@/types.d.ts'
 
 const props = defineProps({
     pageCuid: {
@@ -15,15 +15,23 @@ const props = defineProps({
     }
 })
 
-const replyData = ref<CVReply>({
+const replyData = ref<Reply>({
     cuid: "",
     pageCuid: props.pageCuid,
+    familyCuid: "",
     name: "",
     reply:"",
 })
 
-const submitComment = () => {
-    ;
+const submitComment = async () => {
+    const response = await useFetch('/api/replies', {
+      method: 'POST',
+      body: {
+        pageCuid: replyData.value.pageCuid,
+        familyCuid: replyData.value.familyCuid,
+        replyData,
+      },
+    });
 };
 </script>
 

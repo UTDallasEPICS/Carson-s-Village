@@ -93,9 +93,10 @@ export type Image = {
   //Page: Page
 }
 
-export type CVReply = {
+export type Reply = {
   cuid: string,
   pageCuid: string
+  familyCuid: string
   name: string
   reply: string
 }

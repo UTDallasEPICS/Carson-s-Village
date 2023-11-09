@@ -85,9 +85,10 @@ model PageDonation {
 
 model Reply {
   cuid          String  @id @default(cuid())
-  pageCuid      String
-  reply         String
-  name          String?
+  pageCuid      String  @map("page_cuid")
+  familyCuid    String  @map("family_cuid")
+  reply         String  @default("")
+  name          String? @default("")
   Page          Page    @relation(fields: [pageCuid], references: cuid)
 }
 
