@@ -9,14 +9,14 @@ const stripeSecretKey = runtime.STRIPE_SECRET;
 export default defineEventHandler(async event => {
       const stripe = new Stripe(stripeSecretKey as string, { apiVersion:"2022-11-15"} )
         const body = await readBody(event)
-        const familiesCuid = body.familiesCuid
+        const familyCuid = body.familyCuid
         try{
           if(event.context.user?.user_role == "admin" || event.context.user?.user_role == "advocate"){ //to do: remove advoate
           // update success flag in transaction
           
             /*const family = await prisma.family.findFirst({
               where: {
-                  cuid: familiesCuid
+                  cuid: familyCuid
               }
           })*/
           /*var familyExists = false;
@@ -29,7 +29,7 @@ export default defineEventHandler(async event => {
           /*const transfer = await stripe.transfers.create({
               amount: body.amount,
               currency: 'USD',
-              destination: body.connected_account_id,
+              destination: family.connected_account_id,
               // maybe add a transfer group
           })*/
           

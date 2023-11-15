@@ -23,6 +23,8 @@ const family_cuid = ref("")
 const router = useRoute()
 const family_cuid_data = computed(() => router.params.id)
 family_cuid.value = family_cuid_data.value as string;
+const user_cuid_data = computed(() => router.params.id)
+const user_cuid = user_cuid_data.value as string
 const pages = ref<Page[]>([])
 const cvuser = useCookie<User>('cvuser')
 const isAdmin = computed(() => cvuser.value?.user_role == "advocate" || cvuser.value?.user_role == "admin")
@@ -41,7 +43,7 @@ const data = ref<User>({
   //DonationPayouts: []
 })
 const isFamily = ref(false)
-const familiesCuid = ref("")
+const familyCuid = ref("")
 const data_families = ref<Family[]>([])
 const fromUser = computed(() => router.query.fromUsers as string == '1')
 console.log(router.query.fromUsers)
@@ -55,16 +57,13 @@ const getDataPageList = async () => {
   // extracting the families that the advocate is responsible for
   const { data: advocateFamilies } = await useFetch('/api/user', {
     method: 'GET',
-    query: { cuid:family_cuid },
+    query: { cuid: user_cuid },
     default() {
       return [] as any
     }
   })
 
  data_families.value = advocateFamilies.value?.AdvocateFamily as unknown as Family[]
- //if(data_families.value.length === 0){
-  //  isFamily.value = true
-  //}
   console.log(fromUser.value)
   if(fromUser.value) {
     const { data: family_pages } = await useFetch('/api/family_pages', {
@@ -76,17 +75,7 @@ const getDataPageList = async () => {
   }) 
   pages.value = family_pages.value as unknown as Page[]
 
-  } /*else if(!fromUser.value){
-  const { data: family_pages } = await useFetch('/api/family_pages', {
-    method: 'GET',
-    query: { family_cuid: familiesCuid },
-    watch: [ familiesCuid ],
-    default() {
-      return [] as any
-    }
-    
-  })
-    pages.value = family_pages.value as unknown as Page[]*/
+  } 
 } else if(cvuser.value.familyCuid === family_cuid.value ){
   const { data: family_pages } = await useFetch('/api/family_pages', {
     method: 'GET',
@@ -96,35 +85,45 @@ const getDataPageList = async () => {
     }
   }) 
 
-  pages.value = (family_pages.value ) as unknown as Page[]
+  pages.value = (family_pages.value) as unknown as Page[]
 }
   const isEmpty = computed(() => pages.value.length == 0)
-  //console.log(isFamily.value)
+  
   if(fromUser.value && cvuser.value.user_role == "advocate" ) {
     const { data: familyData } = await useFetch('/api/page_list', {
     method: 'GET',
-    query: { family_cuid },
+    query: { user_cuid },
     default() {
       return [] as any
     }
   })
-  pages.value = (familyData.value ) as unknown as Page[]
+  pages.value = (familyData.value) as unknown as Page[]
   }
 }
 
 const { data: family_pages } = await useFetch('/api/family_pages', {
     method: 'GET',
-    query: { family_cuid: familiesCuid, excuse: cvuser.value.user_role == 'family' },
-    watch: [ familiesCuid ],
+    query: { family_cuid: familyCuid, excuse: cvuser.value.user_role == 'family' },
+    watch: [ familyCuid ],
     default() {
       return [] as any
     }
     
   })
+  /*
+    use
+    prisma.page.FindMany({
+      where: { 
+        Family: {
+          User: { cuid: body.cuid}
+        }
+      }
+    })
+  */
   //pages.value = family_pages.value as unknown as Page[]
-//watchEffect(() => familiesCuid.value = data_families.value![0]?.cuid || "");
+//watchEffect(() => familyCuid.value = data_families.value![0]?.cuid || "");
   //pages.value = familyData.value?.Pages as unknown as Page[]
-const currentFamily = computed(() => data_families.value?.find(({ cuid }: Family) => cuid == familiesCuid.value) || {});
+const currentFamily = computed(() => data_families.value?.find(({ cuid }: Family) => cuid == familyCuid.value) || {});
 
 await getDataPageList()
 </script>
@@ -133,7 +132,7 @@ await getDataPageList()
 .py-4.grid(class="sm:grid-cols-3" v-if="isAdvocate && !fromUser")
     CVLabel Family
     .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
-      Listbox.shadow-sm.border.border-1.rounded-lg(v-if="isAdvocate" as='div' v-model="familiesCuid")
+      Listbox.shadow-sm.border.border-1.rounded-lg(v-if="isAdvocate" as='div' v-model="familyCuid")
         .relative
           Transition(
                     leave-active-class='transition ease-in duration-100'
@@ -142,7 +141,7 @@ await getDataPageList()
                     )
             ListboxOptions(as='div' class='w-full absolute z-10 mt-10 bg-white shadow-lg max-h-60 rounded-md px-2 py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm' )
                 ListboxOption(as='div' v-for="family in data_families" :key="family.cuid" :value="family.cuid" class="px-2 border border-grey-500 py-1 my-1") {{ family.family_name }}
-          ListboxButton(class='text-left bg-white relative rounded-md pl-2 pr-10 py-2 sm:text-sm w-96') {{ familiesCuid ? currentFamily.family_name : 'Select family to view pages from' }}  
+          ListboxButton(class='text-left bg-white relative rounded-md pl-2 pr-10 py-2 sm:text-sm w-96') {{ familyCuid ? currentFamily.family_name : 'Select family to view pages from' }}  
 .mx-auto.mt-1(class="w-11/12 sm:w-[1200px]" v-if="!isAdvocate || fromUser")
   table(style="table-layout: auto;")
     thead
@@ -157,7 +156,7 @@ await getDataPageList()
       :class="{'bg-gray-200': (i+1) % 2}"
       )
         td.font-poppins.text-gray-dark.font-bold(style="text-align: center;") {{ item.page_name }}
-        td.font-poppins.text-gray-dark.font-bold(style="text-align: center;" v-if="isAdmin") {{ item.familyCuid }}
+        td.font-poppins.text-gray-dark.font-bold(style="text-align: center;" v-if="isAdmin") {{ item.userCuid }}
         td.font-poppins.text-gray-dark.font-bold(style="text-align: center;") {{ dateFormat(item.deadline) }}
         td
           LinkButton(class="sm:my-2" style="--tw-bg-opacity: 1; background-color: rgb(110 171 191 / var(--tw-bg-opacity)); white-space: nowrap; display: flex; flex-direction: row; padding: 14px 24px; gap: 10px;" :to="`/EditPage/${item.cuid}`") Edit
@@ -180,7 +179,7 @@ await getDataPageList()
       :class="{'bg-gray-200': (i+1) % 2}"
       )
         td.font-poppins.text-gray-dark.font-bold(style="text-align: center;") {{ item.page_name }}
-        td.font-poppins.text-gray-dark.font-bold(style="text-align: center;" v-if="isAdmin") {{ item.familyCuid }}
+        td.font-poppins.text-gray-dark.font-bold(style="text-align: center;" v-if="isAdmin") {{ item.userCuid }}
         td.font-poppins.text-gray-dark.font-bold(style="text-align: center;") {{ dateFormat(item.deadline) }}
         td
           LinkButton(class="sm:my-2" style="--tw-bg-opacity: 1; background-color: rgb(110 171 191 / var(--tw-bg-opacity)); white-space: nowrap; display: flex; flex-direction: row; padding: 14px 24px; gap: 10px;" :to="`/EditPage/${item.cuid}`") Edit

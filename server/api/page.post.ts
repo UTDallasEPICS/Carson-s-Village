@@ -13,13 +13,13 @@ const prisma = new PrismaClient()
 export default defineEventHandler(async event => {
   //extracting family id to connect the page to the authenticated user
   const {Images, ...data} = await readBody(event)
-  const familyCuid = data.familyCuid;
-  const familiesCuid = data.familiesCuid
-  delete data.familyCuid;
-  delete data.familiesCuid
+  const userCuid = data.userCuid;
+  const familyCuid = data.familyCuid
+  delete data.userCuid;
+  delete data.familyCuid
   data.donation_goal = Math.trunc(data.donation_goal * 100);
   data.amount_raised = Math.trunc(data.amount_raised * 100);
-  if(event.context.user?.user_role === "advocate" || event.context.user?.user_role == 'admin'|| event.context.user.cuid === familyCuid ){
+  if(event.context.user?.user_role === "advocate" || event.context.user?.user_role == 'admin'|| event.context.user.cuid === userCuid ){
     try{
     // Creates a new entry in the database in the page model to a specfic user
     const queryRes = await prisma.page.create({
@@ -27,20 +27,14 @@ export default defineEventHandler(async event => {
         ...data,cuid: undefined,
         User: {
           connect: {
-            cuid : familyCuid || "0"
+            cuid : userCuid || "0"
           }
         },
         Family: {
           connect: {
-            cuid: familiesCuid
+            cuid: familyCuid
           }
         }
-        //,
-        /*Famiy: {
-          connect: {
-            cuid: 
-          }*/
-        
           }
         });
 

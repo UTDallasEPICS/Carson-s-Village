@@ -51,7 +51,7 @@ const router = useRoute()
 const isAuthorized = computed(() => { cvuser2.value?.user_role as string == "advocate" || cvuser2.value?.user_role == "admin"})
 const errorInPage = ref(false);
 
-// Method that creates a new family on the backend and calls save( familyCuid )
+// Method that creates a new family on the backend
 const createFamily = async () => {
     if(isAuthorized){
         const { data: result } = await useFetch('/api/family', {

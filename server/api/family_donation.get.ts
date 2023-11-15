@@ -15,7 +15,7 @@ export default defineEventHandler(async event => {
     console.log(family_cuid)
     const queryRes = await prisma.pageDonation.findMany({
         where: {
-        familiesCuid: family_cuid as string,
+        familyCuid: family_cuid as string,
           success:true
         },
         include: {

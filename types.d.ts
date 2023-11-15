@@ -31,6 +31,7 @@ import { DonationPayout } from "@prisma/client"
 export type Page = {
     page_name: string,
     cuid: string,
+    userCuid: string,
     familyCuid: string,
     day_of_birth: Date | string,
     day_of_passing: Date | string,
@@ -47,7 +48,7 @@ export type Page = {
     amount_distributed: number | string
     profileImageCuid: string
     Images: Image[],
-    familiesCuid: String
+    familyCuid: string
   }
 
 export type Family = {
@@ -66,7 +67,7 @@ export type Family = {
 }
 
 export type User = {
-    cuid: string
+    cuid: string,
     first_name: string,
     last_name: string,
     user_role: string,
@@ -81,9 +82,9 @@ export type User = {
 //Import user from prisma
 
 export type PageDonation = {
-  cuid: string  
-  familyCuid: string,
-  familiesCuid: String  
+  cuid: string,  
+  userCuid: string,
+  familyCuid: String  
   pageCuid: string  
   success: boolean 
   transaction_id: string  
@@ -96,9 +97,10 @@ export type PageDonation = {
 export type donation_payout = {
     cuid: string,
     transaction_id: string,
-    familyCuid: string
+    userCuid: string
     amount_to_record: number,
-    transaction_recording_date: string
+    transaction_recording_date: string,
+    familyCuid: string
     //page: Page
     //user: User
 }
