@@ -18,8 +18,9 @@ model User {
   phone       String @default("")
 
   AdvocateFamily Family[] @relation("advocate_family")
-  Family         Family?  @relation(name: "family_member", fields: [familyCuid], references: [cuid]) //blocker
+  Family         Family?  @relation(name: "family_member", fields: [familyCuid], references: [cuid])
   familyCuid     String?
+  //advocateCuid    String @default("")
   Pages          Page[]
 
   @@map("user_accounts")
@@ -45,15 +46,14 @@ model Family {
 
 model DonationPayout {
   cuid             String @id @default(cuid())
-  familyCuid       String @map("family_cuid")
-  familiesCuid     String @map("families_cuid")
+  userCuid         String @map("user_cuid")
+  familyCuid       String @map("familly_cuid")
   pageCuid         String @map("page_cuid")
   transaction_id   String @unique
   amount           Int    @default(0)
   distributionDate String
-  Family           Family @relation(fields: [familiesCuid], references: cuid)
+  Family           Family @relation(fields: [familyCuid], references: cuid)
   Page             Page   @relation(fields: [pageCuid], references: cuid)
-  User             User   @relation(fields: [familyCuid], references: cuid)
 }
 
 model Page {
@@ -89,14 +89,12 @@ model Page {
 model PageDonation {
   cuid           String  @id @default(cuid())
   familyCuid     String  @map("family_cuid")
-  familiesCuid   String  @map("families_cuid")
   pageCuid       String  @map("page_cuid")
   success        Boolean @default(false)
   transaction_id String  @unique
   amount         Int //In cents
-  Family         Family  @relation(fields: [familiesCuid], references: cuid)
-  Page           Page    @relation(fields: [pageCuid], references: cuid)
   Family         Family  @relation(fields: [familyCuid], references: cuid)
+  Page           Page    @relation(fields: [pageCuid], references: cuid)
 
   @@map("page_donations")
 }

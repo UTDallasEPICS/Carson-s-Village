@@ -14,6 +14,7 @@ import {  dateFormat, donationFormat } from '@/utils'
 
 const pageData = ref<Page>({
     cuid: "",
+    userCuid: "",
     familyCuid: "",
     page_name: "",
     day_of_birth: "",
@@ -30,8 +31,7 @@ const pageData = ref<Page>({
     amount_raised: 0,
     amount_distributed: 0,
     profileImageCuid: "",
-    Images: [],
-    familiesCuid: ""
+    Images: []
 });
 
 type donor = {
@@ -52,13 +52,13 @@ const donationData = ref<PageDonation>({
     success: false,
     cuid: "",
     pageCuid: "",
+    userCuid: "",
     familyCuid: "",
-    familiesCuid: "",
     transaction_id : ""
 });
 
-var familyCuid = "0"
-const familiesCuid = ref("0")
+const userCuid = ref("0")
+const familyCuid = ref("0")
 const profileImageLink = ref("")
 const imageData = ref<Image[]>([])
 const donated_percentage = ref("0");
@@ -80,7 +80,7 @@ donationData.value.familyCuid = pageData.value.familyCuid
 const create_checkout_session = async () => {
     const { data : sessionInfo } = await useFetch('/api/create_session', {
         method: 'POST',
-        body: {...donationData.value, cuid: id.value, family_cuid: pageData.value.familyCuid, amount_raised: Math.trunc(parseFloat(donationData.value.amount as unknown as string) * 100) as number}
+        body: {...donationData.value, cuid: id.value, familyCuid: pageData.value.familyCuid, amount_raised: Math.trunc(parseFloat(donationData.value.amount as unknown as string) * 100) as number}
     });
     stripeLink_ref.value = sessionInfo.value as string
     await navigateTo(stripeLink_ref.value as string,  { external: true } )
@@ -96,10 +96,11 @@ const getDataPage = async( id: string ) => {
 if(pageDataDB.value !== false){
     pageData.value = pageDataDB.value as unknown as Page;
     donated_percentage.value = (((pageData.value.amount_raised as number) / (pageData.value.donation_goal as number )) * 100).toFixed(1) + "";
-    family_cuid.value = pageData.value.familyCuid as string;
-    familyCuid = family_cuid.value as string
-    familiesCuid.value = pageData.value.familiesCuid as string
-    console.log(familiesCuid.value)
+    familyCuid.value = pageData.value.familyCuid as string;
+    userCuid.value = pageData.value.userCuid
+    //familyCuid = family_cuid.value as string
+    familyCuid.value = pageData.value.familyCuid as string
+    console.log(familyCuid.value)
     if(pageData.value.donation_goal as number > 0){
         donation_goal_provided.value = true
     }
@@ -206,7 +207,7 @@ const prevImage = () => {
             CVProgress(v-else style="text-align:center;" modelBarWidth="0")  {{ donated_percentage   + "%" }}
         .well.well-sm
             h1.ml-4.pt-9.text-2xl.text-gray-dark(class="sm:text-3xl" style="font-weight: 600; letter-spacing: 0.35px;") Donor Information
-        DonationEntry(:donationData="donationData" :pageCuid="pageCuid" :familyCuid="familyCuid" :familiesCuid="familiesCuid")
+        DonationEntry(:donationData="donationData" :pageCuid="pageCuid" :familyCuid="familyCuid" :userCuid="userCuid")
         
     .col-md-8.mx-9(class="sm:col-span-1 sm:mr-11")
         .div.px-8.py-4(style="color: #6E6E6E; font-weight: 500; font-size: 14px; line-height: 28px; letter-spacing: -0.078px; word-break: break-word;" id="obituary") {{ pageData.obituary }}

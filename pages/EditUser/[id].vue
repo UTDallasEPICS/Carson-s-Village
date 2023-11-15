@@ -45,7 +45,7 @@ const data_family = ref<Family>({
 
 })
 
-const data_all_users = ref<Family[]>([])
+const data_all_families = ref<Family[]>([])
 
 const cvuser = useCookie('cvuser');
 
@@ -69,7 +69,7 @@ const save = async () => {
 }
 
 }
-const currentFamily = computed(() => data_all_users.value?.find(({ cuid }: Family) => cuid == familyCuid.value) || {});
+const currentFamily = computed(() => data_all_families.value?.find(({ cuid }: Family) => cuid == familyCuid.value) || {});
 // Method to populate the form when editing a pre-existing user
 const getData = async (cuid: string) => {
     const { data: userData } = await useFetch('/api/user', {
@@ -81,11 +81,11 @@ const getData = async (cuid: string) => {
 
 const addingFamily = computed(() => data_user.value.user_role == "family")
 const getUsers = async () => {
-    const { data: userData } = await useFetch('/api/families', {
+    const { data: FamilyData } = await useFetch('/api/families', {
         method: 'GET',
     })
-    data_all_users.value = userData.value as unknown as Family[];
-    console.log(data_all_users.value);
+    data_all_families.value = FamilyData.value as unknown as Family[];
+    console.log(data_all_families.value);
 }
 if ((cuid.value as string) !== "0") {
     await getData(cuid.value as string);
@@ -122,7 +122,7 @@ CVContainer
                     leave-to-class='opacity-0'
                 )
                             ListboxOptions(as='div' class='w-full absolute z-10 mt-10 bg-white shadow-lg max-h-60 rounded-md px-2 py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm' )
-                                ListboxOption(as='div' v-for="family in data_all_users" :key="family.cuid" :value="family.cuid" class="px-2 border border-grey-500 py-1 my-1") {{ family.family_name }}
+                                ListboxOption(as='div' v-for="family in data_all_families" :key="family.cuid" :value="family.cuid" class="px-2 border border-grey-500 py-1 my-1") {{ family.family_name }}
                     ListboxButton(class='text-left bg-white relative rounded-md pl-2 pr-10 py-2 sm:text-sm w-96') {{ familyCuid ? currentFamily.family_name : 'Select family to add the user to' }}
         .py-4.grid(class="sm:grid-cols-3")
             CVLabel First Name

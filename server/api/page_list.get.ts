@@ -9,14 +9,14 @@ const prisma = new PrismaClient()
 */
 
 export default defineEventHandler(async event => {
-    const { family_cuid } = await getQuery(event);
-    if((family_cuid as string) == "0"  || family_cuid == undefined){
+    const { user_cuid } = await getQuery(event);
+    if((user_cuid as string) == "0"  || user_cuid == undefined){
         return []
     }
-    if(event.context.user.user_role === "advocate"  || event.context.user?.user_role == "admin" || event.context.user?.cuid === family_cuid ){
+    if(event.context.user.user_role === "advocate"  || event.context.user?.user_role == "admin" || event.context.user?.cuid === user_cuid ){
         const queryRes = await prisma.page.findMany({
             where: {
-                familyCuid : family_cuid as string
+                userCuid : user_cuid as string
             }
     });
     return queryRes;

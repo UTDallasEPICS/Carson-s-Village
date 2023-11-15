@@ -17,7 +17,7 @@ export default defineEventHandler(async event => {
     if(event.context.user.user_role === "advocate"  || event.context.user?.user_role == "admin" || event.context.user.familyCuid == family_cuid as string){
         const queryRes = await prisma.page.findMany({
             where: {
-                familiesCuid : family_cuid as string
+                familyCuid : family_cuid as string
             }
     });
     return queryRes;

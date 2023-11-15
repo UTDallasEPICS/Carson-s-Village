@@ -32,7 +32,7 @@ const cvuser2 = useCookie<User2>('cvuser')
 
 const data = ref<Page>({
     cuid: "",
-    familyCuid: "",
+    userCuid: "",
     page_name: "",
     day_of_birth: "",
     day_of_passing:"",
@@ -49,7 +49,7 @@ const data = ref<Page>({
     amount_distributed: 0,
     profileImageCuid: "",
     Images: [], 
-    familiesCuid: ""
+    familyCuid: ""
 })
 type User2 = {
     cuid: string
@@ -80,23 +80,23 @@ const data_all_users = ref<Family[]>([])
 const imageData = ref<Image[]>([])
 const profile_image = ref("")
 
-const familiesCuid = ref("")
+const familyCuid = ref("")
 const cuid_data = computed(() => router.params.EditPageId);
 const cuid = cuid_data.value as string
-const family_cuid_data = computed(() => cvuser.value?.cuid)
+const user_cuid_data = computed(() => cvuser.value?.cuid)
 console.log(cvuser.value);
-const family_cuid = family_cuid_data.value as string
+const user_cuid = user_cuid_data.value as string
 const pageCuid = computed(() => router.params.EditPageId)
 data.value.cuid = cuid;
-data.value.familyCuid = family_cuid;
+data.value.userCuid = user_cuid;
 console.log(data.value)
 const errorInPage = ref(false)
 // Method that saves form data to the database for a page that has cuid: router.params.EditPageId
 const save = async () => {
     if(isAdvocate.value) {
-        data.value.familiesCuid = familiesCuid.value
+        data.value.familyCuid = familyCuid.value
     } else {
-        data.value.familiesCuid = cvuser.value.familyCuid
+        data.value.familyCuid = cvuser.value.familyCuid as string
     }
     const { data: saveSuccess } = await useFetch('/api/page', {
         // Checks if there is a pre-existing page to edit or if to create a new page    
@@ -104,16 +104,20 @@ const save = async () => {
         body: ({ ...data.value })
     }
     )
+    try {
     if (saveSuccess.value == true && isAdvocate.value) {
         errorInPage.value = false;
-        await navigateTo('/PageList/' + family_cuid + '?fromUsers=1')
+        await navigateTo('/PageList/' + data.value.userCuid + '?fromUsers=1')
     } else if(saveSuccess.value == true && !isAdvocate.value){
-        await navigateTo('/PageList/' + data.value.familiesCuid + '?fromUsers=0')
+        await navigateTo('/PageList/' + data.value.familyCuid + '?fromUsers=0')
     } else {
         errorInPage.value = true;
     }
+    } catch(e){
+        console.log(e)
+    }
 };
-const currentFamily = computed(() => data_all_users.value?.find(({ cuid }: Family) => cuid == familiesCuid.value) || {});
+const currentFamily = computed(() => data_all_users.value?.find(({ cuid }: Family) => cuid == familyCuid.value) || {});
 console.log(currentFamily)
 // Method to populate the form when editing a pre-existing page
 const getData = async (cuid: string) => {
@@ -128,6 +132,7 @@ const getData = async (cuid: string) => {
         })
         if (pageData.value) {
             data.value = pageData.value as unknown as Page;
+            familyCuid.value = data.value.familyCuid
             imageData.value = data.value?.Images as unknown as Image[]
         // Not nessesary with proper logic in watchers?
         // 1st case is handling getting the profile image from the images in imageData
@@ -217,7 +222,7 @@ CVContainer
         .py-4.grid(class="sm:grid-cols-3" v-if="isAdvocate")
             CVLabel Family
             .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
-                Listbox.shadow-sm.border.border-1.rounded-lg(as='div' v-model="familiesCuid")
+                Listbox.shadow-sm.border.border-1.rounded-lg(as='div' v-model="familyCuid")
                     .relative
                         Transition(
                     leave-active-class='transition ease-in duration-100'
@@ -226,7 +231,7 @@ CVContainer
                 )
                             ListboxOptions(as='div' class='w-full absolute z-10 mt-10 bg-white shadow-lg max-h-60 rounded-md px-2 py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm' )
                                 ListboxOption(as='div' v-for="family in data_all_users" :key="family.cuid" :value="family.cuid" class="px-2 border border-grey-500 py-1 my-1") {{ family.family_name }}
-                    ListboxButton(class='text-left bg-white relative rounded-md pl-2 pr-10 py-2 sm:text-sm w-96') {{ familiesCuid ? currentFamily.family_name : 'Select family to add the page to' }}
+                    ListboxButton(class='text-left bg-white relative rounded-md pl-2 pr-10 py-2 sm:text-sm w-96') {{ familyCuid ? currentFamily.family_name : 'Select family to add the page to' }}
         ImagePreview(v-model:images="imageData" :images="data.Images" :profileImage="profileImage" @profileImage="setProfileImage" @images="setImagesPreview")
         .information.bg-gray-300.rounded-md.mx-9.my-2.text-center(class="sm:text-start")
             legend.ml-2(class="sm:py-1" style="font-weight: 700; text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") Profile Image Selection        
