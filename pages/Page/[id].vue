@@ -53,10 +53,12 @@ const donationData = ref<PageDonation>({
     cuid: "",
     pageCuid: "",
     familyCuid: "",
+    familiesCuid: "",
     transaction_id : ""
 });
 
 var familyCuid = "0"
+const familiesCuid = ref("0")
 const profileImageLink = ref("")
 const imageData = ref<Image[]>([])
 const donated_percentage = ref("0");
@@ -96,6 +98,8 @@ if(pageDataDB.value !== false){
     donated_percentage.value = (((pageData.value.amount_raised as number) / (pageData.value.donation_goal as number )) * 100).toFixed(1) + "";
     family_cuid.value = pageData.value.familyCuid as string;
     familyCuid = family_cuid.value as string
+    familiesCuid.value = pageData.value.familiesCuid as string
+    console.log(familiesCuid.value)
     if(pageData.value.donation_goal as number > 0){
         donation_goal_provided.value = true
     }
@@ -202,7 +206,7 @@ const prevImage = () => {
             CVProgress(v-else style="text-align:center;" modelBarWidth="0")  {{ donated_percentage   + "%" }}
         .well.well-sm
             h1.ml-4.pt-9.text-2xl.text-gray-dark(class="sm:text-3xl" style="font-weight: 600; letter-spacing: 0.35px;") Donor Information
-        DonationEntry(:donationData="donationData" :pageCuid="pageCuid" :familyCuid="familyCuid")
+        DonationEntry(:donationData="donationData" :pageCuid="pageCuid" :familyCuid="familyCuid" :familiesCuid="familiesCuid")
         
     .col-md-8.mx-9(class="sm:col-span-1 sm:mr-11")
         .div.px-8.py-4(style="color: #6E6E6E; font-weight: 500; font-size: 14px; line-height: 28px; letter-spacing: -0.078px; word-break: break-word;" id="obituary") {{ pageData.obituary }}

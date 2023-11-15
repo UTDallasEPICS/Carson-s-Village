@@ -2,11 +2,11 @@
 import Datepicker from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css';
 
-import type { User, Page, PageDonation, donation_payout } from "@/types.d.ts"
+import type { Family, User, Page, PageDonation, donation_payout } from "@/types.d.ts"
 import { donationFormat } from "@/utils"
-
 const props = defineProps<{
   currentPage: Page
+  currentFamily: Family
   currentUser: User
 }>()
 const transaction_id = ref("")
@@ -23,8 +23,9 @@ const save = async () => {
       transaction_id: transaction_id.value,
       distributionDate: distributionDate.value,
       amount: Math.floor(parseFloat(amount.value) * 100),
-      familyCuid: props.currentUser.cuid,
+      familyCuid: props.currentFamily.cuid,
       pageCuid: props.currentPage.cuid,
+      userCuid: props.currentUser.cuid
     }
   })
   window.location.reload()
@@ -34,7 +35,7 @@ const setWholeAmountPage = function(){
 }
 
 const setWholeAmountFamily = function(){
-  amount.value = (((props.currentUser.Pages.reduce((acc: number, curr: Page) => acc + (curr.amount_raised as number), 0) || 0)) - (props.currentUser.Pages.reduce((acc: number, curr: Page) => acc + (curr.amount_distributed as number), 0) || 0)) /100.0 + ""
+  amount.value = (((props.currentFamily.Pages.reduce((acc: number, curr: Page) => acc + (curr.amount_raised as number), 0) || 0)) - (props.currentFamily.Pages.reduce((acc: number, curr: Page) => acc + (curr.amount_distributed as number), 0) || 0)) /100.0 + ""
 }
 
 </script>

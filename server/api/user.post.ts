@@ -60,7 +60,7 @@ if(event.context.user?.user_role == "advocate" || event.context.user.user_role =
           where: { cuid: body.familyCuid },
           data: {
             Pages:pages, updated_at: now,
-            family_members: {
+            FamilyMembers: {
               connect: {
                 cuid: userRes.cuid
               }

@@ -20,7 +20,8 @@ const pageData = ref<Page>({
     amount_raised: 0,
     amount_distributed: 0,
     profileImageCuid: "",
-    Images: []
+    Images: [],
+    familiesCuid: ""
 });
 
 type donor = {
@@ -42,6 +43,7 @@ const donationData = ref<PageDonation>({
     cuid: "",
     pageCuid: "",
     familyCuid: "",
+    familiesCuid: "",
     transaction_id : ""
 });
 
@@ -53,14 +55,18 @@ const props = defineProps({
     familyCuid: {
         type: String,
         default: ""
+    }, 
+    familiesCuid: {
+        type: String,
+        default: ""
     }
 })
-
+console.log(props.familiesCuid)
 const stripeLink_ref = ref("")
 const create_checkout_session = async () => {
     const { data : sessionInfo } = await useFetch('/api/create_session', {
         method: 'POST',
-        body: {cuid: props.pageCuid, family_cuid: props.familyCuid, amount_raised: Math.trunc(parseFloat(donationData.value.amount as unknown as string) * 100) as number}
+        body: {cuid: props.pageCuid, family_cuid: props.familyCuid, familiesCuid: props.familiesCuid, amount_raised: Math.trunc(parseFloat(donationData.value.amount as unknown as string) * 100) as number}
     });
     stripeLink_ref.value = sessionInfo.value as string
     await navigateTo(stripeLink_ref.value as string,  { external: true } )

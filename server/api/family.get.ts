@@ -3,15 +3,16 @@ import {loginRedirectUrl} from "./auth0"
 const prisma = new PrismaClient()
 
 /*
-*	/Users
+*	/Family
 *	function:	GET
-*	retrive details of all users from database
+*	retrive details of all users in the family from database
 */
 
 export default defineEventHandler(async event => {
-
-  if(event.context.user.user_role === "advocate"  || event.context.user.user_role === "admin"){
-    const queryRes = await prisma.family.findMany({
+  const { family_cuid } = getQuery(event)
+  if( event.context.user.user_role == "advocate" || event.context.user.user_role == "admin" || event.context.user.familyCuid === family_cuid as string){
+    const queryRes = await prisma.family.findFirst({
+        where: { cuid: family_cuid as string },
       include: {
         Pages: true,
         FamilyMembers: true,

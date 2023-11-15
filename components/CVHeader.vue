@@ -5,6 +5,7 @@ const cvuser = useCookie<User>('cvuser');
 const cvtoken = useCookie('cvtoken');
 const isAdmin = computed(() => cvuser.value?.user_role == "advocate" || cvuser.value?.user_role == "admin")
 const cuid = computed(() => cvuser.value?.cuid)
+const familyCuid = computed(() => cvuser.value?.familyCuid)
 const isLoggedIn = computed(() => cvuser.value)
 const pages = ref<Page[]>([])
 const searchQuery = ref('');
@@ -22,9 +23,10 @@ ClientOnly
       href="/api/logout"
       ) 
         p.uppercase.white.w-max LOGOUT
-      NavLinkButton(:to="`/PageList/${cuid}`") 
-        p.uppercase.white.w-max(v-if="isAdmin") Pages
-        p.uppercase.white.w-max(v-else) Pages
+      NavLinkButton(:to="`/PageList/${cuid}/?fromUsers=0`" v-if="isAdmin") 
+        p.uppercase.white.w-max Pages
+      NavLinkButton(:to="`/pageList/${familyCuid}/?fromUsers=0`" v-if="!isAdmin")
+        p.uppercase.white.w-max Pages
       NavLinkButton(to='/EditPage/0') 
         p.uppercase.white.w-max New page
       NavLinkButton( v-if="isAdmin" to='/Users') 

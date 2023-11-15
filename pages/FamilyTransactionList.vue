@@ -16,50 +16,50 @@ import {
     ListboxOptions,
     ListboxOption,
 } from '@headlessui/vue'
-import type { User, Page, PageDonation, donation_payout } from "@/types.d.ts"
+import type { User, Page, PageDonation, donation_payout, Family } from "@/types.d.ts"
 import { donationFormat } from "@/utils"
+//import { Family } from "@prisma/client"
 const cvuser = useCookie<User>('cvuser');
 const isAdmin = computed(() => cvuser.value?.user_role == "admin")
 const isAdvocate = computed(() => cvuser.value?.user_role == "advocate")
 //if(isAdmin || isAdvocate ) { // todo after semester: remove || isAdvocate. Advocates should not have access to this page
-  const { data: users } = await useFetch<User[]>('/api/users', {
+  const { data: Families } = await useFetch<Family[]>('/api/families', {
     method: 'GET',
     default() {
       return [] as any
     }, 
   });
-console.log(users.value);
 
-  const currentUserCuid = ref<string>("")
-  const currentUser = computed(() => users.value?.find(({ cuid }: User) => cuid == currentUserCuid.value) || {})
+  const currentFamilyCuid = ref<string>("")
+  const currentFamily = computed(() => Families.value?.find(({ cuid }: Family) => cuid == currentFamilyCuid.value) || {})
+  //console.log(currentFamily.value)
+  const currentUser = computed(() => currentFamily.value?.FamilyMembers![0] || '{}')
+  currentFamilyCuid.value = Families.value![0]?.cuid || ""
 
-  currentUserCuid.value = users.value![0]?.cuid || ""
-
-  const { data: pages } = await useFetch<Page[]>('/api/page_list', {
+  const { data: familyData } = await useFetch('/api/family_pages', {
     method: 'GET',
-    query: { family_cuid: currentUserCuid },
-    watch: [currentUserCuid],
+    query: { family_cuid: currentFamilyCuid },
+    watch: [currentFamilyCuid],
     default() {
       return [] as any;
     },
   });
-
+  
   const currentPageCuid = ref<string>("");
-  const currentPage = computed(() => pages.value?.find(({ cuid }: Page) => cuid == currentPageCuid.value) || {});
-  watchEffect(() => currentPageCuid.value = pages.value![0]?.cuid || "");
+  const currentPage = computed(() => familyData.value?.find(({ cuid }: Page) => cuid == currentPageCuid.value) || {});
+  watchEffect(() => currentPageCuid.value = familyData.value![0]?.cuid || "");
+  
   const { data: donations } = await useFetch<PageDonation[]>('/api/family_donation', {
     method: 'GET',
-    query: { family_cuid: currentUserCuid },
-    watch: [currentUserCuid],
+    query: { family_cuid: currentFamilyCuid },
+    watch: [currentFamilyCuid],
     default() {
       return [] as any;
     },
   });
-
   const totalPageDonations = computed(() => donations.value?.reduce((acc: number, curr: PageDonation) => acc + curr.amount, 0) || 0);
-  const totalDistributed = computed(() => pages.value?.reduce((acc: number, curr: Page) => acc + (curr.amount_distributed as number), 0) || 0);
+  const totalDistributed = computed(() => familyData.value?.reduce((acc: number, curr: Page) => acc + (curr.amount_distributed as number), 0) || 0);
   const totalRemaining = computed(() => totalPageDonations.value - totalDistributed.value);
-//}
 </script>
 
 <template lang="pug">
@@ -69,7 +69,7 @@ console.log(users.value);
     // these two list boxes can be a distinct reusable component
     .flex.gap-5
       p.self-center Family
-      Listbox.shadow-sm.border.border-1.rounded-lg(as='div' v-model="currentUserCuid")
+      Listbox.shadow-sm.border.border-1.rounded-lg(as='div' v-model="currentFamilyCuid")
         .relative
           Transition(
             leave-active-class='transition ease-in duration-100'
@@ -77,8 +77,8 @@ console.log(users.value);
             leave-to-class='opacity-0'
           )
             ListboxOptions(as='div' class='w-full absolute z-10 mt-10 bg-white shadow-lg max-h-60 rounded-md px-2 py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm' )
-              ListboxOption(as='div' v-for="user in users" :key="user.cuid" :value="user.cuid" class="px-2 border border-grey-500 py-1 my-1") {{ user.first_name + " " + user.last_name }}
-        ListboxButton(class='text-left bg-white relative rounded-md pl-2 pr-10 py-2 sm:text-sm w-96') {{ currentUserCuid ? currentUser.first_name + " " + currentUser.last_name : 'Select User' }}
+              ListboxOption(as='div' v-for="Family in Families" :key="Family.cuid" :value="Family.cuid" class="px-2 border border-grey-500 py-1 my-1") {{ Family.family_name }}
+        ListboxButton(class='text-left bg-white relative rounded-md pl-2 pr-10 py-2 sm:text-sm w-96') {{ currentFamilyCuid ? currentFamily.family_name : 'Select Family' }}
     
     .flex.gap-5
       p.self-center Page
@@ -90,11 +90,11 @@ console.log(users.value);
             leave-to-class='opacity-0'
           )
             ListboxOptions(as='div' class='w-full absolute z-10 mt-10 bg-white shadow-lg max-h-60 rounded-md px-2 py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm' )
-              ListboxOption(as='div' v-for="page in pages" :key="page.cuid" :value="page.cuid" class="px-2 border border-grey-500 py-1 my-1") {{ page.page_name }} | {{ donationFormat(page?.amount_raised - page?.amount_distributed) }}
+              ListboxOption(as='div' v-for="page in familyData" :key="page.cuid" :value="page.cuid" class="px-2 border border-grey-500 py-1 my-1") {{ page.page_name }} | {{ donationFormat(page?.amount_raised - page?.amount_distributed) }}
         ListboxButton(class='text-left bg-white relative rounded-md pl-2 pr-10 py-2 sm:text-sm w-96') {{ currentPageCuid ? currentPage.page_name : 'Select Page' }}
   
   .flex.gap-5.justify-around
-    // these next two divs could theoretically be their own component with props
+    //these next two divs could theoretically be their own component with props
     div
       p.text-center.mt-10 Family 
       .flex.flex-col.w-full.justify-center.gap-5.mt-5
@@ -120,7 +120,7 @@ console.log(users.value);
           p.self-center.text-center Remaining Amount to Distribute
           p.text-center.mt-2 {{ donationFormat(currentPage?.amount_raised - currentPage?.amount_distributed) }}
     div(class="basis-1/3")
-      PayoutRecord(:currentPage="currentPage" :currentUser="currentUser")
+      PayoutRecord(:currentPage="currentPage" :currentUser="currentUser" :currentFamily="currentFamily")
 
   CVLegend.mt-10 Family Pages
   table.mt-5.table.table-striped.w-full
@@ -130,7 +130,7 @@ console.log(users.value);
               th.px-8(style="width:25%; --tw-bg-opacity: 1; background-color: rgb(110 171 191 / var(--tw-bg-opacity));") Raised
               th.font-poppins.font-bold(style="--tw-bg-opacity: 1; background-color: rgb(110 171 191 / var(--tw-bg-opacity));") Remaining
               th.px-8(style="width:25%; --tw-bg-opacity: 1; border-radius: 0px 60px 0px 0px; background-color: rgb(110 171 191 / var(--tw-bg-opacity));") Page Cuid
-          tr(v-for="(item, i) in pages" 
+          tr(v-for="(item, i) in familyData" 
               :key="i" 
               :class="{'bg-gray-200': (i+1) % 2}"
           )

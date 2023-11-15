@@ -31,7 +31,7 @@ export default defineEventHandler(async event => {
         cuid: page_cuid
       }
     })
-    
+   
 	const session = await stripe.checkout.sessions.create({
 		mode: 'payment',
 		line_items: [
@@ -77,8 +77,8 @@ export default defineEventHandler(async event => {
           }
         }
     }})
-
-    return session.url;
+    //return transfer.id
+   return session.url;
   }catch(e) {
     console.error(e);
   }
