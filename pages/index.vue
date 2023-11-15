@@ -10,6 +10,8 @@
 
 
 import type { User } from '@/types.d.ts'
+import CVHeader from '@/components/CVHeader.vue';
+
 
 const cvuser = useCookie<User>('cvuser');
 const cuid_data = computed(() => cvuser.value?.cuid)

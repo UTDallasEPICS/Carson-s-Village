@@ -88,3 +88,18 @@ export type Image = {
   pageCuid: string
   //Page: Page
 }
+
+export type Family = {
+  cuid: string;
+  family_name: string;
+  Stripe_Account_id: string | null;
+  Stripe_Accont_cuid: string | null;
+  created_at: string;
+  updated_at: string;
+  advocateCuid: string;
+  Pages: Page[];
+  FamilyMembers: User[];
+  AdvocateResponsible: User;
+  FamilyDonations: PageDonation[];
+  FamilyDonationPayouts: DonationPayout[];
+}
