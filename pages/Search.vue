@@ -53,7 +53,7 @@ onMounted(() => {
           th.px-8 Donation Goal
           th.px-8 Deadline
       tbody
-        tr(v-for="page in pages")
+        tr(v-for="(page, i) in pages" :class="{'bg-gray-200': (i+1) % 2}")
           td(style="text-align: center")   
             NuxtLink(:to="`/Page/${page.cuid}`") {{ page.page_name}}
           td(style="text-align: center") {{ donationFormat(page.donation_goal) }}

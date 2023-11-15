@@ -14,6 +14,7 @@ import {  dateFormat, donationFormat } from '@/utils'
 
 const pageData = ref<Page>({
     cuid: "",
+    userCuid: "",
     familyCuid: "",
     page_name: "",
     day_of_birth: "",
@@ -51,15 +52,18 @@ const donationData = ref<PageDonation>({
     success: false,
     cuid: "",
     pageCuid: "",
+    userCuid: "",
     familyCuid: "",
     transaction_id : ""
 });
 
-var familyCuid = "0"
+const userCuid = ref("0")
+const familyCuid = ref("0")
 const profileImageLink = ref("")
 const imageData = ref<Image[]>([])
 const donated_percentage = ref("0");
-const donated_percentage_100 = ref(0)
+//const donated_percentage_100 = ref(0)
+const donation_goal_provided = ref(false)
 const family_cuid = ref("0")
 const router = useRoute();
 const id = computed(() =>  router.params.id);
@@ -76,7 +80,7 @@ donationData.value.familyCuid = pageData.value.familyCuid
 const create_checkout_session = async () => {
     const { data : sessionInfo } = await useFetch('/api/create_session', {
         method: 'POST',
-        body: {...donationData.value, cuid: id.value, family_cuid: pageData.value.familyCuid, amount_raised: Math.trunc(parseFloat(donationData.value.amount as unknown as string) * 100) as number}
+        body: {...donationData.value, cuid: id.value, familyCuid: pageData.value.familyCuid, amount_raised: Math.trunc(parseFloat(donationData.value.amount as unknown as string) * 100) as number}
     });
     stripeLink_ref.value = sessionInfo.value as string
     await navigateTo(stripeLink_ref.value as string,  { external: true } )
@@ -92,9 +96,14 @@ const getDataPage = async( id: string ) => {
 if(pageDataDB.value !== false){
     pageData.value = pageDataDB.value as unknown as Page;
     donated_percentage.value = (((pageData.value.amount_raised as number) / (pageData.value.donation_goal as number )) * 100).toFixed(1) + "";
-    family_cuid.value = pageData.value.familyCuid as string;
-    familyCuid = family_cuid.value as string
-
+    familyCuid.value = pageData.value.familyCuid as string;
+    userCuid.value = pageData.value.userCuid
+    //familyCuid = family_cuid.value as string
+    familyCuid.value = pageData.value.familyCuid as string
+    console.log(familyCuid.value)
+    if(pageData.value.donation_goal as number > 0){
+        donation_goal_provided.value = true
+    }
     // Sets the front end images including the profile image
     if(pageData.value.Images?.length != 0)
         imageData.value = pageData.value.Images as unknown as Image[] 
@@ -104,6 +113,7 @@ if(pageDataDB.value !== false){
                 break;
             }
         }
+        console.log(donation_goal_provided.value)
 }
 }
 
@@ -163,8 +173,14 @@ const prevImage = () => {
             .font-outfit {{ dateFormat(pageData.visitation_date, true) }}
           .flex.justify-between.gap-5
             .font-outfit {{ "Location:" }}
-            .font-outfit.whitespace-normal {{ pageData.visitation_location }}
+            .font-outfit.whitespace-normal {{ pageData.visitation_location ? pageData.visitation_location : "TBD" }}
           .font-outfit {{ pageData.visitation_description }}
+        .flex.flex-col.gap-5(v-else)
+          .text-gray-dark.font-poppins.text-2xl.text-left.font-bold(style="line-height: 36px; text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") Visitation
+          .flex.justify-between.gap-5
+            .font-outfit {{ "Date: TBD"}}
+          .flex.justify-between.gap-5
+            .font-outfit {{ "Location: TBD" }}
         .flex.flex-col.gap-5(v-if="pageData.funeral_date")
             .text-gray-dark.font-poppins.text-2xl.text-left.font-bold(style="line-height: 36px; text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") Funeral
             .flex.justify-between.gap-5
@@ -174,18 +190,24 @@ const prevImage = () => {
               .font-outfit {{ "Location:" }}
               .font-outfit.whitespace-normal {{ pageData.funeral_location }}
             .font-outfit {{ pageData.funeral_description }}
+        .flex.flex-col.gap-5(v-else)
+            .text-gray-dark.font-poppins.text-2xl.text-left.font-bold(style="line-height: 36px; text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") Funeral
+            .flex.justify-between.gap-5
+              .font-outfit {{ "Date: TBD" }}
+            .flex.justify-between.gap-5
+              .font-outfit {{ "Location: TBD" }}
 //.container(class="sm:overflow-hidden sm:w-3/4 sm:mt-4 sm:mx-auto sm:place-content-center sm:max-w-xl sm:p-6 sm:rounded-card sm:shadow-card")
 .grid(class="sm:grid-cols-2")
     .container.m-4.place-content-center.font-poppins(class="w-5/6 sm:m-auto sm:py-3")
-        .text-md.text-center.ml-4.my-3(class="sm:text-xl sm:my-6" style="letter-spacing: 0.35px; font-weight: 600; color: #646464;") {{ donationFormat(pageData.amount_raised)  + " raised of " +  donationFormat(pageData.donation_goal) + " goal" }}
+        .text-md.text-center.ml-4.my-3(v-if="donation_goal_provided" class="sm:text-xl sm:my-6" style="letter-spacing: 0.35px; font-weight: 600; color: #646464;") {{ donationFormat(pageData.amount_raised)  + " raised of " +  donationFormat(pageData.donation_goal) + " goal" }}
         .py-4
-        .progress-bar.overflow-hidden.ml-4.h-5.rounded-full(style="30px; background-color:#b5b5b5;")
+        .progress-bar.overflow-hidden.ml-4.h-5.rounded-full(v-if="donation_goal_provided" style="30px; background-color:#b5b5b5;")
             CVProgress(v-if="donated_percentage >= 100" modelBarWidth="100") {{ donated_percentage  + "%" }}
             CVProgress(v-else-if="donated_percentage > 0 && donated_percentage < 100" :modelBarWidth="donated_percentage") {{ donated_percentage  + "%" }}
             CVProgress(v-else style="text-align:center;" modelBarWidth="0")  {{ donated_percentage   + "%" }}
         .well.well-sm
             h1.ml-4.pt-9.text-2xl.text-gray-dark(class="sm:text-3xl" style="font-weight: 600; letter-spacing: 0.35px;") Donor Information
-        DonationEntry(:donationData="donationData" :pageCuid="pageCuid" :familyCuid="familyCuid")
+        DonationEntry(:donationData="donationData" :pageCuid="pageCuid" :familyCuid="familyCuid" :userCuid="userCuid")
         
     .col-md-8.mx-9(class="sm:col-span-1 sm:mr-11")
         .div.px-8.py-4(style="color: #6E6E6E; font-weight: 500; font-size: 14px; line-height: 28px; letter-spacing: -0.078px; word-break: break-word;" id="obituary") {{ pageData.obituary }}

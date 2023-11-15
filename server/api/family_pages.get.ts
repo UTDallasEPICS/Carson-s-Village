@@ -9,18 +9,22 @@ const prisma = new PrismaClient()
 */
 
 export default defineEventHandler(async event => {
-    const { user_cuid } = await getQuery(event);
-    if((user_cuid as string) == "0"  || user_cuid == undefined){
+    const { family_cuid, excuse } = getQuery(event);
+    if((family_cuid as string) == "0"  || family_cuid == undefined){
         return []
     }
-    if(event.context.user.user_role === "advocate"  || event.context.user?.user_role == "admin" || event.context.user?.cuid === user_cuid ){
+
+    if(event.context.user.user_role === "advocate"  || event.context.user?.user_role == "admin" || event.context.user.familyCuid == family_cuid as string){
         const queryRes = await prisma.page.findMany({
             where: {
-                userCuid : user_cuid as string
+                familyCuid : family_cuid as string
             }
     });
     return queryRes;
   } else {
+    if(excuse as boolean == true){
+      return []
+    }
     return await sendRedirect(event, loginRedirectUrl());
   }
 })

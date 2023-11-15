@@ -15,6 +15,7 @@ export default defineEventHandler(async (event) => {
 
   if (!cvtoken && !event.req.url?.startsWith('/api/callback')) {
     return createRedirectResponse(event, `${runtime.BASEURL}/login`);
+
   } else {
     if (cvtoken) {
       try {
