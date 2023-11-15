@@ -17,49 +17,71 @@ model User {
   last_name   String @default("")
   phone       String @default("")
 
-  Pages           Page[]
-  PageDonations   PageDonation[]
-  DonationPayouts DonationPayout[]
+  AdvocateFamily Family[] @relation("advocate_family")
+  Family         Family?  @relation(name: "family_member", fields: [familyCuid], references: [cuid])
+  familyCuid     String?
+  //advocateCuid    String @default("")
+  Pages          Page[]
 
   @@map("user_accounts")
 }
 
+model Family {
+  cuid                  String           @id @default(cuid())
+  family_name           String
+  //Stripe_Account ConnectedAccount? 
+  Stripe_Account_id     String?
+  Stripe_Accont_cuid    String?
+  FamilyMembers         User[]           @relation("family_member")
+  created_at            String           @default("")
+  updated_at            String           @default("")
+  Pages                 Page[]
+  FamilyDonations       PageDonation[]
+  FamilyDonationPayouts DonationPayout[]
+  advocateCuid          String           @map("advocate_cuid")
+  AdvocateResponsible   User?            @relation("advocate_family", fields: [advocateCuid], references: [cuid])
+  //PageDonations PageDonation[]
+  //DonationPayouts DonationPayout[]
+}
+
 model DonationPayout {
   cuid             String @id @default(cuid())
-  familyCuid       String @map("family_cuid")
+  userCuid         String @map("user_cuid")
+  familyCuid       String @map("familly_cuid")
   pageCuid         String @map("page_cuid")
   transaction_id   String @unique
   amount           Int    @default(0)
   distributionDate String
+  Family           Family @relation(fields: [familyCuid], references: cuid)
   Page             Page   @relation(fields: [pageCuid], references: cuid)
-  User             User   @relation(fields: [familyCuid], references: cuid)
 }
 
 model Page {
-  cuid                   String @id @default(cuid())
+  cuid                   String  @id @default(cuid())
   page_name              String
-  day_of_birth           String
-  day_of_passing         String
-  visitation_date        String
+  day_of_birth           String?
+  day_of_passing         String?
+  visitation_date        String?
   visitation_location    String
   visitation_description String
 
-  funeral_date        String
+  funeral_date        String?
   funeral_location    String
   funeral_description String
 
   obituary           String
-  images             String[] // TODO: deprecate
   donation_goal      Int              @default(0)
   amount_raised      Int              @default(0)
   deadline           String
-  familyCuid         String           @map("family_cuid")
+  userCuid           String           @map("user_cuid")
   PageDonations      PageDonation[]
   DonationPayouts    DonationPayout[]
-  User               User             @relation(fields: [familyCuid], references: cuid)
+  User               User             @relation(fields: [userCuid], references: cuid)
   Images             Image[]
   amount_distributed Int              @default(0)
   profileImageCuid   String           @map("profile_image_cuid")
+  Family             Family?          @relation(fields: [familyCuid], references: cuid)
+  familyCuid         String?          @map("family_cuid")
 
   @@map("pages")
 }
@@ -71,18 +93,18 @@ model PageDonation {
   success        Boolean @default(false)
   transaction_id String  @unique
   amount         Int //In cents
+  Family         Family  @relation(fields: [familyCuid], references: cuid)
   Page           Page    @relation(fields: [pageCuid], references: cuid)
-  User           User    @relation(fields: [familyCuid], references: cuid)
 
   @@map("page_donations")
 }
 
 model Image {
-  cuid     String @id @default(cuid())
+  cuid     String  @id @default(cuid())
   url      String
   pageCuid String?
   Page     Page?   @relation(fields: [pageCuid], references: [cuid])
 
-  //@@unique([pageCuid, url])
+  @@unique([pageCuid, url])
   @@map("images")
 }

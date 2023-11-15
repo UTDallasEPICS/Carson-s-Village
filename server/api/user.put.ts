@@ -10,7 +10,7 @@ const prisma = new PrismaClient()
 export default defineEventHandler(async event => {
 const body = await readBody(event);
 delete body.pages
-if(event.context.user?.user_role == "advocate"){
+if(event.context.user?.user_role == "advocate"  || event.context.user.user_role === "admin"){
 // updates the user
 try{ 
   const queryRes = await prisma.user.update({

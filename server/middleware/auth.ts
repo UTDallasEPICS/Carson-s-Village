@@ -1,4 +1,4 @@
-import {loginRedirectUrl} from "../api/auth0"
+import {loginRedirectUrl, logoutRedirectUrl} from "../api/auth0"
 import jwt from "jsonwebtoken"
 import fs from "fs"
 import { PrismaClient } from "@prisma/client"
@@ -34,16 +34,11 @@ export default defineEventHandler(async event => {
           console.error(`${claims.email} not found`) 
           setCookie(event,'cvtoken','')
           setCookie(event,'cvuser','')
-    
+          return await sendRedirect(event, logoutRedirectUrl(cvtoken))
           return await sendRedirect(event, loginRedirectUrl());
         }
         // include pages ids to check if that's the family's page. 
         setCookie(event, "cvuser", JSON.stringify(event.context.user))
-        /*if(event.context.user.user_role ==='family' && (event.node.req.url?.includes('/EditPage/') || event.node.req.url?.includes('/PageList/'))){
-          if((event.node.req.url?.includes('/EditPage/') && (!(event.node.req.url?.includes('/EditPage/0'))))){
-
-        }
-        }*/
       } catch (e) {
         console.error(e) 
         setCookie(event,'cvtoken','')
