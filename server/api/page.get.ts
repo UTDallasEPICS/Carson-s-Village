@@ -18,7 +18,9 @@ export default defineEventHandler(async event => {
 			cuid : cuid as string
 		  },
 		  include: {
-            Images: true
+            Images: true,
+			PageDonations: true,
+			Reply: true
 		  }
 		});
 	  return queryRes;

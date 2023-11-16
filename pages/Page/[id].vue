@@ -31,7 +31,9 @@ const pageData = ref<Page>({
     amount_raised: 0,
     amount_distributed: 0,
     profileImageCuid: "",
-    Images: []
+    Images: [],
+    PageDonations:[],
+    Reply:[]
 });
 
 type donor = {
@@ -71,6 +73,7 @@ const id = computed(() =>  router.params.id);
 const pageCuid = id.value as string
 const cvuser = useCookie<Page>('cvuser')
 const stripeLink_ref = ref("")
+//const comments = ref<PageDonation[]>([])
 donationData.value.pageCuid = id.value as string;
 donationData.value.familyCuid = pageData.value.familyCuid
 
@@ -88,31 +91,36 @@ const create_checkout_session = async () => {
 };
 
 // Method to populate the page with data based on the cuid in the url
-const getDataPage = async( id: string ) => { 
-    const { data : pageDataDB } = await useFetch('/api/page', {
-    method: 'GET',
-    query: { cuid: id }
-})
+//const getDataPage = async( id: string ) => { 
+    const { data : pageDataDB } = await useFetch<Page>('/api/page', {
+        method: 'GET',
+        query: { cuid: id }
+    })
+    const comments = computed(() => pageDataDB.value?.PageDonations)
+    const replies = computed(() => pageDataDB.value?.Reply)
 
-if(pageDataDB.value !== false){
-    pageData.value = pageDataDB.value as unknown as Page;
-    donated_percentage.value = (((pageData.value.amount_raised as number) / (pageData.value.donation_goal as number )) * 100).toFixed(1) + "";
-    family_cuid.value = pageData.value.familyCuid as string;
-    familyCuid = family_cuid.value as string
+    if(pageDataDB.value){
+        //comments.value = pageDataDB.value as unknown as PageDonation[];
+        //console.log(comments.value)
+        pageData.value = pageDataDB.value as unknown as Page;
+        donated_percentage.value = (((pageData.value.amount_raised as number) / (pageData.value.donation_goal as number )) * 100).toFixed(1) + "";
+        family_cuid.value = pageData.value.familyCuid as string;
+        familyCuid = family_cuid.value as string
 
-    // Sets the front end images including the profile image
-    if(pageData.value.Images?.length != 0)
-        imageData.value = pageData.value.Images as unknown as Image[] 
-        for(let i = 0; i < imageData.value?.length; i++){
-            if(imageData.value[i].cuid === pageData.value.profileImageCuid){
-                profileImageLink.value = imageData.value[i].url
-                break;
+        // Sets the front end images including the profile image
+        if(pageData.value.Images?.length != 0)
+            imageData.value = pageData.value.Images as unknown as Image[] 
+            for(let i = 0; i < imageData.value?.length; i++){
+                if(imageData.value[i].cuid === pageData.value.profileImageCuid){
+                    profileImageLink.value = imageData.value[i].url
+                    break;
+                }
             }
-        }
-}
-}
+    }
+//}
 
-await getDataPage(id.value as string)
+//await getDataPage(id.value as string)
+
 
 // images for testing if needed.
 /*const temp = ref([
@@ -191,7 +199,17 @@ const prevImage = () => {
         .well.well-sm
             h1.ml-4.pt-9.text-2xl.text-gray-dark(class="sm:text-3xl" style="font-weight: 600; letter-spacing: 0.35px;") Donor Information
         DonationEntry(:donationData="donationData" :pageCuid="pageCuid" :familyCuid="familyCuid")
+        .py-4.grid.flex-box.flex-row.item-centered.gap-1(v-if="comments?.length" style="line-height: 0px;text-align: center")
+            div(class="flex")
+                .div(v-for="(comment,i) in comments" :key="i")
+                    .text-md.text-center.ml-4.my-3 {{comment.donorFirstName}} {{comment.donorLastName }}
+                    .text-md.text-center.ml-4.my-3 {{comment.comments}}
         CVCommentSystem(:pageCuid="pageCuid" :familyCuid="familyCuid")
+        .py-4.grid.flex-box.flex-row.item-centered.gap-1(v-if="replies?.length" style="line-height: 0px;text-align: center")
+            div(class="flex")
+                .div(v-for="(reply,i) in replies" :key="i")
+                    .text-md.text-center.ml-4.my-3 {{reply.reply}}
+                    .text-md.text-center.ml-4.my-3 {{reply.name}}
     .col-md-8.mx-9(class="sm:col-span-1 sm:mr-11")
         .div.px-8.py-4(style="color: #6E6E6E; font-weight: 500; font-size: 14px; line-height: 28px; letter-spacing: -0.078px; word-break: break-word;" id="obituary") {{ pageData.obituary }}
 </template>

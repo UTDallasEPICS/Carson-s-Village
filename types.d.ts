@@ -44,6 +44,8 @@ export type Page = {
     amount_distributed: number | string
     profileImageCuid: string
     Images: Image[]
+    PageDonations: PageDonation[]
+    Reply: Reply[]
   }
   
 export type User = {

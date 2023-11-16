@@ -20,7 +20,9 @@ const pageData = ref<Page>({
     amount_raised: 0,
     amount_distributed: 0,
     profileImageCuid: "",
-    Images: []
+    Images: [],
+    PageDonations: [],
+    Reply: []
 });
 
 const props = defineProps({

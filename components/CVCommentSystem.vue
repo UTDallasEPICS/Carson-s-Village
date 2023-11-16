@@ -15,10 +15,7 @@ const props = defineProps({
     }
 })
 
-const replyData = ref<Reply>({
-    cuid: "",
-    pageCuid: props.pageCuid,
-    familyCuid: "",
+const replyData = ref<Partial<Reply>>({
     name: "",
     reply:"",
 })
@@ -27,8 +24,8 @@ const submitComment = async () => {
     const response = await useFetch('/api/replies', {
       method: 'POST',
       body: {
-        pageCuid: replyData.value.pageCuid,
-        familyCuid: replyData.value.familyCuid,
+        pageCuid: props.pageCuid,
+        familyCuid: props.familyCuid,
         replyData,
       },
     });
