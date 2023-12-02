@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 
 /*
-*   Ofek Shaltiel
+*   Ethan Emmanuel, Rishab Medhi and Ofek Shaltiel
 *	ECS 3200
 *	Carson's Village: Automated Family Page
 *	EditUser.vue 

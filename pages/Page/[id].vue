@@ -34,18 +34,6 @@ const pageData = ref<Page>({
     Images: []
 });
 
-type donor = {
-    first_name: string,
-    last_name: string,
-    isAnonnomous: boolean,
-    comments: string 
-}
-const donorInfo = ref<donor>({
-    first_name: "",
-    last_name: "",
-    isAnonnomous: false,
-    comments: "",
-})
 
 const donationData = ref<PageDonation>({
     amount: 0,
@@ -62,7 +50,6 @@ const familyCuid = ref("0")
 const profileImageLink = ref("")
 const imageData = ref<Image[]>([])
 const donated_percentage = ref("0");
-//const donated_percentage_100 = ref(0)
 const donation_goal_provided = ref(false)
 const family_cuid = ref("0")
 const router = useRoute();
@@ -146,7 +133,7 @@ const prevImage = () => {
         currentImage.value--
     }
     }
-    </script>
+</script>
 
 <template lang="pug">
 // the header overlay with image and name

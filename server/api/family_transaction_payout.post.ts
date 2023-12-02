@@ -10,40 +10,47 @@ export default defineEventHandler(async event => {
       const stripe = new Stripe(stripeSecretKey as string, { apiVersion:"2022-11-15"} )
         const body = await readBody(event)
         const familyCuid = body.familyCuid
-        try{
           if(event.context.user?.user_role == "admin" || event.context.user?.user_role == "advocate"){ //to do: remove advoate
           // update success flag in transaction
           
-            /*const family = await prisma.family.findFirst({
+          const family = await prisma.family.findFirst({
               where: {
                   cuid: familyCuid
               }
-          })*/
-          /*var familyExists = false;
-          var balencePositive = false;
-          familyExists = true; 
-          balencePositive = true;
-          if(!familyExists || !balencePositive ) {
-              return '0'
-          }*/
-          /*const transfer = await stripe.transfers.create({
+          })
+
+          const balance = (await stripe.balance.retrieve()).available[0]?.amount as unknown as number
+          // Makes sure that the family has a connected account and that the main stripe account has enough money to distribute the amount in the body.
+          if(family?.Stripe_Account_id == undefined) {
+            return "Error: No Family Stripe Account Found"
+          }
+
+          if( balance < body.amount  ) {
+            console.log(balance)
+            return "Stripe Account Balance too low"
+          }
+
+          const transfer = await stripe.transfers.create({
               amount: body.amount,
               currency: 'USD',
-              destination: family.connected_account_id,
-              // maybe add a transfer group
-          })*/
-          
+              destination: family?.Stripe_Account_id as string
+          })
+
+          /*if(transfer.lastResponse.statusCode != 200) {
+            console.log(transfer)
+            return transfer.lastResponse.headers
+          }*/
+          const transferBalanceTransaction = await stripe.balanceTransactions.retrieve
+          (
+            transfer.balance_transaction as string,
+          );
+          console.log(transferBalanceTransaction.fee_details)
             await prisma.$transaction([
               prisma.donationPayout.create({
                 data: {
-                  transaction_id: body.transaction_id,
+                  transaction_id: transfer.id,
                   amount: body.amount, 
                   distributionDate: body.distributionDate,
-                  User: {
-                    connect: {
-                      cuid: body.userCuid
-                    }
-                  },
                   Family: {
                     connect: {
                       cuid: body.familyCuid
@@ -64,12 +71,10 @@ export default defineEventHandler(async event => {
             ]) 
             
             return true;
+            //return 0
           }
             return await sendRedirect(event, loginRedirectUrl());
-        } catch (e) {
-          console.error(e)
-          return false;
-          }
+      
     });
     
     
