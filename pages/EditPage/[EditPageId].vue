@@ -24,7 +24,28 @@ import {
 import type { Image, Page, User } from '@/types.d.ts'
 import { donationFormat } from '@/utils'
 
-const data = ref<Page>({
+type Page2 = {
+    page_name: string,
+    cuid: string,
+    familyCuid: string,
+    day_of_birth: Date | string,
+    day_of_passing: Date | string,
+    visitation_date: Date | string,
+    visitation_location: string,
+    visitation_description: string,
+    funeral_date: Date | string,
+    funeral_description: string,
+    funeral_location: string,
+    obituary: string,
+    deadline: Date | string,
+    donation_goal: number | string
+    amount_raised: number | string
+    amount_distributed: number | string
+    profileImageCuid: string
+    Images: Image[]
+  }
+
+const data = ref<Page2>({
     cuid: "",
     familyCuid: "",
     page_name: "",
@@ -44,6 +65,7 @@ const data = ref<Page>({
     profileImageCuid: "",
     Images: []
 })
+
 type User2 = {
     cuid: string
     first_name: string,

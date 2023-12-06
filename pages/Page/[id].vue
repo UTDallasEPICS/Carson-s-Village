@@ -9,9 +9,9 @@
 *	Located under "/Page/"
 */
 
-import type { Page, PageDonation, Image } from '@/types.d.ts'
+import type { Page, PageDonation, Image, Reply} from '@/types.d.ts'
 import {  dateFormat, donationFormat } from '@/utils'
-import CVCommentSystem from '@/components/CVCommentSystem.vue'
+import CVReplySystem from '@/components/CVReplySystem.vue'
 
 const pageData = ref<Page>({
     cuid: "",
@@ -73,7 +73,8 @@ const id = computed(() =>  router.params.id);
 const pageCuid = id.value as string
 const cvuser = useCookie<Page>('cvuser')
 const stripeLink_ref = ref("")
-//const comments = ref<PageDonation[]>([])
+// const Replies = ref<Reply[]>([]);
+// const comments = ref<PageDonation[]>([])
 donationData.value.pageCuid = id.value as string;
 donationData.value.familyCuid = pageData.value.familyCuid
 
@@ -96,8 +97,6 @@ const create_checkout_session = async () => {
         method: 'GET',
         query: { cuid: id }
     })
-    const comments = computed(() => pageDataDB.value?.PageDonations)
-    const replies = computed(() => pageDataDB.value?.Reply)
 
     if(pageDataDB.value){
         //comments.value = pageDataDB.value as unknown as PageDonation[];
@@ -117,6 +116,9 @@ const create_checkout_session = async () => {
                 }
             }
     }
+    const comments = computed(() => pageDataDB.value?.PageDonations)
+    const replies = computed(() => pageDataDB.value?.Reply)
+    
 //}
 
 //await getDataPage(id.value as string)
@@ -149,7 +151,10 @@ const prevImage = () => {
         currentImage.value--
     }
     }
-    </script>
+const DisplayReply = async (reply: Reply) => {
+    pageDataDB.value?.Reply.push(reply)
+}
+</script>
 
 <template lang="pug">
 // the header overlay with image and name
@@ -200,16 +205,18 @@ const prevImage = () => {
             h1.ml-4.pt-9.text-2xl.text-gray-dark(class="sm:text-3xl" style="font-weight: 600; letter-spacing: 0.35px;") Donor Information
         DonationEntry(:donationData="donationData" :pageCuid="pageCuid" :familyCuid="familyCuid")
         .py-4.grid.flex-box.flex-row.item-centered.gap-1(v-if="comments?.length" style="line-height: 0px;text-align: center")
-            div(class="flex")
-                .div(v-for="(comment,i) in comments" :key="i")
-                    .text-md.text-center.ml-4.my-3 {{comment.donorFirstName}} {{comment.donorLastName }}
-                    .text-md.text-center.ml-4.my-3 {{comment.comments}}
-        CVCommentSystem(:pageCuid="pageCuid" :familyCuid="familyCuid")
+            .div.py-4.grid.gap-4(class="w-full" style="grid-template-columns: repeat(3, 1fr);")
+                .div(v-for="(comment, i) in comments" :key="i" class="comment-box")
+                    .comment-box(style="flex: calc(30% - 1rem); height: 10rem; margin: 0.5rem; padding: 1rem; border-radius: 8px; background-color: #fff; border: 1px solid #ddd; box-shadow: 0 2px 4px rgba(0,0,0,0.05);")
+                        .comment-header(style="font-size: 0.75rem; font-weight: bold; margin-bottom: 1.5rem;") {{ comment.donorFirstName }} {{ comment.donorLastName }}
+                        .comment-body(style="font-size: 0.75rem; color: #666;") {{ comment.comments }}
+        CVReplySystem(:pageCuid="pageCuid" :familyCuid="familyCuid" :replies="replies" @displayReply="DisplayReply")
         .py-4.grid.flex-box.flex-row.item-centered.gap-1(v-if="replies?.length" style="line-height: 0px;text-align: center")
             div(class="flex")
-                .div(v-for="(reply,i) in replies" :key="i")
-                    .text-md.text-center.ml-4.my-3 {{reply.reply}}
-                    .text-md.text-center.ml-4.my-3 {{reply.name}}
+            .div(v-for="(reply,i) in replies" :key="i" class="reply-box")
+                .reply-box(v-if="reply.reply.length > 0" style="padding: 1rem; text-align: left; border-bottom: 1px solid black") 
+                    .reply-header(style="font-size: 1rem; font-weight: bold; margin-bottom: 2.5rem; margin-left: 1rem") {{reply.name}}
+                    .reply-body(style="font-size: 1rem; color: #666; margin-bottom: 2.5rem;") {{reply.reply}}
     .col-md-8.mx-9(class="sm:col-span-1 sm:mr-11")
         .div.px-8.py-4(style="color: #6E6E6E; font-weight: 500; font-size: 14px; line-height: 28px; letter-spacing: -0.078px; word-break: break-word;" id="obituary") {{ pageData.obituary }}
 </template>

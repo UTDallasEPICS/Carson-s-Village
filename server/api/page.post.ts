@@ -12,7 +12,7 @@ const prisma = new PrismaClient()
 
 export default defineEventHandler(async event => {
   //extracting family id to connect the page to the authenticated user
-  const {Images, ...data} = await readBody(event)
+  const {Images, Reply, Comments, ...data} = await readBody(event)
   const familyCuid = data.familyCuid;
   delete data.familyCuid;
   data.donation_goal = Math.trunc(data.donation_goal * 100);
