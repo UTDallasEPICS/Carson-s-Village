@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import type { Page, PageDonation, Image } from '@/types.d.ts'
+import type { Page, PageDonation } from '@/types.d.ts'
 import {  dateFormat, donationFormat } from '@/utils'
 
 const pageData = ref<Page>({
@@ -61,6 +61,7 @@ const props = defineProps({
         default: ""
     }
 })
+
 console.log(props.familyCuid)
 const stripeLink_ref = ref("")
 const create_checkout_session = async () => {

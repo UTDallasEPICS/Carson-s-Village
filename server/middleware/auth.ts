@@ -49,6 +49,7 @@ export default defineEventHandler(async event => {
         // include pages ids to check if that's the family's page. 
         setCookie(event, "cvuser", JSON.stringify(event.context.user))
         
+        // check if the family has a stripe account and onboarding them with stripe if not
         if(event.context.user?.Family?.Stripe_Account_id == undefined ) {
           try {
             if (event.context.user?.user_role == "family") {
