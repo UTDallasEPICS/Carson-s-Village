@@ -17,9 +17,9 @@ model User {
   last_name   String @default("")
   phone       String @default("")
 
-  PageDonations   PageDonation[]
-  AdvocateFamily Family[] @relation("advocate_family")
-  Family         Family?  @relation(name: "family_member", fields: [familyCuid], references: [cuid])
+  PageDonations  PageDonation[]
+  AdvocateFamily Family[]       @relation("advocate_family")
+  Family         Family?        @relation(name: "family_member", fields: [familyCuid], references: [cuid])
   familyCuid     String?
   Pages          Page[]
 
@@ -27,18 +27,18 @@ model User {
 }
 
 model Family {
-  cuid String               @id @default(cuid())
-  family_name               String
-  Stripe_Account_id         String?
-  Stripe_Accont_cuid        String?
-  FamilyMembers             User[] @relation("family_member")
-  created_at                String @default("")
-  updated_at                String @default("")
-  Pages                     Page[]
-  FamilyDonations           PageDonation[]
-  FamilyDonationPayouts     DonationPayout[]
-  advocateCuid              String @map("advocate_cuid")
-  AdvocateResponsible       User? @relation("advocate_family", fields: [advocateCuid], references: [cuid]) 
+  cuid                  String           @id @default(cuid())
+  family_name           String
+  Stripe_Account_id     String?
+  Stripe_Accont_cuid    String?
+  FamilyMembers         User[]           @relation("family_member")
+  created_at            String           @default("")
+  updated_at            String           @default("")
+  Pages                 Page[]
+  FamilyDonations       PageDonation[]
+  FamilyDonationPayouts DonationPayout[]
+  advocateCuid          String           @map("advocate_cuid")
+  AdvocateResponsible   User?            @relation("advocate_family", fields: [advocateCuid], references: [cuid])
   //PageDonations PageDonation[]
   //DonationPayouts DonationPayout[]
 }
@@ -78,8 +78,10 @@ model Page {
   Images             Image[]
   amount_distributed Int              @default(0)
   profileImageCuid   String           @map("profile_image_cuid")
-  Family             Family?          @relation(fields: [familyCuid], references: cuid)
-  familyCuid         String?          @map("family_cuid")
+  Reply              Reply[]
+
+  Family     Family? @relation(fields: [familyCuid], references: cuid)
+  familyCuid String? @map("family_cuid")
 
   @@map("pages")
 }
@@ -88,13 +90,28 @@ model PageDonation {
   cuid           String  @id @default(cuid())
   familyCuid     String  @map("family_cuid")
   pageCuid       String  @map("page_cuid")
+  donorFirstName String  @default("")
+  donorLastName  String  @default("")
+  comments       String  @default("")
+  isAnonymous    Boolean @default(false)
   success        Boolean @default(false)
   transaction_id String  @unique
   amount         Int //In cents
   Family         Family  @relation(fields: [familyCuid], references: cuid)
   Page           Page    @relation(fields: [pageCuid], references: cuid)
+  User           User?   @relation(fields: [userCuid], references: [cuid])
+  userCuid       String?
 
   @@map("page_donations")
+}
+
+model Reply {
+  cuid       String  @id @default(cuid())
+  pageCuid   String  @map("page_cuid")
+  familyCuid String  @map("family_cuid")
+  reply      String  @default("")
+  name       String? @default("")
+  Page       Page    @relation(fields: [pageCuid], references: cuid)
 }
 
 model Image {
