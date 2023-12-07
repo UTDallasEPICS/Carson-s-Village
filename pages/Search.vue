@@ -12,6 +12,7 @@
 import type { Page } from '@/types.d.ts'
 import { donationFormat, dateFormat } from '@/utils'
 
+const currentPage = ref(0)
 const pages = ref<Page[]>([])
 const router = useRoute();
 // We use the search query from the url from nav based searches, and we use the input field when on the search page.
@@ -23,11 +24,28 @@ const searchQueryInput = ref("");
 const pageSearch = async( searchQuery: string) => { 
     const { data : pageData } = await useFetch('/api/pages', {
     method: 'GET',
-    query: {searchQuery: searchQuery}    
-    })
+    query: {searchQuery: searchQuery, page_number: currentPage.value}
+  })
     pages.value = pageData.value as unknown as Page[]
 }
 
+const nextPage = () => { 
+    if(currentPage.value != pages.value.length - 1){
+        currentPage.value++
+        if(currentPage.value != pages.value.length) {
+          pageSearch(searchQueryInput.value)
+        }
+    } 
+}
+
+const prevPage= () => {
+    if(currentPage.value != 0){
+        currentPage.value--
+        if(currentPage.value != -1) {
+          pageSearch(searchQueryInput.value)
+        }
+    } 
+}
 // Calling the search method using the url from the nav when the user searches from the nav. This is only called once.
 onMounted(() => {  
   pageSearch(router.query.search as string)    
@@ -53,12 +71,16 @@ onMounted(() => {
           th.px-8 Donation Goal
           th.px-8 Deadline
       tbody
-        tr(v-for="page in pages")
+        tr(v-for="(page, i) in pages" :class="{'bg-gray-200': (i+1) % 2}")
           td(style="text-align: center")   
             NuxtLink(:to="`/Page/${page.cuid}`") {{ page.page_name}}
           td(style="text-align: center") {{ donationFormat(page.donation_goal) }}
           td(style="text-align: center") {{ dateFormat(page.deadline) }}
-              
+.py-4.grid(class="sm:grid-cols-3") 
+  button(@click="prevPage") &lt
+  p {{  currentPage }}
+  button(@click="nextPage") > 
+    
 </template>
 
 <style scoped>

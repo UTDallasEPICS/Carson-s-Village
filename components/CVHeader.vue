@@ -3,8 +3,9 @@ import type { User, Page } from "@/types.d.ts"
 import { donationFormat, dateFormat } from '@/utils'
 const cvuser = useCookie<User>('cvuser');
 const cvtoken = useCookie('cvtoken');
-const isAdmin = computed(() => cvuser.value?.user_role == "advocate")
+const isAdmin = computed(() => cvuser.value?.user_role == "advocate" || cvuser.value?.user_role == "admin")
 const cuid = computed(() => cvuser.value?.cuid)
+const familyCuid = computed(() => cvuser.value?.familyCuid)
 const isLoggedIn = computed(() => cvuser.value)
 const pages = ref<Page[]>([])
 const searchQuery = ref('');
@@ -22,19 +23,24 @@ ClientOnly
       href="/api/logout"
       ) 
         p.uppercase.white.w-max LOGOUT
-      NavLinkButton(:to="`/PageList/${cuid}`") 
-        p.uppercase.white.w-max(v-if="isAdmin") Pages
-        p.uppercase.white.w-max(v-else) Pages
+      NavLinkButton(:to="`/PageList/${cuid}/?fromUsers=0`" v-if="isAdmin") 
+        p.uppercase.white.w-max Pages
+      NavLinkButton(:to="`/pageList/${familyCuid}/?fromUsers=0`" v-if="!isAdmin")
+        p.uppercase.white.w-max Pages
       NavLinkButton(to='/EditPage/0') 
         p.uppercase.white.w-max New page
       NavLinkButton( v-if="isAdmin" to='/Users') 
         p.uppercase.white.w-max Users
       NavLinkButton( v-if="isAdmin" to='/EditUser/0') 
         p.uppercase.white.w-max Invite user
+      NavLinkButton( v-if="isAdmin" to='/EditFamily') 
+        p.uppercase.white.w-max Create Family
       NavLinkButton(to="/") 
         p.uppercase.white.w-max Home
       NavLinkButton(v-if="isAdmin" to='/FamilyTransactionList') 
         p.uppercase.white.w-max Donations
+      NavLinkButton(v-if="isAdmin" to='/FamilyReports')
+        p.uppercase.white.w-max FamilyReports
     div.max-w-min.mx-auto.flex.gap-2(v-else)
       a.items-center.px-2.py-2.text-base.font-medium.rounded-md.text-green-600.cursor-pointer(style="border: 1px solid #c4c4c4;"
       class='hover:text-white hover:bg-gray-600'  

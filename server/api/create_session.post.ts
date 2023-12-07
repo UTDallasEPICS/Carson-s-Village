@@ -17,13 +17,14 @@ const runtime = useRuntimeConfig()
 */
 export default defineEventHandler(async event => {
     const transaction_id = nanoid();
-    const { req, res } = event;
     const stripe = new Stripe(runtime.STRIPE_SECRET, { apiVersion:"2022-11-15"})
     const body = await readBody(event)
     const family_cuid = body.family_cuid
     const page_cuid = body.pageCuid
     const donorComments = body.comments;
     const state = {}; 
+    const userCuid = body.userCuid
+    const familyCuid = body.familyCuid 
   try{
     const page = await prisma.page.findFirst({
       where: {
@@ -48,7 +49,8 @@ export default defineEventHandler(async event => {
 		metadata: {
 			transaction_id: transaction_id,
 			amount: body.amount_raised,
-			target_family_id: family_cuid,
+			target_user_id: userCuid,
+      target_family_id: familyCuid,
 			target_page_name: page?.page_name as string,
 			target_page_cuid: page?.cuid as string,
       comments: donorComments,
@@ -66,9 +68,14 @@ export default defineEventHandler(async event => {
         donorFirstName: body.donorFirstName,
         donorLastName: body.donorLastName,
         comments: donorComments, 
+        Family: {
+          connect: {
+            cuid: familyCuid
+          }
+        },
         User: {
           connect: {
-            cuid: family_cuid
+            cuid: userCuid
           }
         },
         Page: {

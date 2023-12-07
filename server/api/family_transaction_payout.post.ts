@@ -9,42 +9,72 @@ const stripeSecretKey = runtime.STRIPE_SECRET;
 export default defineEventHandler(async event => {
       const stripe = new Stripe(stripeSecretKey as string, { apiVersion:"2022-11-15"} )
         const body = await readBody(event)
-        
-        try{
-          if(event.context.user?.user_role == "advocate"){
+        const familyCuid = body.familyCuid
+          if(event.context.user?.user_role == "admin" || event.context.user?.user_role == "advocate"){ //to do: remove advoate
           // update success flag in transaction
-          await prisma.$transaction([
-            prisma.donationPayout.create({
-              data: {
-                transaction_id: body.transaction_id,
-                amount: body.amount, 
-                distributionDate: body.distributionDate,
-                User: {
-                  connect: {
-                    cuid: body.familyCuid
-                  }
-                },
-                Page: {
-                  connect: {
-                    cuid: body.pageCuid,
-                  }
-                }
-            }}),
-            prisma.page.update({
-              where: {
-                cuid: body.pageCuid as string
-              },
-              data: {amount_distributed: {increment: body.amount}}
-            })
-          ]) 
           
-          return true;
-        }
-          return await sendRedirect(event, loginRedirectUrl());
-        } catch (e) {
-          console.error(e)
-          return false;
+          const family = await prisma.family.findFirst({
+              where: {
+                  cuid: familyCuid
+              }
+          })
+
+          const balance = (await stripe.balance.retrieve()).available[0]?.amount as unknown as number
+          // Makes sure that the family has a connected account and that the main stripe account has enough money to distribute the amount in the body.
+          if(family?.Stripe_Account_id == undefined) {
+            return "Error: No Family Stripe Account Found"
           }
+
+          if( balance < body.amount  ) {
+            console.log(balance)
+            return "Stripe Account Balance too low"
+          }
+
+          const transfer = await stripe.transfers.create({
+              amount: body.amount,
+              currency: 'USD',
+              destination: family?.Stripe_Account_id as string
+          })
+
+          /*if(transfer.lastResponse.statusCode != 200) {
+            console.log(transfer)
+            return transfer.lastResponse.headers
+          }*/
+          const transferBalanceTransaction = await stripe.balanceTransactions.retrieve
+          (
+            transfer.balance_transaction as string,
+          );
+          console.log(transferBalanceTransaction.fee_details)
+            await prisma.$transaction([
+              prisma.donationPayout.create({
+                data: {
+                  transaction_id: transfer.id,
+                  amount: body.amount, 
+                  distributionDate: body.distributionDate,
+                  Family: {
+                    connect: {
+                      cuid: body.familyCuid
+                    }
+                  },
+                  Page: {
+                    connect: {
+                      cuid: body.pageCuid,
+                    }
+                  }
+              }}),
+              prisma.page.update({
+                where: {
+                  cuid: body.pageCuid as string
+                },
+                data: {amount_distributed: {increment: body.amount}}
+              })
+            ]) 
+            
+            return true;
+            //return 0
+          }
+            return await sendRedirect(event, loginRedirectUrl());
+      
     });
     
     
