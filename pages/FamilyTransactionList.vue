@@ -33,7 +33,7 @@ const isAdvocate = computed(() => cvuser.value?.user_role == "advocate")
   const currentFamilyCuid = ref<string>("")
   const currentFamily = computed(() => Families.value?.find(({ cuid }: Family) => cuid == currentFamilyCuid.value) || {})
   //console.log(currentFamily.value)
-  const currentUser = computed(() => currentFamily.value?.FamilyMembers![0] || '{}')
+  //const currentUser = computed(() => currentFamily.value?.FamilyMembers![0] as User)
   currentFamilyCuid.value = Families.value![0]?.cuid || ""
 
   const { data: familyData } = await useFetch('/api/family_pages', {
@@ -57,6 +57,7 @@ const isAdvocate = computed(() => cvuser.value?.user_role == "advocate")
       return [] as any;
     },
   });
+  
   const totalPageDonations = computed(() => donations.value?.reduce((acc: number, curr: PageDonation) => acc + curr.amount, 0) || 0);
   const totalDistributed = computed(() => familyData.value?.reduce((acc: number, curr: Page) => acc + (curr.amount_distributed as number), 0) || 0);
   const totalRemaining = computed(() => totalPageDonations.value - totalDistributed.value);
@@ -120,12 +121,12 @@ const isAdvocate = computed(() => cvuser.value?.user_role == "advocate")
           p.self-center.text-center Remaining Amount to Distribute
           p.text-center.mt-2 {{ donationFormat(currentPage?.amount_raised - currentPage?.amount_distributed) }}
     div(class="basis-1/3")
-      PayoutRecord(:currentPage="currentPage" :currentUser="currentUser" :currentFamily="currentFamily")
+      PayoutRecord(:currentPage="currentPage" :currentFamily="currentFamily")
 
   CVLegend.mt-10 Family Pages
   table.mt-5.table.table-striped.w-full
       thead
-          tr
+          tr(style="color: white;")
               th.px-8(style="--tw-bg-opacity: 1; background-color: rgb(110 171 191 / var(--tw-bg-opacity));border-radius: 60px 0px 0px 0px; width:25%; overflow: hidden") Page Name
               th.px-8(style="width:25%; --tw-bg-opacity: 1; background-color: rgb(110 171 191 / var(--tw-bg-opacity));") Raised
               th.font-poppins.font-bold(style="--tw-bg-opacity: 1; background-color: rgb(110 171 191 / var(--tw-bg-opacity));") Remaining
@@ -142,7 +143,7 @@ const isAdvocate = computed(() => cvuser.value?.user_role == "advocate")
   CVLegend.mt-10 Family Donations
   table.mt-5.table.table-striped(style="width:100%;")
       thead
-          tr
+          tr(style="color: white;")
               th.px-8(style="--tw-bg-opacity: 1; background-color: rgb(110 171 191 / var(--tw-bg-opacity));border-radius: 60px 0px 0px 0px; width:25%; overflow: hidden") Transaction id
               th.px-8(style="width:25%; --tw-bg-opacity: 1; background-color: rgb(110 171 191 / var(--tw-bg-opacity));") Donation cuid
               th.font-poppins.font-bold(style="--tw-bg-opacity: 1; background-color: rgb(110 171 191 / var(--tw-bg-opacity));") Page Name

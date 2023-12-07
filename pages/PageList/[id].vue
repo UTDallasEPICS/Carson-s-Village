@@ -89,7 +89,7 @@ const getDataPageList = async () => {
 }
   const isEmpty = computed(() => pages.value.length == 0)
   
-  if(fromUser.value && cvuser.value.user_role == "advocate" ) {
+  if(fromUser.value && (cvuser.value.user_role == "advocate" || cvuser.value.user_role == "admin")) {
     const { data: familyData } = await useFetch('/api/page_list', {
     method: 'GET',
     query: { user_cuid },
@@ -110,8 +110,10 @@ const { data: family_pages } = await useFetch('/api/family_pages', {
     }
     
   })
+
+  
   /*
-    use
+    // For winter clean up
     prisma.page.FindMany({
       where: { 
         Family: {
@@ -129,10 +131,10 @@ await getDataPageList()
 </script>
 
 <template lang ="pug">
-.py-4.grid(class="sm:grid-cols-3" v-if="isAdvocate && !fromUser")
+.py-4.grid(class="sm:grid-cols-3" v-if="isAdmin && !fromUser")
     CVLabel Family
     .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
-      Listbox.shadow-sm.border.border-1.rounded-lg(v-if="isAdvocate" as='div' v-model="familyCuid")
+      Listbox.shadow-sm.border.border-1.rounded-lg(v-if="isAdmin" as='div' v-model="familyCuid")
         .relative
           Transition(
                     leave-active-class='transition ease-in duration-100'
@@ -142,7 +144,7 @@ await getDataPageList()
             ListboxOptions(as='div' class='w-full absolute z-10 mt-10 bg-white shadow-lg max-h-60 rounded-md px-2 py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm' )
                 ListboxOption(as='div' v-for="family in data_families" :key="family.cuid" :value="family.cuid" class="px-2 border border-grey-500 py-1 my-1") {{ family.family_name }}
           ListboxButton(class='text-left bg-white relative rounded-md pl-2 pr-10 py-2 sm:text-sm w-96') {{ familyCuid ? currentFamily.family_name : 'Select family to view pages from' }}  
-.mx-auto.mt-1(class="w-11/12 sm:w-[1200px]" v-if="!isAdvocate || fromUser")
+.mx-auto.mt-1(class="w-11/12 sm:w-[1200px]" v-if="!isAdmin || fromUser")
   table(style="table-layout: auto;")
     thead
       tr
@@ -165,7 +167,7 @@ await getDataPageList()
   .container.bg-blue-300.mx-auto(class="w-auto sm:w-[1200px]" style="--tw-bg-opacity: 1; background-color: rgb(110 171 191 / var(--tw-bg-opacity)); height: 50px; border-radius: 0px 0px 60px 60px;")
 
 
-.mx-auto.mt-1(class="w-11/12 sm:w-[1200px]" v-if="!fromUser && isAdvocate")
+.mx-auto.mt-1(class="w-11/12 sm:w-[1200px]" v-if="!fromUser && isAdmin")
   table(style="table-layout: auto;")
     thead
       tr

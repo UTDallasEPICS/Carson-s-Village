@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 
 /*
-*   Ofek Shaltiel
+*   David Haung and Ofek Shaltiel
 *	ECS 3200
 *	Carson's Village: Automated Family Page
 *	EditPage.vue 
@@ -51,6 +51,7 @@ const data = ref<Page>({
     Images: [], 
     familyCuid: ""
 })
+
 type User2 = {
     cuid: string
     first_name: string,
@@ -74,7 +75,7 @@ const data_family = ref<Family>({
 
 })
 
-const isAdvocate = computed(() => cvuser.value?.user_role == "advocate")
+const isAdvocate = computed(() => cvuser.value?.user_role == "advocate" ||  cvuser.value?.user_role == "admin")
 const data_all_users = ref<Family[]>([])
 
 const imageData = ref<Image[]>([])

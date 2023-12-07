@@ -1,21 +1,19 @@
-import { PrismaClient } from "@prisma/client";
-import jwt from "jsonwebtoken";
-import fs from "fs";
-import { parseCookies } from 'h3';
-import Stripe from "stripe";
-import { useRuntimeConfig } from '#imports';
+import {loginRedirectUrl, logoutRedirectUrl} from "../api/auth0"
+import jwt from "jsonwebtoken"
+import fs from "fs"
+import Stripe from "stripe"
+const runtime = useRuntimeConfig()
 
-const prisma = new PrismaClient();
-const runtime = useRuntimeConfig();
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, { apiVersion: "2022-11-15" });
-
-export default defineEventHandler(async (event) => {
-  const cookies = parseCookies(event);
-  const cvtoken = cookies.cvtoken || "";
-
-  if (!cvtoken && !event.req.url?.startsWith('/api/callback')) {
-    return createRedirectResponse(event, `${runtime.BASEURL}/login`);
-
+const stripeSecretKey = runtime.STRIPE_SECRET;
+import { PrismaClient } from "@prisma/client"
+const client = new PrismaClient()
+export default defineEventHandler(async event => {
+  const stripe = new Stripe(runtime.STRIPE_SECRET, { apiVersion:"2022-11-15"})
+  event.context.client = client
+  const cvtoken = getCookie(event, "cvtoken") || ""
+  // not logged in but trying to
+  if (!cvtoken && !(event.node.req.url?.includes('/api/callback') || event.node.req.url?.includes("/Page/") || event.node.req.url?.includes("/api/page") || event.node.req.url?.includes("/"))) {
+    await sendRedirect(event, loginRedirectUrl());
   } else {
     if (cvtoken) {
       try {
@@ -24,14 +22,21 @@ export default defineEventHandler(async (event) => {
         const user = await prisma.user.findUnique({
           where: { email: claims.email },
           include: {
-            Family: true
+            Pages: {
+              select: {
+                cuid: true
+              }
+            }, Family: {
+              select: {
+                Stripe_Account_id: true
+              }
+            }
           }
         });
 
         if (!user) {
           return createRedirectResponse(event, `${runtime.BASEURL}/login`);
         }
-
         if (user.user_role === 'family' && !user.Family?.Stripe_Account_id) {
           const newStripeAccount = await stripe.accounts.create({
             type: 'standard',
@@ -59,7 +64,10 @@ export default defineEventHandler(async (event) => {
         return createRedirectResponse(event, `${runtime.BASEURL}/login`);
       }
     }
+  } catch(e){
+    console.error(e)
   }
+
 });
 
 function createRedirectResponse(event, location) {

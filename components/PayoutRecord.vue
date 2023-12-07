@@ -7,9 +7,9 @@ import { donationFormat } from "@/utils"
 const props = defineProps<{
   currentPage: Page
   currentFamily: Family
-  currentUser: User
 }>()
 const transaction_id = ref("")
+const error = ref("")
 const distributionDate = ref(new Date())
 const amount = ref("0.00")
 
@@ -17,18 +17,22 @@ const cvuser = useCookie<User>('cvuser')
 
 // Method that records donation payouts and increases the amount distributed for each page.
 const save = async () => {
-  await useFetch('/api/family_transaction_payout', {
+  const{data: result } = await useFetch('/api/family_transaction_payout', {
     method: 'POST',
     body: {
       transaction_id: transaction_id.value,
       distributionDate: distributionDate.value,
       amount: Math.floor(parseFloat(amount.value) * 100),
       familyCuid: props.currentFamily.cuid,
-      pageCuid: props.currentPage.cuid,
-      userCuid: props.currentUser.cuid
+      pageCuid: props.currentPage.cuid
     }
   })
-  window.location.reload()
+  if(result.value == true) {
+    window.location.reload()
+  } else {
+    console.log(result.value)
+    error.value = result.value as string
+  }
 };
 const setWholeAmountPage = function(){
   amount.value = (((props.currentPage.amount_raised as number) - (props.currentPage.amount_distributed as number)) / 100.0) + ""
@@ -54,16 +58,9 @@ p.text-center.mt-10 Record Payout
       max-w-min.mx-auto.flex.gap-2
   div.mx-auto.flex.gap-2.justify-between() 
     button.p-3.px-6.pt-2.bg-orange-500.rounded-lg.text-white(@click="setWholeAmountFamily") Distribute All Remaining Family Funds
-      
     button.p-3.px-6.pt-2.bg-orange-500.rounded-lg.text-white(@click="setWholeAmountPage") Distribute All Remaining Page Funds
-
-  //button.p-3.px-6.pt-2.bg-orange-500.rounded-lg.text-white(@click="setWholeAmount") Distribute All Remaining
-
-  .flex.gap-5.justify-between
-    p.self-center Stripe Transaction ID
-    CVInput(v-model='transaction_id')
-
   button.p-3.px-6.pt-2.bg-orange-500.rounded-lg.text-white(@click="save") Perform Distribution
+p(v-if="error.length != 0" Style="color:red;") {{ error }}
 </template>
 
 <style scoped></style>
