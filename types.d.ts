@@ -47,8 +47,9 @@ export type Page = {
     amount_raised: number | string
     amount_distributed: number | string
     profileImageCuid: string
-    Images: Image[],
-    familyCuid: string
+    Images: Image[]
+    PageDonations: PageDonation[]
+    Reply: Reply[]
   }
 
 export type Family = {
@@ -89,6 +90,10 @@ export type PageDonation = {
   success: boolean 
   transaction_id: string  
   amount: number
+  donorFirstName: string
+  donorLastName: string
+  isAnonymous: boolean
+  comments: string
   //Page: Page
   //User: User
 }
@@ -110,4 +115,12 @@ export type Image = {
   url: string
   pageCuid: string
   //Page: Page
+}
+
+export type Reply = {
+  cuid: string,
+  pageCuid: string
+  familyCuid: string
+  name: string
+  reply: string
 }

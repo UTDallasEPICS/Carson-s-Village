@@ -49,6 +49,8 @@ const data = ref<Page>({
     amount_distributed: 0,
     profileImageCuid: "",
     Images: [], 
+    PageDonations: [], 
+    Reply: [], 
     familyCuid: ""
 })
 
