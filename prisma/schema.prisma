@@ -17,11 +17,11 @@ model User {
   last_name   String @default("")
   phone       String @default("")
 
-  AdvocateFamily  Family[]  @relation("advocate_family")
-  Family          Family?   @relation(name:"family_member", fields: [familyCuid], references: [cuid])
-  familyCuid      String?
-  Pages           Page[]
   PageDonations   PageDonation[]
+  AdvocateFamily Family[] @relation("advocate_family")
+  Family         Family?  @relation(name: "family_member", fields: [familyCuid], references: [cuid])
+  familyCuid     String?
+  Pages          Page[]
 
   @@map("user_accounts")
 }
@@ -55,7 +55,7 @@ model DonationPayout {
 }
 
 model Page {
-  cuid                   String @id @default(cuid())
+  cuid                   String  @id @default(cuid())
   page_name              String
   day_of_birth           String?
   day_of_passing         String?
@@ -78,29 +78,27 @@ model Page {
   Images             Image[]
   amount_distributed Int              @default(0)
   profileImageCuid   String           @map("profile_image_cuid")
-  Family             Family?           @relation(fields: [familyCuid], references: cuid)
-  familyCuid       String?           @map("family_cuid")
+  Family             Family?          @relation(fields: [familyCuid], references: cuid)
+  familyCuid         String?          @map("family_cuid")
 
   @@map("pages")
 }
 
 model PageDonation {
   cuid           String  @id @default(cuid())
-  userCuid     String  @map("user_cuid")
-  familyCuid   String @map("family_cuid")
+  familyCuid     String  @map("family_cuid")
   pageCuid       String  @map("page_cuid")
   success        Boolean @default(false)
   transaction_id String  @unique
   amount         Int //In cents
-  Family         Family @relation(fields: [familyCuid], references: cuid)
+  Family         Family  @relation(fields: [familyCuid], references: cuid)
   Page           Page    @relation(fields: [pageCuid], references: cuid)
-  User           User    @relation(fields: [userCuid], references: cuid)
 
   @@map("page_donations")
 }
 
 model Image {
-  cuid     String @id @default(cuid())
+  cuid     String  @id @default(cuid())
   url      String
   pageCuid String?
   Page     Page?   @relation(fields: [pageCuid], references: [cuid])
