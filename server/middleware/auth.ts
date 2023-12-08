@@ -34,7 +34,7 @@ export default defineEventHandler(async event => {
               }
             }, Family: {
               select: {
-                Stripe_Account_id: true
+                stripe_account_id: true
               }
             }
           }
@@ -43,14 +43,13 @@ export default defineEventHandler(async event => {
           console.error(`${claims.email} not found`) 
           setCookie(event,'cvtoken','')
           setCookie(event,'cvuser','')
-          return await sendRedirect(event, logoutRedirectUrl(cvtoken))
           return await sendRedirect(event, loginRedirectUrl());
         }
         // include pages ids to check if that's the family's page. 
         setCookie(event, "cvuser", JSON.stringify(event.context.user))
         
         // check if the family has a stripe account and onboarding them with stripe if not
-        if(event.context.user?.Family?.Stripe_Account_id == undefined ) {
+        if(event.context.user?.Family?.stripe_account_id == undefined ) {
           try {
             if (event.context.user?.user_role == "family") {
                     const newStripeAccount = await stripe.accounts.create({
@@ -60,7 +59,7 @@ export default defineEventHandler(async event => {
 
                     await event.context.client.family.update({
                         where: { cuid: event.context.user.familyCuid },
-                        data: { Stripe_Account_id: newStripeAccount.id }
+                        data: { stripe_account_id: newStripeAccount.id }
                     });
     
                     let stripeAccountId = newStripeAccount.id;
