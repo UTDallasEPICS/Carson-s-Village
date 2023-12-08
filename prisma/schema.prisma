@@ -28,8 +28,7 @@ model User {
 model Family {
   cuid                  String           @id @default(cuid())
   family_name           String
-  Stripe_Account_id     String?
-  Stripe_Accont_cuid    String?
+  stripe_account_id     String?
   FamilyMembers         User[]           @relation("family_member")
   created_at            String           @default("")
   updated_at            String           @default("")

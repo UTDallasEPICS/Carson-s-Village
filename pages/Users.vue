@@ -21,16 +21,40 @@ type User2 = {
     Pages: Page[];
     Family: Family;
 }
+
 const users = ref<User2[]>([])
 const cvuser = useCookie<User>('cvuser')
 const isAuthorized = computed(() => cvuser.value?.user_role == "advocate" || cvuser.value?.user_role == "admin")
+const currentPage  = ref(0)
+const totalLength = ref(0)
 
 // Method that retrieves all the authenticated users on the website (advocates and family members)
 const getDataUsers = async () => {
     const { data: usersData } = await useFetch('/api/users', {
         method: 'GET',
+        query: { page_number: currentPage}
     })
-    users.value = usersData.value as unknown as User2[];
+    users.value = usersData.value?.userData as unknown as User2[];
+    totalLength.value = usersData.value?.Pagination.total as unknown as number
+}
+
+const nextPage = () => { 
+    console.log((totalLength.value / 12) -1 )
+    if(currentPage.value < ((totalLength.value / 12) - 1)){
+        currentPage.value++
+        if(isAuthorized.value) {
+            getDataUsers()
+        }
+    } 
+}
+
+const prevPage= () => {
+    if(currentPage.value != 0){
+        currentPage.value--
+        if(isAuthorized.value) {
+            getDataUsers()
+        }
+    } 
 }
 
 if( (isAuthorized.value as boolean) == true )
@@ -59,4 +83,11 @@ if( (isAuthorized.value as boolean) == true )
                 td.font-poppins.text-gray-dark.font-bold(style="text-align: center") {{ item.email }}
                 LinkButton(class="sm:my-2" style="--tw-bg-opacity: 1; background-color: rgb(110 171 191 / var(--tw-bg-opacity)); white-space: nowrap; display: flex; flex-direction: row; padding: 14px 24px; gap: 10px;" :to="`/pageList/${item.cuid}?fromUsers=1`") View
     .container.mx-auto(class="w-auto sm:w-[1200px]" style="--tw-bg-opacity: 1; background-color: rgb(110 171 191 / var(--tw-bg-opacity)); height: 50px; border-radius: 0px 0px 60px 60px;")
+.ml-9.mb-9.py-7.flex.flex-wrap.gap-2
+    .col-md-10.px-2.mt-2
+        button(@click="prevPage") &lt
+    .col-md-10.px-2.mt-2
+        p {{  currentPage }}
+    .col-md-10.px-2.mt-2
+        button(@click="nextPage") >
 </template>

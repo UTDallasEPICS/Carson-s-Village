@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import type { Page, PageDonation, Image } from '@/types.d.ts'
+import type { Page, PageDonation } from '@/types.d.ts'
 import {  dateFormat, donationFormat } from '@/utils'
 
 const props = defineProps({

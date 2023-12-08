@@ -36,19 +36,31 @@ export default defineEventHandler(async event => {
 
 const body = await readBody(event);
 const now = (new Date()).toString();
-const family_name = body.family_name
-delete body.family_name
-delete body.familyCuid
-delete body.Pages
+  const { family_name,
+    first_name,
+    email,
+    middle_name,
+    last_name,
+    phone } = body
 if(event.context.user?.user_role == "advocate" || event.context.user.user_role === "admin") {
     try {
       await sendEmail(body.email, "invitation", "Invitation to Carson's village", ({...body, url: `${runtime.BASEURL}api/login`}))
       const queryRes = await prisma.family.create({
         data: {
-          family_name: family_name, advocateCuid: event.context.user.cuid, created_at: now, updated_at: "", cuid: undefined,
+          family_name: family_name,
+          AdvocateResponsible: {
+            connect: { cuid: event.context.user.cuid }
+          },
+          created_at: now,
+          updated_at: "",
+          cuid: undefined,
           FamilyMembers: {
             create: {
-              ...body, cuid: undefined
+              first_name,
+              email,
+              middle_name,
+              last_name,
+              phone,
             }
           }
         }

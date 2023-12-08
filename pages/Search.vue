@@ -19,33 +19,33 @@ const router = useRoute();
 // to call /api/pages
 
 const searchQueryInput = ref("");
+const totalLength = ref(0)
 
 // Method to populate search results for pages
 const pageSearch = async( searchQuery: string) => { 
-    const { data : pageData } = await useFetch('/api/pages', {
+    const { data: pageData } = await useFetch('/api/pages', {
     method: 'GET',
     query: {searchQuery: searchQuery, page_number: currentPage.value}
   })
-    pages.value = pageData.value as unknown as Page[]
+    pages.value = pageData.value?.data as unknown as Page[]
+    totalLength.value = pageData.value?.Pagination.total as unknown as number
 }
 
+// Pagination control, move the page counter forwards and backwards and searches
 const nextPage = () => { 
-    if(currentPage.value != pages.value.length - 1){
+  console.log(totalLength.value / 12)
+    if(currentPage.value < ((totalLength.value / 12) - 1)){
         currentPage.value++
-        if(currentPage.value != pages.value.length) {
           pageSearch(searchQueryInput.value)
-        }
     } 
 }
-
 const prevPage= () => {
     if(currentPage.value != 0){
         currentPage.value--
-        if(currentPage.value != -1) {
           pageSearch(searchQueryInput.value)
-        }
     } 
 }
+
 // Calling the search method using the url from the nav when the user searches from the nav. This is only called once.
 onMounted(() => {  
   pageSearch(router.query.search as string)    
@@ -76,11 +76,13 @@ onMounted(() => {
             NuxtLink(:to="`/Page/${page.cuid}`") {{ page.page_name}}
           td(style="text-align: center") {{ donationFormat(page.donation_goal) }}
           td(style="text-align: center") {{ dateFormat(page.deadline) }}
-.py-4.grid(class="sm:grid-cols-3") 
-  button(@click="prevPage") &lt
-  p {{  currentPage }}
-  button(@click="nextPage") > 
-    
+  .ml-9.mb-9.py-7.flex.flex-wrap.gap-2
+    .col-md-10.px-2.mt-2
+        button(@click="prevPage") &lt
+    .col-md-10.px-2.mt-2
+        p {{  currentPage }}
+    .col-md-10.px-2.mt-2
+        button(@click="nextPage") >
 </template>
 
 <style scoped>

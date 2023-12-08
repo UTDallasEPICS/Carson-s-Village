@@ -19,7 +19,7 @@ export default defineEventHandler(async event => {
       try {
         const publicKey = fs.readFileSync(process.cwd() + "/cert-dev.pem", 'utf8');
         const claims = jwt.verify(cvtoken, publicKey);
-        const user = await prisma.user.findUnique({
+        const user = await event.context.client.user.findUnique({
           where: { email: claims.email },
           include: {
             Pages: {
@@ -28,7 +28,7 @@ export default defineEventHandler(async event => {
               }
             }, Family: {
               select: {
-                Stripe_Account_id: true
+                stripe_account_id: true
               }
             }
           }
@@ -43,7 +43,7 @@ export default defineEventHandler(async event => {
             email: user.email,
           });
 
-          await prisma.family.update({
+          await event.context.client.family.update({
             where: { cuid: user.Family.cuid },
             data: { Stripe_Account_id: newStripeAccount.id }
           });
@@ -64,10 +64,7 @@ export default defineEventHandler(async event => {
         return createRedirectResponse(event, `${runtime.BASEURL}/login`);
       }
     }
-  } catch(e){
-    console.error(e)
-  }
-
+    }
 });
 
 function createRedirectResponse(event, location) {
