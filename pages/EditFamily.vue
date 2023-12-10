@@ -29,7 +29,6 @@ const data_family = ref<Family>({
     updated_at: "",
     family_name: "",
     advocateCuid: cvuser2.value.cuid 
-
 })
 
 const data_user = ref<User>({
@@ -51,7 +50,7 @@ const router = useRoute()
 const isAuthorized = computed(() => { cvuser2.value?.user_role as string == "advocate" || cvuser2.value?.user_role == "admin"})
 const errorInPage = ref(false);
 
-// Method that creates a new family on the backend
+// Method that creates a new family on the backend and adds the first user
 const createFamily = async () => {
     if(isAuthorized){
         const { data: result } = await useFetch('/api/family', {
@@ -66,25 +65,7 @@ const createFamily = async () => {
     } else {
         errorInPage.value = true;
     }
-    //save(data_family.value?.cuid)
 } 
-}
-
-// creates the user and adds them to the family  created in createFamily()
-const save = async (familyCuid: any) => {
-    if(isAuthorized){
-        const { data: result } = await useFetch('/api/user', {
-        method: 'POST',
-        body: ({ ...data_user.value, cuid: undefined, familyCuid: familyCuid})
-    })
-    if( result.value ){
-        errorInPage.value = false;
-        await navigateTo('/Users')
-    } else {
-        errorInPage.value = true;
-    }
-}
-
 }
 </script>
 

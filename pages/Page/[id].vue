@@ -31,7 +31,12 @@ const pageData = ref<Page>({
     amount_raised: 0,
     amount_distributed: 0,
     profileImageCuid: "",
-    Images: []
+    Images: [],
+    status: "active",
+    donation_status: "in progress",
+    duration: "",
+    start_date: "",
+    goal_met_date: ""
 });
 
 
@@ -103,6 +108,21 @@ if(pageDataDB.value !== false){
         console.log(donation_goal_provided.value)
 }
 }
+const isActive = computed(() => pageData.value.status == "active")
+const shareFacebook = () => {
+  const facebookShareLink = `https://www.facebook.com/sharer/sharer.php?caption=${pageData.value.page_name}&u=${window.location.href}`
+  window.open(facebookShareLink)
+}
+
+const shareXFormalyKnownAsTwitter = () => {
+  const xShareLink = `https://twitter.com/intent/tweet?text=${pageData.value.page_name}&url=${window.location.href}`
+  window.open(xShareLink)
+}
+
+const shareMail = () => {
+  const MailShareLink = `mailto:?subject=Site%20sharing&body=Please%20check%20this%20site%20out%20${window.location.href}`
+  window.open(MailShareLink)
+}
 
 await getDataPage(id.value as string)
 
@@ -155,36 +175,36 @@ const prevImage = () => {
       .flex.flex-col.gap-5(class="lg:grid lg:grid-cols-2")
         .flex.flex-col.gap-5(v-if="pageData.visitation_date")
           .text-gray-dark.font-poppins.text-2xl.text-left.font-bold(style="line-height: 36px; text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") Visitation
-          .flex.justify-between.gap-5
+          .flex.gap-5
             .font-outfit {{ "Date:" }}
             .font-outfit {{ dateFormat(pageData.visitation_date, true) }}
-          .flex.justify-between.gap-5
+          .flex.gap-5
             .font-outfit {{ "Location:" }}
             .font-outfit.whitespace-normal {{ pageData.visitation_location ? pageData.visitation_location : "TBD" }}
           .font-outfit {{ pageData.visitation_description }}
         .flex.flex-col.gap-5(v-else)
           .text-gray-dark.font-poppins.text-2xl.text-left.font-bold(style="line-height: 36px; text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") Visitation
-          .flex.justify-between.gap-5
-            .font-outfit {{ "Date: TBD"}}
-          .flex.justify-between.gap-5
-            .font-outfit {{ "Location: TBD" }}
+          .flex.gap-5
+            .font-outfit {{ "Date:  TBD"}}
+          .flex.gap-5
+            .font-outfit {{ "Location:  TBD" }}
         .flex.flex-col.gap-5(v-if="pageData.funeral_date")
             .text-gray-dark.font-poppins.text-2xl.text-left.font-bold(style="line-height: 36px; text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") Funeral
-            .flex.justify-between.gap-5
+            .flex.gap-5
               .font-outfit {{ "Date:" }}
               .font-outfit {{ dateFormat(pageData.funeral_date, true) }}
-            .flex.justify-between.gap-5
+            .flex.gap-5
               .font-outfit {{ "Location:" }}
               .font-outfit.whitespace-normal {{ pageData.funeral_location }}
             .font-outfit {{ pageData.funeral_description }}
         .flex.flex-col.gap-5(v-else)
             .text-gray-dark.font-poppins.text-2xl.text-left.font-bold(style="line-height: 36px; text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") Funeral
-            .flex.justify-between.gap-5
-              .font-outfit {{ "Date: TBD" }}
-            .flex.justify-between.gap-5
-              .font-outfit {{ "Location: TBD" }}
+            .flex.gap-5
+              .font-outfit {{ "Date:  TBD" }}
+            .fle.gap-5
+              .font-outfit {{ "Location:  TBD" }}
 //.container(class="sm:overflow-hidden sm:w-3/4 sm:mt-4 sm:mx-auto sm:place-content-center sm:max-w-xl sm:p-6 sm:rounded-card sm:shadow-card")
-.grid(class="sm:grid-cols-2")
+.grid(class="sm:grid-cols-2" v-if="isActive")
     .container.m-4.place-content-center.font-poppins(class="w-5/6 sm:m-auto sm:py-3")
         .text-md.text-center.ml-4.my-3(v-if="donation_goal_provided" class="sm:text-xl sm:my-6" style="letter-spacing: 0.35px; font-weight: 600; color: #646464;") {{ donationFormat(pageData.amount_raised)  + " raised of " +  donationFormat(pageData.donation_goal) + " goal" }}
         .py-4
@@ -195,7 +215,19 @@ const prevImage = () => {
         .well.well-sm
             h1.ml-4.pt-9.text-2xl.text-gray-dark(class="sm:text-3xl" style="font-weight: 600; letter-spacing: 0.35px;") Donor Information
         DonationEntry(:donationData="donationData" :pageCuid="pageCuid" :familyCuid="familyCuid" :userCuid="userCuid")
-        
-    .col-md-8.mx-9(class="sm:col-span-1 sm:mr-11")
-        .div.px-8.py-4(style="color: #6E6E6E; font-weight: 500; font-size: 14px; line-height: 28px; letter-spacing: -0.078px; word-break: break-word;" id="obituary") {{ pageData.obituary }}
+div.flex(style="color:gray; font-weight: 700; justify-content:center; align-items: center; height: 100px;")
+  label SHARE THIS PAGE |&nbsp;
+  .col
+    button(@click="shareFacebook")
+      img(src="/facebook-fa.PNG" style="width:30px; height:33px;") 
+  .col
+    button(@click="shareXFormalyKnownAsTwitter")
+        img(src="/twitter fa.PNG" style="width:30px; height:29px;") 
+  .col
+    button(@click="shareMail")
+        img(src="/mail fa.PNG" style="width:50px; height:29px;") 
+  .col
+    p {{  "" }}
+.col-md-8.mx-9(class="sm:col-span-1 sm:mr-11")
+    .div.px-8.py-4(style="color: #6E6E6E; font-weight: 500; font-size: 14px; line-height: 28px; letter-spacing: -0.078px; word-break: break-word;" id="obituary") {{ pageData.obituary }}
 </template>

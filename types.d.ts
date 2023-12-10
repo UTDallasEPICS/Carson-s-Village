@@ -48,7 +48,12 @@ export type Page = {
     amount_distributed: number | string
     profileImageCuid: string
     Images: Image[],
-    familyCuid: string
+    familyCuid: string,
+    status: string,
+    donation_status: string,
+    duration: string, 
+    start_date: string
+    goal_met_date: string
   }
 
 export type Family = {

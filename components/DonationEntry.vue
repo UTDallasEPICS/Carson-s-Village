@@ -21,7 +21,12 @@ const pageData = ref<Page>({
     amount_raised: 0,
     amount_distributed: 0,
     profileImageCuid: "",
-    Images: []
+    Images: [], 
+    status: "active",
+    donation_status: "in progress",
+    duration: "",
+    start_date: "",
+    goal_met_date: ""
 });
 
 type donor = {

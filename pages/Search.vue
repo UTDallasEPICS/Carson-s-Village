@@ -60,7 +60,7 @@ onMounted(() => {
   br
   legend(class='text-m indent-8') Search memorial pages
   input(class="border border-gray-300 py-2 px-4 ml-8 rounded-lg focus:outline-none focus:border-black-500" type="search" placeholder=" " v-model="searchQueryInput")
-  button(class='text-m bg-gray-300 p-2 mt-1 mb-2' @click='pageSearch(searchQueryInput)') SEARCH
+  button(class='text-m bg-gray-300 p-2 mt-1 mb-2' @click='currentPage=0;pageSearch(searchQueryInput)') SEARCH
   .container
   br
   b(class="ml-8 text-xl")     Search Results 
@@ -76,7 +76,7 @@ onMounted(() => {
             NuxtLink(:to="`/Page/${page.cuid}`") {{ page.page_name}}
           td(style="text-align: center") {{ donationFormat(page.donation_goal) }}
           td(style="text-align: center") {{ dateFormat(page.deadline) }}
-  .ml-9.mb-9.py-7.flex.flex-wrap.gap-2
+  .ml-9.mb-9.py-7.flex.flex-wrap.gap-2.place-content-center
     .col-md-10.px-2.mt-2
         button(@click="prevPage") &lt
     .col-md-10.px-2.mt-2

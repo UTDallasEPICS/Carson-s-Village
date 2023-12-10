@@ -83,7 +83,7 @@ if( (isAuthorized.value as boolean) == true )
                 td.font-poppins.text-gray-dark.font-bold(style="text-align: center") {{ item.email }}
                 LinkButton(class="sm:my-2" style="--tw-bg-opacity: 1; background-color: rgb(110 171 191 / var(--tw-bg-opacity)); white-space: nowrap; display: flex; flex-direction: row; padding: 14px 24px; gap: 10px;" :to="`/pageList/${item.cuid}?fromUsers=1`") View
     .container.mx-auto(class="w-auto sm:w-[1200px]" style="--tw-bg-opacity: 1; background-color: rgb(110 171 191 / var(--tw-bg-opacity)); height: 50px; border-radius: 0px 0px 60px 60px;")
-.ml-9.mb-9.py-7.flex.flex-wrap.gap-2
+.ml-9.mb-9.py-7.flex.flex-wrap.gap-2.place-content-center
     .col-md-10.px-2.mt-2
         button(@click="prevPage") &lt
     .col-md-10.px-2.mt-2

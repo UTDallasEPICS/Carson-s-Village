@@ -29,6 +29,9 @@ const pages = ref<Page[]>([])
 const cvuser = useCookie<User>('cvuser')
 const isAdmin = computed(() => cvuser.value?.user_role == "advocate" || cvuser.value?.user_role == "admin")
 const isAdvocate = computed(() => cvuser.value?.user_role == "advocate");
+const currentPage = ref(0)
+const totalLength = ref(0)
+
 const data = ref<User>({
   cuid: "",
   first_name: "",
@@ -42,11 +45,12 @@ const data = ref<User>({
   //PageDonations: [],
   //DonationPayouts: []
 })
+
 const isFamily = ref(false)
 const familyCuid = ref("")
 const data_families = ref<Family[]>([])
 const fromUser = computed(() => router.query.fromUsers as string == '1')
-console.log(router.query.fromUsers)
+
 // Method to populate the page list with databased on the cuid of the user in the url
 const getDataPageList = async () => {
   if(cvuser.value.user_role == "advocate" || cvuser.value.user_role == "admin"){
@@ -54,62 +58,71 @@ const getDataPageList = async () => {
     method: 'GET',
     query: { family_cuid }
   })*/
-  // extracting the families that the advocate is responsible for
-  const { data: advocateFamilies } = await useFetch('/api/user', {
-    method: 'GET',
-    query: { cuid: user_cuid },
-    default() {
-      return [] as any
-    }
-  })
+    // extracting the families that the advocate is responsible for
+    const { data: advocateFamilies } = await useFetch('/api/user', {
+      method: 'GET',
+      query: { cuid: user_cuid },
+      default() {
+        return [] as any
+      }
+    })
 
- data_families.value = advocateFamilies.value?.AdvocateFamily as unknown as Family[]
-  console.log(fromUser.value)
-  if(fromUser.value) {
+    data_families.value = advocateFamilies.value?.AdvocateFamily as unknown as Family[]
+    console.log(fromUser.value)
+    console.log(currentPage.value)
+    // handles request to show the individual user's family pages. 
+    if(fromUser.value) {
+      const { data: family_pages } = await useFetch('/api/family_pages', {
+      method: 'GET',
+      query: { family_cuid, page_number: currentPage },
+      default() {
+        return [] as any
+      }
+    }) 
+    pages.value = family_pages.value.data as unknown as Page[]
+    totalLength.value = family_pages.value.Pagination.total as unknown as number
+    } 
+  // handles the family pages of a family member
+  } else if(cvuser.value.familyCuid === family_cuid.value ){
     const { data: family_pages } = await useFetch('/api/family_pages', {
-    method: 'GET',
-    query: { family_cuid },
-    default() {
-      return [] as any
-    }
-  }) 
-  pages.value = family_pages.value as unknown as Page[]
+      method: 'GET',
+      query: { family_cuid, page_number: currentPage },
+      default() {
+        return [] as any
+      }
+    }) 
 
-  } 
-} else if(cvuser.value.familyCuid === family_cuid.value ){
-  const { data: family_pages } = await useFetch('/api/family_pages', {
-    method: 'GET',
-    query: { family_cuid },
-    default() {
-      return [] as any
-    }
-  }) 
-
-  pages.value = (family_pages.value) as unknown as Page[]
-}
-  const isEmpty = computed(() => pages.value.length == 0)
-  
-  if(fromUser.value && (cvuser.value.user_role == "advocate" || cvuser.value.user_role == "admin")) {
-    const { data: familyData } = await useFetch('/api/page_list', {
-    method: 'GET',
-    query: { user_cuid },
-    default() {
-      return [] as any
-    }
-  })
-  pages.value = (familyData.value) as unknown as Page[]
+    pages.value = (family_pages.value.data) as unknown as Page[]
+    totalLength.value = family_pages.value.Pagination.total as unknown as number
   }
-}
+    const isEmpty = computed(() => pages.value.length == 0)
+    
+    //  handles the family pages an advocate or admin made themselves
+    if(fromUser.value && (cvuser.value.user_role == "advocate" || cvuser.value.user_role == "admin")) {
+      const { data: familyData } = await useFetch('/api/page_list', {
+      method: 'GET',
+      query: { user_cuid, page_number: currentPage },
+      default() {
+        return [] as any
+      }
+    })
+    pages.value = (familyData.value.data) as unknown as Page[]
+    totalLength.value = familyData.value.Pagination.total as unknown as number
+    }
+  }
 
+// handles changes of family selected for advocates or admins
+// todo: remove excuse which is a boolean variable to force api/family_pages to return nothing for families 
 const { data: family_pages } = await useFetch('/api/family_pages', {
     method: 'GET',
-    query: { family_cuid: familyCuid, excuse: cvuser.value.user_role == 'family' },
+    query: { family_cuid: familyCuid, page_number: currentPage, excuse: cvuser.value.user_role == 'family' },
     watch: [ familyCuid ],
     default() {
-      return [] as any
+      return { Pagination: {total: 0} ,data: ref<Page[]>([]) }
     }
     
   })
+const totalLength2 = computed(() => family_pages.value?.Pagination.total as unknown as number)
 
   
   /*
@@ -125,6 +138,22 @@ const { data: family_pages } = await useFetch('/api/family_pages', {
   //pages.value = family_pages.value as unknown as Page[]
 //watchEffect(() => familyCuid.value = data_families.value![0]?.cuid || "");
   //pages.value = familyData.value?.Pages as unknown as Page[]
+
+const nextPage = () => { 
+    if(currentPage.value < Math.max(((totalLength.value / 12) - 1), ((totalLength2.value / 12) - 1))){
+        currentPage.value++
+        if(fromUser.value || cvuser.value.user_role == "family")
+          getDataPageList()
+    } 
+}
+
+const prevPage= () => {
+    if(currentPage.value != 0){
+        currentPage.value--
+        if(fromUser.value || cvuser.value.user_role == "family")
+          getDataPageList()
+    } 
+}
 const currentFamily = computed(() => data_families.value?.find(({ cuid }: Family) => cuid == familyCuid.value) || {});
 
 await getDataPageList()
@@ -176,7 +205,7 @@ await getDataPageList()
         th.font-poppins.font-bold(style="color:white; width:35%; --tw-bg-opacity: 1; background-color: rgb(110 171 191 / var(--tw-bg-opacity));") Donation Deadline
         th.font-poppins.font-bold(style="width:10%; --tw-bg-opacity: 1; background-color: rgb(110 171 191 / var(--tw-bg-opacity)); color: rgb(110 171 191 / var(--tw-bg-opacity));")  {{ "_______________________" }}
         th.font-poppins.font-bold(style="border-radius: 0px 60px 0px 0px; width:20%; --tw-bg-opacity: 1; background-color: rgb(110 171 191 / var(--tw-bg-opacity));color:rgb(110 171 191 / var(--tw-bg-opacity));") {{ "_____________" }}
-      tr(v-for="(item, i) in family_pages" 
+      tr(v-for="(item, i) in family_pages.data" 
       :key="i" 
       :class="{'bg-gray-200': (i+1) % 2}"
       )
@@ -188,6 +217,13 @@ await getDataPageList()
         td
           LinkButton(class="sm:my-2" style="--tw-bg-opacity: 1; background-color: rgb(110 171 191 / var(--tw-bg-opacity)); white-space: nowrap; display: flex; flex-direction: row; padding: 14px 24px; gap: 10px;" :to="`/Page/${item.cuid}`") View
   .container.bg-blue-300.mx-auto(class="w-auto sm:w-[1200px]" style="--tw-bg-opacity: 1; background-color: rgb(110 171 191 / var(--tw-bg-opacity)); height: 50px; border-radius: 0px 0px 60px 60px;")
+.ml-9.mb-9.py-7.flex.flex-wrap.gap-2.place-content-center
+  .col-md-10.px-2.mt-2
+      button(@click="prevPage") &lt
+  .col-md-10.px-2.mt-2
+      p {{  currentPage }}
+  .col-md-10.px-2.mt-2
+      button(@click="nextPage") >
 </template>
 
 <style scoped></style>		
