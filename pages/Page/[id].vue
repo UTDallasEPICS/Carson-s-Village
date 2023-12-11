@@ -212,9 +212,10 @@ const DisplayReply = async (reply: Reply) => {
         .py-4.grid.flex-box.flex-row.item-centered.gap-1(v-if="comments?.length" style="line-height: 0px;text-align: center")
             .div.py-4.grid.gap-4(class="w-full" style="grid-template-columns: repeat(3, 1fr);")
                 .div(v-for="(comment, i) in comments" :key="i" class="comment-box")
-                    .comment-box(style="flex: calc(30% - 1rem); height: 10rem; margin: 0.5rem; padding: 1rem; border-radius: 8px; background-color: #fff; border: 1px solid #ddd; box-shadow: 0 2px 4px rgba(0,0,0,0.05);")
-                        .comment-header(style="font-size: 0.75rem; font-weight: bold; margin-bottom: 1.5rem;") {{ comment.donorFirstName }} {{ comment.donorLastName }}
-                        .comment-body(style="font-size: 0.75rem; color: #666;") {{ comment.comments }}
+                    .comment-box(style="flex: calc(30% - 1rem); height: 10rem; width: 11rem; margin: 0.5rem; padding: 1rem; border-radius: 8px; background-color: #fff; border: 1px solid #ddd; box-shadow: 0 2px 4px rgba(0,0,0,0.05);")
+                        .div.comment-header(style="font-size: 0.75rem; font-weight: bold; margin-bottom: 1.5rem;") {{ comment.donorFirstName }} {{ comment.donorLastName }}
+                        .div.comment-body(style="font-size: 0.75rem; color: #666; border-left: 1px solid black;") {{ comment.comments }}
+                        .div.comment-donation-amount(style="font-size: 0.75rem; color: #666; margin-top: 5rem;") Amount Donated ${{ comment.amount }}
         CVReplySystem(:pageCuid="pageCuid" :familyCuid="familyCuid" :replies="replies" @displayReply="DisplayReply")
         .py-4.grid.flex-box.flex-row.item-centered.gap-1(v-if="replies?.length" style="line-height: 0px;text-align: center")
             div(class="flex")
