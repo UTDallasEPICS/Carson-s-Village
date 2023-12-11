@@ -54,7 +54,9 @@ const data = ref<Page>({
     donation_status: "in progress",
     duration: "0 days",
     start_date: "",
-    goal_met_date: ""
+    goal_met_date: "",
+    PageDonations: [], 
+    Reply: [], 
 })
 
 type User2 = {
@@ -71,8 +73,7 @@ type User2 = {
 }
 const data_family = ref<Family>({
     cuid: "",
-    Stripe_Account_id: "",
-    Stripe_Accont_cuid: "",
+    stripe_account_id: "",
     created_at: "",
     updated_at: Date.toString(),
     family_name: "",

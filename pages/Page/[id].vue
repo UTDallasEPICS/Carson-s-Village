@@ -9,8 +9,9 @@
 *	Located under "/Page/"
 */
 
-import type { Page, PageDonation, Image } from '@/types.d.ts'
+import type { Page, PageDonation, Image, Reply} from '@/types.d.ts'
 import {  dateFormat, donationFormat } from '@/utils'
+import CVReplySystem from '@/components/CVReplySystem.vue'
 
 const pageData = ref<Page>({
     cuid: "",
@@ -36,7 +37,9 @@ const pageData = ref<Page>({
     donation_status: "in progress",
     duration: "",
     start_date: "",
-    goal_met_date: ""
+    goal_met_date: "",
+    PageDonations:[],
+    Reply:[]
 });
 
 
@@ -47,7 +50,11 @@ const donationData = ref<PageDonation>({
     pageCuid: "",
     userCuid: "",
     familyCuid: "",
-    transaction_id : ""
+    transaction_id : "",
+    donorFirstName: "",
+    donorLastName: "",
+    comments: "", 
+    isAnonymous : false
 });
 
 const userCuid = ref("0")
@@ -62,6 +69,8 @@ const id = computed(() =>  router.params.id);
 const pageCuid = id.value as string
 const cvuser = useCookie<Page>('cvuser')
 const stripeLink_ref = ref("")
+// const Replies = ref<Reply[]>([]);
+// const comments = ref<PageDonation[]>([])
 donationData.value.pageCuid = id.value as string;
 donationData.value.familyCuid = pageData.value.familyCuid
 
@@ -79,16 +88,15 @@ const create_checkout_session = async () => {
 };
 
 // Method to populate the page with data based on the cuid in the url
-const getDataPage = async( id: string ) => { 
-    const { data : pageDataDB } = await useFetch('/api/page', {
-    method: 'GET',
-    query: { cuid: id }
-})
+//const getDataPage = async( id: string ) => { 
+    const { data : pageDataDB } = await useFetch<Page>('/api/page', {
+        method: 'GET',
+        query: { cuid: id }
+    })
 
-if(pageDataDB.value !== false){
+if(!pageDataDB.value){
     pageData.value = pageDataDB.value as unknown as Page;
     donated_percentage.value = (((pageData.value.amount_raised as number) / (pageData.value.donation_goal as number )) * 100).toFixed(1) + "";
-    familyCuid.value = pageData.value.familyCuid as string;
     userCuid.value = pageData.value.userCuid
     //familyCuid = family_cuid.value as string
     familyCuid.value = pageData.value.familyCuid as string
@@ -98,7 +106,7 @@ if(pageDataDB.value !== false){
     }
     // Sets the front end images including the profile image
     if(pageData.value.Images?.length != 0)
-        imageData.value = pageData.value.Images as unknown as Image[] 
+        imageData.value = pageData.value.Images as unknown as Image[]
         for(let i = 0; i < imageData.value?.length; i++){
             if(imageData.value[i].cuid === pageData.value.profileImageCuid){
                 profileImageLink.value = imageData.value[i].url
@@ -106,7 +114,7 @@ if(pageDataDB.value !== false){
             }
         }
         console.log(donation_goal_provided.value)
-}
+
 }
 const isActive = computed(() => pageData.value.status == "active")
 const shareFacebook = () => {
@@ -124,7 +132,10 @@ const shareMail = () => {
   window.open(MailShareLink)
 }
 
-await getDataPage(id.value as string)
+const comments = computed(() => pageDataDB.value?.PageDonations)
+const replies = computed(() => pageDataDB.value?.Reply)
+
+
 
 // images for testing if needed.
 /*const temp = ref([
@@ -153,6 +164,9 @@ const prevImage = () => {
         currentImage.value--
     }
     }
+const DisplayReply = async (reply: Reply) => {
+    pageDataDB.value?.Reply.push(reply)
+}
 </script>
 
 <template lang="pug">
@@ -214,20 +228,34 @@ const prevImage = () => {
             CVProgress(v-else style="text-align:center;" modelBarWidth="0")  {{ donated_percentage   + "%" }}
         .well.well-sm
             h1.ml-4.pt-9.text-2xl.text-gray-dark(class="sm:text-3xl" style="font-weight: 600; letter-spacing: 0.35px;") Donor Information
-        DonationEntry(:donationData="donationData" :pageCuid="pageCuid" :familyCuid="familyCuid" :userCuid="userCuid")
-div.flex(style="color:gray; font-weight: 700; justify-content:center; align-items: center; height: 100px;")
-  label SHARE THIS PAGE |&nbsp;
-  .col
-    button(@click="shareFacebook")
-      img(src="/facebook-fa.PNG" style="width:30px; height:33px;") 
-  .col
-    button(@click="shareXFormalyKnownAsTwitter")
-        img(src="/twitter fa.PNG" style="width:30px; height:29px;") 
-  .col
-    button(@click="shareMail")
-        img(src="/mail fa.PNG" style="width:50px; height:29px;") 
-  .col
-    p {{  "" }}
-.col-md-8.mx-9(class="sm:col-span-1 sm:mr-11")
-    .div.px-8.py-4(style="color: #6E6E6E; font-weight: 500; font-size: 14px; line-height: 28px; letter-spacing: -0.078px; word-break: break-word;" id="obituary") {{ pageData.obituary }}
+        DonationEntry(:donationData="donationData" :pageCuid="pageCuid" :familyCuid="familyCuid")
+        .py-4.grid.flex-box.flex-row.item-centered.gap-1(v-if="comments?.length" style="line-height: 0px;text-align: center")
+            .div.py-4.grid.gap-4(class="w-full" style="grid-template-columns: repeat(3, 1fr);")
+                .div(v-for="(comment, i) in comments" :key="i" class="comment-box")
+                    .comment-box(style="flex: calc(30% - 1rem); height: 10rem; width: 11rem; margin: 0.5rem; padding: 1rem; border-radius: 8px; background-color: #fff; border: 1px solid #ddd; box-shadow: 0 2px 4px rgba(0,0,0,0.05);")
+                        .div.comment-header(style="font-size: 0.75rem; font-weight: bold; margin-bottom: 1.5rem;") {{ comment.donorFirstName }} {{ comment.donorLastName }}
+                        .div.comment-body(style="font-size: 0.75rem; color: #666; border-left: 1px solid black;") {{ comment.comments }}
+                        .div.comment-donation-amount(style="font-size: 0.75rem; color: #666; margin-top: 5rem;") Amount Donated ${{ comment.amount }}
+        CVReplySystem(:pageCuid="pageCuid" :familyCuid="familyCuid" :replies="replies" @displayReply="DisplayReply")
+        .py-4.grid.flex-box.flex-row.item-centered.gap-1(v-if="replies?.length" style="line-height: 0px;text-align: center")
+            div(class="flex")
+            .div(v-for="(reply,i) in replies" :key="i" class="reply-box")
+                .reply-box(v-if="reply.reply.length > 0" style="padding: 1rem; text-align: left; border-bottom: 1px solid black") 
+                    .reply-header(style="font-size: 1rem; font-weight: bold; margin-bottom: 2.5rem; margin-left: 1rem") {{reply.name}}
+                    .reply-body(style="font-size: 1rem; color: #666; margin-bottom: 2.5rem;") {{reply.reply}}
+        div.flex(style="color:gray; font-weight: 700; justify-content:center; align-items: center; height: 100px;")
+          label SHARE THIS PAGE |&nbsp;
+          .col
+            button(@click="shareFacebook")
+              img(src="/facebook-fa.PNG" style="width:30px; height:33px;") 
+          .col
+            button(@click="shareXFormalyKnownAsTwitter")
+                img(src="/twitter fa.PNG" style="width:30px; height:29px;") 
+          .col
+            button(@click="shareMail")
+                img(src="/mail fa.PNG" style="width:50px; height:29px;") 
+          .col
+            p {{  "" }}
+    .col-md-8.mx-9(class="sm:col-span-1 sm:mr-11")
+        .div.px-8.py-4(style="color: #6E6E6E; font-weight: 500; font-size: 14px; line-height: 28px; letter-spacing: -0.078px; word-break: break-word;" id="obituary") {{ pageData.obituary }}
 </template>
