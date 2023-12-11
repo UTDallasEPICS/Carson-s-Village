@@ -247,13 +247,13 @@ const DisplayReply = async (reply: Reply) => {
           label SHARE THIS PAGE |&nbsp;
           .col
             button(@click="shareFacebook")
-              img(src="/facebook-fa.PNG" style="width:30px; height:33px;") 
+              img(src="/facebook-fa.png" style="width:30px; height:33px;") 
           .col
             button(@click="shareXFormalyKnownAsTwitter")
-                img(src="/twitter fa.PNG" style="width:30px; height:29px;") 
+                img(src="/twitter_fa.png" style="width:30px; height:29px;") 
           .col
             button(@click="shareMail")
-                img(src="/mail fa.PNG" style="width:50px; height:29px;") 
+                img(src="/mail_fa.png" style="width:50px; height:29px;") 
           .col
             p {{  "" }}
     .col-md-8.mx-9(class="sm:col-span-1 sm:mr-11")
