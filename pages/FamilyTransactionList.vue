@@ -19,10 +19,12 @@ import {
 import type { User, Page, PageDonation, donation_payout, Family } from "@/types.d.ts"
 import { donationFormat } from "@/utils"
 //import { Family } from "@prisma/client"
+const currentFamilyPageNumber = ref(0)
+//const familyPagesLength = ref(0)
 const cvuser = useCookie<User>('cvuser');
 const isAdmin = computed(() => cvuser.value?.user_role == "admin")
 const isAdvocate = computed(() => cvuser.value?.user_role == "advocate")
-//if(isAdmin || isAdvocate ) { // todo after semester: remove || isAdvocate. Advocates should not have access to this page
+//if(isAdmin  ) {
   const { data: Families } = await useFetch<Family[]>('/api/families', {
     method: 'GET',
     default() {
@@ -32,22 +34,24 @@ const isAdvocate = computed(() => cvuser.value?.user_role == "advocate")
 
   const currentFamilyCuid = ref<string>("")
   const currentFamily = computed(() => Families.value?.find(({ cuid }: Family) => cuid == currentFamilyCuid.value) || {})
+  
   //console.log(currentFamily.value)
   //const currentUser = computed(() => currentFamily.value?.FamilyMembers![0] as User)
   currentFamilyCuid.value = Families.value![0]?.cuid || ""
-
+  
   const { data: familyData } = await useFetch('/api/family_pages', {
     method: 'GET',
-    query: { family_cuid: currentFamilyCuid },
-    watch: [currentFamilyCuid],
+    query: { family_cuid: currentFamilyCuid, page_number: currentFamilyPageNumber},
+    watch: [currentFamilyCuid, currentFamilyPageNumber],
     default() {
       return [] as any;
     },
   });
   
+  const familyPagesLength = computed(() => familyData.value.Pagination.total)
   const currentPageCuid = ref<string>("");
-  const currentPage = computed(() => familyData.value?.find(({ cuid }: Page) => cuid == currentPageCuid.value) || {});
-  watchEffect(() => currentPageCuid.value = familyData.value![0]?.cuid || "");
+  const currentPage = computed(() => familyData.value?.raw_data.find(({ cuid }: Page) => cuid == currentPageCuid.value) || {});
+  watchEffect(() => currentPageCuid.value = familyData.value.raw_data![0]?.cuid || "");
   
   const { data: donations } = await useFetch<PageDonation[]>('/api/family_donation', {
     method: 'GET',
@@ -58,13 +62,25 @@ const isAdvocate = computed(() => cvuser.value?.user_role == "advocate")
     },
   });
   
+  const nextPage = () => { 
+  console.log(familyPagesLength.value / 12)
+    if(currentFamilyPageNumber.value < ((familyPagesLength.value / 12) - 1)){
+        currentFamilyPageNumber.value++
+    } 
+  }
+  const prevPage= () => {
+    if(currentFamilyPageNumber.value != 0){
+        currentFamilyPageNumber.value--
+    } 
+  }
+
   const totalPageDonations = computed(() => donations.value?.reduce((acc: number, curr: PageDonation) => acc + curr.amount, 0) || 0);
-  const totalDistributed = computed(() => familyData.value?.reduce((acc: number, curr: Page) => acc + (curr.amount_distributed as number), 0) || 0);
+  const totalDistributed = computed(() => familyData.value?.raw_data.reduce((acc: number, curr: Page) => acc + (curr.amount_distributed as number), 0) || 0);
   const totalRemaining = computed(() => totalPageDonations.value - totalDistributed.value);
 </script>
 
 <template lang="pug">
-.px-10(v-if="isAdmin || isAdvocate" )   
+.px-10(v-if="isAdmin" )   
   TitleComp.border-1.border-black Family Transaction List
   .flex.flex-wrap.w-full.justify-center.gap-5.mt-10
     // these two list boxes can be a distinct reusable component
@@ -91,7 +107,7 @@ const isAdvocate = computed(() => cvuser.value?.user_role == "advocate")
             leave-to-class='opacity-0'
           )
             ListboxOptions(as='div' class='w-full absolute z-10 mt-10 bg-white shadow-lg max-h-60 rounded-md px-2 py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm' )
-              ListboxOption(as='div' v-for="page in familyData" :key="page.cuid" :value="page.cuid" class="px-2 border border-grey-500 py-1 my-1") {{ page.page_name }} | {{ donationFormat(page?.amount_raised - page?.amount_distributed) }}
+              ListboxOption(as='div' v-for="page in familyData.raw_data" :key="page.cuid" :value="page.cuid" class="px-2 border border-grey-500 py-1 my-1") {{ page.page_name }} | {{ donationFormat(page?.amount_raised - page?.amount_distributed) }}
         ListboxButton(class='text-left bg-white relative rounded-md pl-2 pr-10 py-2 sm:text-sm w-96') {{ currentPageCuid ? currentPage.page_name : 'Select Page' }}
   
   .flex.gap-5.justify-around
@@ -131,7 +147,7 @@ const isAdvocate = computed(() => cvuser.value?.user_role == "advocate")
               th.px-8(style="width:25%; --tw-bg-opacity: 1; background-color: rgb(110 171 191 / var(--tw-bg-opacity));") Raised
               th.font-poppins.font-bold(style="--tw-bg-opacity: 1; background-color: rgb(110 171 191 / var(--tw-bg-opacity));") Remaining
               th.px-8(style="width:25%; --tw-bg-opacity: 1; border-radius: 0px 60px 0px 0px; background-color: rgb(110 171 191 / var(--tw-bg-opacity));") Page Cuid
-          tr(v-for="(item, i) in familyData" 
+          tr(v-for="(item, i) in familyData.data" 
               :key="i" 
               :class="{'bg-gray-200': (i+1) % 2}"
           )
@@ -139,7 +155,13 @@ const isAdvocate = computed(() => cvuser.value?.user_role == "advocate")
               td.font-poppins.text-gray-dark.font-bold(style="text-align: center")  {{ donationFormat(item.amount_raised) }}
               td.font-poppins.text-gray-dark.font-bold(style="text-align: center")  {{ donationFormat(item.amount_raised-item.amount_distributed) }}
               td.font-poppins.text-gray-dark.font-bold(style="text-align: center")  {{ item.cuid }}
-  
+  .ml-9.mb-9.py-7.flex.flex-wrap.gap-2.place-content-center
+    .col-md-10.px-2.mt-2
+        button(@click="prevPage") &lt
+    .col-md-10.px-2.mt-2
+        p {{  currentFamilyPageNumber }}
+    .col-md-10.px-2.mt-2
+        button(@click="nextPage") >
   CVLegend.mt-10 Family Donations
   table.mt-5.table.table-striped(style="width:100%;")
       thead

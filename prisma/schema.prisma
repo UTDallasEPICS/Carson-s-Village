@@ -76,10 +76,14 @@ model Page {
   Images             Image[]
   amount_distributed Int              @default(0)
   profileImageCuid   String           @map("profile_image_cuid")
+  Family             Family?          @relation(fields: [familyCuid], references: cuid)
+  familyCuid         String?          @map("family_cuid")
+  status             String           @default("active")
+  donation_status    String           @default("in progress")
+  duration           String           @default("0 days")
+  start_date         String           @default("")
+  goal_met_date      String           @default("")
   Reply              Reply[]
-
-  Family     Family? @relation(fields: [familyCuid], references: cuid)
-  familyCuid String? @map("family_cuid")
 
   @@map("pages")
 }

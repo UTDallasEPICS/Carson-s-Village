@@ -24,7 +24,7 @@ import {
 
 import type { Image, Page, User } from '@/types.d.ts'
 import { Family } from "@prisma/client"
-import { donationFormat } from '@/utils'
+import { donationFormat, dateFormat } from '@/utils'
 
 const router = useRoute()
 const cvuser = useCookie<User>('cvuser');
@@ -48,10 +48,15 @@ const data = ref<Page>({
     amount_raised: 0,
     amount_distributed: 0,
     profileImageCuid: "",
-    Images: [], 
+    Images: [],//ref<Image[]>([]).value, 
+    familyCuid: "",
+    status: "active",
+    donation_status: "in progress",
+    duration: "0 days",
+    start_date: "",
+    goal_met_date: "",
     PageDonations: [], 
     Reply: [], 
-    familyCuid: ""
 })
 
 type User2 = {
@@ -68,13 +73,11 @@ type User2 = {
 }
 const data_family = ref<Family>({
     cuid: "",
-    Stripe_Account_id: "",
-    Stripe_Accont_cuid: "",
+    stripe_account_id: "",
     created_at: "",
     updated_at: Date.toString(),
     family_name: "",
     advocateCuid: cvuser2.value.cuid 
-
 })
 
 const isAdvocate = computed(() => cvuser.value?.user_role == "advocate" ||  cvuser.value?.user_role == "admin")
@@ -94,6 +97,7 @@ data.value.cuid = cuid;
 data.value.userCuid = user_cuid;
 console.log(data.value)
 const errorInPage = ref(false)
+
 // Method that saves form data to the database for a page that has cuid: router.params.EditPageId
 const save = async () => {
     if(isAdvocate.value) {
@@ -101,6 +105,11 @@ const save = async () => {
     } else {
         data.value.familyCuid = cvuser.value.familyCuid as string
     }
+
+    if(router.params.EditPageId === "0") {
+        data.value.start_date = new Date().toString()
+    }
+
     const { data: saveSuccess } = await useFetch('/api/page', {
         // Checks if there is a pre-existing page to edit or if to create a new page    
         method: router.params.EditPageId !== "0" ? 'PUT' : 'POST',
@@ -122,6 +131,7 @@ const save = async () => {
 };
 const currentFamily = computed(() => data_all_users.value?.find(({ cuid }: Family) => cuid == familyCuid.value) || {});
 console.log(currentFamily)
+
 // Method to populate the form when editing a pre-existing page
 const getData = async (cuid: string) => {
     const pageFound = cvuser.value.Pages.find((i: Page) => i.cuid == router.params.EditPageId) != undefined

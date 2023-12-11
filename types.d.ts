@@ -47,7 +47,13 @@ export type Page = {
     amount_raised: number | string
     amount_distributed: number | string
     profileImageCuid: string
-    Images: Image[]
+    Images: Image[],
+    familyCuid: string,
+    status: string,
+    donation_status: string,
+    duration: string, 
+    start_date: string
+    goal_met_date: string
     PageDonations: PageDonation[]
     Reply: Reply[]
   }
