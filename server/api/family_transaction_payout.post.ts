@@ -21,19 +21,19 @@ export default defineEventHandler(async event => {
 
           const balance = (await stripe.balance.retrieve()).available[0]?.amount as unknown as number
           // Makes sure that the family has a connected account and that the main stripe account has enough money to distribute the amount in the body.
-          if(family?.Stripe_Account_id == undefined) {
+          if(family?.stripe_account_id == undefined) {
             return "Error: No Family Stripe Account Found"
           }
 
-          if( balance < body.amount  ) {
-            console.log(balance)
+          if(balance < body.amount) {
+            //console.log(balance)
             return "Stripe Account Balance too low"
           }
 
           const transfer = await stripe.transfers.create({
               amount: body.amount,
               currency: 'USD',
-              destination: family?.Stripe_Account_id as string
+              destination: family?.stripe_account_id as string
           })
 
           /*if(transfer.lastResponse.statusCode != 200) {

@@ -3,17 +3,17 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 export default defineEventHandler(async (event) => {
-  try {
+  //try {
     const {pageCuid, familyCuid, replyData} = await readBody(event)
-    
+    console.log(replyData)
     const newReply = await prisma.reply.create({
-      data: {...replyData, pageCuid, familyCuid},
+      data: { ...replyData}
     });
 
     return {reply: newReply };
-  } catch (error) {
+  /*} catch (error) {
     console.error(error);
   } finally {
     await prisma.$disconnect();
-  }
+  }*/
 });

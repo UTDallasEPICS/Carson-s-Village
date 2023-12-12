@@ -22,7 +22,7 @@ import {
 } from '@headlessui/vue'
 
 
-import type { Image, Page, User } from '@/types.d.ts'
+import type { Image, Page, User, PageDonation } from '@/types.d.ts'
 import { Family } from "@prisma/client"
 import { donationFormat, dateFormat } from '@/utils'
 
@@ -55,7 +55,7 @@ const data = ref<Page>({
     duration: "0 days",
     start_date: "",
     goal_met_date: "",
-    PageDonations: [], 
+    PageDonations: ref<PageDonation[]>([]).value, 
     Reply: [], 
 })
 
@@ -73,7 +73,7 @@ type User2 = {
 }
 const data_family = ref<Family>({
     cuid: "",
-    stripe_account_id: "",
+    Stripe_Account_id: "",
     created_at: "",
     updated_at: Date.toString(),
     family_name: "",

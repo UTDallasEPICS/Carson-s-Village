@@ -37,8 +37,6 @@ model Family {
   FamilyDonationPayouts DonationPayout[]
   advocateCuid          String           @map("advocate_cuid")
   AdvocateResponsible   User?            @relation("advocate_family", fields: [advocateCuid], references: [cuid])
-  //PageDonations PageDonation[]
-  //DonationPayouts DonationPayout[]
 }
 
 model DonationPayout {
@@ -101,7 +99,6 @@ model PageDonation {
   amount         Int //In cents
   Family         Family  @relation(fields: [familyCuid], references: cuid)
   Page           Page    @relation(fields: [pageCuid], references: cuid)
-  userCuid       String?
 
   @@map("page_donations")
 }

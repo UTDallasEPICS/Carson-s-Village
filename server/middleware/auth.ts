@@ -15,12 +15,18 @@ export default defineEventHandler(async event => {
   if (!cvtoken && !(event.node.req.url?.includes('/api/callback') || event.node.req.url?.includes("/Page/") || event.node.req.url?.includes("/api/page") || event.node.req.url?.includes("/"))) {
     await sendRedirect(event, loginRedirectUrl());
   } else {
+    // theoretically logged in
     if (cvtoken) {
       try {
-        const publicKey = fs.readFileSync(process.cwd() + "/cert-dev.pem", 'utf8');
-        const claims = jwt.verify(cvtoken, publicKey);
-        const user = await event.context.client.user.findUnique({
-          where: { email: claims.email },
+        const claims = jwt.verify(
+          cvtoken, 
+          fs.readFileSync(process.cwd()+"/cert-dev.pem")
+        )
+        event.context.claims = claims
+        event.context.user = await event.context.client.user.findFirst(
+          {
+            where:{ email: claims.email }
+          ,
           include: {
             Pages: {
               select: {
@@ -32,42 +38,55 @@ export default defineEventHandler(async event => {
               }
             }
           }
-        });
-
-        if (!user) {
-          return createRedirectResponse(event, `${runtime.BASEURL}/login`);
+          })
+        if(!event.context.user) {
+          console.error(`${claims.email} not found`) 
+          setCookie(event,'cvtoken','')
+          setCookie(event,'cvuser','')
+          return await sendRedirect(event, logoutRedirectUrl(cvtoken))
+          return await sendRedirect(event, loginRedirectUrl());
         }
-        if (user.user_role === 'family' && !user.Family?.Stripe_Account_id) {
-          const newStripeAccount = await stripe.accounts.create({
-            type: 'standard',
-            email: user.email,
-          });
+        // include pages ids to check if that's the family's page. 
+        setCookie(event, "cvuser", JSON.stringify(event.context.user))
+        
+        // check if the family has a stripe account and onboarding them with stripe if not
+        if(event.context.user?.Family?.stripe_account_id == undefined ) {
+          try {
+            if (event.context.user?.user_role == "family") {
+                    const newStripeAccount = await stripe.accounts.create({
+                        type: 'standard',
+                        email: event.context.user.email,
+                    });
 
-          await event.context.client.family.update({
-            where: { cuid: user.Family.cuid },
-            data: { Stripe_Account_id: newStripeAccount.id }
-          });
-
-          const accountLink = await stripe.accountLinks.create({
-            account: newStripeAccount.id,
-            refresh_url: `${runtime.BASEURL}/api/family_onboarding.get?familyCuid=${user.Family.cuid}`,
-            return_url: `${runtime.BASEURL}/`, // Users will be redirected here after onboarding
-            type: 'account_onboarding',
-          });
-
-          return createRedirectResponse(event, accountLink.url);
+                    await event.context.client.family.update({
+                        where: { cuid: event.context.user.familyCuid },
+                        data: { stripe_account_id: newStripeAccount.id }
+                    });
+    
+                    let stripeAccountId = newStripeAccount.id;
+    
+                if (stripeAccountId) {
+                    const accountLink = await stripe.accountLinks.create({
+                        account: stripeAccountId,
+                        refresh_url: `${runtime.BASEURL}`,
+                        return_url: `${runtime.BASEURL}`,
+                        type: 'account_onboarding',
+                    });
+                    
+            return await sendRedirect(event, accountLink.url);
         }
-
-        // If the user has a Stripe account or is not part of a family, proceed as normal
-      } catch (error) {
-        console.error(error);
-        return createRedirectResponse(event, `${runtime.BASEURL}/login`);
+      }
+      } catch (e) {
+        console.error(e) 
+        setCookie(event,'cvtoken','')
+        setCookie(event,'cvuser','')
+    
+        return await sendRedirect(event, loginRedirectUrl())
       }
     }
-    }
-});
-
-function createRedirectResponse(event, location) {
-  event.res.writeHead(302, { Location: location });
-  event.res.end();
+  } catch(e){
+    console.error(e)
+  }
 }
+}
+})

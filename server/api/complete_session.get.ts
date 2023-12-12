@@ -60,6 +60,9 @@ export default defineEventHandler(async event => {
           // Calculate duration if needed
           const startDate = new Date(transaction.Page.start_date);
           let duration: number | string = Math.round((new Date().getTime() - startDate.getTime()) / (1000 * 3600 * 24)) + " days";
+          if( duration == "1 days") {
+            duration = "1 day"
+          }
           if(transaction.Page.donation_status == "Successful") {
             duration = transaction.Page.duration
           }

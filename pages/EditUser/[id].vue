@@ -36,8 +36,7 @@ const data_user = ref<User>({
 const familyCuid = ref("") 
 const data_family = ref<Family>({
     cuid: "",
-    Stripe_Account_id: "",
-    Stripe_Accont_cuid: "",
+    stripe_account_id: "",
     created_at: "",
     updated_at: Date.toString(),
     family_name: "",
