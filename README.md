@@ -230,17 +230,17 @@ This system is focused around advocates, families, and pages. Advocates invite f
   - Admin can view all of family's donations
 
 ## Family Creation Page
-    - Admin and Advocate can create family and the first user
-    - First user is invited via AWS SES
+  - Admin and Advocate can create family and the first user
+  - First user is invited via AWS SES
 
 ## User Invite Page
-    - Admin and Advocate can create a user with the following properties
-      - Role (advocate or family)
-      - Select Family via listbox for family role 
-      - First Name
-      - Middle Name
-      - Last name
-      - Phone number
+   - Admin and Advocate can create a user with the following properties
+     - Role (advocate or family)
+     - Select Family via listbox for family role 
+     - First Name
+     - Middle Name
+     - Last name
+     - Phone number
 
 ## Home 
  - Every Logged in user can view their
