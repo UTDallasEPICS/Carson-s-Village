@@ -46,21 +46,8 @@ export default defineEventHandler(async (event) => {
           data: { Stripe_Account_id: newStripeAccount.id },
         });
 
-        const accountLink = await stripe.accountLinks.create({
-          account: newStripeAccount.id,
-          refresh_url: `${runtime.BASEURL}/api/family_onboarding.get?familyCuid=${user.Family.cuid}`,
-          return_url: `${runtime.BASEURL}/dashboard`, // Redirect to dashboard after onboarding.
-          type: 'account_onboarding',
-        });
-
-        return createRedirectResponse(event, accountLink.url);
-      } else if (user.user_role === 'family' && user.Family?.Stripe_Account_id) {
-        // Check the existing Stripe account for transfers capability status.
-        const stripeAccount = await stripe.accounts.retrieve(user.Family.Stripe_Account_id);
-        if (stripeAccount.capabilities.transfers === 'inactive') {
-          const additionalInfoUrl = `${runtime.BASEURL}/additional-info?familyCuid=${user.Family.cuid}`;
-          return createRedirectResponse(event, additionalInfoUrl);
-        }
+        // Redirect to embedded UI component for onboarding
+        return createRedirectResponse(event, `${runtime.BASEURL}/stripe-onboarding?familyCuid=${user.Family.cuid}`);
       }
     } catch (error) {
       console.error(error);
@@ -73,3 +60,21 @@ function createRedirectResponse(event, location) {
   event.res.writeHead(302, { Location: location });
   event.res.end();
 }
+
+// Additional endpoint for creating Account Session
+app.post('/create-account-session', async (req, res) => {
+  try {
+    const { connectedAccountId } = req.body; // Replace with actual connected account ID from the client
+    const accountSession = await stripe.accountSessions.create({
+      account: connectedAccountId,
+      components: {
+        account_onboarding: {
+          enabled: true
+        }
+      }
+    });
+    res.json({ client_secret: accountSession.client_secret });
+  } catch (error) {
+    res.status(500).send({ error: error.message });
+  }
+});
