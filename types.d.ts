@@ -61,8 +61,8 @@ export type Page = {
 export type Family = {
   cuid: string;
   family_name: string;
-  Stripe_Account_id: string | null;
-  Stripe_Accont_cuid: string | null;
+  stripe_account_id: string | null;
+  //Stripe_Accont_cuid: string | null;
   created_at: string;
   updated_at: string;
   advocateCuid: string;

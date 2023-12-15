@@ -6,19 +6,26 @@ This system is focused around advocates, families, and pages. Advocates invite f
 
 ## Users
 
-- There are two roles: family and advocate
+- There are three roles: family, advocate, admin
 - Users are invite only, regardless of roles
+- Admin(s) are entered through CLI only
+- Admins can do what advocates can do and only admins can
+  - Distribute Donations via Stripe
 - Only advocates can
+  - Toggle Page active/inactive status
   - Invite users
-  - See a lit of all pages
+  - See a list of all pages
+  - See a list of all users
+  - See Family Reports
   - Change the role of a user
-- All users can
+- All logged in users can
   - Edit a page
   - See a list of their own pages
+- Only Family Users need to do onboarding for using a connected account via Stripe Connect
 - Users are authenticated via Auth0
 - Users receive invitation emails via AWS SES
 
-## Pages
+## Family Pages
 
 - All pages can be viewed publicly
 - Pages must be publicly searchable
@@ -50,9 +57,10 @@ None
 
 ## Third party integrations
 
-- Stripe for payments
+- Stripe for payments, Donation Distribution
 - Auth0 for authentication
 - AWS SES for emails
+- Constant Contacts for newsletter integration
 
 ## Deployment
 

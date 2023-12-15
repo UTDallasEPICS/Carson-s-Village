@@ -57,8 +57,7 @@ div
     const data_family = ref<Family>({
       cuid: '',
       family_name: '',
-      Stripe_Account_id: null,
-      Stripe_Accont_cuid: null,
+      stripe_account_id: null,
       created_at: '',
       updated_at: '',
       advocateCuid: '',

@@ -19,10 +19,10 @@ export default defineEventHandler(async (event) => {
 
   const family = await prisma.family.findUnique({
     where: { cuid: familyCuid },
-    select: { Stripe_Account_id: true },
+    select: { stripe_account_id: true },
   });
 
-  if (!family || !family.Stripe_Account_id) {
+  if (!family || !family.stripe_account_id) {
     const newStripeAccount = await stripe.accounts.create({
       type: 'standard',
       email: event.context.user.email, // Ensure the user's email is available in the context
@@ -30,7 +30,7 @@ export default defineEventHandler(async (event) => {
 
     await prisma.family.update({
       where: { cuid: familyCuid },
-      data: { Stripe_Account_id: newStripeAccount.id }
+      data: { stripe_account_id: newStripeAccount.id }
     });
 
     const accountLink = await stripe.accountLinks.create({

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 
 /*
-*   Namra Zubair
+* Namra Zubair
 *	ECS 2200
 *	Carson's Village: Automated Family Page
 *	PageList.vue 
@@ -48,7 +48,6 @@ const donationData = ref<PageDonation>({
     success: false,
     cuid: "",
     pageCuid: "",
-    userCuid: "",
     familyCuid: "",
     transaction_id : "",
     donorFirstName: "",
@@ -58,7 +57,7 @@ const donationData = ref<PageDonation>({
 });
 
 const userCuid = ref("0")
-const familyCuid = ref("0")
+const familyCuid = computed(() => pageDataDB.value?.familyCuid)
 const profileImageLink = ref("")
 const imageData = ref<Image[]>([])
 const donated_percentage = ref("0");
@@ -94,12 +93,13 @@ const create_checkout_session = async () => {
         query: { cuid: id }
     })
 
-if(!pageDataDB.value){
+if(pageDataDB.value){
     pageData.value = pageDataDB.value as unknown as Page;
     donated_percentage.value = (((pageData.value.amount_raised as number) / (pageData.value.donation_goal as number )) * 100).toFixed(1) + "";
     userCuid.value = pageData.value.userCuid
+    //pageData.value.Reply = pageDataDB.value.Reply as unknown as Reply[]
     //familyCuid = family_cuid.value as string
-    familyCuid.value = pageData.value.familyCuid as string
+    //familyCuid.value = pageDataDB.value.familyCuid as string
     console.log(familyCuid.value)
     if(pageData.value.donation_goal as number > 0){
         donation_goal_provided.value = true
@@ -215,7 +215,7 @@ const DisplayReply = async (reply: Reply) => {
             .text-gray-dark.font-poppins.text-2xl.text-left.font-bold(style="line-height: 36px; text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") Funeral
             .flex.gap-5
               .font-outfit {{ "Date:  TBD" }}
-            .fle.gap-5
+            .flex.gap-5
               .font-outfit {{ "Location:  TBD" }}
 //.container(class="sm:overflow-hidden sm:w-3/4 sm:mt-4 sm:mx-auto sm:place-content-center sm:max-w-xl sm:p-6 sm:rounded-card sm:shadow-card")
 .grid(class="sm:grid-cols-2" v-if="isActive")
@@ -229,13 +229,15 @@ const DisplayReply = async (reply: Reply) => {
         .well.well-sm
             h1.ml-4.pt-9.text-2xl.text-gray-dark(class="sm:text-3xl" style="font-weight: 600; letter-spacing: 0.35px;") Donor Information
         DonationEntry(:donationData="donationData" :pageCuid="pageCuid" :familyCuid="familyCuid")
-        .py-4.grid.flex-box.flex-row.item-centered.gap-1(v-if="comments?.length" style="line-height: 0px;text-align: center")
-            .div.py-4.grid.gap-4(class="w-full" style="grid-template-columns: repeat(3, 1fr);")
+        .py-4.grid.gap-1(v-if="comments?.length" style="text-align: center")
+            .div.py-4.grid(class="w-full" style="grid-template-columns: repeat(3, 1fr);")
                 .div(v-for="(comment, i) in comments" :key="i" class="comment-box")
                     .comment-box(style="flex: calc(30% - 1rem); height: 10rem; width: 11rem; margin: 0.5rem; padding: 1rem; border-radius: 8px; background-color: #fff; border: 1px solid #ddd; box-shadow: 0 2px 4px rgba(0,0,0,0.05);")
                         .div.comment-header(style="font-size: 0.75rem; font-weight: bold; margin-bottom: 1.5rem;") {{ comment.donorFirstName }} {{ comment.donorLastName }}
-                        .div.comment-body(style="font-size: 0.75rem; color: #666; border-left: 1px solid black;") {{ comment.comments }}
-                        .div.comment-donation-amount(style="font-size: 0.75rem; color: #666; margin-top: 5rem;") Amount Donated {{ donationFormat(comment.amount) }}
+
+                        div.comment-body(style="font-size: 0.75rem; color: #666; border-left: 1px solid black;") {{ comment.comments }}
+                        div.comment-donation-amount(style="font-size: 0.75rem; color: #666; margin-top: 5rem;") Amount Donated {{ donationFormat(comment.amount) }}
+
         CVReplySystem(:pageCuid="pageCuid" :familyCuid="familyCuid" :replies="replies" @displayReply="DisplayReply")
         .py-4.grid.flex-box.flex-row.item-centered.gap-1(v-if="replies?.length" style="line-height: 0px;text-align: center")
             div(class="flex")

@@ -19,8 +19,7 @@ export default defineEventHandler(async event => {
           success:true
         },
         include: {
-            Page: true,
-            User: true
+            Page: true
         }
   });
 
