@@ -23,7 +23,14 @@ export default defineEventHandler(async event => {
         include: {
           Page: {
             select: {
-              page_name: true
+              page_name: true,
+              amount_raised: true,
+              donation_goal: true,
+              deadline: true,
+              start_date: true,
+              donation_status: true,
+              duration: true,
+              goal_met_date: true
             }
           }
         }
@@ -36,19 +43,48 @@ export default defineEventHandler(async event => {
       })
 
       if(checkTransaction?.success!= true){
+        if (transaction?.Page) {
+          const newAmountRaised = transaction.Page.amount_raised + transaction.amount;
+          let donation_status = 'In Progress';
+          let goal_met_date = transaction.Page.goal_met_date; 
+    
+          if (newAmountRaised >= transaction.Page.donation_goal) {
+            donation_status = 'Successful';
+            if(goal_met_date == "")
+              goal_met_date = new Date().toString(); 
+          }
+          
+          if(new Date().getTime() > new Date(transaction.Page.deadline).getTime() && transaction.Page.donation_status == "in progress") {
+            donation_status = "Failed"
+          }
+          // Calculate duration if needed
+          const startDate = new Date(transaction.Page.start_date);
+          let duration: number | string = Math.round((new Date().getTime() - startDate.getTime()) / (1000 * 3600 * 24)) + " days";
+          if( duration == "1 days") {
+            duration = "1 day"
+          }
+          if(transaction.Page.donation_status == "Successful") {
+            duration = transaction.Page.duration
+          }
+          console.log(duration)
+          
         await prisma.$transaction([
           prisma.pageDonation.update({
             where: { transaction_id: query.transaction as string},
             data: { success: true }
           }),
-          prisma.page.update({
-            where: {
-              cuid: transaction?.pageCuid
-            },
-            data: {amount_raised: {increment: transaction?.amount}}
-          }),
+           prisma.page.update({
+            where: { cuid: transaction?.pageCuid },
+            data: {
+              amount_raised: {increment: transaction?.amount},
+              donation_status: donation_status,
+              goal_met_date: goal_met_date,
+              duration: duration + "",
+            }
+          })
         ])
-      } else {
+      }
+     } else {
         console.log("Transaction already completed.")
       }
 

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 
 /*
-*   Namra Zubair
+* Namra Zubair
 *	ECS 2200
 *	Carson's Village: Automated Family Page
 *	PageList.vue 
@@ -9,11 +9,13 @@
 *	Located under "/Page/"
 */
 
-import type { Page, PageDonation, Image } from '@/types.d.ts'
+import type { Page, PageDonation, Image, Reply} from '@/types.d.ts'
 import {  dateFormat, donationFormat } from '@/utils'
+import CVReplySystem from '@/components/CVReplySystem.vue'
 
 const pageData = ref<Page>({
     cuid: "",
+    userCuid: "",
     familyCuid: "",
     page_name: "",
     day_of_birth: "",
@@ -30,21 +32,16 @@ const pageData = ref<Page>({
     amount_raised: 0,
     amount_distributed: 0,
     profileImageCuid: "",
-    Images: []
+    Images: [],
+    status: "active",
+    donation_status: "in progress",
+    duration: "",
+    start_date: "",
+    goal_met_date: "",
+    PageDonations:[],
+    Reply:[]
 });
 
-type donor = {
-    first_name: string,
-    last_name: string,
-    isAnonnomous: boolean,
-    comments: string 
-}
-const donorInfo = ref<donor>({
-    first_name: "",
-    last_name: "",
-    isAnonnomous: false,
-    comments: "",
-})
 
 const donationData = ref<PageDonation>({
     amount: 0,
@@ -52,20 +49,27 @@ const donationData = ref<PageDonation>({
     cuid: "",
     pageCuid: "",
     familyCuid: "",
-    transaction_id : ""
+    transaction_id : "",
+    donorFirstName: "",
+    donorLastName: "",
+    comments: "", 
+    isAnonymous : false
 });
 
-var familyCuid = "0"
+const userCuid = ref("0")
+const familyCuid = computed(() => pageDataDB.value?.familyCuid)
 const profileImageLink = ref("")
 const imageData = ref<Image[]>([])
 const donated_percentage = ref("0");
-const donated_percentage_100 = ref(0)
+const donation_goal_provided = ref(false)
 const family_cuid = ref("0")
 const router = useRoute();
 const id = computed(() =>  router.params.id);
 const pageCuid = id.value as string
 const cvuser = useCookie<Page>('cvuser')
 const stripeLink_ref = ref("")
+// const Replies = ref<Reply[]>([]);
+// const comments = ref<PageDonation[]>([])
 donationData.value.pageCuid = id.value as string;
 donationData.value.familyCuid = pageData.value.familyCuid
 
@@ -76,38 +80,62 @@ donationData.value.familyCuid = pageData.value.familyCuid
 const create_checkout_session = async () => {
     const { data : sessionInfo } = await useFetch('/api/create_session', {
         method: 'POST',
-        body: {...donationData.value, cuid: id.value, family_cuid: pageData.value.familyCuid, amount_raised: Math.trunc(parseFloat(donationData.value.amount as unknown as string) * 100) as number}
+        body: {...donationData.value, cuid: id.value, familyCuid: pageData.value.familyCuid, amount_raised: Math.trunc(parseFloat(donationData.value.amount as unknown as string) * 100) as number}
     });
     stripeLink_ref.value = sessionInfo.value as string
     await navigateTo(stripeLink_ref.value as string,  { external: true } )
 };
 
 // Method to populate the page with data based on the cuid in the url
-const getDataPage = async( id: string ) => { 
-    const { data : pageDataDB } = await useFetch('/api/page', {
-    method: 'GET',
-    query: { cuid: id }
-})
+//const getDataPage = async( id: string ) => { 
+    const { data : pageDataDB } = await useFetch<Page>('/api/page', {
+        method: 'GET',
+        query: { cuid: id }
+    })
 
-if(pageDataDB.value !== false){
+if(pageDataDB.value){
     pageData.value = pageDataDB.value as unknown as Page;
     donated_percentage.value = (((pageData.value.amount_raised as number) / (pageData.value.donation_goal as number )) * 100).toFixed(1) + "";
-    family_cuid.value = pageData.value.familyCuid as string;
-    familyCuid = family_cuid.value as string
-
+    userCuid.value = pageData.value.userCuid
+    //pageData.value.Reply = pageDataDB.value.Reply as unknown as Reply[]
+    //familyCuid = family_cuid.value as string
+    //familyCuid.value = pageDataDB.value.familyCuid as string
+    console.log(familyCuid.value)
+    if(pageData.value.donation_goal as number > 0){
+        donation_goal_provided.value = true
+    }
     // Sets the front end images including the profile image
     if(pageData.value.Images?.length != 0)
-        imageData.value = pageData.value.Images as unknown as Image[] 
+        imageData.value = pageData.value.Images as unknown as Image[]
         for(let i = 0; i < imageData.value?.length; i++){
             if(imageData.value[i].cuid === pageData.value.profileImageCuid){
                 profileImageLink.value = imageData.value[i].url
                 break;
             }
         }
+        console.log(donation_goal_provided.value)
+
 }
+const isActive = computed(() => pageData.value.status == "active")
+const shareFacebook = () => {
+  const facebookShareLink = `https://www.facebook.com/sharer/sharer.php?caption=${pageData.value.page_name}&u=${window.location.href}`
+  window.open(facebookShareLink)
 }
 
-await getDataPage(id.value as string)
+const shareXFormalyKnownAsTwitter = () => {
+  const xShareLink = `https://twitter.com/intent/tweet?text=${pageData.value.page_name}&url=${window.location.href}`
+  window.open(xShareLink)
+}
+
+const shareMail = () => {
+  const MailShareLink = `mailto:?subject=Site%20sharing&body=Please%20check%20this%20site%20out%20${window.location.href}`
+  window.open(MailShareLink)
+}
+
+const comments = computed(() => pageDataDB.value?.PageDonations)
+const replies = computed(() => pageDataDB.value?.Reply)
+
+
 
 // images for testing if needed.
 /*const temp = ref([
@@ -136,7 +164,10 @@ const prevImage = () => {
         currentImage.value--
     }
     }
-    </script>
+const DisplayReply = async (reply: Reply) => {
+    pageDataDB.value?.Reply.push(reply)
+}
+</script>
 
 <template lang="pug">
 // the header overlay with image and name
@@ -158,35 +189,75 @@ const prevImage = () => {
       .flex.flex-col.gap-5(class="lg:grid lg:grid-cols-2")
         .flex.flex-col.gap-5(v-if="pageData.visitation_date")
           .text-gray-dark.font-poppins.text-2xl.text-left.font-bold(style="line-height: 36px; text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") Visitation
-          .flex.justify-between.gap-5
+          .flex.gap-5
             .font-outfit {{ "Date:" }}
             .font-outfit {{ dateFormat(pageData.visitation_date, true) }}
-          .flex.justify-between.gap-5
+          .flex.gap-5
             .font-outfit {{ "Location:" }}
-            .font-outfit.whitespace-normal {{ pageData.visitation_location }}
+            .font-outfit.whitespace-normal {{ pageData.visitation_location ? pageData.visitation_location : "TBD" }}
           .font-outfit {{ pageData.visitation_description }}
+        .flex.flex-col.gap-5(v-else)
+          .text-gray-dark.font-poppins.text-2xl.text-left.font-bold(style="line-height: 36px; text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") Visitation
+          .flex.gap-5
+            .font-outfit {{ "Date:  TBD"}}
+          .flex.gap-5
+            .font-outfit {{ "Location:  TBD" }}
         .flex.flex-col.gap-5(v-if="pageData.funeral_date")
             .text-gray-dark.font-poppins.text-2xl.text-left.font-bold(style="line-height: 36px; text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") Funeral
-            .flex.justify-between.gap-5
+            .flex.gap-5
               .font-outfit {{ "Date:" }}
               .font-outfit {{ dateFormat(pageData.funeral_date, true) }}
-            .flex.justify-between.gap-5
+            .flex.gap-5
               .font-outfit {{ "Location:" }}
               .font-outfit.whitespace-normal {{ pageData.funeral_location }}
             .font-outfit {{ pageData.funeral_description }}
+        .flex.flex-col.gap-5(v-else)
+            .text-gray-dark.font-poppins.text-2xl.text-left.font-bold(style="line-height: 36px; text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") Funeral
+            .flex.gap-5
+              .font-outfit {{ "Date:  TBD" }}
+            .flex.gap-5
+              .font-outfit {{ "Location:  TBD" }}
 //.container(class="sm:overflow-hidden sm:w-3/4 sm:mt-4 sm:mx-auto sm:place-content-center sm:max-w-xl sm:p-6 sm:rounded-card sm:shadow-card")
-.grid(class="sm:grid-cols-2")
+.grid(class="sm:grid-cols-2" v-if="isActive")
     .container.m-4.place-content-center.font-poppins(class="w-5/6 sm:m-auto sm:py-3")
-        .text-md.text-center.ml-4.my-3(class="sm:text-xl sm:my-6" style="letter-spacing: 0.35px; font-weight: 600; color: #646464;") {{ donationFormat(pageData.amount_raised)  + " raised of " +  donationFormat(pageData.donation_goal) + " goal" }}
+        .text-md.text-center.ml-4.my-3(v-if="donation_goal_provided" class="sm:text-xl sm:my-6" style="letter-spacing: 0.35px; font-weight: 600; color: #646464;") {{ donationFormat(pageData.amount_raised)  + " raised of " +  donationFormat(pageData.donation_goal) + " goal" }}
         .py-4
-        .progress-bar.overflow-hidden.ml-4.h-5.rounded-full(style="30px; background-color:#b5b5b5;")
+        .progress-bar.overflow-hidden.ml-4.h-5.rounded-full(v-if="donation_goal_provided" style="30px; background-color:#b5b5b5;")
             CVProgress(v-if="donated_percentage >= 100" modelBarWidth="100") {{ donated_percentage  + "%" }}
             CVProgress(v-else-if="donated_percentage > 0 && donated_percentage < 100" :modelBarWidth="donated_percentage") {{ donated_percentage  + "%" }}
             CVProgress(v-else style="text-align:center;" modelBarWidth="0")  {{ donated_percentage   + "%" }}
         .well.well-sm
             h1.ml-4.pt-9.text-2xl.text-gray-dark(class="sm:text-3xl" style="font-weight: 600; letter-spacing: 0.35px;") Donor Information
         DonationEntry(:donationData="donationData" :pageCuid="pageCuid" :familyCuid="familyCuid")
-        
+        .py-4.grid.gap-1(v-if="comments?.length" style="text-align: center")
+            .div.py-4.grid(class="w-full" style="grid-template-columns: repeat(3, 1fr);")
+                .div(v-for="(comment, i) in comments" :key="i" class="comment-box")
+                    .comment-box(style="flex: calc(30% - 1rem); height: 10rem; width: 11rem; margin: 0.5rem; padding: 1rem; border-radius: 8px; background-color: #fff; border: 1px solid #ddd; box-shadow: 0 2px 4px rgba(0,0,0,0.05);")
+                        .div.comment-header(style="font-size: 0.75rem; font-weight: bold; margin-bottom: 1.5rem;") {{ comment.donorFirstName }} {{ comment.donorLastName }}
+
+                        div.comment-body(style="font-size: 0.75rem; color: #666; border-left: 1px solid black;") {{ comment.comments }}
+                        div.comment-donation-amount(style="font-size: 0.75rem; color: #666; margin-top: 5rem;") Amount Donated {{ donationFormat(comment.amount) }}
+
+        CVReplySystem(:pageCuid="pageCuid" :familyCuid="familyCuid" :replies="replies" @displayReply="DisplayReply")
+        .py-4.grid.flex-box.flex-row.item-centered.gap-1(v-if="replies?.length" style="line-height: 0px;text-align: center")
+            div(class="flex")
+            .div(v-for="(reply,i) in replies" :key="i" class="reply-box")
+                .reply-box(v-if="reply.reply.length > 0" style="padding: 1rem; text-align: left; border-bottom: 1px solid black") 
+                    .reply-header(style="font-size: 1rem; font-weight: bold; margin-bottom: 2.5rem; margin-left: 1rem") {{reply.name}}
+                    .reply-body(style="font-size: 1rem; color: #666; margin-bottom: 2.5rem;") {{reply.reply}}
+        div.flex(style="color:gray; font-weight: 700; justify-content:center; align-items: center; height: 100px;")
+          label SHARE THIS PAGE |&nbsp;
+          .col
+            button(@click="shareFacebook")
+              img(src="/facebook-fa.png" style="width:30px; height:33px;") 
+          .col
+            button(@click="shareXFormalyKnownAsTwitter")
+                img(src="/twitter_fa.png" style="width:30px; height:29px;") 
+          .col
+            button(@click="shareMail")
+                img(src="/mail_fa.png" style="width:50px; height:29px;") 
+          .col
+            p {{  "" }}
     .col-md-8.mx-9(class="sm:col-span-1 sm:mr-11")
         .div.px-8.py-4(style="color: #6E6E6E; font-weight: 500; font-size: 14px; line-height: 28px; letter-spacing: -0.078px; word-break: break-word;" id="obituary") {{ pageData.obituary }}
 </template>

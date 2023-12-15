@@ -24,10 +24,14 @@ export type PageDonation = PPageDonation & {
   PageDonations?: PageDonation[];
   DonationPayout?: DonationPayout[];
 };*/
+
+import { DonationPayout } from "@prisma/client"
+
 // TODO: import types from prisma, export them with relations added
 export type Page = {
     page_name: string,
     cuid: string,
+    userCuid: string,
     familyCuid: string,
     day_of_birth: Date | string,
     day_of_passing: Date | string,
@@ -43,30 +47,59 @@ export type Page = {
     amount_raised: number | string
     amount_distributed: number | string
     profileImageCuid: string
-    Images: Image[]
+    Images: Image[],
+    familyCuid: string,
+    status: string,
+    donation_status: string,
+    duration: string, 
+    start_date: string
+    goal_met_date: string
+    PageDonations: PageDonation[]
+    Reply: Reply[]
   }
-  
+
+export type Family = {
+  cuid: string;
+  family_name: string;
+  stripe_account_id: string | null;
+  //Stripe_Accont_cuid: string | null;
+  created_at: string;
+  updated_at: string;
+  advocateCuid: string;
+  Pages: Page[];
+  FamilyMembers: User[];
+  AdvocateResponsible: User;
+  FamilyDonations: PageDonation[];
+  FamilyDonationPayouts: DonationPayout[];
+}
+
 export type User = {
-    cuid: string
+    cuid: string,
     first_name: string,
     last_name: string,
-    user_role: Object,
+    user_role: string,
     email: string,
     middle_name: string,
     phone: string,
-    Pages: Page[]
+    Pages: Page[],
+    familyCuid: String
     //PageDonations: PageDonation[]
     //DonationPayouts: DonationPayout[]  
 }
 //Import user from prisma
 
 export type PageDonation = {
-  cuid: string  
-  familyCuid: string  
+  cuid: string,  
+  userCuid: string,
+  familyCuid: String  
   pageCuid: string  
   success: boolean 
   transaction_id: string  
   amount: number
+  donorFirstName: string
+  donorLastName: string
+  isAnonymous: boolean
+  comments: string
   //Page: Page
   //User: User
 }
@@ -75,9 +108,10 @@ export type PageDonation = {
 export type donation_payout = {
     cuid: string,
     transaction_id: string,
-    familyCuid: string
+    userCuid: string
     amount_to_record: number,
-    transaction_recording_date: string
+    transaction_recording_date: string,
+    familyCuid: string
     //page: Page
     //user: User
 }
@@ -87,4 +121,12 @@ export type Image = {
   url: string
   pageCuid: string
   //Page: Page
+}
+
+export type Reply = {
+  cuid: string,
+  pageCuid: string
+  familyCuid: string
+  name: string
+  reply: string
 }

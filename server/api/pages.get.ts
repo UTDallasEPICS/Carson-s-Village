@@ -9,20 +9,48 @@ const prisma = new PrismaClient()
 
 export default defineEventHandler(async event => {
 const runtime = useRuntimeConfig()
-  const { searchQuery } = await getQuery(event);
-  if((searchQuery as string) ==""){
-    return await prisma.page.findMany({
+  const { searchQuery, page_number } = await getQuery(event);
+  if((searchQuery as string) == "") { 
+    const [count, pagesResult] = await prisma.$transaction([
+      prisma.page.count(),
+      prisma.page.findMany({
+      skip: page_number as number * 12,
+      take: 12
     })
+    ])
+    return {
+      Pagination: {
+      total:  count
+      }, 
+      data:  pagesResult
+    };
   }
+
+  console.log(page_number)
   
-  const pagesResult = await prisma.page.findMany({
+  // Pagination via taking the absolute page number with 12 records per page 
+  const [count, pagesResult] = await prisma.$transaction([
+    prisma.page.count({ where: { page_name: {
+      contains: searchQuery as string,
+      mode: 'insensitive',
+    } }}),
+    prisma.page.findMany({
   where: {
   page_name: {
     contains: searchQuery as string,
     mode: 'insensitive',
-  },
   }
+  },
+  skip: page_number as number * 12,
+  take: 12, 
 })
-  return pagesResult;
+  ])
+
+  return {
+    Pagination: {
+    total: count },
+    data:  pagesResult
+  };
+
   })
 
