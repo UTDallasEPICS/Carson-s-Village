@@ -234,8 +234,10 @@ const DisplayReply = async (reply: Reply) => {
                 .div(v-for="(comment, i) in comments" :key="i" class="comment-box")
                     .comment-box(style="flex: calc(30% - 1rem); height: 10rem; width: 11rem; margin: 0.5rem; padding: 1rem; border-radius: 8px; background-color: #fff; border: 1px solid #ddd; box-shadow: 0 2px 4px rgba(0,0,0,0.05);")
                         .div.comment-header(style="font-size: 0.75rem; font-weight: bold; margin-bottom: 1.5rem;") {{ comment.donorFirstName }} {{ comment.donorLastName }}
-                        p.comment-body(style="font-size: 0.75rem; width: fit-content; color: #666;") {{ comment.comments }}
-                        .div.comment-donation-amount(style="font-size: 0.75rem; color: #666;") Amount Donated: {{ donationFormat(comment.amount) }}
+
+                        div.comment-body(style="font-size: 0.75rem; color: #666; border-left: 1px solid black;") {{ comment.comments }}
+                        div.comment-donation-amount(style="font-size: 0.75rem; color: #666; margin-top: 5rem;") Amount Donated {{ donationFormat(comment.amount) }}
+
         CVReplySystem(:pageCuid="pageCuid" :familyCuid="familyCuid" :replies="replies" @displayReply="DisplayReply")
         .py-4.grid.flex-box.flex-row.item-centered.gap-1(v-if="replies?.length" style="line-height: 0px;text-align: center")
             div(class="flex")
@@ -247,13 +249,13 @@ const DisplayReply = async (reply: Reply) => {
           label SHARE THIS PAGE |&nbsp;
           .col
             button(@click="shareFacebook")
-              img(src="/facebook-fa.PNG" style="width:30px; height:33px;") 
+              img(src="/facebook-fa.png" style="width:30px; height:33px;") 
           .col
             button(@click="shareXFormalyKnownAsTwitter")
-                img(src="/twitter fa.PNG" style="width:30px; height:29px;") 
+                img(src="/twitter_fa.png" style="width:30px; height:29px;") 
           .col
             button(@click="shareMail")
-                img(src="/mail fa.PNG" style="width:50px; height:29px;") 
+                img(src="/mail_fa.png" style="width:50px; height:29px;") 
           .col
             p {{  "" }}
     .col-md-8.mx-9(class="sm:col-span-1 sm:mr-11")
