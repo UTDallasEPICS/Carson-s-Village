@@ -13,36 +13,6 @@ import type { Page, PageDonation, Image, Reply} from '@/types.d.ts'
 import {  dateFormat, donationFormat } from '@/utils'
 import CVReplySystem from '@/components/CVReplySystem.vue'
 
-const pageData = ref<Page>({
-    cuid: "",
-    userCuid: "",
-    familyCuid: "",
-    page_name: "",
-    day_of_birth: "",
-    day_of_passing: "",
-    visitation_date: "",
-    visitation_location: "",
-    visitation_description: "",
-    funeral_date: "",
-    funeral_description: "",
-    funeral_location: "",
-    obituary: "",
-    deadline: "",
-    donation_goal: 0,
-    amount_raised: 0,
-    amount_distributed: 0,
-    profileImageCuid: "",
-    Images: [],
-    status: "active",
-    donation_status: "in progress",
-    duration: "",
-    start_date: "",
-    goal_met_date: "",
-    PageDonations:[],
-    Reply:[]
-});
-
-
 const donationData = ref<PageDonation>({
     amount: 0,
     success: false,
@@ -55,23 +25,26 @@ const donationData = ref<PageDonation>({
     comments: "", 
     isAnonymous : false
 });
-
-const userCuid = ref("0")
-const familyCuid = computed(() => pageDataDB.value?.familyCuid)
-const profileImageLink = ref("")
-const imageData = ref<Image[]>([])
-const donated_percentage = ref("0");
-const donation_goal_provided = ref(false)
-const family_cuid = ref("0")
 const router = useRoute();
 const id = computed(() =>  router.params.id);
 const pageCuid = id.value as string
 const cvuser = useCookie<Page>('cvuser')
 const stripeLink_ref = ref("")
-// const Replies = ref<Reply[]>([]);
-// const comments = ref<PageDonation[]>([])
-donationData.value.pageCuid = id.value as string;
-donationData.value.familyCuid = pageData.value.familyCuid
+
+const { data: pageDataDB } = await useFetch<Page>('/api/page', {
+  method: 'GET',
+  query: { cuid: id }
+});
+
+const familyCuid = computed(() => pageDataDB.value?.familyCuid);
+const donated_percentage = computed(() => (((pageDataDB.value?.amount_raised as number) / (pageDataDB.value?.donation_goal as number)) * 100).toFixed(1) + "");
+const donation_goal_provided = computed(() => Boolean(pageDataDB.value?.donation_goal));
+const userCuid = computed(() => pageDataDB.value?.userCuid);
+const isActive = computed(() => pageDataDB.value?.status == "active");
+const comments = computed(() => pageDataDB.value?.PageDonations);
+const replies = computed(() => pageDataDB.value?.Reply);
+const imageData = computed(() => pageDataDB.value?.Images as unknown as Image[]);
+const profileImageLink = computed(() => imageData.value.find(i => i.cuid == pageDataDB.value?.profileImageCuid)?.url || "");
 
 /* 
 *  This creates a stripe session and redirects the user to stripe.
@@ -80,50 +53,25 @@ donationData.value.familyCuid = pageData.value.familyCuid
 const create_checkout_session = async () => {
     const { data : sessionInfo } = await useFetch('/api/create_session', {
         method: 'POST',
-        body: {...donationData.value, cuid: id.value, familyCuid: pageData.value.familyCuid, amount_raised: Math.trunc(parseFloat(donationData.value.amount as unknown as string) * 100) as number}
+      body: {
+        ...donationData.value,
+        cuid: id.value,
+        pageCuid: id.value,
+        familyCuid: pageDataDB.value?.familyCuid,
+        amount_raised: Math.trunc(parseFloat(donationData.value.amount as unknown as string) * 100) as number
+      }
     });
     stripeLink_ref.value = sessionInfo.value as string
     await navigateTo(stripeLink_ref.value as string,  { external: true } )
 };
 
-// Method to populate the page with data based on the cuid in the url
-//const getDataPage = async( id: string ) => { 
-    const { data : pageDataDB } = await useFetch<Page>('/api/page', {
-        method: 'GET',
-        query: { cuid: id }
-    })
-
-if(pageDataDB.value){
-    pageData.value = pageDataDB.value as unknown as Page;
-    donated_percentage.value = (((pageData.value.amount_raised as number) / (pageData.value.donation_goal as number )) * 100).toFixed(1) + "";
-    userCuid.value = pageData.value.userCuid
-    //pageData.value.Reply = pageDataDB.value.Reply as unknown as Reply[]
-    //familyCuid = family_cuid.value as string
-    //familyCuid.value = pageDataDB.value.familyCuid as string
-    console.log(familyCuid.value)
-    if(pageData.value.donation_goal as number > 0){
-        donation_goal_provided.value = true
-    }
-    // Sets the front end images including the profile image
-    if(pageData.value.Images?.length != 0)
-        imageData.value = pageData.value.Images as unknown as Image[]
-        for(let i = 0; i < imageData.value?.length; i++){
-            if(imageData.value[i].cuid === pageData.value.profileImageCuid){
-                profileImageLink.value = imageData.value[i].url
-                break;
-            }
-        }
-        console.log(donation_goal_provided.value)
-
-}
-const isActive = computed(() => pageData.value.status == "active")
 const shareFacebook = () => {
-  const facebookShareLink = `https://www.facebook.com/sharer/sharer.php?caption=${pageData.value.page_name}&u=${window.location.href}`
+  const facebookShareLink = `https://www.facebook.com/sharer/sharer.php?caption=${pageDataDB.value?.page_name}&u=${window.location.href}`
   window.open(facebookShareLink)
 }
 
 const shareXFormalyKnownAsTwitter = () => {
-  const xShareLink = `https://twitter.com/intent/tweet?text=${pageData.value.page_name}&url=${window.location.href}`
+  const xShareLink = `https://twitter.com/intent/tweet?text=${pageDataDB.value?.page_name}&url=${window.location.href}`
   window.open(xShareLink)
 }
 
@@ -131,11 +79,6 @@ const shareMail = () => {
   const MailShareLink = `mailto:?subject=Site%20sharing&body=Please%20check%20this%20site%20out%20${window.location.href}`
   window.open(MailShareLink)
 }
-
-const comments = computed(() => pageDataDB.value?.PageDonations)
-const replies = computed(() => pageDataDB.value?.Reply)
-
-
 
 // images for testing if needed.
 /*const temp = ref([
@@ -173,11 +116,11 @@ const DisplayReply = async (reply: Reply) => {
 // the header overlay with image and name
 .mt-2.min-h-24.text-white.uppercase.w-full(style="background-image: url('https://carsonsvillage.org/wp-content/uploads/2018/11/iStock-862083112-BW.jpg');") 
   .h-full.py-8.self-center.w-full.text-center.flex.flex-col(style="background-color: rgba(50, 119, 136, .8)") 
-    p.my-auto.font-bold.text-4xl {{ pageData.page_name }}
+    p.my-auto.font-bold.text-4xl {{ pageDataDB.page_name }}
 
 .flex.flex-col.gap-5.px-4.mx-auto.mt-8(class="w-3/4 sm:px-16")
   img.mx-auto(v-if="profileImageLink" class="w-[122px] h-[122px] rounded-[8px]" :src="`${profileImageLink}`")
-  .text-gray-dark.mx-auto.w-max.font-poppins.text-md {{ dateFormat(pageData.day_of_birth, true) + ' - ' + dateFormat(pageData.day_of_passing, true) }} 
+  .text-gray-dark.mx-auto.w-max.font-poppins.text-md {{ dateFormat(pageDataDB.day_of_birth, true) + ' - ' + dateFormat(pageDataDB.day_of_passing, true) }} 
   .flex.flex-col-reverse.gap-5(class="sm:grid sm:grid-cols-2")
     .relative.w-96.border.border-2.border-grey.p-1(v-if="imageData.length != 0" )
       button.absolute.left-4.top-64.bg-black.text-white(@click="prevImage" style="opacity:0.7; --tw-text-opacity: 1; width: 46px; height: 46px; border-radius:50%; align-items: center; justify-content: center; line-height: 2; text-align: center;color: white;") &#60;
@@ -187,30 +130,30 @@ const DisplayReply = async (reply: Reply) => {
     .py-4.flex.flex-col.gap-5
       .text-gray-dark.font-poppins.text-2xl.text-left.font-bold(style="line-height: 36px; text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") Services
       .flex.flex-col.gap-5(class="lg:grid lg:grid-cols-2")
-        .flex.flex-col.gap-5(v-if="pageData.visitation_date")
+        .flex.flex-col.gap-5(v-if="pageDataDB.visitation_date")
           .text-gray-dark.font-poppins.text-2xl.text-left.font-bold(style="line-height: 36px; text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") Visitation
           .flex.gap-5
             .font-outfit {{ "Date:" }}
-            .font-outfit {{ dateFormat(pageData.visitation_date, true) }}
+            .font-outfit {{ dateFormat(pageDataDB.visitation_date, true) }}
           .flex.gap-5
             .font-outfit {{ "Location:" }}
-            .font-outfit.whitespace-normal {{ pageData.visitation_location ? pageData.visitation_location : "TBD" }}
-          .font-outfit {{ pageData.visitation_description }}
+            .font-outfit.whitespace-normal {{ pageDataDB.visitation_location ? pageDataDB.visitation_location : "TBD" }}
+          .font-outfit {{ pageDataDB.visitation_description }}
         .flex.flex-col.gap-5(v-else)
           .text-gray-dark.font-poppins.text-2xl.text-left.font-bold(style="line-height: 36px; text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") Visitation
           .flex.gap-5
             .font-outfit {{ "Date:  TBD"}}
           .flex.gap-5
             .font-outfit {{ "Location:  TBD" }}
-        .flex.flex-col.gap-5(v-if="pageData.funeral_date")
+        .flex.flex-col.gap-5(v-if="pageDataDB.funeral_date")
             .text-gray-dark.font-poppins.text-2xl.text-left.font-bold(style="line-height: 36px; text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") Funeral
             .flex.gap-5
               .font-outfit {{ "Date:" }}
-              .font-outfit {{ dateFormat(pageData.funeral_date, true) }}
+              .font-outfit {{ dateFormat(pageDataDB.funeral_date, true) }}
             .flex.gap-5
               .font-outfit {{ "Location:" }}
-              .font-outfit.whitespace-normal {{ pageData.funeral_location }}
-            .font-outfit {{ pageData.funeral_description }}
+              .font-outfit.whitespace-normal {{ pageDataDB.funeral_location }}
+            .font-outfit {{ pageDataDB.funeral_description }}
         .flex.flex-col.gap-5(v-else)
             .text-gray-dark.font-poppins.text-2xl.text-left.font-bold(style="line-height: 36px; text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") Funeral
             .flex.gap-5
@@ -220,7 +163,7 @@ const DisplayReply = async (reply: Reply) => {
 //.container(class="sm:overflow-hidden sm:w-3/4 sm:mt-4 sm:mx-auto sm:place-content-center sm:max-w-xl sm:p-6 sm:rounded-card sm:shadow-card")
 .grid(class="sm:grid-cols-2" v-if="isActive")
     .container.m-4.place-content-center.font-poppins(class="w-5/6 sm:m-auto sm:py-3")
-        .text-md.text-center.ml-4.my-3(v-if="donation_goal_provided" class="sm:text-xl sm:my-6" style="letter-spacing: 0.35px; font-weight: 600; color: #646464;") {{ donationFormat(pageData.amount_raised)  + " raised of " +  donationFormat(pageData.donation_goal) + " goal" }}
+        .text-md.text-center.ml-4.my-3(v-if="donation_goal_provided" class="sm:text-xl sm:my-6" style="letter-spacing: 0.35px; font-weight: 600; color: #646464;") {{ donationFormat(pageDataDB.amount_raised)  + " raised of " +  donationFormat(pageDataDB.donation_goal) + " goal" }}
         .py-4
         .progress-bar.overflow-hidden.ml-4.h-5.rounded-full(v-if="donation_goal_provided" style="30px; background-color:#b5b5b5;")
             CVProgress(v-if="donated_percentage >= 100" modelBarWidth="100") {{ donated_percentage  + "%" }}
@@ -259,5 +202,5 @@ const DisplayReply = async (reply: Reply) => {
           .col
             p {{  "" }}
     .col-md-8.mx-9(class="sm:col-span-1 sm:mr-11")
-        .div.px-8.py-4(style="color: #6E6E6E; font-weight: 500; font-size: 14px; line-height: 28px; letter-spacing: -0.078px; word-break: break-word;" id="obituary") {{ pageData.obituary }}
+        .div.px-8.py-4(style="color: #6E6E6E; font-weight: 500; font-size: 14px; line-height: 28px; letter-spacing: -0.078px; word-break: break-word;" id="obituary") {{ pageDataDB.obituary }}
 </template>
