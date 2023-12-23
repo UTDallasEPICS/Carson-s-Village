@@ -19,12 +19,11 @@ export default defineEventHandler(async event => {
     const transaction_id = nanoid();
     const stripe = new Stripe(runtime.STRIPE_SECRET, { apiVersion:"2022-11-15"})
     const body = await readBody(event)
-    const family_cuid = body.family_cuid
     const page_cuid = body.pageCuid
     const donorComments = body.comments;
     const state = {}; 
     const userCuid = body.userCuid
-    const familyCuid = body.familyCuid 
+    const familyCuid = body.family_cuid 
   try{
     const page = await prisma.page.findFirst({
       where: {
