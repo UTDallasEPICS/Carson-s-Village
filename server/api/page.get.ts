@@ -14,14 +14,18 @@ export default defineEventHandler(async event => {
 			return false
 		}
 		const queryRes = await prisma.page.findFirst({
-       	where: {
-			cuid : cuid as string
+      where: {
+			  cuid : cuid as string
 		  },
 		  include: {
-            Images: true,
-			PageDonations: true,
-			Reply: true
+        Images: true,
+        PageDonations: {
+          where: {
+            success: true
+          }
+        },
+        Reply: true
 		  }
 		});
 	  return queryRes;
-		})
+})
