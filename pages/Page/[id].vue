@@ -9,7 +9,7 @@
 *	Located under "/Page/"
 */
 
-import type { Page, PageDonation, Image, Reply} from '@/types.d.ts'
+import type { Page, PageDonation, Image, Reply, Family} from '@/types.d.ts'
 import {  dateFormat, donationFormat } from '@/utils'
 import CVReplySystem from '@/components/CVReplySystem.vue'
 
@@ -32,20 +32,43 @@ const pageData = ref<Page>({
     amount_raised: 0,
     amount_distributed: 0,
     profileImageCuid: "",
-    Images: [],
+    Images: ref<Image[]>([]).value,
     status: "active",
     donation_status: "in progress",
     duration: "",
     start_date: "",
     goal_met_date: "",
-    PageDonations:[],
-    Reply:[]
+    PageDonations: ref<PageDonation[]>([]).value,
+    Reply: ref<Reply[]>([]).value,
+    Family: {
+      cuid: "",
+      family_name: "",
+      stripe_account_id: "",
+      created_at: "",
+      updated_at: "",
+      FamilyMembers: [],
+      FamilyDonationPayouts: [],
+      Pages: [],
+      AdvocateResponsible: {
+          cuid: '',
+          first_name: '',
+          last_name: '',
+          user_role: '',
+          email: '',
+          middle_name: '',
+          phone: '',
+          Pages: [],
+          familyCuid: ''
+      },
+      FamilyDonations: [],
+      advocateCuid: ""
+    } 
 });
-
 
 const donationData = ref<PageDonation>({
     amount: 0,
     success: false,
+    userCuid: "",
     cuid: "",
     pageCuid: "",
     familyCuid: "",
@@ -53,7 +76,8 @@ const donationData = ref<PageDonation>({
     donorFirstName: "",
     donorLastName: "",
     comments: "", 
-    isAnonymous : false
+    isAnonymous : false,
+    Page: ref<Page[]>([]).value[0]
 });
 
 const userCuid = ref("0")
@@ -100,7 +124,7 @@ if(pageDataDB.value){
     //pageData.value.Reply = pageDataDB.value.Reply as unknown as Reply[]
     //familyCuid = family_cuid.value as string
     //familyCuid.value = pageDataDB.value.familyCuid as string
-    console.log(familyCuid.value)
+    console.log(donated_percentage.value)
     if(pageData.value.donation_goal as number > 0){
         donation_goal_provided.value = true
     }
@@ -223,9 +247,9 @@ const DisplayReply = async (reply: Reply) => {
         .text-md.text-center.ml-4.my-3(v-if="donation_goal_provided" class="sm:text-xl sm:my-6" style="letter-spacing: 0.35px; font-weight: 600; color: #646464;") {{ donationFormat(pageData.amount_raised)  + " raised of " +  donationFormat(pageData.donation_goal) + " goal" }}
         .py-4
         .progress-bar.overflow-hidden.ml-4.h-5.rounded-full(v-if="donation_goal_provided" style="30px; background-color:#b5b5b5;")
-            CVProgress(v-if="donated_percentage >= 100" modelBarWidth="100") {{ donated_percentage  + "%" }}
-            CVProgress(v-else-if="donated_percentage > 0 && donated_percentage < 100" :modelBarWidth="donated_percentage") {{ donated_percentage  + "%" }}
-            CVProgress(v-else style="text-align:center;" modelBarWidth="0")  {{ donated_percentage   + "%" }}
+            //CVProgress(v-if="donated_percentage >= 100" modelBarWidth="100") {{ donated_percentage  + "%" }}
+            CVProgress(:modelBarWidth="donated_percentage") {{ donated_percentage  + "%" }}
+            //CVProgress(v-else style="text-align:center;" modelBarWidth="0")  {{ donated_percentage   + "%" }}
         .well.well-sm
             h1.ml-4.pt-9.text-2xl.text-gray-dark(class="sm:text-3xl" style="font-weight: 600; letter-spacing: 0.35px;") Donor Information
         DonationEntry(:donationData="donationData" :pageCuid="pageCuid" :familyCuid="familyCuid")

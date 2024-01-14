@@ -53,6 +53,7 @@ export default defineEventHandler(async event => {
         if(event.context.user?.Family?.stripe_account_id == undefined ) {
           try {
             if (event.context.user?.user_role == "family") {
+                    // todo: change to custom accounts
                     const newStripeAccount = await stripe.accounts.create({
                         type: 'standard',
                         email: event.context.user.email,
@@ -63,7 +64,7 @@ export default defineEventHandler(async event => {
                         data: { stripe_account_id: newStripeAccount.id }
                     });
     
-                    let stripeAccountId = newStripeAccount.id;
+                    const stripeAccountId = newStripeAccount.id;
     
                 if (stripeAccountId) {
                     const accountLink = await stripe.accountLinks.create({

@@ -22,11 +22,13 @@ const donationData = ref<PageDonation>({
     cuid: "",
     pageCuid: props.pageCuid,
     familyCuid: props.familyCuid,
-    transaction_id : "",
+    transaction_id: "",
     donorFirstName: "",
     donorLastName: "",
-    comments: "", 
-    isAnonymous : false
+    comments: "",
+    Page: ref<Page[]>([]).value[0],
+    userCuid: '',
+    isAnonymous: false
 });
 
 const stripeLink_ref = ref("")

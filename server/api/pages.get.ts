@@ -9,7 +9,8 @@ const prisma = new PrismaClient()
 
 export default defineEventHandler(async event => {
 const runtime = useRuntimeConfig()
-  const { searchQuery, page_number } = await getQuery(event);
+//if(event.context.user.cuid != undefined)
+  const { searchQuery, page_number } = getQuery(event);
   if((searchQuery as string) == "") { 
     const [count, pagesResult] = await prisma.$transaction([
       prisma.page.count(),

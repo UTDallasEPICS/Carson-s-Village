@@ -27,6 +27,7 @@ const pageSearch = async( searchQuery: string) => {
     method: 'GET',
     query: {searchQuery: searchQuery, page_number: currentPage.value}
   })
+    // api/pages returns both the pages 12 at a time and the length for upper bounds checking
     pages.value = pageData.value?.data as unknown as Page[]
     totalLength.value = pageData.value?.Pagination.total as unknown as number
 }

@@ -21,7 +21,7 @@ export default defineEventHandler(async event => {
     // Creates a new entry in the database in the page model to a specfic user
     const queryRes = await prisma.page.create({
       data: {
-        ...data,cuid: undefined,
+        ...data, cuid: undefined,
         User: {
           connect: {
             cuid : userCuid || "0"

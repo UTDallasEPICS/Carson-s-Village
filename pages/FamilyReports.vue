@@ -4,7 +4,7 @@ div
     br
     a.mt-1.p-4.px-6.pt-2.bg-orange-400.rounded-full(style="color: white; font-weight: 700;" :href="filedownloadlink" :download="downloadName" :dataset.downloadurl="dataset") download
     table(style="margin-top: 1.25rem; width: 100%; border-spacing: 0; border-collapse: collapse;" v-if="isAdminAdvocate")
-        thead(style="color:white;")
+        thead(style="color: white;")
             tr
                 th(style="padding: 1rem; background-color: #6eabbf; border-radius: 60px 0 0 0; width: 12%;") Page Name
                 th(style="padding: 1rem; background-color: #6eabbf; width: 12%;") Advocate
@@ -19,11 +19,11 @@ div
                 th(style="padding: 1rem; background-color: #6eabbf; width: 7%") Goal Date
                 th(style="padding: 1rem; background-color: #6eabbf; width: 7%") Status
                 th(style="padding: 1rem; background-color: #6eabbf; border-radius: 0 60px 0 0; width: 7%;") Toggle Status
-        tbody(v-for="family in families")
-            tr(v-for="(page,i) in family.Pages" 
+        tbody
+            tr(v-for="(page, i) in families" 
             :class="{'bg-gray-200': (i+1) % 2}") 
                 td(style="text-align: center;") {{ page.page_name }}
-                td(style="text-align: center;") {{ family.AdvocateResponsible.first_name  + " " + family.AdvocateResponsible.last_name }}
+                td(style="text-align: center;") {{ page.Family.AdvocateResponsible.first_name  + " " + page.Family.AdvocateResponsible?.last_name }}
                 td(style="text-align: center;") {{ page.duration }} 
                 td(style="text-align: center;") {{  page.donation_status }}
                 td(style="text-align: center;") {{ (page.goal_met_date) ? dateFormat(page.goal_met_date, true) : "Goal Not Reached" }}
@@ -35,7 +35,14 @@ div
                 td(style="text-align: center;") {{ dateFormat(page.deadline)}}
                 td(style="text-align: center;") {{ page.status }}
                 td(style="text-align: center;")
-                  ActionButton(style="color: white; background-color:red;" @click="togglePageStatus(page)") {{ "X" }}
+                  ActionButton(style="color: white; background-color: red;" @click="togglePageStatus(page)") {{ "X" }}
+.ml-9.mb-9.py-7.flex.flex-wrap.gap-2.place-content-center
+  .col-md-10.px-2.mt-2
+      button(@click="prevPage") &lt
+  .col-md-10.px-2.mt-2
+      p {{  currentPage }}
+  .col-md-10.px-2.mt-2
+      button(@click="nextPage") >
 </template>
     
 <script setup lang='ts'>
@@ -48,12 +55,15 @@ div
     const isAdminAdvocate = computed(() => cvuser.value?.user_role == "advocate" || cvuser.value?.user_role == "admin" )
     const families = ref<Family[]>([]);
     const familyPages = ref<Partial<Page[]>>([])
+    const familiesRaw = ref<Family[]>([])
+    const currentPage = ref(0);
     const currentFamily = ref(null);
     const currentFamilyId = ref(null);
     const filedownloadlink = ref("")
     const dataset = ref("")
     const downloadName = ref("")
-  
+    const totalLength = ref(0)
+
     const data_family = ref<Family>({
       cuid: '',
       family_name: '',
@@ -92,7 +102,7 @@ div
       arr = currentArr.value 
       }
     })
-  
+
     //adds owed Percent
     type pageReport = Partial<Page> & { owedPercent: number | undefined }
     const currentArr = ref<pageReport[]>([])
@@ -103,8 +113,9 @@ div
         
         currentArr.value.push({...d, ['owedPercent']: owedPercent | 0} )
     });
-  
 
+  
+    
     const array = [listOfTags].concat(currentArr.value as unknown as string[])
   
     // creates CSV
@@ -116,15 +127,18 @@ div
     // loads family report data from the families database table and joins and creates a download link for the file
     const loadReports = async () => {
       if( isAdminAdvocate ) { 
-          const { data: familiesData } = await useFetch('/api/families', {
-          method: 'GET' 
+          const { data: familiesData } = await useFetch('/api/familiesReports', {
+          method: 'GET', 
+          query: { page_number: currentPage }
           });
           
-          families.value = familiesData.value as unknown as Family[]
+          families.value = familiesData.value?.paginated_families as unknown as Family[]
+          totalLength.value = familiesData.value?.Pagination.total as unknown as number
+          //console.log(families.value)
           // gathering the family data into an array of family pages and their advocate responsible
-          families.value.forEach((element: Family)  => { element.Pages.forEach((element2) => {familyPages.value.push( { ...element2 as unknown as Page[], ...element.AdvocateResponsible as any }) })})
+          familiesRaw.value = familiesData.value?.families_raw as unknown as Family[]
+          familiesRaw.value.forEach((element: Family)  => { element.Pages.forEach((element2) => {familyPages.value.push( { ...element2 as unknown as Page[], ...element.AdvocateResponsible as any }) })})
           const familyPagesArr = [...familyPages.value]
-          
           const csv = convertToCSV( familyPagesArr )
           createCsvDownloadLink(csv)
       }
@@ -139,11 +153,11 @@ div
       dataset.value = ["text/csv", filename, filedownloadlink.value].join(':');
       downloadName.value = filename
     }
+    
     // method activated by Advocate or Admin to manual remove the ability to donate to a family page after about a week of the donation deadline.
     // an advocate or admin can also re-enable a page to set its status from 'inactive' to 'active'
     const togglePageStatus = (page: Page) => {
       if(isAdminAdvocate.value) {
-        console.log(page.status)
         let booleanChanged = false 
         if(page.status == "active") {
           const confirmDeactivate = confirm('Are you sure you want to deactivate this page?')
@@ -151,7 +165,7 @@ div
               page.status = "inactive"
               booleanChanged = true
             } else if(!confirmDeactivate){
-            return ""
+              return ""
             }
         } else if(page.status == "inactive" && !booleanChanged) {
           const confirmReactivate = confirm('Are you sure you want to reactivate this page?')
@@ -170,14 +184,21 @@ div
           })
         }
     }
-    const goToNextPage = () => {
-      // existing logic for pagination
-    };
     
-    const goToPreviousPage = () => {
-      // existing logic for pagination
-    };
-    
+    // Pagination control, move the page counter forwards and backwards and searches
+const nextPage = () => { 
+  console.log(totalLength.value / 12)
+    if(currentPage.value < ((totalLength.value / 12) - 1)){
+        currentPage.value++
+          loadReports()
+    } 
+}
+const prevPage= () => {
+    if(currentPage.value != 0){
+        currentPage.value--
+          loadReports()
+    } 
+  }
     // Invoke the initial data loading
     loadReports();
     
