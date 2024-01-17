@@ -9,10 +9,10 @@ const prisma = new PrismaClient()
 */
 
 export default defineEventHandler(async event => {
-  const { page_number } = await getQuery(event);
+  const { page_number } = getQuery(event);
 
   if(event.context.user.user_role === "advocate" || event.context.user.user_role === "admin"){
-  // Pagination via taking the absolute page number with 12 records per page
+  // Pagination via taking the absolute table page number with 12 records per page
     const [ count, userData ] = await prisma.$transaction([
       prisma.user.count(),
       prisma.user.findMany({

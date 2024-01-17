@@ -46,6 +46,8 @@ div
 </template>
     
 <script setup lang='ts'>
+    // todo: Make the table resizable with custom dimensions. Possible application of the standard table 
+    // todo: add number of family family pages an advocate is responsible, total amount raised by the families an advocate is responsible for
     //import { Family } from '@prisma/client'; 
     import type { Family, User, Page as Page2 } from '@/types.d.ts'
     import { Page, User as User2 } from '@prisma/client'
@@ -90,6 +92,7 @@ div
   
   // converts array of family pages and their advocate responsible for the family into a csv
   function convertToCSV(arr : Partial<Page[]>) {
+    // todo: clean up and remove usages of any, idea for this is to use the pick type from typescript
     const listOfTags = ["page_name", "donation_goal", "amount_raised", "deadline", "amount_distributed", "donation_status", "duration", "start_date", "goal_met_date", "first_name", "middle_name", "last_name", "Amount Owed / Goal Percentage" ]
     // removes every column not in list of tags
     Object.keys(arr[0] || "").forEach((element: string) => {
@@ -114,8 +117,6 @@ div
         currentArr.value.push({...d, ['owedPercent']: owedPercent | 0} )
     });
 
-  
-    
     const array = [listOfTags].concat(currentArr.value as unknown as string[])
   
     // creates CSV
@@ -144,10 +145,11 @@ div
       }
     }
 
-    // creates download link to csv
+    // creates download link to csv of family reports table
     const createCsvDownloadLink = (csv: string) => {
       const csvFile = new File([csv], "file", {
       type: "text/csv" } )
+      // unique filename based on current time
       const filename = "report-" + dateFormat(new Date().toString())+".csv"
       filedownloadlink.value = window.URL.createObjectURL(csvFile);
       dataset.value = ["text/csv", filename, filedownloadlink.value].join(':');
@@ -185,7 +187,7 @@ div
         }
     }
     
-    // Pagination control, move the page counter forwards and backwards and searches
+// Pagination control, move the page counter forwards and backwards and searches
 const nextPage = () => { 
   console.log(totalLength.value / 12)
     if(currentPage.value < ((totalLength.value / 12) - 1)){
@@ -199,7 +201,6 @@ const prevPage= () => {
           loadReports()
     } 
   }
-    // Invoke the initial data loading
-    loadReports();
-    
+// Invoke the initial data loading
+loadReports();
   </script>

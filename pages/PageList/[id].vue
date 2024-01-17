@@ -19,6 +19,8 @@ import {
 *		Located under "/PageList/"
 */
 
+
+// todo: clean up and finish advocate managment system functionality to page list
 const family_cuid = ref("")
 const router = useRoute()
 const family_cuid_data = computed(() => router.params.id)
@@ -37,7 +39,7 @@ const data = ref<User>({
   cuid: "",
   first_name: "",
   last_name: "",
-  user_role: "{}",
+  user_role: "",
   email: "",
   middle_name: "",
   phone: "",
@@ -72,10 +74,8 @@ const getDataPageList = async () => {
         return [] as any
       }
     })
-
     data_families.value = advocateFamilies.value?.AdvocateFamily as unknown as Family[]
-    console.log(fromUser.value)
-    console.log(currentPage.value)
+    
     // handles request to show the family pages created by a user. 
     if(fromUser.value) {
       const { data: family_pages } = await useFetch('/api/family_pages', {
@@ -97,13 +97,12 @@ const getDataPageList = async () => {
         return [] as any
       }
     }) 
-
     pages.value = (family_pages.value.data) as unknown as Page[]
     totalLength.value = family_pages.value.Pagination.total as unknown as number
   }
     const isEmpty = computed(() => pages.value.length == 0)
     const entityCuid = computed(() => fromUser.value ? user_cuid : family_cuid)
-    //  handles the family pages an advocate made themselves
+    //  handles the family pages an advocate made themselves, do not admin back into if statement, it will crash
     if(cvuser.value.user_role == "advocate" ) {
         const { data: familyData } = await useFetch('/api/page_list', {
         method: 'GET',
@@ -128,6 +127,8 @@ const { data: family_pages } = await useFetch('/api/page_list', {
   })
 const totalLength2 = computed(() => family_pages.value?.Pagination.total as unknown as number)
   
+
+  // Todo: Talk to Taz about this
   /*
     // For winter clean up
     prisma.page.FindMany({
@@ -138,9 +139,9 @@ const totalLength2 = computed(() => family_pages.value?.Pagination.total as unkn
       }
     })
   */
-  //pages.value = family_pages.value as unknown as Page[]
+//pages.value = family_pages.value as unknown as Page[]
 //watchEffect(() => familyCuid.value = data_families.value![0]?.cuid || "");
-  //pages.value = familyData.value?.Pages as unknown as Page[]
+//pages.value = familyData.value?.Pages as unknown as Page[]
 
 const nextPage = () => { 
     if(currentPage.value < Math.max(((totalLength.value / 12) - 1), ((totalLength2.value / 12) - 1))){
@@ -176,6 +177,7 @@ await getDataPageList()
             ListboxOptions(as='div' class='w-full absolute z-10 mt-10 bg-white shadow-lg max-h-60 rounded-md px-2 py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm' )
                 ListboxOption(as='div' v-for="family in data_families" :key="family.cuid" :value="family.cuid" class="px-2 border border-grey-500 py-1 my-1") {{ family.family_name }}
           ListboxButton(class='text-left bg-white relative rounded-md pl-2 pr-10 py-2 sm:text-sm w-96') {{ familyCuid ? currentFamily.family_name : 'Select family to view pages from' }}  
+//todo: reduce this to one table
 .mx-auto.mt-1(class="w-11/12 sm:w-[1200px]" v-if="!isAdvocate || isAdmin || fromUser")
   table(style="table-layout: auto;")
     thead
@@ -197,7 +199,6 @@ await getDataPageList()
         td
           LinkButton(class="sm:my-2" style="--tw-bg-opacity: 1; background-color: rgb(110 171 191 / var(--tw-bg-opacity)); white-space: nowrap; display: flex; flex-direction: row; padding: 14px 24px; gap: 10px;" :to="`/Page/${item.cuid}`") View
   .container.bg-blue-300.mx-auto(class="w-auto sm:w-[1200px]" style="--tw-bg-opacity: 1; background-color: rgb(110 171 191 / var(--tw-bg-opacity)); height: 50px; border-radius: 0px 0px 60px 60px;")
-
 
 .mx-auto.mt-1(class="w-11/12 sm:w-[1200px]" v-if="!fromUser && isAdvocate")
   table(style="table-layout: auto;")

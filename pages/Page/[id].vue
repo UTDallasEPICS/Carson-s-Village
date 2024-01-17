@@ -141,6 +141,8 @@ if(pageDataDB.value){
 
 }
 const isActive = computed(() => pageData.value.status == "active")
+
+//todo: Set as pop up?
 const shareFacebook = () => {
   const facebookShareLink = `https://www.facebook.com/sharer/sharer.php?caption=${pageData.value.page_name}&u=${window.location.href}`
   window.open(facebookShareLink)
@@ -188,6 +190,8 @@ const prevImage = () => {
         currentImage.value--
     }
     }
+
+// Recieves emitted reply from CVReplies System to update replies in real time
 const DisplayReply = async (reply: Reply) => {
     pageDataDB.value?.Reply.push(reply)
 }
@@ -242,7 +246,7 @@ const DisplayReply = async (reply: Reply) => {
             .flex.gap-5
               .font-outfit {{ "Location:  TBD" }}
 //.container(class="sm:overflow-hidden sm:w-3/4 sm:mt-4 sm:mx-auto sm:place-content-center sm:max-w-xl sm:p-6 sm:rounded-card sm:shadow-card")
-.grid(class="sm:grid-cols-2" v-if="isActive")
+.grid(class="sm:grid-cols-2")
     .container.m-4.place-content-center.font-poppins(class="w-5/6 sm:m-auto sm:py-3")
         .text-md.text-center.ml-4.my-3(v-if="donation_goal_provided" class="sm:text-xl sm:my-6" style="letter-spacing: 0.35px; font-weight: 600; color: #646464;") {{ donationFormat(pageData.amount_raised)  + " raised of " +  donationFormat(pageData.donation_goal) + " goal" }}
         .py-4
@@ -252,7 +256,7 @@ const DisplayReply = async (reply: Reply) => {
             //CVProgress(v-else style="text-align:center;" modelBarWidth="0")  {{ donated_percentage   + "%" }}
         .well.well-sm
             h1.ml-4.pt-9.text-2xl.text-gray-dark(class="sm:text-3xl" style="font-weight: 600; letter-spacing: 0.35px;") Donor Information
-        DonationEntry(:donationData="donationData" :pageCuid="pageCuid" :familyCuid="familyCuid")
+        DonationEntry(v-if="isActive" :donationData="donationData" :pageCuid="pageCuid" :familyCuid="familyCuid")
         .py-4.grid.gap-1(v-if="comments?.length" style="text-align: center")
             .div.py-4.grid(class="w-full" style="grid-template-columns: repeat(3, 1fr);")
                 .div(v-for="(comment, i) in comments" :key="i" class="comment-box")

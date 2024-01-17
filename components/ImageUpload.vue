@@ -13,9 +13,8 @@ type imageLinkTypes = {
   image: Image
 }
 
-const props = defineProps({
-});
-
+const props = defineProps<{pageCuid: string}>()
+console.log(props.pageCuid)
 // actually uploads images using presigned url to s3 bucket
 const onFile = async (event: Event) => {
   const Files = event?.target?.files
@@ -24,7 +23,7 @@ const onFile = async (event: Event) => {
     // Creates the presigned url and enters the image into the database
     const { data: imageData } = await useFetch('/api/image_upload', {
       method: 'POST',
-      body: { contentLength: file.size, contentType: file.type, file }
+      body: { contentLength: file.size, contentType: file.type, file, pageCuid: ref(props.pageCuid) }
     });
   const { uploadUrl, image} = imageData.value as unknown as imageLinkTypes;
 

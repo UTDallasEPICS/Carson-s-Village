@@ -54,6 +54,7 @@ export default defineEventHandler(async event => {
           try {
             if (event.context.user?.user_role == "family") {
                     // todo: change to custom accounts
+                    // incomplete code for custom account is available in embedded UI pr and branch
                     const newStripeAccount = await stripe.accounts.create({
                         type: 'standard',
                         email: event.context.user.email,

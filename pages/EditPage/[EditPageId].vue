@@ -113,7 +113,6 @@ const familyCuid = ref("")
 const cuid_data = computed(() => router.params.EditPageId);
 const cuid = cuid_data.value as string
 const user_cuid_data = computed(() => cvuser.value?.cuid)
-console.log(cvuser.value);
 const user_cuid = user_cuid_data.value as string
 const pageCuid = computed(() => router.params.EditPageId)
 data.value.cuid = cuid;
@@ -140,20 +139,19 @@ const save = async () => {
     }
     )
     try {
-    if (saveSuccess.value == true && isAdvocate.value) {
-        errorInPage.value = false;
-        await navigateTo('/PageList/' + data.value.userCuid + '?fromUsers=1')
-    } else if(saveSuccess.value == true && !isAdvocate.value){
-        await navigateTo('/PageList/' + data.value.familyCuid + '?fromUsers=0')
-    } else {
-        errorInPage.value = true;
-    }
+        if (saveSuccess.value == true && isAdvocate.value) {
+            errorInPage.value = false;
+            await navigateTo('/PageList/' + data.value.userCuid + '?fromUsers=1')
+        } else if(saveSuccess.value == true && !isAdvocate.value){
+            await navigateTo('/PageList/' + data.value.familyCuid + '?fromUsers=0')
+        } else {
+            errorInPage.value = true;
+        }
     } catch(e){
         console.log(e)
     }
 };
 const currentFamily = computed(() => data_all_users.value?.find(({ cuid }: Family) => cuid == familyCuid.value) || {});
-console.log(currentFamily)
 
 // Method to populate the form when editing a pre-existing page
 const getData = async (cuid: string) => {
@@ -268,7 +266,7 @@ CVContainer
                             ListboxOptions(as='div' class='w-full absolute z-10 mt-10 bg-white shadow-lg max-h-60 rounded-md px-2 py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm' )
                                 ListboxOption(as='div' v-for="family in data_all_users" :key="family.cuid" :value="family.cuid" class="px-2 border border-grey-500 py-1 my-1") {{ family.family_name }}
                     ListboxButton(class='text-left bg-white relative rounded-md pl-2 pr-10 py-2 sm:text-sm w-96') {{ familyCuid ? currentFamily.family_name : 'Select family to add the page to' }}
-        ImagePreview(v-model:images="imageData" :images="data.Images" :profileImage="profileImage" @profileImage="setProfileImage" @images="setImagesPreview")
+        ImagePreview(v-model:images="imageData" :images="data.Images" :profileImage="profileImage" :pageCuid="cuid_data" @profileImage="setProfileImage" @images="setImagesPreview")
         .information.bg-gray-300.rounded-md.mx-9.my-2.text-center(class="sm:text-start")
             legend.ml-2(class="sm:py-1" style="font-weight: 700; text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") Profile Image Selection        
         .py-4.grid(class="sm:grid-cols-3") 
@@ -341,7 +339,7 @@ CVContainer
             .col-md-10.p-2.pt-6.mt-2(class="sm:pt-2 sm:ml-auto sm:mr-6")
                 LinkButton(v-if="pageCuid!=0" to='#') Delete Page
         .py-4.grid(class="sm:grid-cols-3" Style="color:red" v-if="errorInPage")
-            CVLabel Error in Creating page in the system.  
+            CVLabel Error in Creating/Editing page in the system.  
 </template>
 
 <style scoped></style>

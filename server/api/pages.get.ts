@@ -9,7 +9,7 @@ const prisma = new PrismaClient()
 
 export default defineEventHandler(async event => {
 const runtime = useRuntimeConfig()
-//if(event.context.user.cuid != undefined)
+//if(event.context.user.cuid != undefined) to add? if the user is not logged in, do not let them see all the pages
   const { searchQuery, page_number } = getQuery(event);
   if((searchQuery as string) == "") { 
     const [count, pagesResult] = await prisma.$transaction([

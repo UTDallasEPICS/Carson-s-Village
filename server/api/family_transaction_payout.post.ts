@@ -10,7 +10,7 @@ export default defineEventHandler(async event => {
       const stripe = new Stripe(stripeSecretKey as string, { apiVersion:"2022-11-15"} )
         const body = await readBody(event)
         const familyCuid = body.familyCuid
-          if(event.context.user?.user_role == "admin" || event.context.user?.user_role == "advocate"){ //to do: remove advoate
+          if(event.context.user?.user_role == "admin"){ 
           // update success flag in transaction
           
           const family = await prisma.family.findFirst({
@@ -71,7 +71,6 @@ export default defineEventHandler(async event => {
             ]) 
             
             return true;
-            //return 0
           }
             return await sendRedirect(event, loginRedirectUrl());
       

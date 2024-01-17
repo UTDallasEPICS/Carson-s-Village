@@ -24,13 +24,12 @@ const currentFamilyPageNumber = ref(0)
 const cvuser = useCookie<User>('cvuser');
 const isAdmin = computed(() => cvuser.value?.user_role == "admin")
 const isAdvocate = computed(() => cvuser.value?.user_role == "advocate")
-//if(isAdmin  ) {
-  const { data: Families } = await useFetch<Family[]>('/api/families', {
+const { data: Families } = await useFetch<Family[]>('/api/families', {
     method: 'GET',
     default() {
       return [] as any
     }, 
-  });
+});
 
   const currentFamilyCuid = ref<string>("")
   const currentFamily = computed(() => Families.value?.find(({ cuid }: Family) => cuid == currentFamilyCuid.value) || {})
@@ -68,7 +67,7 @@ const isAdvocate = computed(() => cvuser.value?.user_role == "advocate")
         currentFamilyPageNumber.value++
     } 
   }
-  const prevPage= () => {
+  const prevPage = () => {
     if(currentFamilyPageNumber.value != 0){
         currentFamilyPageNumber.value--
     } 
