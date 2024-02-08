@@ -71,7 +71,7 @@ const createFamily = async () => {
 <template lang="pug">
 CVContainer
     .well.well-sm
-        TitleComp Family creation
+        TitleComp Family Creation
         br
         .bar.mx-9(style="border-top: 0.5px solid #646464;")
         br
