@@ -86,7 +86,7 @@ CVContainer
         .py-4.grid(class="sm:grid-cols-3")
             CVLabel First Name
             .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
-                CVInput(v-model='data_user.first_name' placeholder="(user-defined" required)
+                CVInput(v-model='data_user.first_name' placeholder="(user-defined)" required)
         .py-4.grid(class="sm:grid-cols-3")
             CVLabel Middle Name
             .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
