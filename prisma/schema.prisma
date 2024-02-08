@@ -52,7 +52,8 @@ model DonationPayout {
 
 model Page {
   cuid                   String  @id @default(cuid())
-  page_name              String
+  first_name             String
+  last_name              String
   day_of_birth           String?
   day_of_passing         String?
   visitation_date        String?
