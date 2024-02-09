@@ -23,23 +23,23 @@ ClientOnly
       href="/api/logout"
       ) 
         p.uppercase.white.w-max LOGOUT
-      NavLinkButton(:to="`/PageList/${cuid}/?fromUsers=0`" v-if="isAdmin") 
+      NavLinkButton(:to="`/PageList/${cuid}/?fromUsers=0`" v-if="isAdmin" target="_blank") 
         p.uppercase.white.w-max Pages
-      NavLinkButton(:to="`/pageList/${familyCuid}/?fromUsers=0`" v-if="!isAdmin")
+      NavLinkButton(:to="`/pageList/${familyCuid}/?fromUsers=0`" v-if="!isAdmin" target="_blank")
         p.uppercase.white.w-max Pages
-      NavLinkButton(to='/EditPage/0') 
+      NavLinkButton(to='/EditPage/0' target="_blank") 
         p.uppercase.white.w-max New page
-      NavLinkButton( v-if="isAdmin" to='/Users') 
+      NavLinkButton( v-if="isAdmin" to='/Users' target="_blank") 
         p.uppercase.white.w-max Users
-      NavLinkButton( v-if="isAdmin" to='/EditUser/0') 
+      NavLinkButton( v-if="isAdmin" to='/EditUser/0' target="_blank") 
         p.uppercase.white.w-max Invite user
-      NavLinkButton( v-if="isAdmin" to='/EditFamily') 
+      NavLinkButton( v-if="isAdmin" to='/EditFamily' target="_blank") 
         p.uppercase.white.w-max Create Family
-      NavLinkButton(to="/") 
+      NavLinkButton(to="/" target="_blank") 
         p.uppercase.white.w-max Home
-      NavLinkButton(v-if="isAdmin" to='/FamilyTransactionList') 
+      NavLinkButton(v-if="isAdmin" to='/FamilyTransactionList' target="_blank") 
         p.uppercase.white.w-max Donations
-      NavLinkButton(v-if="isAdmin" to='/FamilyReports')
+      NavLinkButton(v-if="isAdmin" to='/FamilyReports' target="_blank")
         p.uppercase.white.w-max Family Reports
     div.max-w-min.mx-auto.flex.gap-2(v-else)
       a.items-center.px-2.py-2.text-base.font-medium.rounded-md.text-green-600.cursor-pointer(style="border: 1px solid #c4c4c4;"
@@ -47,13 +47,13 @@ ClientOnly
       href="/api/login"
       ) 
         p.uppercase.white.w-max LOGIN
-      NavLinkButton(to='https://carsonsvillage.org/') 
+      NavLinkButton(to='https://carsonsvillage.org/' target="_blank") 
         p.uppercase.white.w-max HOME
-      NavLinkButton(to='https://carsonsvillage.org/#') 
+      NavLinkButton(to='https://carsonsvillage.org/#' target="_blank") 
         p.uppercase.white.w-max RESOURCES
-      NavLinkButton(to='https://carsonsvillage.org/get-involved/') 
+      NavLinkButton(to='https://carsonsvillage.org/get-involved/' target="_blank") 
         p.uppercase.white.w-max GET INVOLVED
-      NavLinkButton(to='https://carsonsvillage.org/') 
+      NavLinkButton(to='https://carsonsvillage.org/' target="_blank") 
         p.uppercase.white.w-max ABOUT US
     
     .flex.w-max(v-if="isNotSearch")
