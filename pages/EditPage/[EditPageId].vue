@@ -33,7 +33,8 @@ const cvuser2 = useCookie<User2>('cvuser')
 const data = ref<Page>({
     cuid: "",
     userCuid: "",
-    page_name: "",
+    first_name: "",
+    last_name: "",
     day_of_birth: "",
     day_of_passing:"",
     visitation_date: "",
@@ -229,9 +230,13 @@ CVContainer
         .information.bg-gray-300.rounded-md.mx-9.my-2.text-center(class="sm:text-start")
             CVLegend Personal Information
         .py-4.grid(class="sm:grid-cols-3") 
-            CVLabel Page Name
+            CVLabel First Name
             .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
-                CVInput(v-model='data.page_name' placeholder="required" required)
+                CVInput(v-model='data.first_name' placeholder="required" required)
+        .py-4.grid(class="sm:grid-cols-3") 
+            CVLabel Last Name
+            .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
+                CVInput(v-model='data.last_name' placeholder="required" required)
         .py-4.grid(class="sm:grid-cols-3" v-if="isAdvocate")
             CVLabel Family
             .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
