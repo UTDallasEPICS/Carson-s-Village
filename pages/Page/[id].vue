@@ -83,12 +83,9 @@ const donationData = ref<PageDonation>({
 const userCuid = ref("0")
 const familyCuid = computed(() => pageDataDB.value?.familyCuid)
 const profileImageLink = ref("")
-const imageData = ref<Image[]>([])
-const donated_percentage = ref("0");
-const donation_goal_provided = ref(false)
 const family_cuid = ref("0")
 const router = useRoute();
-const id = computed(() =>  router.params.id);
+const id = computed(() => router.params.id);
 const pageCuid = id.value as string
 const cvuser = useCookie<Page>('cvuser')
 const stripeLink_ref = ref("")
@@ -101,6 +98,7 @@ donationData.value.familyCuid = pageData.value.familyCuid
 *  This creates a stripe session and redirects the user to stripe.
 *  Then it redirects to /PageDonation/pageCuid/transactionId
 */
+// todo: change to $fetch
 const create_checkout_session = async () => {
     const { data : sessionInfo } = await useFetch('/api/create_session', {
         method: 'POST',
@@ -111,38 +109,21 @@ const create_checkout_session = async () => {
 };
 
 // Method to populate the page with data based on the cuid in the url
-//const getDataPage = async( id: string ) => { 
-    const { data : pageDataDB } = await useFetch<Page>('/api/page', {
-        method: 'GET',
-        query: { cuid: id }
-    })
+const { data : pageDataDB } = await useFetch<Page>('/api/page', {
+    method: 'GET',
+    query: { cuid: id }
+})
 
 if(pageDataDB.value){
     pageData.value = pageDataDB.value as unknown as Page;
-    donated_percentage.value = (((pageData.value.amount_raised as number) / (pageData.value.donation_goal as number )) * 100).toFixed(1) + "";
     userCuid.value = pageData.value.userCuid
-    //pageData.value.Reply = pageDataDB.value.Reply as unknown as Reply[]
     //familyCuid = family_cuid.value as string
     //familyCuid.value = pageDataDB.value.familyCuid as string
-    console.log(donated_percentage.value)
-    if(pageData.value.donation_goal as number > 0){
-        donation_goal_provided.value = true
-    }
-    // Sets the front end images including the profile image
-    if(pageData.value.Images?.length != 0)
-        imageData.value = pageData.value.Images as unknown as Image[]
-        for(let i = 0; i < imageData.value?.length; i++){
-            if(imageData.value[i].cuid === pageData.value.profileImageCuid){
-                profileImageLink.value = imageData.value[i].url
-                break;
-            }
-        }
-        console.log(donation_goal_provided.value)
+  }
 
-}
-const isActive = computed(() => pageData.value.status == "active")
+const isActive = computed(() => pageDataDB.value?.status == "active")
 
-//todo: Set as pop up?
+// todo: Set as pop up?
 const shareFacebook = () => {
   const facebookShareLink = `https://www.facebook.com/sharer/sharer.php?caption=${pageData.value.page_name}&u=${window.location.href}`
   window.open(facebookShareLink)
@@ -158,10 +139,14 @@ const shareMail = () => {
   window.open(MailShareLink)
 }
 
+const donated_percentage = computed(() => (((pageDataDB.value?.amount_raised as number) / (pageDataDB.value?.donation_goal as number )) * 100).toFixed(1) + "");
+const donation_goal_provided = computed(() => pageDataDB.value?.donation_goal as number > 0)
 const comments = computed(() => pageDataDB.value?.PageDonations)
 const replies = computed(() => pageDataDB.value?.Reply)
-
-
+const imageData = computed(() => pageDataDB.value?.Images || [])
+const profileImage = computed(() => imageData.value?.find((image: Image) => 
+          image.cuid === pageDataDB.value?.profileImageCuid
+      ))
 
 // images for testing if needed.
 /*const temp = ref([
@@ -177,7 +162,7 @@ const replies = computed(() => pageDataDB.value?.Reply)
 const currentImage = ref(0)
 // TODO: setup auto cycle on a timer
 const nextImage = () => { 
-    if(currentImage.value === imageData.value.length - 1){
+    if(currentImage.value === imageData.value?.length - 1){
         currentImage.value = 0
     } else {
         currentImage.value++
@@ -185,16 +170,19 @@ const nextImage = () => {
 }
 const prevImage = () => {
     if(currentImage.value === 0){
-        currentImage.value = imageData.value.length -1
+        currentImage.value = imageData.value?.length - 1
     } else {
         currentImage.value--
     }
-    }
+}
 
 // Recieves emitted reply from CVReplies System to update replies in real time
-const DisplayReply = async (reply: Reply) => {
+const displayReply = async (reply: Reply) => {
     pageDataDB.value?.Reply.push(reply)
 }
+
+console.log(pageDataDB.value?.visitation_description)
+console.log(pageDataDB.value?.funeral_date)
 </script>
 
 <template lang="pug">
@@ -204,15 +192,15 @@ const DisplayReply = async (reply: Reply) => {
     p.my-auto.font-bold.text-4xl {{ pageData.page_name }}
 
 .flex.flex-col.gap-5.px-4.mx-auto.mt-8(class="w-3/4 sm:px-16")
-  img.mx-auto(v-if="profileImageLink" class="w-[122px] h-[122px] rounded-[8px]" :src="`${profileImageLink}`")
-  .text-gray-dark.mx-auto.w-max.font-poppins.text-md {{ dateFormat(pageData.day_of_birth, true) + ' - ' + dateFormat(pageData.day_of_passing, true) }} 
+  img.mx-auto(v-if="profileImage?.url" class="w-[122px] h-[122px] rounded-[8px]" :src="`${profileImage?.url}`")
+  .text-gray-dark.mx-auto.w-max.font-poppins.text-md {{ dateFormat(pageDataDB.day_of_birth, true) + ' - ' + dateFormat(pageDataDB.day_of_passing, true) }} 
   .flex.flex-col-reverse.gap-5(class="sm:grid sm:grid-cols-2")
-    .relative.w-96.border.border-2.border-grey.p-1(v-if="imageData.length != 0" )
+    .relative.w-96.p-1(v-if="imageData.length != 0" )
       button.absolute.left-4.top-64.bg-black.text-white(@click="prevImage" style="opacity:0.7; --tw-text-opacity: 1; width: 46px; height: 46px; border-radius:50%; align-items: center; justify-content: center; line-height: 2; text-align: center;color: white;") &#60;
       button.absolute.right-8.top-64.bg-black.text-white(@click="nextImage" style="opacity:0.7; --tw-text-opacity: 1; width: 46px; height: 46px; border-radius:50%; align-items: center; justify-content: center; line-height: 2; text-align: center;color: white;") &#62;
       img.w-96(style="object-fit:cover" :src="imageData[currentImage].url")
     // services list
-    .py-4.flex.flex-col.gap-5
+    .py-4.flex.flex-col.gap-5(style="font-size: 18px")
       .text-gray-dark.font-poppins.text-2xl.text-left.font-bold(style="line-height: 36px; text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") Services
       .flex.flex-col.gap-5(class="lg:grid lg:grid-cols-2")
         .flex.flex-col.gap-5(v-if="pageData.visitation_date")
@@ -248,7 +236,7 @@ const DisplayReply = async (reply: Reply) => {
 //.container(class="sm:overflow-hidden sm:w-3/4 sm:mt-4 sm:mx-auto sm:place-content-center sm:max-w-xl sm:p-6 sm:rounded-card sm:shadow-card")
 .grid(class="sm:grid-cols-2")
     .container.m-4.place-content-center.font-poppins(class="w-5/6 sm:m-auto sm:py-3")
-        .text-md.text-center.ml-4.my-3(v-if="donation_goal_provided" class="sm:text-xl sm:my-6" style="letter-spacing: 0.35px; font-weight: 600; color: #646464;") {{ donationFormat(pageData.amount_raised)  + " raised of " +  donationFormat(pageData.donation_goal) + " goal" }}
+        .text-md.text-center.ml-4.my-3(v-if="donation_goal_provided" class="sm:text-xl sm:my-6" style="letter-spacing: 0.35px; font-weight: 600; color: #646464;") {{ donationFormat(pageDataDB.amount_raised)  + " raised of " +  donationFormat(pageDataDB.donation_goal) + " goal" }}
         .py-4
         .progress-bar.overflow-hidden.ml-4.h-5.rounded-full(v-if="donation_goal_provided" style="30px; background-color:#b5b5b5;")
             //CVProgress(v-if="donated_percentage >= 100" modelBarWidth="100") {{ donated_percentage  + "%" }}
@@ -264,7 +252,7 @@ const DisplayReply = async (reply: Reply) => {
                         .div.comment-header(style="font-size: 0.75rem; font-weight: bold; margin-bottom: 1.5rem;") {{ comment.donorFirstName }} {{ comment.donorLastName }}
                         p.comment-body(style="font-size: 0.75rem; width: fit-content; color: #666;") {{ comment.comments }}
                         .div.comment-donation-amount(style="font-size: 0.75rem; color: #666;") Amount Donated: {{ donationFormat(comment.amount) }}
-        CVReplySystem(:pageCuid="pageCuid" :familyCuid="familyCuid" :replies="replies" @displayReply="DisplayReply")
+        CVReplySystem(:pageCuid="pageCuid" :familyCuid="familyCuid" :replies="replies" @displayReply="displayReply")
         .py-4.grid.flex-box.flex-row.item-centered.gap-1(v-if="replies?.length" style="line-height: 0px;text-align: center")
             div(class="flex")
             .div(v-for="(reply,i) in replies" :key="i" class="reply-box")
@@ -285,5 +273,5 @@ const DisplayReply = async (reply: Reply) => {
           .col
             p {{  "" }}
     .col-md-8.mx-9(class="sm:col-span-1 sm:mr-11")
-        .div.px-8.py-4(style="color: #6E6E6E; font-weight: 500; font-size: 14px; line-height: 28px; letter-spacing: -0.078px; word-break: break-word;" id="obituary") {{ pageData.obituary }}
+        .div.px-8.py-4(style="color: #6E6E6E; font-weight: 500; font-size: 18px; line-height: 28px; letter-spacing: -0.078px; word-break: break-word;" id="obituary") {{ pageData.obituary }}
 </template>

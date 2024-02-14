@@ -41,7 +41,7 @@ ClientOnly
       NavLinkButton(v-if="isAdmin" to='/FamilyTransactionList') 
         p.uppercase.white.w-max Donations
       NavLinkButton(v-if="isAdvocateAdmin" to='/FamilyReports')
-        p.uppercase.white.w-max FamilyReports
+        p.uppercase.white.w-max Family Reports
     div.max-w-min.mx-auto.flex.gap-2(v-else)
       a.items-center.px-2.py-2.text-base.font-medium.rounded-md.text-green-600.cursor-pointer(style="border: 1px solid #c4c4c4;"
       class='hover:text-white hover:bg-gray-600'  
@@ -60,7 +60,7 @@ ClientOnly
     //&& isLoggedIn")
     .flex.w-max(v-if="isNotSearch")
       input(class="border border-gray-300 py-2 px-4 rounded-lg focus:outline-none focus:border-black-500" type="search" placeholder=" " v-model="searchQuery")
-      NuxtLink.inline(:to="`/Search/?search=${searchQuery}`")
+      NuxtLink.inline(:to="`/Search/?search=${searchQuery}&isPageList=0`")
         img(src="/CVSearchIcon.png")
     //.flex.w-max(v-else) Todo: add to search page
       p.uppercase.white.w-max Welcome TO Carson's Village

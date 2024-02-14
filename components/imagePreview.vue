@@ -29,7 +29,7 @@ const emptyImage = ref<Image>({
 })
 
 // Method to remove a single image
-const removeImage = async (cuid:string, isPreview: boolean) => {
+const removeImage = async (cuid: string, isPreview: boolean) => {
   if(cuid == previewCuid.value){
     isPreview = true;
   }
@@ -37,12 +37,13 @@ const removeImage = async (cuid:string, isPreview: boolean) => {
   // Confirmation of image deletetion. If no is pressed nothing happens
   if(confirm('Are you sure you want to delete this image?')){
     const theImage = props.images.find((i:Image)=> i.cuid == cuid)
+    // todo: change to $fetch
     await useFetch('/api/image', {
     method: 'delete',
     body: (theImage as Image)
     });
-    let imagesTemp = props.images.filter((i:Image) => i.cuid != cuid) 
-    emit("images", props.images.filter((i:Image) => i.cuid != cuid));
+    let imagesTemp = props.images.filter((i: Image) => i.cuid != cuid) //todo: replace emit on "images" with this?
+    emit("images", props.images.filter((i: Image) => i.cuid != cuid));
     if(isPreview && imagesTemp.length !=0){
         previewCuid.value =  imagesTemp[0].cuid
     } else if(imagesTemp.length === 0){

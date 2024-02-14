@@ -8,7 +8,7 @@ const stripeSecretKey = runtime.STRIPE_SECRET;
 import { PrismaClient } from "@prisma/client"
 const client = new PrismaClient()
 export default defineEventHandler(async event => {
-  const stripe = new Stripe(runtime.STRIPE_SECRET, { apiVersion:"2022-11-15"})
+  const stripe = new Stripe(runtime.STRIPE_SECRET, { apiVersion:"2022-11-15"}) // todo: upgrade to "2023-10-16" version
   event.context.client = client
   const cvtoken = getCookie(event, "cvtoken") || ""
   // not logged in but trying to
@@ -25,7 +25,7 @@ export default defineEventHandler(async event => {
         event.context.claims = claims
         event.context.user = await event.context.client.user.findFirst(
           {
-            where:{ email: claims.email }
+            where: { email: claims.email }
           ,
           include: {
             Pages: {
@@ -34,8 +34,12 @@ export default defineEventHandler(async event => {
               }
             }, Family: {
               select: {
-                stripe_account_id: true
+                stripe_account_id: true,
+                Pages: { select: {
+                  cuid: true
+                }
               }
+            }
             }
           }
           })
@@ -43,7 +47,7 @@ export default defineEventHandler(async event => {
           console.error(`${claims.email} not found`) 
           setCookie(event,'cvtoken','')
           setCookie(event,'cvuser','')
-          return await sendRedirect(event, logoutRedirectUrl(cvtoken))
+          return await sendRedirect(event, logoutRedirectUrl(cvtoken)) // todo: add error message after failed log in attempt
           return await sendRedirect(event, loginRedirectUrl());
         }
         // include pages ids to check if that's the family's page. 
@@ -53,7 +57,7 @@ export default defineEventHandler(async event => {
         if(event.context.user?.Family?.stripe_account_id == undefined ) {
           try {
             if (event.context.user?.user_role == "family") {
-                    // todo: change to custom accounts
+                    // todo: change to custom accounts or potentially stick with express accounts
                     // incomplete code for custom account is available in embedded UI pr and branch
                     const newStripeAccount = await stripe.accounts.create({
                         type: 'standard',

@@ -13,7 +13,7 @@ export default defineEventHandler(async event => {
   const { Images, Reply, PageDonations, userCuid, familyCuid, Family, ...data } = await readBody(event)
   //const userCuid = data.userCuid
   //delete data.userCuid;
-  delete data.Family // Not sure why I have to do this
+  delete data.Family // Not sure why this is needed to fix an error
   
   if(event.context.user.user_role === "advocate" || event.context.user?.user_role == "admin" || event.context.user.cuid === userCuid ){
     console.log(data.amount_raised)
@@ -42,7 +42,6 @@ export default defineEventHandler(async event => {
         // For page edit, images without a pageCuid are processed
         /*await Promise.all(
         Images.forEach(async (image: Image) => {
-          console.log("code stops here")
           if(image.pageCuid == null) {
             await prisma.image.update({
               where: {

@@ -40,7 +40,7 @@ div
   .col-md-10.px-2.mt-2
       button(@click="prevPage") &lt
   .col-md-10.px-2.mt-2
-      p {{  currentPage }}
+      p {{  currentPage + 1 }}
   .col-md-10.px-2.mt-2
       button(@click="nextPage") >
 </template>
@@ -93,6 +93,7 @@ div
   // converts array of family pages and their advocate responsible for the family into a csv
   function convertToCSV(arr : Partial<Page[]>) {
     // todo: clean up and remove usages of any, idea for this is to use the pick type from typescript
+    // problem for Samuel: page_name will be set as first_name and last_name which will be on the same level as the user first_name and last_name
     const listOfTags = ["page_name", "donation_goal", "amount_raised", "deadline", "amount_distributed", "donation_status", "duration", "start_date", "goal_met_date", "first_name", "middle_name", "last_name", "Amount Owed / Goal Percentage" ]
     // removes every column not in list of tags
     Object.keys(arr[0] || "").forEach((element: string) => {
@@ -128,7 +129,7 @@ div
     // loads family report data from the families database table and joins and creates a download link for the file
     const loadReports = async () => {
       if( isAdminAdvocate ) { 
-          const { data: familiesData } = await useFetch('/api/familiesReports', {
+          const { data: familiesData, refresh } = await useFetch('/api/familiesReports', {
           method: 'GET', 
           query: { page_number: currentPage }
           });
@@ -145,12 +146,23 @@ div
       }
     }
 
+    // Formats report date to the format 'yyyy-mm-dd'
+    function formatReportDate(date: string) {
+      const dates = date.split("-")
+      const month = dates[0]
+      const day = dates[1]
+      const year = dates[2]
+      const formatedMonth = parseInt(month) >= 10 ? month : 0 + "" + month
+      const formatedDay = parseInt(day) >= 10 ? day : 0 + "" + day
+      return year + "-" + formatedMonth + "-" + formatedDay 
+    }
     // creates download link to csv of family reports table
     const createCsvDownloadLink = (csv: string) => {
       const csvFile = new File([csv], "file", {
       type: "text/csv" } )
       // unique filename based on current time
-      const filename = "report-" + dateFormat(new Date().toString())+".csv"
+      const filename = "family_report_" + formatReportDate(dateFormat(new Date().toString(), true).replaceAll("/", "-")) + ".csv"
+      console.log(filename)
       filedownloadlink.value = window.URL.createObjectURL(csvFile);
       dataset.value = ["text/csv", filename, filedownloadlink.value].join(':');
       downloadName.value = filename
@@ -179,7 +191,7 @@ div
           }
         }
           booleanChanged = false          
-
+          // todo: change to $fetch
           const toggledStatus = useFetch('api/page', {
             method: "PUT",
             body: { ...page }

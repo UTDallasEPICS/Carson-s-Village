@@ -24,7 +24,7 @@ export default defineEventHandler(async event => {
           ...data, cuid: undefined,
           User: {
             connect: {
-              cuid : userCuid || "0"
+              cuid : userCuid
             }
           },
           Family: {

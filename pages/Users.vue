@@ -32,7 +32,8 @@ const totalLength = ref(0)
 const getDataUsers = async () => {
     const { data: usersData } = await useFetch('/api/users', {
         method: 'GET',
-        query: { page_number: currentPage}
+        query: { page_number: currentPage }, 
+        watch: [currentPage]
     })
     users.value = usersData.value?.userData as unknown as User2[];
     totalLength.value = usersData.value?.Pagination.total as unknown as number
@@ -87,7 +88,7 @@ if( (isAuthorized.value as boolean) == true )
     .col-md-10.px-2.mt-2
         button(@click="prevPage") &lt
     .col-md-10.px-2.mt-2
-        p {{  currentPage }}
+        p {{  currentPage + 1 }}
     .col-md-10.px-2.mt-2
         button(@click="nextPage") >
 </template>

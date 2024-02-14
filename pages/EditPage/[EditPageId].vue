@@ -86,11 +86,24 @@ type User2 = {
     cuid: string
     first_name: string,
     last_name: string,
-    user_role: Object,
+    user_role: string,
     email: string,
     middle_name: string,
     phone: string,
-    Pages: Page[]
+    Pages: Page[],
+    Family: {
+        cuid: string,
+        family_name: string,
+        stripe_account_id: string,
+        created_at: string,
+        updated_at: string,
+        FamilyMembers: [],
+        FamilyDonationPayouts: [],
+        Pages: [],
+        AdvocateResponsible: User,
+        FamilyDonations: [],
+        advocateCuid: ""
+    }
     //PageDonations: PageDonation[]
     //DonationPayouts: DonationPayout[]  
 }
@@ -132,6 +145,7 @@ const save = async () => {
         data.value.start_date = new Date().toString()
     }
 
+    // todo: change to $fetch
     const { data: saveSuccess } = await useFetch('/api/page', {
         // Checks if there is a pre-existing page to edit or if to create a new page    
         method: router.params.EditPageId !== "0" ? 'PUT' : 'POST',
@@ -155,11 +169,11 @@ const currentFamily = computed(() => data_all_users.value?.find(({ cuid }: Famil
 
 // Method to populate the form when editing a pre-existing page
 const getData = async (cuid: string) => {
-    const pageFound = cvuser.value.Pages.find((i: Page) => i.cuid == router.params.EditPageId) != undefined
-    
+    const pageFoundFromUser = cvuser.value.Pages.find((i: Page) => i.cuid == router.params.EditPageId) != undefined
+    const pageFoundFromFamily = cvuser2.value.Family?.Pages.find((i: Page) => i.cuid == router.params.EditPageId) != undefined
     console.log(data_all_users)
     // Allowing access to the user's EditPage only if user is an advocate or it is one of the family's family pages.
-    if (pageFound || cvuser.value.user_role == "advocate" || cvuser.value.user_role == "admin") {
+    if (pageFoundFromUser || pageFoundFromFamily || cvuser.value.user_role == "advocate" || cvuser.value.user_role == "admin") {
         const { data: pageData } = await useFetch('/api/page', {
             method: 'GET',
             query: { cuid: cuid }

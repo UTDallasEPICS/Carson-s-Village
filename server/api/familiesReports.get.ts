@@ -7,7 +7,7 @@ const prisma = new PrismaClient()
 /*
 *	/Users
 *	function:	GET
-*	retrive details of all families from database
+*	retrive details of all families from database for the purpose of family reports
 */
 
 export default defineEventHandler(async event => {

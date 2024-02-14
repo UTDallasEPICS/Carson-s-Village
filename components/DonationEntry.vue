@@ -33,12 +33,15 @@ const donationData = ref<PageDonation>({
 
 const stripeLink_ref = ref("")
 const create_checkout_session = async () => {
+    // todo: depreciate
     const donorData = {
         first_name: donationData.value.donorFirstName,
         last_name: donationData.value.donorLastName,
         isAnonymous: donationData.value.isAnonymous,
         comments: donationData.value.comments
     };
+
+    // todo: change to $fetch
     const { data : sessionInfo } = await useFetch('/api/create_session', {
         method: 'POST',
         body: { ...donationData.value, cuid: props.pageCuid, family_cuid: props.familyCuid, amount_raised: Math.trunc(parseFloat(donationData.value.amount as unknown as string) * 100) as number}

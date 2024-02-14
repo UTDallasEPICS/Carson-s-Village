@@ -59,7 +59,7 @@ const getDataPageList = async () => {
   if(cvuser.value.user_role == "admin") {
     const { data: pagesData } = await useFetch('/api/pages', {
       method: 'GET',
-      query: { searchQuery: ref(""), page_number: currentPage }
+      query: { searchQuery: ref(""), page_number: currentPage, isPageList: 1 }
     })
     pages.value = pagesData.value?.data as unknown as Page[]
     totalLength.value = pagesData.value?.Pagination.total as unknown as number
@@ -225,7 +225,7 @@ await getDataPageList()
   .col-md-10.px-2.mt-2
       button(@click="prevPage") &lt
   .col-md-10.px-2.mt-2
-      p {{  currentPage }}
+      p {{  currentPage + 1 }}
   .col-md-10.px-2.mt-2
       button(@click="nextPage") >
 </template>

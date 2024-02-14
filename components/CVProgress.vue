@@ -1,22 +1,22 @@
 <script lang="ts" setup>
-
-
-const actualBarWidth = ref(0)
-const displayNothing = ref(false)
 const props = defineProps<{modelBarWidth: string}>()
+const actualBarWidth = computed(() => { if(props.modelBarWidth != null && props.modelBarWidth !="inf" ) {
+        if(parseFloat(props.modelBarWidth) >= 100) {
+            return 100
+        } else if(parseFloat(props.modelBarWidth) < 100 && parseFloat(props.modelBarWidth) > 0) {
+            return parseFloat(props.modelBarWidth)
+        } else {
+            return 0
+        }
+    } else if(props.modelBarWidth == "inf") {
+        return 100
+    }})
 console.log(parseFloat(props.modelBarWidth), " bar width")
-if(props.modelBarWidth != null && props.modelBarWidth !="inf" ) {
-    if(parseFloat(props.modelBarWidth) >= 100) {
-        actualBarWidth.value = 100
-    } else if(parseFloat(props.modelBarWidth) < 100 && parseFloat(props.modelBarWidth) > 0) {
-        actualBarWidth.value = parseFloat(props.modelBarWidth)
-    } else {
-        actualBarWidth.value = 0
-        displayNothing.value = true
-    }
 
-} else if(props.modelBarWidth == "inf") {
-    actualBarWidth.value = 100
+// handles logic with how to display the progress bar
+function calculateBarWidth (modelBarWidth: string) {
+    console.log(modelBarWidth)
+    
 }
 
 console.log(actualBarWidth.value)
@@ -26,7 +26,7 @@ const style = computed(() =>
 
 <template lang="pug">
 .rounded-full.text-white.flex.items-center.justify-center(:style="style")
-    slot(v-if="!displayNothing")
+    slot(v-if="actualBarWidth")
 </template>
 
 <style scoped></style>

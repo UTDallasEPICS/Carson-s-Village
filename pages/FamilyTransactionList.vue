@@ -158,7 +158,7 @@ const { data: Families } = await useFetch<Family[]>('/api/families', {
     .col-md-10.px-2.mt-2
         button(@click="prevPage") &lt
     .col-md-10.px-2.mt-2
-        p {{  currentFamilyPageNumber }}
+        p {{  currentFamilyPageNumber + 1}}
     .col-md-10.px-2.mt-2
         button(@click="nextPage") >
   CVLegend.mt-10 Family Donations

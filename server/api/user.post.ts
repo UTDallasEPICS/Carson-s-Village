@@ -2,14 +2,14 @@ import { PrismaClient } from "@prisma/client"
 import { SESClient, SendEmailCommand } from "@aws-sdk/client-ses"
 const prisma = new PrismaClient()
 const sesClient = new SESClient({ region: "us-east-1" });
-import {loginRedirectUrl} from "../api/auth0"
+import { loginRedirectUrl } from "../api/auth0"
 import emailTemplates from "email-templates"
 
 /*	/EditUser/0
 *	  function:	POST
 *	  submit user account details to database
 */
-const runtime= useRuntimeConfig()
+const runtime = useRuntimeConfig()
 export default defineEventHandler(async event => {
 
 const EmailTemplates = new emailTemplates({
@@ -25,7 +25,7 @@ const EmailTemplates = new emailTemplates({
   },
 })
 
-const sendEmail = async (to:string, template:string, subject:string, data:string) => {
+const sendEmail = async (to: string, template: string, subject: string, data: string) => {
   const { html, text } = await EmailTemplates.renderAll(template, data)
   const sendEmailCommand = new SendEmailCommand({
     Destination: { ToAddresses: [to] }, 
