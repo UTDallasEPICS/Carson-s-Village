@@ -143,10 +143,9 @@ const isAdvocate = computed(() => cvuser.value?.user_role == "advocate")
   table.mt-5.table.table-striped.w-full
       thead
           tr(style="color: white;")
-              th.px-8(style="--tw-bg-opacity: 1; background-color: rgb(110 171 191 / var(--tw-bg-opacity));border-radius: 60px 0px 0px 0px; width:25%; overflow: hidden") Page Name
-              th.px-8(style="width:25%; --tw-bg-opacity: 1; background-color: rgb(110 171 191 / var(--tw-bg-opacity));") Raised
-              th.font-poppins.font-bold(style="--tw-bg-opacity: 1; background-color: rgb(110 171 191 / var(--tw-bg-opacity));") Remaining
-              th.px-8(style="width:25%; --tw-bg-opacity: 1; border-radius: 0px 60px 0px 0px; background-color: rgb(110 171 191 / var(--tw-bg-opacity));") Page Cuid
+              th.px-8(style="--tw-bg-opacity: 1; background-color: rgb(110 171 191 / var(--tw-bg-opacity));border-radius: 60px 0px 0px 0px; width:33.33%; overflow: hidden") Page Name
+              th.px-8(style="--tw-bg-opacity: 1; background-color: rgb(110 171 191 / var(--tw-bg-opacity));") Raised
+              th.font-poppins.font-bold(style="--tw-bg-opacity: 1; border-radius: 0px 60px 0px 0px; background-color: rgb(110 171 191 / var(--tw-bg-opacity)); width:33.33%") Remaining
           tr(v-for="(item, i) in familyData.data" 
               :key="i" 
               :class="{'bg-gray-200': (i+1) % 2}"
@@ -154,7 +153,6 @@ const isAdvocate = computed(() => cvuser.value?.user_role == "advocate")
               td.font-poppins.text-gray-dark.font-bold(style="text-align: center")  {{ item?.page_name }}
               td.font-poppins.text-gray-dark.font-bold(style="text-align: center")  {{ donationFormat(item.amount_raised) }}
               td.font-poppins.text-gray-dark.font-bold(style="text-align: center")  {{ donationFormat(item.amount_raised-item.amount_distributed) }}
-              td.font-poppins.text-gray-dark.font-bold(style="text-align: center")  {{ item.cuid }}
   .ml-9.mb-9.py-7.flex.flex-wrap.gap-2.place-content-center
     .col-md-10.px-2.mt-2
         button(@click="prevPage") &lt
@@ -166,16 +164,14 @@ const isAdvocate = computed(() => cvuser.value?.user_role == "advocate")
   table.mt-5.table.table-striped(style="width:100%;")
       thead
           tr(style="color: white;")
-              th.px-8(style="--tw-bg-opacity: 1; background-color: rgb(110 171 191 / var(--tw-bg-opacity));border-radius: 60px 0px 0px 0px; width:25%; overflow: hidden") Transaction id
-              th.px-8(style="width:25%; --tw-bg-opacity: 1; background-color: rgb(110 171 191 / var(--tw-bg-opacity));") Donation cuid
+              th.px-8(style="--tw-bg-opacity: 1; background-color: rgb(110 171 191 / var(--tw-bg-opacity));border-radius: 60px 0px 0px 0px; width:33.33%; overflow: hidden") Transaction id
               th.font-poppins.font-bold(style="--tw-bg-opacity: 1; background-color: rgb(110 171 191 / var(--tw-bg-opacity));") Page Name
-              th.px-8(style="width:25%; --tw-bg-opacity: 1; border-radius: 0px 60px 0px 0px; background-color: rgb(110 171 191 / var(--tw-bg-opacity));") Amount
+              th.px-8(style="width:33.33%; --tw-bg-opacity: 1; border-radius: 0px 60px 0px 0px; background-color: rgb(110 171 191 / var(--tw-bg-opacity));") Amount
           tr(v-for="(item, i) in donations" 
               :key="i" 
               :class="{'bg-gray-200': (i+1) % 2}"
           )
               td.font-poppins.text-gray-dark.font-bold(style="text-align: center")  {{ item.transaction_id }}
-              td.font-poppins.text-gray-dark.font-bold(style="text-align: center")  {{ item.cuid }}
               td.font-poppins.text-gray-dark.font-bold(style="text-align: center")  {{ item.Page.page_name }}
               td.font-poppins.text-gray-dark.font-bold(style="text-align: center")  {{ donationFormat(item.amount) }}
 </template>

@@ -178,7 +178,6 @@ await getDataPageList()
     thead
       tr
         th.font-poppins.font-bold.p-2(style="color:white;--tw-bg-opacity: 1; background-color: rgb(110 171 191 / var(--tw-bg-opacity)); overflow: hidden; border-radius: 60px 0px 0px 0px; width:30%; ")  Page Name
-        th.font-poppins.font-bold.overflow-hidden(v-if="isAdmin" style="color: white; width:15%;--tw-bg-opacity: 1; background-color: rgb(110 171 191 / var(--tw-bg-opacity));") User ID
         th.font-poppins.font-bold(style="color:white; width:35%; --tw-bg-opacity: 1; background-color: rgb(110 171 191 / var(--tw-bg-opacity));") Donation Deadline
         th.font-poppins.font-bold(style="width:10%; --tw-bg-opacity: 1; background-color: rgb(110 171 191 / var(--tw-bg-opacity)); color: rgb(110 171 191 / var(--tw-bg-opacity));")  {{ "_______________________" }}
         th.font-poppins.font-bold(style="border-radius: 0px 60px 0px 0px; width:20%; --tw-bg-opacity: 1; background-color: rgb(110 171 191 / var(--tw-bg-opacity));color:rgb(110 171 191 / var(--tw-bg-opacity));") {{ "_____________" }}
@@ -187,7 +186,6 @@ await getDataPageList()
       :class="{'bg-gray-200': (i+1) % 2}"
       )
         td.font-poppins.text-gray-dark.font-bold(style="text-align: center;") {{ item.page_name }}
-        td.font-poppins.text-gray-dark.font-bold(style="text-align: center;" v-if="isAdmin") {{ item.userCuid }}
         td.font-poppins.text-gray-dark.font-bold(style="text-align: center;") {{ dateFormat(item.deadline) }}
         td
           LinkButton(class="sm:my-2" style="--tw-bg-opacity: 1; background-color: rgb(110 171 191 / var(--tw-bg-opacity)); white-space: nowrap; display: flex; flex-direction: row; padding: 14px 24px; gap: 10px;" :to="`/EditPage/${item.cuid}`") Edit
@@ -201,7 +199,6 @@ await getDataPageList()
     thead
       tr
         th.font-poppins.font-bold.p-2(style="color:white;--tw-bg-opacity: 1; background-color: rgb(110 171 191 / var(--tw-bg-opacity)); overflow: hidden; border-radius: 60px 0px 0px 0px; width:30%; ")  Page Name
-        th.font-poppins.font-bold.overflow-hidden(v-if="isAdmin" style="color: white; width:15%;--tw-bg-opacity: 1; background-color: rgb(110 171 191 / var(--tw-bg-opacity));") User ID
         th.font-poppins.font-bold(style="color:white; width:35%; --tw-bg-opacity: 1; background-color: rgb(110 171 191 / var(--tw-bg-opacity));") Donation Deadline
         th.font-poppins.font-bold(style="width:10%; --tw-bg-opacity: 1; background-color: rgb(110 171 191 / var(--tw-bg-opacity)); color: rgb(110 171 191 / var(--tw-bg-opacity));")  {{ "_______________________" }}
         th.font-poppins.font-bold(style="border-radius: 0px 60px 0px 0px; width:20%; --tw-bg-opacity: 1; background-color: rgb(110 171 191 / var(--tw-bg-opacity));color:rgb(110 171 191 / var(--tw-bg-opacity));") {{ "_____________" }}
@@ -210,7 +207,6 @@ await getDataPageList()
       :class="{'bg-gray-200': (i+1) % 2}"
       )
         td.font-poppins.text-gray-dark.font-bold(style="text-align: center;") {{ item.page_name }}
-        td.font-poppins.text-gray-dark.font-bold(style="text-align: center;" v-if="isAdmin") {{ item.userCuid }}
         td.font-poppins.text-gray-dark.font-bold(style="text-align: center;") {{ dateFormat(item.deadline) }}
         td
           LinkButton(class="sm:my-2" style="--tw-bg-opacity: 1; background-color: rgb(110 171 191 / var(--tw-bg-opacity)); white-space: nowrap; display: flex; flex-direction: row; padding: 14px 24px; gap: 10px;" :to="`/EditPage/${item.cuid}`") Edit
