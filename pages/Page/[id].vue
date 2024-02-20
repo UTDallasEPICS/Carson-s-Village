@@ -116,7 +116,7 @@ const DisplayReply = async (reply: Reply) => {
 // the header overlay with image and name
 .mt-2.min-h-24.text-white.uppercase.w-full(style="background-image: url('https://carsonsvillage.org/wp-content/uploads/2018/11/iStock-862083112-BW.jpg');") 
   .h-full.py-8.self-center.w-full.text-center.flex.flex-col(style="background-color: rgba(50, 119, 136, .8)") 
-    p.my-auto.font-bold.text-4xl {{ pageDataDB.page_name }}
+    p.my-auto.font-bold.text-4xl {{ pageDataDB.first_name + " " + pageDataDB.last_name }}
 
 .flex.flex-col.gap-5.px-4.mx-auto.mt-8(class="w-3/4 sm:px-16")
   img.mx-auto(v-if="profileImageLink" class="w-[122px] h-[122px] rounded-[8px]" :src="`${profileImageLink}`")

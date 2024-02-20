@@ -23,7 +23,7 @@ div
         tbody(v-for="family in families")
             tr(v-for="(page,i) in family.Pages" 
             :class="{'bg-gray-200': (i+1) % 2}") 
-                td(style="text-align: center;") {{ page.page_name }}
+                td(style="text-align: center;") {{ page.first_name + " " + page.last_name}}
                 td(style="text-align: center;") {{ family.AdvocateResponsible.first_name  + " " + family.AdvocateResponsible.last_name }}
                 td(style="text-align: center;") {{ page.duration }} 
                 td(style="text-align: center;") {{  page.donation_status }}
