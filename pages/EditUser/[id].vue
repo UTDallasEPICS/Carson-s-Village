@@ -55,11 +55,11 @@ const errorInPage = ref(false);
 // Method that creates a new user on the database on the backend
 const save = async () => {
     if(isAuthorized){
-        const { data: result } = await useFetch('/api/user', {
+        const data = await $fetch('/api/user', {
         method: (cuid.value as string) !== "0" ? 'PUT' : 'POST',
         body: ({ ...data_user.value, familyCuid: familyCuid.value, cuid: cuid.value as string })
     })
-    if(result.value == true){
+    if(data == true){
         errorInPage.value = false;
         await navigateTo('/Users')
     } else {

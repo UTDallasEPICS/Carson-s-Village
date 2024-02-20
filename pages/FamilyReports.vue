@@ -164,7 +164,7 @@ div
         }
           booleanChanged = false          
 
-          const toggledStatus = useFetch('api/page', {
+          const toggledStatus = $fetch('api/page', {
             method: "PUT",
             body: { ...page }
           })

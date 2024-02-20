@@ -52,13 +52,13 @@ const errorInPage = ref(false);
 // Method that creates a new family on the backend and adds the first user
 const createFamily = async () => {
     if(isAuthorized){
-        const { data: result } = await useFetch('/api/family', {
+        const result = await $fetch('/api/family', {
         method: 'POST',
         body: ({family_name: data_family.value.family_name, ...data_user.value})
     })
-    data_family.value = result.value as unknown as Family
-    console.log(result.value)
-    if( result.value ){
+    data_family.value = result as unknown as Family
+    console.log(result)
+    if( result ){
         errorInPage.value = false;
         await navigateTo('/Users')
     } else {
