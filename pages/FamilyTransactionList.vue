@@ -172,7 +172,12 @@ const isAdvocate = computed(() => cvuser.value?.user_role == "advocate")
               :class="{'bg-gray-200': (i+1) % 2}"
           )
               td.font-poppins.text-gray-dark.font-bold(style="text-align: center")  {{ item.transaction_id }}
+<<<<<<< HEAD
               td.font-poppins.text-gray-dark.font-bold(style="text-align: center")  {{ item.Page.page_name }}
+=======
+              td.font-poppins.text-gray-dark.font-bold(style="text-align: center")  {{ item.cuid }}
+              td.font-poppins.text-gray-dark.font-bold(style="text-align: center")  {{ item.Page.first_name + " " + item.Page.first_name }}
+>>>>>>> 9c07cfd (Looks okay to me, unsure of what else to fix. Need to ask Ofek about one more thing though)
               td.font-poppins.text-gray-dark.font-bold(style="text-align: center")  {{ donationFormat(item.amount) }}
 </template>
 

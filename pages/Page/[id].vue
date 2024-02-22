@@ -66,12 +66,12 @@ const create_checkout_session = async () => {
 };
 
 const shareFacebook = () => {
-  const facebookShareLink = `https://www.facebook.com/sharer/sharer.php?caption=${pageDataDB.value?.page_name}&u=${window.location.href}`
+  const facebookShareLink = `https://www.facebook.com/sharer/sharer.php?caption=${pageDataDB.value?.first_name}${pageDataDB.value?.last_name}&u=${window.location.href}`
   window.open(facebookShareLink)
 }
 
-const shareXFormalyKnownAsTwitter = () => {
-  const xShareLink = `https://twitter.com/intent/tweet?text=${pageDataDB.value?.page_name}&url=${window.location.href}`
+const shareXFormerlyKnownAsTwitter = () => {
+  const xShareLink = `https://twitter.com/intent/tweet?text=${pageDataDB.value?.first_name}${pageDataDB.value?.last_name}&url=${window.location.href}`
   window.open(xShareLink)
 }
 
@@ -194,7 +194,7 @@ const DisplayReply = async (reply: Reply) => {
             button(@click="shareFacebook")
               img(src="/facebook-fa.png" style="width:30px; height:33px;") 
           .col
-            button(@click="shareXFormalyKnownAsTwitter")
+            button(@click="shareXFormerlyKnownAsTwitter")
                 img(src="/twitter_fa.png" style="width:30px; height:29px;") 
           .col
             button(@click="shareMail")

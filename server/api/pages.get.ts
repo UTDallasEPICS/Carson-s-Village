@@ -29,6 +29,7 @@ const runtime = useRuntimeConfig()
   console.log(page_number)
   
   // Pagination via taking the absolute page number with 12 records per page 
+  // TODO: Figure this out
   const [count, pagesResult] = await prisma.$transaction([
     prisma.page.count({ where: { page_name: {
       contains: searchQuery as string,
