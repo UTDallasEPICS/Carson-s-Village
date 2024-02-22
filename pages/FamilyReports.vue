@@ -1,8 +1,21 @@
 <template lang="pug">
+//todo: add 2 datepickers to select the interval and use where between in db query. https://github.com/prisma/prisma/discussions/11443
+//todo: num pages per family
+//to maybe do: add selection for families instead of all at once and toggle between all at once and all families
+//todo: listbox for property selection. Then use some sort of mapping to toggle properties using v-if (or at worst a switch statement)
 div
     h2(style="margin-top: 2.5rem;") Family Reports 
     br
     a.mt-1.p-4.px-6.pt-2.bg-orange-400.rounded-full(style="color: white; font-weight: 700;" :href="filedownloadlink" :download="downloadName" :dataset.downloadurl="dataset") download
+    .py-4.grid(class="sm:grid-cols-3") 
+            CVLabel Date Range Start
+            .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
+                CVDatepicker(v-model='start_date')
+    .py-4.grid(class="sm:grid-cols-3") 
+            CVLabel Date Range End
+            .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
+                CVDatepicker(v-model='end_date')
+    ActionButton(@click="currentPage=0;loadReports") Pick Time Interval            
     table(style="margin-top: 1.25rem; width: 100%; border-spacing: 0; border-collapse: collapse;" v-if="isAdminAdvocate")
         thead(style="color: white;")
             tr
@@ -29,7 +42,7 @@ div
                 td(style="text-align: center;") {{ (page.goal_met_date) ? dateFormat(page.goal_met_date, true) : "Goal Not Reached" }}
                 td(style="text-align: center;") {{ dateFormat(page.start_date, true) }}
                 td(style="text-align: center;") {{ donationFormat((page.amount_raised - page.amount_distributed)) }}
-                td(style="text-align: center;") {{ (page.donation_goal) ? ((page.amount_raised - page.amount_distributed)/(page.donation_goal) * 100) + "%" : "No donation goal"}}
+                td(style="text-align: center;") {{ (page.donation_goal) ? ((page.amount_raised - page.amount_distributed)/(page.donation_goal) * 100).toFixed(2) + "%" : "No donation goal"}}
                 td(style="text-align: center;") {{ donationFormat(page.amount_distributed) }}
                 td(style="text-align: center;") {{ donationFormat(page.donation_goal) }}
                 td(style="text-align: center;") {{ dateFormat(page.deadline)}}
@@ -46,6 +59,8 @@ div
 </template>
     
 <script setup lang='ts'>
+    // todo: Make a 3 column grid of checkboxes to see which columns we need
+    // move download button on same row as the table using flex and justify content between
     // todo: Make the table resizable with custom dimensions. Possible application of the standard table 
     // todo: add number of family family pages an advocate is responsible, total amount raised by the families an advocate is responsible for
     //import { Family } from '@prisma/client'; 
@@ -65,6 +80,8 @@ div
     const dataset = ref("")
     const downloadName = ref("")
     const totalLength = ref(0)
+    const start_date = ref("1/01/2015")
+    const end_date = ref(new Date().toLocaleDateString())
 
     const data_family = ref<Family>({
       cuid: '',
@@ -125,26 +142,39 @@ div
       return Object.values(it).toString()
     }).join('\n')
   }
-  
-    // loads family report data from the families database table and joins and creates a download link for the file
-    const loadReports = async () => {
-      if( isAdminAdvocate ) { 
-          const { data: familiesData, refresh } = await useFetch('/api/familiesReports', {
-          method: 'GET', 
-          query: { page_number: currentPage }
-          });
-          
-          families.value = familiesData.value?.paginated_families as unknown as Family[]
-          totalLength.value = familiesData.value?.Pagination.total as unknown as number
-          //console.log(families.value)
-          // gathering the family data into an array of family pages and their advocate responsible
-          familiesRaw.value = familiesData.value?.families_raw as unknown as Family[]
-          familiesRaw.value.forEach((element: Family)  => { element.Pages.forEach((element2) => {familyPages.value.push( { ...element2 as unknown as Page[], ...element.AdvocateResponsible as any }) })})
-          const familyPagesArr = [...familyPages.value]
-          const csv = convertToCSV( familyPagesArr )
-          createCsvDownloadLink(csv)
-      }
+
+  // creates download link to csv of family reports table
+  const createCsvDownloadLink = (csv: string) => {
+      const csvFile = new File([csv], "file", {
+      type: "text/csv" } )
+      // unique filename based on current time
+      const filename = "family_report_" + formatReportDate(dateFormat(new Date().toString(), true).replaceAll("/", "-")) + ".csv"
+      console.log(filename)
+      filedownloadlink.value = window.URL.createObjectURL(csvFile);
+      dataset.value = ["text/csv", filename, filedownloadlink.value].join(':');
+      downloadName.value = filename
     }
+  
+  // loads family report data from the families database table and joins and creates a download link for the file
+  const loadReports = async () => {
+    if( isAdminAdvocate ) { 
+        const { data: familiesData } = await useFetch('/api/familiesReports', {
+        method: 'GET', 
+        query: { page_number: currentPage, start_date: start_date.value, end_date: end_date.value },
+        watch: [currentPage, start_date, end_date]
+        });
+        
+        families.value = familiesData.value?.paginated_pages as unknown as Family[]
+        totalLength.value = familiesData.value?.Pagination.total as unknown as number
+        console.log(families.value)
+        // gathering the family data into an array of family pages and their advocate responsible
+        familiesRaw.value = familiesData.value?.all_families as unknown as Family[]
+        familiesRaw.value.forEach((element: Family)  => { element.Pages.forEach((element2) => {familyPages.value.push( { ...element2 as unknown as Page[], ...element.AdvocateResponsible as any }) })})
+        const familyPagesArr = [...familyPages.value]
+        const csv = convertToCSV( familyPagesArr )
+        createCsvDownloadLink(csv)
+    }
+  }
 
     // Formats report date to the format 'yyyy-mm-dd'
     function formatReportDate(date: string) {
@@ -156,17 +186,7 @@ div
       const formatedDay = parseInt(day) >= 10 ? day : 0 + "" + day
       return year + "-" + formatedMonth + "-" + formatedDay 
     }
-    // creates download link to csv of family reports table
-    const createCsvDownloadLink = (csv: string) => {
-      const csvFile = new File([csv], "file", {
-      type: "text/csv" } )
-      // unique filename based on current time
-      const filename = "family_report_" + formatReportDate(dateFormat(new Date().toString(), true).replaceAll("/", "-")) + ".csv"
-      console.log(filename)
-      filedownloadlink.value = window.URL.createObjectURL(csvFile);
-      dataset.value = ["text/csv", filename, filedownloadlink.value].join(':');
-      downloadName.value = filename
-    }
+    
     
     // method activated by Advocate or Admin to manual remove the ability to donate to a family page after about a week of the donation deadline.
     // an advocate or admin can also re-enable a page to set its status from 'inactive' to 'active'
@@ -204,15 +224,15 @@ const nextPage = () => {
   console.log(totalLength.value / 12)
     if(currentPage.value < ((totalLength.value / 12) - 1)){
         currentPage.value++
-          loadReports()
+        loadReports()
     } 
 }
 const prevPage= () => {
     if(currentPage.value != 0){
         currentPage.value--
-          loadReports()
+        loadReports()
     } 
   }
 // Invoke the initial data loading
 loadReports();
-  </script>
+</script>

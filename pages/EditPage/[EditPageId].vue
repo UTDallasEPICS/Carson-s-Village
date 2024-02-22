@@ -246,7 +246,6 @@ if( isAdvocate.value ) {
         data_all_users.value = Families.value as unknown as Family[]
 }
 
-// Use watcher on for images to handle profile image on here to handle image remove edge cases.
 await getData(useRoute().params.EditPageId as string)
 const profileImage = computed(() => data.value?.Images.find((i: Image) => i.cuid == data.value?.profileImageCuid))
 </script>
