@@ -23,7 +23,8 @@ export default defineEventHandler(async event => {
         include: {
           Page: {
             select: {
-              page_name: true,
+              first_name: true,
+              last_name: true,
               amount_raised: true,
               donation_goal: true,
               deadline: true,

@@ -80,7 +80,7 @@ div
   
   // converts array of family pages and their advocate responsible for the family into a csv
   function convertToCSV(arr : Partial<Page[]>) {
-    const listOfTags = ["page_name", "donation_goal", "amount_raised", "deadline", "amount_distributed", "donation_status", "duration", "start_date", "goal_met_date", "first_name", "middle_name", "last_name", "Amount Owed / Goal Percentage" ]
+    const listOfTags = ["first_name", "last_name", "donation_goal", "amount_raised", "deadline", "amount_distributed", "donation_status", "duration", "start_date", "goal_met_date", "first_name", "middle_name", "last_name", "Amount Owed / Goal Percentage" ]
     // removes every column not in list of tags
     Object.keys(arr[0] || "").forEach((element: string) => {
       const currentArr = ref<Partial<Page[]>>([])

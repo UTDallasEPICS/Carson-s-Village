@@ -176,7 +176,7 @@ const isAdvocate = computed(() => cvuser.value?.user_role == "advocate")
           )
               td.font-poppins.text-gray-dark.font-bold(style="text-align: center")  {{ item.transaction_id }}
               td.font-poppins.text-gray-dark.font-bold(style="text-align: center")  {{ item.cuid }}
-              td.font-poppins.text-gray-dark.font-bold(style="text-align: center")  {{ item.Page.page_name }}
+              td.font-poppins.text-gray-dark.font-bold(style="text-align: center")  {{ item.Page.first_name + " " + item.Page.first_name }}
               td.font-poppins.text-gray-dark.font-bold(style="text-align: center")  {{ donationFormat(item.amount) }}
 </template>
 
