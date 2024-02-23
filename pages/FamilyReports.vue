@@ -23,7 +23,7 @@ div
         tbody(v-for="family in families")
             tr(v-for="(page,i) in family.Pages" 
             :class="{'bg-gray-200': (i+1) % 2}") 
-                td(style="text-align: center;") {{ page.first_name + " " + page.last_name}}
+                td(style="text-align: center;") {{ page.page_first_name + " " + page.page_last_name}}
                 td(style="text-align: center;") {{ family.AdvocateResponsible.first_name  + " " + family.AdvocateResponsible.last_name }}
                 td(style="text-align: center;") {{ page.duration }} 
                 td(style="text-align: center;") {{  page.donation_status }}
@@ -81,7 +81,7 @@ div
   
   // converts array of family pages and their advocate responsible for the family into a csv
   function convertToCSV(arr : Partial<Page[]>) {
-    const listOfTags = ["first_name", "last_name", "donation_goal", "amount_raised", "deadline", "amount_distributed", "donation_status", "duration", "start_date", "goal_met_date", "first_name", "middle_name", "last_name", "Amount Owed / Goal Percentage" ]
+    const listOfTags = ["page_first_name", "page_last_name", "donation_goal", "amount_raised", "deadline", "amount_distributed", "donation_status", "duration", "start_date", "goal_met_date", "first_name", "middle_name", "last_name", "Amount Owed / Goal Percentage" ]
     // removes every column not in list of tags
     Object.keys(arr[0] || "").forEach((element: string) => {
       const currentArr = ref<Partial<Page[]>>([])

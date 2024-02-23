@@ -30,7 +30,7 @@ import { DonationPayout } from "@prisma/client"
 // TODO: import types from prisma, export them with relations added
 export type Page = {
     page_first_name: string,
-    last_name: string,
+    page_last_name: string,
     cuid: string,
     userCuid: string,
     familyCuid: string,

@@ -39,7 +39,7 @@ export default defineEventHandler(async event => {
 					currency: 'usd',
 					unit_amount: body.amount_raised,
 					product_data: {
-						name: `Donation to ${page?.first_name} ${page?.last_name}`,
+						name: `Donation to ${page?.page_first_name} ${page?.page_last_name}`,
 					},
 				},
 				quantity: 1
@@ -50,8 +50,8 @@ export default defineEventHandler(async event => {
 			amount: body.amount_raised,
 			target_user_id: userCuid,
       target_family_id: familyCuid,
-			target_first_name: page?.first_name as string,
-      target_last_name: page?.last_name as string,
+			target_first_name: page?.page_first_name as string,
+      target_last_name: page?.page_last_name as string,
 			target_page_cuid: page?.cuid as string,
       comments: donorComments,
 		},

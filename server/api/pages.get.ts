@@ -36,24 +36,24 @@ const runtime = useRuntimeConfig()
   const [count, pagesResult] = await prisma.$transaction([
     prisma.page.count({ where: { 
       OR: [ {
-      first_name: {
+      page_first_name: {
       contains: searchQuery as string,
       mode: 'insensitive',
     } },
-      { last_name: {
+      { page_last_name: {
         contains: searchQuery as string,
       mode: 'insensitive',
       }}] }}),
     prisma.page.findMany({
   where: {
     OR: [ {
-      first_name: {
+      page_first_name: {
         contains: searchQuery as string,
         mode: 'insensitive',
       }
     },
     {
-      last_name: {
+      page_last_name: {
         contains: searchQuery as string,
         mode: 'insensitive',
       }
