@@ -33,8 +33,8 @@ const cvuser2 = useCookie<User2>('cvuser')
 const data = ref<Page>({
     cuid: "",
     userCuid: "",
-    first_name: "",
-    last_name: "",
+    page_first_name: "",
+    page_last_name: "",
     day_of_birth: "",
     day_of_passing:"",
     visitation_date: "",

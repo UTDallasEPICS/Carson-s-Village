@@ -186,7 +186,7 @@ await getDataPageList()
       :key="i" 
       :class="{'bg-gray-200': (i+1) % 2}"
       )
-        td.font-poppins.text-gray-dark.font-bold(style="text-align: center;") {{ item.first_name + " " + item.last_name }}
+        td.font-poppins.text-gray-dark.font-bold(style="text-align: center;") {{ item.page_first_name + " " + item.page_last_name }}
         td.font-poppins.text-gray-dark.font-bold(style="text-align: center;" v-if="isAdmin") {{ item.userCuid }}
         td.font-poppins.text-gray-dark.font-bold(style="text-align: center;") {{ dateFormat(item.deadline) }}
         td
@@ -209,7 +209,7 @@ await getDataPageList()
       :key="i" 
       :class="{'bg-gray-200': (i+1) % 2}"
       )
-        td.font-poppins.text-gray-dark.font-bold(style="text-align: center;") {{ item.first_name + " " + item.last_name }}
+        td.font-poppins.text-gray-dark.font-bold(style="text-align: center;") {{ item.page_first_name + " " + item.page_last_name }}
         td.font-poppins.text-gray-dark.font-bold(style="text-align: center;" v-if="isAdmin") {{ item.userCuid }}
         td.font-poppins.text-gray-dark.font-bold(style="text-align: center;") {{ dateFormat(item.deadline) }}
         td
