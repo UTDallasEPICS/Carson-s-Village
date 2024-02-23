@@ -72,8 +72,8 @@ model Page {
   duration               String           @default("0 days")
   start_date             String           @default("")
   goal_met_date          String           @default("")
-  first_name             String
-  last_name              String
+  page_first_name        String           @default("")
+  page_last_name         String           @default("")
   DonationPayouts        DonationPayout[]
   Reply                  Reply[]
   Images                 Image[]
