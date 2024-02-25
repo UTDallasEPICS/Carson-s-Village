@@ -71,7 +71,7 @@ const shareFacebook = () => {
 }
 
 const shareXFormerlyKnownAsTwitter = () => {
-  const xShareLink = `https://twitter.com/intent/tweet?text=${pageDataDB.value?.first_name}${pageDataDB.value?.last_name}&url=${window.location.href}`
+  const xShareLink = `https://twitter.com/intent/tweet?text=${pageDataDB.value?.page_first_name}${pageDataDB.value?.page_last_name}&url=${window.location.href}`
   window.open(xShareLink)
 }
 

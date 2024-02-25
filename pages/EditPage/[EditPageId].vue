@@ -232,11 +232,11 @@ CVContainer
         .py-4.grid(class="sm:grid-cols-3") 
             CVLabel First Name
             .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
-                CVInput(v-model='data.first_name' placeholder="required" required)
+                CVInput(v-model='data.page_first_name' placeholder="required" required)
         .py-4.grid(class="sm:grid-cols-3") 
             CVLabel Last Name
             .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
-                CVInput(v-model='data.last_name' placeholder="required" required)
+                CVInput(v-model='data.page_last_name' placeholder="required" required)
         .py-4.grid(class="sm:grid-cols-3" v-if="isAdvocate")
             CVLabel Family
             .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
