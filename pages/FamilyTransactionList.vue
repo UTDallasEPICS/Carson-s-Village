@@ -108,7 +108,7 @@ const isAdvocate = computed(() => cvuser.value?.user_role == "advocate")
           )
             ListboxOptions(as='div' class='w-full absolute z-10 mt-10 bg-white shadow-lg max-h-60 rounded-md px-2 py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm' )
               ListboxOption(as='div' v-for="page in familyData.raw_data" :key="page.cuid" :value="page.cuid" class="px-2 border border-grey-500 py-1 my-1") {{ page.page_first_name + " "  + page.page_last_name }} | {{ donationFormat(page?.amount_raised - page?.amount_distributed) }}
-        ListboxButton(class='text-left bg-white relative rounded-md pl-2 pr-10 py-2 sm:text-sm w-96') {{ currentPageCuid ? (currentPage.page_first_name || currentPage.last_name) : 'Select Page' }}
+        ListboxButton(class='text-left bg-white relative rounded-md pl-2 pr-10 py-2 sm:text-sm w-96') {{ currentPageCuid ? (currentPage.page_first_name || currentPage.page_last_name) : 'Select Page' }}
   
   .flex.gap-5.justify-around
     //these next two divs could theoretically be their own component with props
@@ -150,7 +150,7 @@ const isAdvocate = computed(() => cvuser.value?.user_role == "advocate")
               :key="i" 
               :class="{'bg-gray-200': (i+1) % 2}"
           )
-              td.font-poppins.text-gray-dark.font-bold(style="text-align: center")  {{ item?.page_first_name + " " + item?.last_name }}
+              td.font-poppins.text-gray-dark.font-bold(style="text-align: center")  {{ item?.page_first_name + " " + item?.page_last_name }}
               td.font-poppins.text-gray-dark.font-bold(style="text-align: center")  {{ donationFormat(item.amount_raised) }}
               td.font-poppins.text-gray-dark.font-bold(style="text-align: center")  {{ donationFormat(item.amount_raised-item.amount_distributed) }}
   .ml-9.mb-9.py-7.flex.flex-wrap.gap-2.place-content-center
@@ -173,8 +173,7 @@ const isAdvocate = computed(() => cvuser.value?.user_role == "advocate")
           )
               td.font-poppins.text-gray-dark.font-bold(style="text-align: center")  {{ item.transaction_id }}
               td.font-poppins.text-gray-dark.font-bold(style="text-align: center")  {{ item.cuid }}
-
-              td.font-poppins.text-gray-dark.font-bold(style="text-align: center")  {{ item.Page.page_first_name + " " + item.Page.page_first_name }}
+              td.font-poppins.text-gray-dark.font-bold(style="text-align: center")  {{ item.Page.page_first_name + " " + item.Page.page_last_name }}
               td.font-poppins.text-gray-dark.font-bold(style="text-align: center")  {{ donationFormat(item.amount) }}
 </template>
 
