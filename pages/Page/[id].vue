@@ -66,7 +66,7 @@ const create_checkout_session = async () => {
 };
 
 const shareFacebook = () => {
-  const facebookShareLink = `https://www.facebook.com/sharer/sharer.php?caption=${pageDataDB.value?.first_name}${pageDataDB.value?.last_name}&u=${window.location.href}`
+  const facebookShareLink = `https://www.facebook.com/sharer/sharer.php?caption=${pageDataDB.value?.page_first_name}${pageDataDB.value?.page_last_name}&u=${window.location.href}`
   window.open(facebookShareLink)
 }
 
