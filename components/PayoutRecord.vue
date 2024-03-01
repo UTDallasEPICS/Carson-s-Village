@@ -17,7 +17,7 @@ const cvuser = useCookie<User>('cvuser')
 
 // Method that records donation payouts and increases the amount distributed for each page.
 const save = async () => {
-  const{data: result } = await useFetch('/api/family_transaction_payout', {
+  const result = await $fetch('/api/family_transaction_payout', {
     method: 'POST',
     body: {
       transaction_id: transaction_id.value,
@@ -27,11 +27,11 @@ const save = async () => {
       pageCuid: props.currentPage.cuid
     }
   })
-  if(result.value == true) {
+  if(result == true) {
     window.location.reload()
   } else {
-    console.log(result.value)
-    error.value = result.value as string
+    console.log(result)
+    error.value = result as string
   }
 };
 const setWholeAmountPage = function(){

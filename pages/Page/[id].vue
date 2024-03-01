@@ -51,17 +51,17 @@ const profileImageLink = computed(() => imageData.value.find(i => i.cuid == page
 *  Then it redirects to /PageDonation/pageCuid/transactionId
 */
 const create_checkout_session = async () => {
-    const { data : sessionInfo } = await useFetch('/api/create_session', {
+    const sessionInfo = await $fetch('/api/create_session', {
         method: 'POST',
       body: {
-        ...donationData.value,
+        ...donationData,
         cuid: id.value,
         pageCuid: id.value,
         familyCuid: pageDataDB.value?.familyCuid,
-        amount_raised: Math.trunc(parseFloat(donationData.value.amount as unknown as string) * 100) as number
+        amount_raised: Math.trunc(parseFloat(donationData.amount as unknown as string) * 100) as number
       }
     });
-    stripeLink_ref.value = sessionInfo.value as string
+    stripeLink_ref.value = sessionInfo as string
     await navigateTo(stripeLink_ref.value as string,  { external: true } )
 };
 

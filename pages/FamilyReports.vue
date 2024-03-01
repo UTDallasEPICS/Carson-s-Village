@@ -113,72 +113,72 @@ div
     }).join('\n')
   }
   
-    // loads family report data from the families database table and joins and creates a download link for the file
-    const loadReports = async () => {
-      if( isAdminAdvocate ) { 
-          const { data: familiesData } = await useFetch('/api/families', {
-          method: 'GET' 
-          });
-          
-          families.value = familiesData.value as unknown as Family[]
-          // gathering the family data into an array of family pages and their advocate responsible
-          families.value.forEach((element: Family)  => { element.Pages.forEach((element2) => {familyPages.value.push( { ...element2 as unknown as Page[], ...element.AdvocateResponsible as any }) })})
-          const familyPagesArr = [...familyPages.value]
-          
-          const csv = convertToCSV( familyPagesArr )
-          createCsvDownloadLink(csv)
-      }
+  // loads family report data from the families database table and joins and creates a download link for the file
+  const loadReports = async () => {
+    if( isAdminAdvocate ) { 
+      const familiesData = await useFetch('/api/families', {
+        method: 'GET' 
+      });
+      
+      families.value = familiesData as unknown as Family[]
+      // gathering the family data into an array of family pages and their advocate responsible
+      families.value.forEach((element: Family)  => { element.Pages.forEach((element2) => {familyPages.value.push( { ...element2 as unknown as Page[], ...element.AdvocateResponsible as any }) })})
+      const familyPagesArr = [...familyPages.value]
+      
+      const csv = convertToCSV( familyPagesArr )
+      createCsvDownloadLink(csv)
     }
+  }
 
-    // creates download link to csv
-    const createCsvDownloadLink = (csv: string) => {
-      const csvFile = new File([csv], "file", {
-      type: "text/csv" } )
-      const filename = "report-" + dateFormat(new Date().toString())+".csv"
-      filedownloadlink.value = window.URL.createObjectURL(csvFile);
-      dataset.value = ["text/csv", filename, filedownloadlink.value].join(':');
-      downloadName.value = filename
-    }
-    // method activated by Advocate or Admin to manual remove the ability to donate to a family page after about a week of the donation deadline.
-    // an advocate or admin can also re-enable a page to set its status from 'inactive' to 'active'
-    const togglePageStatus = (page: Page) => {
-      if(isAdminAdvocate.value) {
-        console.log(page.status)
-        let booleanChanged = false 
-        if(page.status == "active") {
-          const confirmDeactivate = confirm('Are you sure you want to deactivate this page?')
-            if(confirmDeactivate) {
-              page.status = "inactive"
-              booleanChanged = true
-            } else if(!confirmDeactivate){
-            return ""
-            }
-        } else if(page.status == "inactive" && !booleanChanged) {
-          const confirmReactivate = confirm('Are you sure you want to reactivate this page?')
-          if(confirmReactivate) {
-            page.status = "active"
+  // creates download link to csv
+  const createCsvDownloadLink = (csv: string) => {
+    const csvFile = new File([csv], "file", {
+    type: "text/csv" } )
+    const filename = "report-" + dateFormat(new Date().toString())+".csv"
+    filedownloadlink.value = window.URL.createObjectURL(csvFile);
+    dataset.value = ["text/csv", filename, filedownloadlink.value].join(':');
+    downloadName.value = filename
+  }
+  // method activated by Advocate or Admin to manual remove the ability to donate to a family page after about a week of the donation deadline.
+  // an advocate or admin can also re-enable a page to set its status from 'inactive' to 'active'
+  const togglePageStatus = (page: Page) => {
+    if(isAdminAdvocate.value) {
+      console.log(page.status)
+      let booleanChanged = false 
+      if(page.status == "active") {
+        const confirmDeactivate = confirm('Are you sure you want to deactivate this page?')
+          if(confirmDeactivate) {
+            page.status = "inactive"
             booleanChanged = true
-          } else if(!confirmReactivate) {
+          } else if(!confirmDeactivate){
           return ""
           }
+      } else if(page.status == "inactive" && !booleanChanged) {
+        const confirmReactivate = confirm('Are you sure you want to reactivate this page?')
+        if(confirmReactivate) {
+          page.status = "active"
+          booleanChanged = true
+        } else if(!confirmReactivate) {
+        return ""
         }
-          booleanChanged = false          
+      }
+        booleanChanged = false          
 
-          const toggledStatus = useFetch('api/page', {
-            method: "PUT",
-            body: { ...page }
-          })
-        }
-    }
-    const goToNextPage = () => {
-      // existing logic for pagination
-    };
-    
-    const goToPreviousPage = () => {
-      // existing logic for pagination
-    };
-    
-    // Invoke the initial data loading
-    loadReports();
-    
-  </script>
+        const toggledStatus = $fetch('api/page', {
+          method: "PUT",
+          body: { ...page }
+        })
+      }
+  }
+  const goToNextPage = () => {
+    // existing logic for pagination
+  };
+  
+  const goToPreviousPage = () => {
+    // existing logic for pagination
+  };
+  
+  // Invoke the initial data loading
+  loadReports();
+  
+</script>

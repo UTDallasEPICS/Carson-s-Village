@@ -111,14 +111,14 @@ const save = async () => {
         data.value.start_date = new Date().toString()
     }
 
-    const { data: saveSuccess } = await useFetch('/api/page', {
+    const saveSuccess= await $fetch('/api/page', {
         // Checks if there is a pre-existing page to edit or if to create a new page    
         method: router.params.EditPageId !== "0" ? 'PUT' : 'POST',
         body: ({ ...data.value })
     }
     )
     try {
-    if (saveSuccess.value == true && isAdvocate.value) {
+    if (saveSuccess == true && isAdvocate.value) {
         errorInPage.value = false;
         await navigateTo('/PageList/' + data.value.userCuid + '?fromUsers=1')
     } else if(saveSuccess.value == true && !isAdvocate.value){
