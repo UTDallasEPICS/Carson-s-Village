@@ -54,10 +54,10 @@ const cuid = computed(() => router.params.id as string);
 const errorInPage = ref(false); 
 // Method that creates a new user on the database on the backend
 const save = async () => {
-    if(isAuthorized){
-        const data = await $fetch('/api/user', {
-        method: (cuid.value as string) !== "0" ? 'PUT' : 'POST',
-        body: ({ ...data_user.value, familyCuid: familyCuid.value, cuid: cuid.value as string })
+  if(isAuthorized){
+    const data = await $fetch('/api/user', {
+      method: (cuid.value as string) !== "0" ? 'PUT' : 'POST',
+      body: ({ ...data_user.value, familyCuid: familyCuid.value, cuid: cuid.value as string })
     })
     if(data == true){
         errorInPage.value = false;
@@ -65,32 +65,30 @@ const save = async () => {
     } else {
         errorInPage.value = true;
     }
-}
-
+  }
 }
 const currentFamily = computed(() => data_all_families.value?.find(({ cuid }: Family) => cuid == familyCuid.value) || {});
 // Method to populate the form when editing a pre-existing user
 const getData = async (cuid: string) => {
-    const { data: userData } = await useFetch('/api/user', {
-        method: 'GET',
-        query: { cuid: cuid }
-    })
-    data_user.value = userData.value as unknown as User;
+  const { data: userData } = await useFetch('/api/user', {
+      method: 'GET',
+      query: { cuid: cuid }
+  })
+  data_user.value = userData.value as unknown as User;
 }
 
 const addingFamily = computed(() => data_user.value.user_role == "family")
 const getUsers = async () => {
-    const { data: FamilyData } = await useFetch('/api/families', {
-        method: 'GET',
-    })
-    data_all_families.value = FamilyData.value as unknown as Family[];
-    console.log(data_all_families.value);
+  const { data: FamilyData } = await useFetch('/api/families', {
+      method: 'GET',
+  })
+  data_all_families.value = FamilyData.value as unknown as Family[];
+  console.log(data_all_families.value);
 }
 if ((cuid.value as string) !== "0") {
-    await getData(cuid.value as string);
+  await getData(cuid.value as string);
 }
-    await getUsers()
-//add to template when family Backend done
+await getUsers()
 </script>
 
 <template lang="pug">

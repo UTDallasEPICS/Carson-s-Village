@@ -29,7 +29,7 @@ const onFile = async (event: Event) => {
   const { uploadUrl, image} = imageData.value as unknown as imageLinkTypes;
 
   // Executing the image upload by using the presigned url and file as well as its size and type in the request
-  const response = await $fetch(uploadUrl, {
+  const response = await fetch(uploadUrl, {
     method: "PUT",
     headers: {
     "Content-Length": file.size,
