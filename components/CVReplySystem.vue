@@ -25,7 +25,7 @@ const clearSuccessMessage = () => {
 
 const successMessage = ref("");
 const submitComment = async () => {
-    const response = await useFetch('/api/replies', {  // look at nuxt documentation for $fetch
+    const response = await $fetch('/api/replies', {  // look at nuxt documentation for $fetch
       method: 'POST',
       body: {
         pageCuid: props.pageCuid,
@@ -53,13 +53,13 @@ const submitComment = async () => {
 
 <template lang="pug">
 .comment-system.flex.flex-col.items-center(class="sm:mx-4 sm:w-full sm:py-2")
-      h2.text-center.mt-4.mb-6.font-bold Leave a Message
-      CVTextArea(name='reply' v-model="replyData.reply" placeholder='Replies' class="font-normal h-40 w-full")
-      .field-row.flex.mt-4.w-full
-          CVInput(name='name' v-model="replyData.name" placeholder='Name' class="font-normal w-full")     
-      .col-md-8.ml-4.pt-6.pr-5.flex.items-center.justify-center.mt-6
-          ActionButton.mx-auto.text-md(@click="submitComment") Submit
-      .div(v-if="successMessage" class="mt-4 text-green-500") {{ successMessage }}
+  h2.text-center.mt-4.mb-6.font-bold Leave a Message
+  CVTextArea(name='reply' v-model="replyData.reply" placeholder='Replies' class="font-normal h-40 w-full")
+  .field-row.flex.mt-4.w-full
+      CVInput(name='name' v-model="replyData.name" placeholder='Name' class="font-normal w-full")     
+  .col-md-8.ml-4.pt-6.pr-5.flex.items-center.justify-center.mt-6
+      ActionButton.mx-auto.text-md(@click="submitComment") Submit
+  .div(v-if="successMessage" class="mt-4 text-green-500") {{ successMessage }}
 </template>
 
 <style scoped></style>
