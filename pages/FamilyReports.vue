@@ -81,37 +81,8 @@ div
   
   // converts array of family pages and their advocate responsible for the family into a csv
   function convertToCSV(arr : Partial<Page[]>) {
-    const listOfTags = ["page_first_name", "page_last_name", "donation_goal", "amount_raised", "deadline", "amount_distributed", "donation_status", "duration", "start_date", "goal_met_date", "first_name", "middle_name", "last_name", "Amount Owed / Goal Percentage" ]
-    // removes every column not in list of tags
-    Object.keys(arr[0] || "").forEach((element: string) => {
-      const currentArr = ref<Partial<Page[]>>([])
-      if(!listOfTags.includes(element)) {
-        arr.forEach((d: any) => {
-        const { [element]: removedSeries , ...newObject  } = d
-        currentArr.value.push(newObject)
-    });
-      arr = currentArr.value 
-      }
-    })
-  
-    //adds owed Percent
-    type pageReport = Partial<Page> & { owedPercent: number | undefined }
-    const currentArr = ref<pageReport[]>([])
-    arr.forEach((d) => {
-        const owed = (d?.amount_raised as number) - (d?.amount_distributed as number)
-        const goal = (d?.donation_goal as number)
-        const owedPercent: number | undefined = goal != 0 ? ((100 * owed) / goal) : 0
-        
-        currentArr.value.push({...d, ['owedPercent']: owedPercent | 0} )
-    });
-  
-
-    const array = [listOfTags].concat(currentArr.value as unknown as string[])
-  
-    // creates CSV
-    return array.map(it => {
-      return Object.values(it).toString()
-    }).join('\n')
+    const headers = ["page_first_name", "page_last_name", "donation_goal", "amount_raised", "deadline", "amount_distributed", "donation_status", "duration", "start_date", "goal_met_date", "first_name", "middle_name", "last_name", "Amount Owed / Goal Percentage" ]
+    return arr.reduce((acc: any[], page: any) => [...acc, headers.reduce((acc: string[], header: string) => [...acc, page[header]], []).join(",")], []).join("\n")
   }
   
   // loads family report data from the families database table and joins and creates a download link for the file
