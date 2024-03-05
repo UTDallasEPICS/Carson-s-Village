@@ -32,14 +32,14 @@ const pageData = ref<Page>({
     amount_raised: 0,
     amount_distributed: 0,
     profileImageCuid: "",
-    Images: ref<Image[]>([]).value,
+    Images: [],
     status: "active",
     donation_status: "in progress",
     duration: "",
     start_date: "",
     goal_met_date: "",
-    PageDonations: ref<PageDonation[]>([]).value,
-    Reply: ref<Reply[]>([]).value,
+    PageDonations: [],
+    Reply: [],
     Family: {
       cuid: "",
       family_name: "",
@@ -271,7 +271,7 @@ console.log(pageDataDB.value?.funeral_date)
             button(@click="shareMail")
                 img(src="/mail fa.PNG" style="width:50px; height:29px;") 
           .col
-            p {{  "" }}
+            p {{ "" }}
     .col-md-8.mx-9(class="sm:col-span-1 sm:mr-11")
         .div.px-8.py-4(style="color: #6E6E6E; font-weight: 500; font-size: 18px; line-height: 28px; letter-spacing: -0.078px; word-break: break-word;" id="obituary") {{ pageData.obituary }}
 </template>

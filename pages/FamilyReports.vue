@@ -1,54 +1,62 @@
 <template lang="pug">
-//todo: add 2 datepickers to select the interval and use where between in db query. https://github.com/prisma/prisma/discussions/11443
+//todo: style the date selection and have date selection on all the following: donation deadline, start date, and goal met date (use HTML select?)
 //todo: num pages per family
-//to maybe do: add selection for families instead of all at once and toggle between all at once and all families
-//todo: listbox for property selection. Then use some sort of mapping to toggle properties using v-if (or at worst a switch statement)
+//todo: add selection for families instead of all at once and toggle between all at once and all families by having the first option as displaying every page
+//todo: 3 column by however many needed rows (flex-wrap) of checkboxes to enable and disable columns. Future idea: put a nicer version as a sidebar
 div
     h2(style="margin-top: 2.5rem;") Family Reports 
     br
-    a.mt-1.p-4.px-6.pt-2.bg-orange-400.rounded-full(style="color: white; font-weight: 700;" :href="filedownloadlink" :download="downloadName" :dataset.downloadurl="dataset") download
-    .py-4.grid(class="sm:grid-cols-3") 
-            CVLabel Date Range Start
-            .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
-                CVDatepicker(v-model='start_date')
-    .py-4.grid(class="sm:grid-cols-3") 
-            CVLabel Date Range End
-            .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
-                CVDatepicker(v-model='end_date')
-    ActionButton(@click="currentPage=0;loadReports") Pick Time Interval            
-    table(style="margin-top: 1.25rem; width: 100%; border-spacing: 0; border-collapse: collapse;" v-if="isAdminAdvocate")
-        thead(style="color: white;")
-            tr
-                th(style="padding: 1rem; background-color: #6eabbf; border-radius: 60px 0 0 0; width: 12%;") Page Name
-                th(style="padding: 1rem; background-color: #6eabbf; width: 12%;") Advocate
-                th(style="padding: 1rem; background-color: #6eabbf; width: 12%;") Duration
-                th(style="padding: 1rem; background-color: #6eabbf; width: 7%;") Goal Met
-                th(style="padding: 1rem; background-color: #6eabbf; width: 10%;") Goal Met Date
-                th(style="padding: 1rem; background-color: #6eabbf; width: 12%;") Start Date
-                th(style="padding: 1rem; background-color: #6eabbf; width: 5%") Owed
-                th(style="padding: 1rem; background-color: #6eabbf; width: 5%") Owed %
-                th(style="padding: 1rem; background-color: #6eabbf; width: 5%") Paid
-                th(style="padding: 1rem; background-color: #6eabbf; width: 5%") Goal
-                th(style="padding: 1rem; background-color: #6eabbf; width: 7%") Goal Date
-                th(style="padding: 1rem; background-color: #6eabbf; width: 7%") Status
-                th(style="padding: 1rem; background-color: #6eabbf; border-radius: 0 60px 0 0; width: 7%;") Toggle Status
-        tbody
-            tr(v-for="(page, i) in families" 
-            :class="{'bg-gray-200': (i+1) % 2}") 
-                td(style="text-align: center;") {{ page.page_name }}
-                td(style="text-align: center;") {{ page.Family.AdvocateResponsible.first_name  + " " + page.Family.AdvocateResponsible?.last_name }}
-                td(style="text-align: center;") {{ page.duration }} 
-                td(style="text-align: center;") {{  page.donation_status }}
-                td(style="text-align: center;") {{ (page.goal_met_date) ? dateFormat(page.goal_met_date, true) : "Goal Not Reached" }}
-                td(style="text-align: center;") {{ dateFormat(page.start_date, true) }}
-                td(style="text-align: center;") {{ donationFormat((page.amount_raised - page.amount_distributed)) }}
-                td(style="text-align: center;") {{ (page.donation_goal) ? ((page.amount_raised - page.amount_distributed)/(page.donation_goal) * 100).toFixed(2) + "%" : "No donation goal"}}
-                td(style="text-align: center;") {{ donationFormat(page.amount_distributed) }}
-                td(style="text-align: center;") {{ donationFormat(page.donation_goal) }}
-                td(style="text-align: center;") {{ dateFormat(page.deadline)}}
-                td(style="text-align: center;") {{ page.status }}
-                td(style="text-align: center;")
-                  ActionButton(style="color: white; background-color: red;" @click="togglePageStatus(page)") {{ "X" }}
+    .flex.flex-col.gap-5.px-4.mx-auto.mt-8(class="w-3/4 sm:px-16")
+      //img.mx-auto(v-if="profileImage?.url" class="w-[122px] h-[122px] rounded-[8px]" :src="`${profileImage?.url}`")
+      .text-gray-dark.mx-auto.w-max.font-poppins.text-md {{ dateFormat(start_date, true) + ' - ' + dateFormat(end_date, true) }} 
+      //.flex.flex-col-reverse.gap-5(class="sm:grid sm:grid-cols-2")
+        .relative.w-96.p-1(v-if="imageData.length != 0" )
+          button.absolute.left-4.top-64.bg-black.text-white(@click="prevImage" style="opacity:0.7; --tw-text-opacity: 1; width: 46px; height: 46px; border-radius:50%; align-items: center; justify-content: center; line-height: 2; text-align: center;color: white;") &#60;
+          button.absolute.right-8.top-64.bg-black.text-white(@click="nextImage" style="opacity:0.7; --tw-text-opacity: 1; width: 46px; height: 46px; border-radius:50%; align-items: center; justify-content: center; line-height: 2; text-align: center;color: white;") &#62;
+          img.w-96(style="object-fit:cover" :src="imageData[currentImage].url")
+    .py-4.grid(class="sm:grid-cols-5") 
+            CVLabel Date Range
+            .col-md-8.mx-9(class="sm:col-span-1 sm:mr-11")
+              CVDatepicker(v-model='start_date' @update:model-value="currentPage=0; loadReports();")
+            .col-md-8.mx-9(class="sm:col-span-1 sm:mr-11")  
+              p(style="text-align:center;") {{ "-" }}
+            .col-md-8.mx-9(class="sm:col-span-1 sm:mr-11")  
+              CVDatepicker(v-model='end_date' @update:modelValue="currentPage=0; loadReports()" )          
+    .flex.gap-2.justify-center.cols-2
+      table(style="margin-top: 1.25rem; width: 100%; border-spacing: 0; border-collapse: collapse;" v-if="isAdminAdvocate")
+          thead(style="color: white;")
+              tr
+                  th(style="padding: 1rem; background-color: #6eabbf; border-radius: 60px 0 0 0; width: 12%;") Page Name
+                  th(style="padding: 1rem; background-color: #6eabbf; width: 12%;") Advocate
+                  th(style="padding: 1rem; background-color: #6eabbf; width: 12%;") Duration
+                  th(style="padding: 1rem; background-color: #6eabbf; width: 7%;") Goal Met
+                  th(style="padding: 1rem; background-color: #6eabbf; width: 10%;") Goal Met Date
+                  th(style="padding: 1rem; background-color: #6eabbf; width: 12%;") Start Date
+                  th(style="padding: 1rem; background-color: #6eabbf; width: 5%") Owed
+                  //th(style="padding: 1rem; background-color: #6eabbf; width: 5%") Owed %
+                  th(style="padding: 1rem; background-color: #6eabbf; width: 5%") Paid
+                  th(style="padding: 1rem; background-color: #6eabbf; width: 5%") Goal
+                  th(style="padding: 1rem; background-color: #6eabbf; width: 7%") Goal Date
+                  th(style="padding: 1rem; background-color: #6eabbf; width: 7%") Status
+                  th(style="padding: 1rem; background-color: #6eabbf; border-radius: 0 60px 0 0; width: 7%;") Toggle Status
+          tbody
+              tr(v-for="(page, i) in families" 
+              :class="{'bg-gray-200': (i+1) % 2}") 
+                  td(style="text-align: center;") {{ page.page_name }}
+                  td(style="text-align: center;") {{ page.Family.AdvocateResponsible.first_name  + " " + page.Family.AdvocateResponsible?.last_name }}
+                  td(style="text-align: center;") {{ page.duration }} 
+                  td(style="text-align: center;") {{  page.donation_status }}
+                  td(style="text-align: center;") {{ (page.goal_met_date) ? dateFormat(page.goal_met_date, true) : "Goal Not Reached" }}
+                  td(style="text-align: center;") {{ dateFormat(page.start_date, true) }}
+                  td(style="text-align: center;") {{ donationFormat((page.amount_raised - page.amount_distributed)) }}
+                  //td(style="text-align: center;") {{ (page.donation_goal) ? ((page.amount_raised - page.amount_distributed)/(page.donation_goal) * 100).toFixed(2) + "%" : "No donation goal"}}
+                  td(style="text-align: center;") {{ donationFormat(page.amount_distributed) }}
+                  td(style="text-align: center;") {{ donationFormat(page.donation_goal) }}
+                  td(style="text-align: center;") {{ dateFormat(page.deadline)}}
+                  td(style="text-align: center;") {{ page.status }}
+                  td(style="text-align: center;")
+                    ActionButton(style="color: white; background-color: red;" @click="togglePageStatus(page)") {{ "X" }}
+      a.mr-9.mt-1.p-4.px-6.pt-2.bg-orange-400(style="border-radius: 100px; height: 50px; color: white; font-weight: 700;" :href="filedownloadlink" :download="downloadName" :dataset.downloadurl="dataset") download
 .ml-9.mb-9.py-7.flex.flex-wrap.gap-2.place-content-center
   .col-md-10.px-2.mt-2
       button(@click="prevPage") &lt
@@ -59,8 +67,6 @@ div
 </template>
     
 <script setup lang='ts'>
-    // todo: Make a 3 column grid of checkboxes to see which columns we need
-    // move download button on same row as the table using flex and justify content between
     // todo: Make the table resizable with custom dimensions. Possible application of the standard table 
     // todo: add number of family family pages an advocate is responsible, total amount raised by the families an advocate is responsible for
     //import { Family } from '@prisma/client'; 
@@ -125,6 +131,7 @@ div
     })
 
     //adds owed Percent
+    //todo: add something useful here or depreciate
     type pageReport = Partial<Page> & { owedPercent: number | undefined }
     const currentArr = ref<pageReport[]>([])
     arr.forEach((d) => {
