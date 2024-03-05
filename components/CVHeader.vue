@@ -12,7 +12,7 @@ const pages = ref<Page[]>([])
 const searchQuery = ref('');
 const route = useRoute()
 const isNotSearch = computed(() => route.path !== "/Search/")
-
+console.log(route.path)
 </script>
 
 <template lang="pug">

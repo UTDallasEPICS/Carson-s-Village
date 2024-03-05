@@ -48,15 +48,15 @@ const data = ref<Page>({
     amount_raised: 0,
     amount_distributed: 0,
     profileImageCuid: "",
-    Images: ref<Image[]>([]).value, 
+    Images: [], 
     familyCuid: "",
     status: "active",
     donation_status: "in progress",
     duration: "0 days",
     start_date: "",
     goal_met_date: "",
-    PageDonations: ref<PageDonation[]>([]).value, 
-    Reply: ref<Reply[]>([]).value,
+    PageDonations: [], 
+    Reply: [],
     Family: {
         cuid: "",
         family_name: "",
@@ -246,7 +246,6 @@ if( isAdvocate.value ) {
         data_all_users.value = Families.value as unknown as Family[]
 }
 
-// Use watcher on for images to handle profile image on here to handle image remove edge cases.
 await getData(useRoute().params.EditPageId as string)
 const profileImage = computed(() => data.value?.Images.find((i: Image) => i.cuid == data.value?.profileImageCuid))
 </script>
