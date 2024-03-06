@@ -1,7 +1,7 @@
 <template lang="pug">
 div
         h2(style="margin-top: 2.5rem; margin-left:1.65rem; font-weight:700") Family Reports 
-    br
+br
     a.mt-3.p-4.px-6.pt-4.bg-orange-400.rounded-full(style="color: white; font-weight:700; text-align: center; margin-left: 17.5px" :href="filedownloadlink" :download="downloadName" :dataset.downloadurl="dataset") Download
     a.mt-3.p-4.px-6.pt-4.bg-orange-400.rounded-full(style="color: white; font-weight:700; text-align: center; margin-left: 1000px") Archived Pages
     table(style="margin-top: 1.25rem; width: 100%; border-spacing: 0; border-collapse: collapse;" v-if="isAdminAdvocate")
