@@ -125,7 +125,6 @@ const create_checkout_session = async () => {
     await navigateTo(stripeLink_ref.value as string,  { external: true } )
 };
 
-
 // Method to populate the page with data based on the cuid in the url
 const { data : pageDataDB } = await useFetch<Page>('/api/page', {
     method: 'GET',
@@ -142,7 +141,6 @@ if(pageDataDB.value){
 const isActive = computed(() => pageDataDB.value?.status == "active")
 
 // todo: Set as pop up?
-
 const shareFacebook = () => {
   const facebookShareLink = `https://www.facebook.com/sharer/sharer.php?caption=${pageDataDB.value?.page_name}&u=${window.location.href}`
   window.open(facebookShareLink)
@@ -157,7 +155,6 @@ const shareMail = () => {
   const MailShareLink = `mailto:?subject=Site%20sharing&body=Please%20check%20this%20site%20out%20${window.location.href}`
   window.open(MailShareLink)
 }
-
 
 const donated_percentage = computed(() => (((pageDataDB.value?.amount_raised as number) / (pageDataDB.value?.donation_goal as number )) * 100).toFixed(1) + "");
 const donation_goal_provided = computed(() => pageDataDB.value?.donation_goal as number > 0)
@@ -270,10 +267,9 @@ console.log(pageDataDB.value?.funeral_date)
                 .div(v-for="(comment, i) in comments" :key="i" class="comment-box")
                     .comment-box(style="flex: calc(30% - 1rem); height: 10rem; width: 11rem; margin: 0.5rem; padding: 1rem; border-radius: 8px; background-color: #fff; border: 1px solid #ddd; box-shadow: 0 2px 4px rgba(0,0,0,0.05);")
                         .div.comment-header(style="font-size: 0.75rem; font-weight: bold; margin-bottom: 1.5rem;") {{ comment.donorFirstName }} {{ comment.donorLastName }}
-                        div.comment-body(style="font-size: 0.75rem; color: #666; border-left: 1px solid black;") {{ comment.comments }}
-                        div.comment-donation-amount(style="font-size: 0.75rem; color: #666; margin-top: 5rem;") Amount Donated {{ donationFormat(comment.amount) }}
-
-        CVReplySystem(:pageCuid="pageCuid" :familyCuid="familyCuid" :replies="replies" @displayReply="DisplayReply")
+                        p.comment-body(style="font-size: 0.75rem; width: fit-content; color: #666;") {{ comment.comments }}
+                        .div.comment-donation-amount(style="font-size: 0.75rem; color: #666;") Amount Donated: {{ donationFormat(comment.amount) }}
+        CVReplySystem(:pageCuid="pageCuid" :familyCuid="familyCuid" :replies="replies" @displayReply="displayReply")
         .py-4.grid.flex-box.flex-row.item-centered.gap-1(v-if="replies?.length" style="line-height: 0px;text-align: center")
             div(class="flex")
             .div(v-for="(reply,i) in replies" :key="i" class="reply-box")

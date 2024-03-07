@@ -48,13 +48,13 @@ ClientOnly
       href="/api/login"
       ) 
         p.uppercase.white.w-max LOGIN
-      NavLinkButton(to='https://carsonsvillage.org/') 
+      NavLinkButton(to='https://carsonsvillage.org/' target="_blank") 
         p.uppercase.white.w-max HOME
-      NavLinkButton(to='https://carsonsvillage.org/#') 
+      NavLinkButton(to='https://carsonsvillage.org/#' target="_blank") 
         p.uppercase.white.w-max RESOURCES
-      NavLinkButton(to='https://carsonsvillage.org/get-involved/') 
+      NavLinkButton(to='https://carsonsvillage.org/get-involved/' target="_blank") 
         p.uppercase.white.w-max GET INVOLVED
-      NavLinkButton(to='https://carsonsvillage.org/') 
+      NavLinkButton(to='https://carsonsvillage.org/' target="_blank") 
         p.uppercase.white.w-max ABOUT US
     
     //&& isLoggedIn")
