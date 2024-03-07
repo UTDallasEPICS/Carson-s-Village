@@ -6,10 +6,11 @@ import { useRuntimeConfig } from '#imports';
 const prisma = new PrismaClient();
 const runtime = useRuntimeConfig();
 const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
-const stripe = new Stripe(stripeSecretKey, { apiVersion: "2022-11-15" });
+const stripe = new Stripe(stripeSecretKey as string, { apiVersion: "2022-11-15" });
 
+//todo: depreciate
 export default defineEventHandler(async (event) => {
-  const { familyCuid } = await getQuery(event);
+  const { familyCuid } = getQuery(event);
 
   if (!familyCuid) {
     // Family CUID not provided error handling
@@ -18,7 +19,7 @@ export default defineEventHandler(async (event) => {
   }
 
   const family = await prisma.family.findUnique({
-    where: { cuid: familyCuid },
+    where: { cuid: familyCuid as string },
     select: { stripe_account_id: true },
   });
 
@@ -29,7 +30,7 @@ export default defineEventHandler(async (event) => {
     });
 
     await prisma.family.update({
-      where: { cuid: familyCuid },
+      where: { cuid: familyCuid as string},
       data: { stripe_account_id: newStripeAccount.id }
     });
 

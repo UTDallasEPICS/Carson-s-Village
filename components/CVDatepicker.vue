@@ -1,5 +1,6 @@
 <template lang="pug">
 Datepicker.rounded-md.p-2(type="String" v-model="value")
+    slot
 </template>
         
 <script setup lang="ts">

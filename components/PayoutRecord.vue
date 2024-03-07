@@ -17,7 +17,8 @@ const cvuser = useCookie<User>('cvuser')
 
 // Method that records donation payouts and increases the amount distributed for each page.
 const save = async () => {
-  const{data: result } = await useFetch('/api/family_transaction_payout', {
+  // todo: change to $fetch // could improve preformance for Jason by significant amount
+  const{ data: result } = await useFetch('/api/family_transaction_payout', {
     method: 'POST',
     body: {
       transaction_id: transaction_id.value,

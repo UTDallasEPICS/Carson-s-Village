@@ -1,30 +1,49 @@
 /*import {
+  Family as PFamily,
   User as PUser,
   Page as PPage,
   Image as PImage,
-  PageDonation as PPageDonation
-  DonationPayout as PDonationPayout
-
-  UserToPage as PUserToPage
+  PageDonation as PPageDonation,
+  DonationPayout as PDonationPayout, 
+  DonationToPage as PDonationToPage, 
+  FamilyToPage as PFamilyToPage,
+  UserToFamily as PUserToFamily,
+  UserToPage as PUserToPage,
+  ImageToPage as PImage
 } from '@/prisma/client';
 import { DonationPayout } from '@prisma/client';
+
+export type Family = PFamily & {
+  Pages?: FamilyToPage;
+  FamilyMembers?: UserToFamily[];
+  PageDonations?: PageDonation[];
+  DonationPayout?: DonationPayout[];
+}
 
 export type User = PUser & {
   Pages?: UserToPage;
   PageDonations?: PageDonation[];
   DonationPayout?: DonationPayout[];
 };
+
 export type Page = PPage & {
   Pages?: UserToPage;
   PageDonations?: PageDonation[];
   DonationPayout?: DonationPayout[];
 };
-export type PageDonation = PPageDonation & {
-  Pages?: UserToPage;
-  PageDonations?: PageDonation[];
-  DonationPayout?: DonationPayout[];
-};*/
 
+export type Image = PImage & {
+  Pages?: ImageToPage;
+};
+
+export type PageDonation = PPageDonation & {
+  Pages?: DonationToPage;
+}
+
+export type DonationPayout = PDonationPayout & {
+  Pages?: PayoutToPage;
+};
+*/
 import { DonationPayout } from "@prisma/client"
 
 // TODO: import types from prisma, export them with relations added
@@ -48,6 +67,7 @@ export type Page = {
     amount_distributed: number | string
     profileImageCuid: string
     Images: Image[],
+    Family: Family,
     familyCuid: string,
     status: string,
     donation_status: string,
@@ -62,7 +82,6 @@ export type Family = {
   cuid: string;
   family_name: string;
   stripe_account_id: string | null;
-  //Stripe_Accont_cuid: string | null;
   created_at: string;
   updated_at: string;
   advocateCuid: string;
@@ -86,21 +105,20 @@ export type User = {
     //PageDonations: PageDonation[]
     //DonationPayouts: DonationPayout[]  
 }
-//Import user from prisma
 
 export type PageDonation = {
   cuid: string,  
   userCuid: string,
-  familyCuid: String  
-  pageCuid: string  
-  success: boolean 
-  transaction_id: string  
-  amount: number
-  donorFirstName: string
-  donorLastName: string
-  isAnonymous: boolean
-  comments: string
-  //Page: Page
+  familyCuid: String,  
+  pageCuid: string,  
+  success: boolean, 
+  transaction_id: string,  
+  amount: number,
+  donorFirstName: string,
+  donorLastName: string,
+  isAnonymous: boolean,
+  comments: string,
+  Page: Page,
   //User: User
 }
 
@@ -111,9 +129,8 @@ export type donation_payout = {
     userCuid: string
     amount_to_record: number,
     transaction_recording_date: string,
-    familyCuid: string
-    //page: Page
-    //user: User
+    familyCuid: string,
+    page: Page
 }
 
 export type Image = {

@@ -7,7 +7,6 @@ const prisma = new PrismaClient()
 *	retrive family page images from database
 */
 
-
 export default defineEventHandler(async event => {
   const { pageCuid } = getQuery(event)
 

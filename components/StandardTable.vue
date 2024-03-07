@@ -1,4 +1,6 @@
 <script lang="ts" setup>
+import { dateFormat } from 'utils';
+
 const props2 = defineProps<{ headers: [] }>()
 const props = defineProps({
     headers: {
@@ -13,25 +15,36 @@ const props = defineProps({
 //              tr(v-for="(header in headers)" :key="i")
 //                  th.css  {{ header.name }}
 //              tr(v-for="(header in headers)" :key="j")
-//                  th.css {{ header.name }}
-//                  LinkButton(v-if="header.isLink")
+//                  LinkButton(v-if="${header.kind=="link"}" :to=header.property)
+//                  td.css(v-else-if="${header.kind=="money"}") {{ donationFormat(header.property) }}
+//                  td.css(v-else-if="${header.kind=="date"}")  {{ dateFormat(header.property) }}
 //                  td.css(v-else) {{ header.property }}
 //                
-const rows = [
-  {
-    name: "row 1",
-    amount_raised: "5"
-  }
-]
+
 const headers = [
   {
-    title: "Name",
+    name: "Name",
     property: "name"
   },
   {
-    title: "Amount Raised",
-    property: "amount_raised"
+    name: "Amount Raised",
+    property: 2000,
+    kind: "money"
+  },
+  {
+    name: "",
+    property: "/Page/12sdfgsfdscadasd",
     kind: "link"
+  },
+  {
+    name: "page name",
+    property: "Leorem Ipsum",
+    kind: "string"
+  }, 
+  {
+    name: "current date",
+    property: new Date().toString(),
+    kind: "date"
   }
 ]
 

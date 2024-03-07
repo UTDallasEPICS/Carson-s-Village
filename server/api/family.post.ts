@@ -7,7 +7,7 @@ import emailTemplates from "email-templates"
 
 /*	/EditUser/0
 *	  function:	POST
-*	  submit user account details to database
+*	  submit family and first user account details to database
 */
 const runtime = useRuntimeConfig()
 export default defineEventHandler(async event => {
