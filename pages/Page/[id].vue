@@ -84,7 +84,6 @@ const userCuid = ref("0")
 const familyCuid = computed(() => pageDataDB.value?.familyCuid)
 const profileImageLink = ref("")
 const family_cuid = ref("0")
-
 const router = useRoute();
 const id = computed(() => router.params.id);
 const pageCuid = id.value as string
