@@ -5,12 +5,11 @@ const prisma = new PrismaClient()
 /*
 *	/PageList/cuid
 *	function:	POST
-*	retrive family pages details from database for a cuid
+*	retrive family pages details from database for a family's cuid
 */
 
 export default defineEventHandler(async event => {
-    const { family_cuid, page_number, excuse } = getQuery(event);
-    console.log(page_number as number, "a")
+    const { family_cuid, page_number} = getQuery(event);
     if((family_cuid as string) == "0"  || family_cuid == undefined){
         return []
     }
@@ -43,9 +42,6 @@ export default defineEventHandler(async event => {
       raw_data: pagesUnpaginated
     };
   } else {
-    if(excuse as boolean == true){
-      return []
-    }
     return await sendRedirect(event, loginRedirectUrl());
   }
 })

@@ -24,13 +24,12 @@ const currentFamilyPageNumber = ref(0)
 const cvuser = useCookie<User>('cvuser');
 const isAdmin = computed(() => cvuser.value?.user_role == "admin")
 const isAdvocate = computed(() => cvuser.value?.user_role == "advocate")
-//if(isAdmin  ) {
-  const { data: Families } = await useFetch<Family[]>('/api/families', {
+const { data: Families } = await useFetch<Family[]>('/api/families', {
     method: 'GET',
     default() {
       return [] as any
     }, 
-  });
+});
 
   const currentFamilyCuid = ref<string>("")
   const currentFamily = computed(() => Families.value?.find(({ cuid }: Family) => cuid == currentFamilyCuid.value) || {})
@@ -68,7 +67,7 @@ const isAdvocate = computed(() => cvuser.value?.user_role == "advocate")
         currentFamilyPageNumber.value++
     } 
   }
-  const prevPage= () => {
+  const prevPage = () => {
     if(currentFamilyPageNumber.value != 0){
         currentFamilyPageNumber.value--
     } 
@@ -157,7 +156,7 @@ const isAdvocate = computed(() => cvuser.value?.user_role == "advocate")
     .col-md-10.px-2.mt-2
         button(@click="prevPage") &lt
     .col-md-10.px-2.mt-2
-        p {{  currentFamilyPageNumber }}
+        p {{  currentFamilyPageNumber + 1}}
     .col-md-10.px-2.mt-2
         button(@click="nextPage") >
   CVLegend.mt-10 Family Donations

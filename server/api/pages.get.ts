@@ -9,8 +9,9 @@ const prisma = new PrismaClient()
 
 export default defineEventHandler(async event => {
 const runtime = useRuntimeConfig()
-  const { searchQuery, page_number } = await getQuery(event);
-  if((searchQuery as string) == "") { 
+if(event.context.user.cuid != undefined) { //if the user is not logged in, do not let them see all the pages
+  const { searchQuery, page_number, isPageList } = getQuery(event);
+  if((searchQuery as string) == "" && event.context.user.user_role == "admin" && (isPageList == 1) as boolean) { 
     const [count, pagesResult] = await prisma.$transaction([
       prisma.page.count(),
       prisma.page.findMany({
@@ -26,31 +27,44 @@ const runtime = useRuntimeConfig()
     };
   }
 
-  console.log(page_number)
-  
-  // Pagination via taking the absolute page number with 12 records per page 
-  const [count, pagesResult] = await prisma.$transaction([
-    prisma.page.count({ where: { page_name: {
+  const searchQuerySpacesRemoved = (searchQuery as string).replaceAll(" ", "")
+  // Makes sure that an empty searchQuery returns no results and that searchQueries with all spaces return no results (prevents returning all pages with a first and last name using a space).
+  if((searchQuery as string) != "" && searchQuerySpacesRemoved.length != 0) {
+    // Pagination via taking the absolute page number with 12 records per page 
+    const [count, pagesResult] = await prisma.$transaction([
+      prisma.page.count({ where: { page_name: {
+        contains: searchQuery as string,
+        mode: 'insensitive',
+      } }}),
+      prisma.page.findMany({
+    where: {
+    page_name: {
       contains: searchQuery as string,
       mode: 'insensitive',
-    } }}),
-    prisma.page.findMany({
-  where: {
-  page_name: {
-    contains: searchQuery as string,
-    mode: 'insensitive',
-  }
-  },
-  skip: page_number as number * 12,
-  take: 12, 
-})
-  ])
+    }
+    },
+    skip: page_number as number * 12,
+    take: 12, 
+  })
+    ])
 
+    return {
+      Pagination: {
+      total: count },
+      data:  pagesResult
+    };
+  }
   return {
     Pagination: {
-    total: count },
-    data:  pagesResult
+    total: 0
+    }, 
+    data:  []
   };
-
+} 
+  return {
+    Pagination: {
+    total: 0
+    }, 
+    data:  []
+  };
   })
-
