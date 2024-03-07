@@ -4,6 +4,8 @@ Look at the [Nuxt 3 documentation](https://nuxt.com/docs/getting-started/introdu
 
 ## Dependency Software to Install
 Nodejs, Docker, IDE with command line, Git, WSL2 (windows only)
+* Note: Docker will ask you to create an account for Docker, which is not required for most development. Don't make the account unless you like having your data harvested.
+
 ## Setup
 
 Clone repsitory 
