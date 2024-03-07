@@ -47,6 +47,7 @@ const data_family = ref<Family>({
 const data_all_families = ref<Family[]>([])
 const router = useRoute()
 const isAuthorized = computed(() => { cvuser.value?.user_role as string == "advocate" || cvuser.value?.user_role == "admin"})
+const isAdmin = computed(() => cvuser.value?.user_role as string == "admin")
 const cuid = computed(() => router.params.id as string);
 const errorInPage = ref(false);
 
@@ -110,6 +111,7 @@ CVContainer
                 select.rounded-md.outline-0.border-box.w-full.p-2.bg-white(style="border: 1px solid #c4c4c4;" v-model='data_user.user_role') Select User Role
                     option family
                     option advocate
+                    option(v-if="isAdmin") admin
         .py-4.grid(class="sm:grid-cols-3" v-if="addingFamily")
             CVLabel Family
             .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
