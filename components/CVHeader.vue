@@ -17,7 +17,7 @@ console.log(route.path)
 
 <template lang="pug">
 ClientOnly
-  .max-w-min.mx-auto.flex.gap-2
+  .max-w-min.mx-auto.flex.gap-2.mt-7(style="text-align:center")
     div.max-w-min.mx-auto.flex.gap-2(v-if="isLoggedIn")
       a.items-center.px-2.py-2.text-base.font-medium.rounded-md.text-green-600.cursor-pointer(style="border: 1px solid #c4c4c4;"
       class='hover:text-white hover:bg-gray-600'  
@@ -48,13 +48,13 @@ ClientOnly
       href="/api/login"
       ) 
         p.uppercase.white.w-max LOGIN
-      NavLinkButton(to='https://carsonsvillage.org/') 
+      NavLinkButton(to='https://carsonsvillage.org/' target="_blank") 
         p.uppercase.white.w-max HOME
-      NavLinkButton(to='https://carsonsvillage.org/#') 
+      NavLinkButton(to='https://carsonsvillage.org/#' target="_blank") 
         p.uppercase.white.w-max RESOURCES
-      NavLinkButton(to='https://carsonsvillage.org/get-involved/') 
+      NavLinkButton(to='https://carsonsvillage.org/get-involved/' target="_blank") 
         p.uppercase.white.w-max GET INVOLVED
-      NavLinkButton(to='https://carsonsvillage.org/') 
+      NavLinkButton(to='https://carsonsvillage.org/' target="_blank") 
         p.uppercase.white.w-max ABOUT US
     
     //&& isLoggedIn")

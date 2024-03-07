@@ -67,18 +67,16 @@ if( (isAuthorized.value as boolean) == true )
     table(style="table-layout: auto;")
         thead
             tr
-                th.font-poppins.font-bold.font-bold.p-2(style="color: white;--tw-bg-opacity: 1; background-color: rgb(110 171 191 / var(--tw-bg-opacity));border-radius: 60px 0px 0px 0px; width:20%; overflow: hidden") User Names
-                th.font-poppins.font-bold(style="color: white; width: 20%; --tw-bg-opacity: 1; background-color: rgb(110 171 191 / var(--tw-bg-opacity));") User ID
-                th.font-poppins.font-bold(style="color: white; width: 20%; --tw-bg-opacity: 1; background-color: rgb(110 171 191 / var(--tw-bg-opacity));") Family Name
-                th.font-poppins.font-bold(style="color: white; --tw-bg-opacity: 1; background-color: rgb(110 171 191 / var(--tw-bg-opacity));") User Role
+                th.font-poppins.font-bold.font-bold.p-2(style="color: white;--tw-bg-opacity: 1; background-color: rgb(110 171 191 / var(--tw-bg-opacity));border-radius: 60px 0px 0px 0px; width:25%; overflow: hidden") User Names
+                th.font-poppins.font-bold(style="color: white; width: 25%; --tw-bg-opacity: 1; background-color: rgb(110 171 191 / var(--tw-bg-opacity));") Family Name
+                th.font-poppins.font-bold(style="color: white; width: 12.5%; --tw-bg-opacity: 1; background-color: rgb(110 171 191 / var(--tw-bg-opacity));") User Role
                 th.font-poppins.font-bold(style="color: white; --tw-bg-opacity: 1; background-color: rgb(110 171 191 / var(--tw-bg-opacity));") User Email
-                th.font-poppins.font-bold(style="width:20%; --tw-bg-opacity: 1; border-radius: 0px 60px 0px 0px; background-color: rgb(110 171 191 / var(--tw-bg-opacity)); color: rgb(110 171 191 / var(--tw-bg-opacity));") {{  "__________" }}
+                th.font-poppins.font-bold(style="width:25%; --tw-bg-opacity: 1; border-radius: 0px 60px 0px 0px; background-color: rgb(110 171 191 / var(--tw-bg-opacity)); color: rgb(110 171 191 / var(--tw-bg-opacity));") {{  "__________" }}
             tr(v-for="(item, i) in users" 
                 :key="i"
                 :class="{'bg-gray-200': (i+1) % 2}" 
             )
                 td.font-poppins.text-gray-dark.font-bold(style="text-align: center") {{ item.first_name + " " + item.last_name }}
-                td.font-poppins.text-gray-dark.font-bold(style="text-align: center") {{ item.cuid }}
                 td.font-poppins.text-gray-dark.font-bold(style="text-align: center") {{ item.Family?.family_name }}
                 td.font-poppins.text-gray-dark.font-bold(style="text-align: center") {{ item.user_role }}
                 td.font-poppins.text-gray-dark.font-bold(style="text-align: center") {{ item.email }}

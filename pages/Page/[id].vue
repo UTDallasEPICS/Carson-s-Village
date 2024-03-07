@@ -84,15 +84,27 @@ const userCuid = ref("0")
 const familyCuid = computed(() => pageDataDB.value?.familyCuid)
 const profileImageLink = ref("")
 const family_cuid = ref("0")
+
 const router = useRoute();
 const id = computed(() => router.params.id);
 const pageCuid = id.value as string
 const cvuser = useCookie<Page>('cvuser')
 const stripeLink_ref = ref("")
-// const Replies = ref<Reply[]>([]);
-// const comments = ref<PageDonation[]>([])
-donationData.value.pageCuid = id.value as string;
-donationData.value.familyCuid = pageData.value.familyCuid
+
+const { data: pageDataDB } = await useFetch<Page>('/api/page', {
+  method: 'GET',
+  query: { cuid: id }
+});
+
+const familyCuid = computed(() => pageDataDB.value?.familyCuid);
+const donated_percentage = computed(() => (((pageDataDB.value?.amount_raised as number) / (pageDataDB.value?.donation_goal as number)) * 100).toFixed(1) + "");
+const donation_goal_provided = computed(() => Boolean(pageDataDB.value?.donation_goal));
+const userCuid = computed(() => pageDataDB.value?.userCuid);
+const isActive = computed(() => pageDataDB.value?.status == "active");
+const comments = computed(() => pageDataDB.value?.PageDonations);
+const replies = computed(() => pageDataDB.value?.Reply);
+const imageData = computed(() => pageDataDB.value?.Images as unknown as Image[]);
+const profileImageLink = computed(() => imageData.value.find(i => i.cuid == pageDataDB.value?.profileImageCuid)?.url || "");
 
 /* 
 *  This creates a stripe session and redirects the user to stripe.
@@ -102,7 +114,13 @@ donationData.value.familyCuid = pageData.value.familyCuid
 const create_checkout_session = async () => {
     const { data : sessionInfo } = await useFetch('/api/create_session', {
         method: 'POST',
-        body: {...donationData.value, cuid: id.value, familyCuid: pageData.value.familyCuid, amount_raised: Math.trunc(parseFloat(donationData.value.amount as unknown as string) * 100) as number}
+      body: {
+        ...donationData.value,
+        cuid: id.value,
+        pageCuid: id.value,
+        familyCuid: pageDataDB.value?.familyCuid,
+        amount_raised: Math.trunc(parseFloat(donationData.value.amount as unknown as string) * 100) as number
+      }
     });
     stripeLink_ref.value = sessionInfo.value as string
     await navigateTo(stripeLink_ref.value as string,  { external: true } )
@@ -125,12 +143,12 @@ const isActive = computed(() => pageDataDB.value?.status == "active")
 
 // todo: Set as pop up?
 const shareFacebook = () => {
-  const facebookShareLink = `https://www.facebook.com/sharer/sharer.php?caption=${pageData.value.page_name}&u=${window.location.href}`
+  const facebookShareLink = `https://www.facebook.com/sharer/sharer.php?caption=${pageDataDB.value?.page_name}&u=${window.location.href}`
   window.open(facebookShareLink)
 }
 
 const shareXFormalyKnownAsTwitter = () => {
-  const xShareLink = `https://twitter.com/intent/tweet?text=${pageData.value.page_name}&url=${window.location.href}`
+  const xShareLink = `https://twitter.com/intent/tweet?text=${pageDataDB.value?.page_name}&url=${window.location.href}`
   window.open(xShareLink)
 }
 
@@ -189,7 +207,7 @@ console.log(pageDataDB.value?.funeral_date)
 // the header overlay with image and name
 .mt-2.min-h-24.text-white.uppercase.w-full(style="background-image: url('https://carsonsvillage.org/wp-content/uploads/2018/11/iStock-862083112-BW.jpg');") 
   .h-full.py-8.self-center.w-full.text-center.flex.flex-col(style="background-color: rgba(50, 119, 136, .8)") 
-    p.my-auto.font-bold.text-4xl {{ pageData.page_name }}
+    p.my-auto.font-bold.text-4xl {{ pageDataDB.page_name }}
 
 .flex.flex-col.gap-5.px-4.mx-auto.mt-8(class="w-3/4 sm:px-16")
   img.mx-auto(v-if="profileImage?.url" class="w-[122px] h-[122px] rounded-[8px]" :src="`${profileImage?.url}`")
@@ -203,30 +221,30 @@ console.log(pageDataDB.value?.funeral_date)
     .py-4.flex.flex-col.gap-5(style="font-size: 18px")
       .text-gray-dark.font-poppins.text-2xl.text-left.font-bold(style="line-height: 36px; text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") Services
       .flex.flex-col.gap-5(class="lg:grid lg:grid-cols-2")
-        .flex.flex-col.gap-5(v-if="pageData.visitation_date")
+        .flex.flex-col.gap-5(v-if="pageDataDB.visitation_date")
           .text-gray-dark.font-poppins.text-2xl.text-left.font-bold(style="line-height: 36px; text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") Visitation
           .flex.gap-5
             .font-outfit {{ "Date:" }}
-            .font-outfit {{ dateFormat(pageData.visitation_date, true) }}
+            .font-outfit {{ dateFormat(pageDataDB.visitation_date, true) }}
           .flex.gap-5
             .font-outfit {{ "Location:" }}
-            .font-outfit.whitespace-normal {{ pageData.visitation_location ? pageData.visitation_location : "TBD" }}
-          .font-outfit {{ pageData.visitation_description }}
+            .font-outfit.whitespace-normal {{ pageDataDB.visitation_location ? pageDataDB.visitation_location : "TBD" }}
+          .font-outfit {{ pageDataDB.visitation_description }}
         .flex.flex-col.gap-5(v-else)
           .text-gray-dark.font-poppins.text-2xl.text-left.font-bold(style="line-height: 36px; text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") Visitation
           .flex.gap-5
             .font-outfit {{ "Date:  TBD"}}
           .flex.gap-5
             .font-outfit {{ "Location:  TBD" }}
-        .flex.flex-col.gap-5(v-if="pageData.funeral_date")
+        .flex.flex-col.gap-5(v-if="pageDataDB.funeral_date")
             .text-gray-dark.font-poppins.text-2xl.text-left.font-bold(style="line-height: 36px; text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") Funeral
             .flex.gap-5
               .font-outfit {{ "Date:" }}
-              .font-outfit {{ dateFormat(pageData.funeral_date, true) }}
+              .font-outfit {{ dateFormat(pageDataDB.funeral_date, true) }}
             .flex.gap-5
               .font-outfit {{ "Location:" }}
-              .font-outfit.whitespace-normal {{ pageData.funeral_location }}
-            .font-outfit {{ pageData.funeral_description }}
+              .font-outfit.whitespace-normal {{ pageDataDB.funeral_location }}
+            .font-outfit {{ pageDataDB.funeral_description }}
         .flex.flex-col.gap-5(v-else)
             .text-gray-dark.font-poppins.text-2xl.text-left.font-bold(style="line-height: 36px; text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") Funeral
             .flex.gap-5
@@ -263,15 +281,15 @@ console.log(pageDataDB.value?.funeral_date)
           label SHARE THIS PAGE |&nbsp;
           .col
             button(@click="shareFacebook")
-              img(src="/facebook-fa.PNG" style="width:30px; height:33px;") 
+              img(src="/facebook-fa.png" style="width:30px; height:33px;") 
           .col
             button(@click="shareXFormalyKnownAsTwitter")
-                img(src="/twitter fa.PNG" style="width:30px; height:29px;") 
+                img(src="/twitter_fa.png" style="width:30px; height:29px;") 
           .col
             button(@click="shareMail")
-                img(src="/mail fa.PNG" style="width:50px; height:29px;") 
+                img(src="/mail_fa.png" style="width:50px; height:29px;") 
           .col
             p {{ "" }}
     .col-md-8.mx-9(class="sm:col-span-1 sm:mr-11")
-        .div.px-8.py-4(style="color: #6E6E6E; font-weight: 500; font-size: 18px; line-height: 28px; letter-spacing: -0.078px; word-break: break-word;" id="obituary") {{ pageData.obituary }}
+        .div.px-8.py-4(style="color: #6E6E6E; font-weight: 500; font-size: 14px; line-height: 28px; letter-spacing: -0.078px; word-break: break-word;" id="obituary") {{ pageDataDB.obituary }}
 </template>
