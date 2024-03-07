@@ -90,21 +90,6 @@ const pageCuid = id.value as string
 const cvuser = useCookie<Page>('cvuser')
 const stripeLink_ref = ref("")
 
-const { data: pageDataDB } = await useFetch<Page>('/api/page', {
-  method: 'GET',
-  query: { cuid: id }
-});
-
-const familyCuid = computed(() => pageDataDB.value?.familyCuid);
-const donated_percentage = computed(() => (((pageDataDB.value?.amount_raised as number) / (pageDataDB.value?.donation_goal as number)) * 100).toFixed(1) + "");
-const donation_goal_provided = computed(() => Boolean(pageDataDB.value?.donation_goal));
-const userCuid = computed(() => pageDataDB.value?.userCuid);
-const isActive = computed(() => pageDataDB.value?.status == "active");
-const comments = computed(() => pageDataDB.value?.PageDonations);
-const replies = computed(() => pageDataDB.value?.Reply);
-const imageData = computed(() => pageDataDB.value?.Images as unknown as Image[]);
-const profileImageLink = computed(() => imageData.value.find(i => i.cuid == pageDataDB.value?.profileImageCuid)?.url || "");
-
 /* 
 *  This creates a stripe session and redirects the user to stripe.
 *  Then it redirects to /PageDonation/pageCuid/transactionId
