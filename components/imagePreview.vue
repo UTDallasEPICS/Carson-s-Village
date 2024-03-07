@@ -69,7 +69,7 @@ const saveImage = async (theImage: Image) => {
 </script>
 
 <template lang="pug">
-.information.bg-gray-300.rounded-md.mx-9.my-2.text-center(class="sm:text-start")
+.information.rounded-md.mx-9.my-2.text-center(class="sm:text-start text-white bg-blue-999")
     CVLegend Images   
 .py-4.grid(class="sm:grid-cols-3") 
     div(v-if="images.length !=0" style='position: relative;') 

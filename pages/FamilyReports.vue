@@ -56,7 +56,7 @@ div
                   td(style="text-align: center;") {{ page.status }}
                   td(style="text-align: center;")
                     ActionButton(style="color: white; background-color: red;" @click="togglePageStatus(page)") {{ "X" }}
-      a.mr-9.mt-1.p-4.px-6.pt-2.bg-orange-400(style="border-radius: 100px; height: 50px; color: white; font-weight: 700;" :href="filedownloadlink" :download="downloadName" :dataset.downloadurl="dataset") download
+      a.mr-9.mt-1.p-4.px-6.pt-2.bg-orange-999(style="border-radius: 100px; height: 50px; color: white; font-weight: 700;" :href="filedownloadlink" :download="downloadName" :dataset.downloadurl="dataset") Download
 .ml-9.mb-9.py-7.flex.flex-wrap.gap-2.place-content-center
   .col-md-10.px-2.mt-2
       button(@click="prevPage") &lt

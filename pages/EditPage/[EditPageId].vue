@@ -260,7 +260,7 @@ CVContainer
         .bar.mx-9(style="border-top: 0.5px solid #646464;")
     br
     .div
-        .information.bg-gray-300.rounded-md.mx-9.my-2.text-center(class="sm:text-start")
+        .information.rounded-md.mx-9.my-2.text-center(class="sm:text-start text-white bg-blue-999")
             CVLegend Personal Information
         .py-4.grid(class="sm:grid-cols-3") 
             CVLabel Page Name
@@ -280,7 +280,7 @@ CVContainer
                                 ListboxOption(as='div' v-for="family in data_all_users" :key="family.cuid" :value="family.cuid" class="px-2 border border-grey-500 py-1 my-1") {{ family.family_name }}
                     ListboxButton(class='text-left bg-white relative rounded-md pl-2 pr-10 py-2 sm:text-sm w-96') {{ familyCuid ? currentFamily.family_name : 'Select family to add the page to' }}
         ImagePreview(v-model:images="imageData" :images="data.Images" :profileImage="profileImage" :pageCuid="cuid_data" @profileImage="setProfileImage" @images="setImagesPreview")
-        .information.bg-gray-300.rounded-md.mx-9.my-2.text-center(class="sm:text-start")
+        .information.rounded-md.mx-9.my-2.text-center(class="sm:text-start text-white bg-blue-999")
             legend.ml-2(class="sm:py-1" style="font-weight: 700; text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") Profile Image Selection        
         .py-4.grid(class="sm:grid-cols-3") 
             CVLabel Profile Image
@@ -300,7 +300,7 @@ CVContainer
             CVLabel Day of Passing 
             .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
                 CVDatepicker(v-model='data.day_of_passing')
-        .information.bg-gray-300.rounded-md.mx-9.my-2.text-center(class="sm:text-start")
+        .information.rounded-md.mx-9.my-2.text-center(class="sm:text-start text-white bg-blue-999")
             CVLegend Visitation Information 
         .py-4.grid(class="sm:grid-cols-3") 
             CVLabel Date
@@ -315,7 +315,7 @@ CVContainer
             .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
                 CVTextArea(v-model='data.visitation_description' placeholder="optional")
 
-        .information.bg-gray-300.rounded-md.mx-9.my-2.text-center(class="sm:text-start")
+        .information.rounded-md.mx-9.my-2.text-center(class="sm:text-start text-white bg-blue-999")
             CVLegend Funeral Information       
         .py-4.grid(class="sm:grid-cols-3")
             CVLabel Date    
@@ -333,7 +333,7 @@ CVContainer
             CVLabel Obituary
             .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
                 CVTextArea(v-model='data.obituary' placeholder="optional")
-        .information.bg-gray-300.rounded-md.mx-9.my-2.text-center(class="sm:text-start")
+        .information.rounded-md.mx-9.my-2(class="sm:text-star text-white bg-blue-999")
             CVLegend Fundraising Information
         .py-4.grid(class="sm:grid-cols-3")
             CVLabel Goal    
@@ -346,11 +346,11 @@ CVContainer
                 CVDatepicker(v-model='data.deadline')
         .ml-9.mb-9.py-7.flex.flex-wrap.gap-2
             .col-md-10.px-2.mt-2
-                ActionButton(@click="save") Save
+                ActionButton(@click="save" class="transition duration-300 bg-orange-999 hover:bg-green-600") Save
             .col-md-10.py-2.mt-2
-                LinkButton(v-if="pageCuid!=0" :to="`/Page/${cuid}`") View Page
+                LinkButton(v-if="pageCuid!=0" :to="`/Page/${cuid}`" class="transition duration-300 bg-orange-999 hover:bg-green-600") View Page
             .col-md-10.p-2.pt-6.mt-2(class="sm:pt-2 sm:ml-auto sm:mr-6")
-                LinkButton(v-if="pageCuid!=0" to='#') Delete Page
+                LinkButton(v-if="pageCuid!=0" to='#' class="transition duration-300 bg-orange-999 hover:bg-green-600") Delete Page
         .py-4.grid(class="sm:grid-cols-3" Style="color:red" v-if="errorInPage")
             CVLabel Error in Creating/Editing page in the system.  
 </template>

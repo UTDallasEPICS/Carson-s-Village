@@ -142,9 +142,9 @@ const { data: Families } = await useFetch<Family[]>('/api/families', {
   table.mt-5.table.table-striped.w-full
       thead
           tr(style="color: white;")
-              th.px-8(style="--tw-bg-opacity: 1; background-color: rgb(110 171 191 / var(--tw-bg-opacity));border-radius: 60px 0px 0px 0px; width:33.33%; overflow: hidden") Page Name
-              th.px-8(style="--tw-bg-opacity: 1; background-color: rgb(110 171 191 / var(--tw-bg-opacity));") Raised
-              th.font-poppins.font-bold(style="--tw-bg-opacity: 1; border-radius: 0px 60px 0px 0px; background-color: rgb(110 171 191 / var(--tw-bg-opacity)); width:33.33%") Remaining
+              th.px-8(style="--tw-bg-opacity: 1; background-color: #5aadc2;border-radius: 60px 0px 0px 0px; width:33.33%; overflow: hidden") Page Name
+              th.px-8(style="--tw-bg-opacity: 1; background-color: #5aadc2;") Raised
+              th.font-poppins.font-bold(style="--tw-bg-opacity: 1; border-radius: 0px 60px 0px 0px; background-color: #5aadc2; width:33.33%") Remaining
           tr(v-for="(item, i) in familyData.data" 
               :key="i" 
               :class="{'bg-gray-200': (i+1) % 2}"
@@ -163,9 +163,9 @@ const { data: Families } = await useFetch<Family[]>('/api/families', {
   table.mt-5.table.table-striped(style="width:100%;")
       thead
           tr(style="color: white;")
-              th.px-8(style="--tw-bg-opacity: 1; background-color: rgb(110 171 191 / var(--tw-bg-opacity));border-radius: 60px 0px 0px 0px; width:33.33%; overflow: hidden") Transaction id
-              th.font-poppins.font-bold(style="--tw-bg-opacity: 1; background-color: rgb(110 171 191 / var(--tw-bg-opacity));") Page Name
-              th.px-8(style="width:33.33%; --tw-bg-opacity: 1; border-radius: 0px 60px 0px 0px; background-color: rgb(110 171 191 / var(--tw-bg-opacity));") Amount
+              th.px-8(style="--tw-bg-opacity: 1; background-color: #5aadc2;border-radius: 60px 0px 0px 0px; width:33.33%; overflow: hidden") Transaction id
+              th.font-poppins.font-bold(style="--tw-bg-opacity: 1; background-color: #5aadc2;") Page Name
+              th.px-8(style="width:33.33%; --tw-bg-opacity: 1; border-radius: 0px 60px 0px 0px; background-color: #5aadc2;") Amount
           tr(v-for="(item, i) in donations" 
               :key="i" 
               :class="{'bg-gray-200': (i+1) % 2}"

@@ -100,7 +100,7 @@ CVContainer
             .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
                 CVInput(v-model='data_user.phone' placeholder="(user defined, optional)")
             .col-md-10.py-2
-                ActionButton(@click="createFamily()") Save    
+                ActionButton(@click="createFamily()" class="transition duration-300 bg-orange-999 hover:bg-green-600") Save    
         .py-4.grid(class="sm:grid-cols-3" Style="color:red" v-if="errorInPage")
             CVLabel Error Creating Family and First Family Member in the System.
 </template>

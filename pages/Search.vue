@@ -84,10 +84,10 @@ onMounted(() => {
   b(class="ml-8 text-xl")     Search Results 
   table.table.table-striped(style="width:100%;")
       thead
-        tr.bg-green-400.text-white
-          th.px-8 Page 
-          th.px-8 Donation Goal
-          th.px-8 Deadline
+        tr.text-white
+          th.px-8(style="background-color: #5aadc2; border-radius: 60px 0px 0px 0px;") Page 
+          th.px-8(style="background-color: #5aadc2;") Donation Goal
+          th.px-8(style="background-color: #5aadc2; border-radius: 0px 60px 0px 0px;") Deadline
       tbody
         tr(v-for="(page, i) in pages" :class="{'bg-gray-200': (i+1) % 2}")
           td(style="text-align: center")   

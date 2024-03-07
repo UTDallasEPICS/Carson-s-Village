@@ -19,8 +19,8 @@ console.log(route.path)
 ClientOnly
   .max-w-min.mx-auto.flex.gap-2.mt-7(style="text-align:center")
     div.max-w-min.mx-auto.flex.gap-2(v-if="isLoggedIn")
-      a.items-center.px-2.py-2.text-base.font-medium.rounded-md.text-green-600.cursor-pointer(style="border: 1px solid #c4c4c4;"
-      class='hover:text-white hover:bg-gray-600'  
+      a.items-center.px-2.py-2.text-base.font-medium.rounded-md.text-gray-999.cursor-pointer(
+      class='hover:text-black border border-gray-999 hover:border-green-999 bg-white'  
       href="/api/logout"
       ) 
         p.uppercase.white.w-max LOGOUT
@@ -43,8 +43,8 @@ ClientOnly
       NavLinkButton(v-if="isAdvocateAdmin" to='/FamilyReports')
         p.uppercase.white.w-max Family Reports
     div.max-w-min.mx-auto.flex.gap-2(v-else)
-      a.items-center.px-2.py-2.text-base.font-medium.rounded-md.text-green-600.cursor-pointer(style="border: 1px solid #c4c4c4;"
-      class='hover:text-white hover:bg-gray-600'  
+      a.items-center.px-2.py-2.text-base.font-medium.rounded-md.text-gray-999.cursor-pointer(
+      class='hover:text-black border border-gray-999 hover:border-green-999 bg-white'  
       href="/api/login"
       ) 
         p.uppercase.white.w-max LOGIN

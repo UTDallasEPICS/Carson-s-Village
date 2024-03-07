@@ -61,7 +61,7 @@ const submitComment = async () => {
       .field-row.flex.mt-4.w-full
           CVInput(name='name' v-model="replyData.name" placeholder='Name' class="font-normal w-full")     
       .col-md-8.ml-4.pt-6.pr-5.flex.items-center.justify-center.mt-6
-          ActionButton.mx-auto.text-md(@click="submitComment") Submit
+          ActionButton.mx-auto.text-md(@click="submitComment" class="transition duration-300 bg-orange-999 hover:bg-green-600") Submit
       .div(v-if="successMessage" class="mt-4 text-green-500") {{ successMessage }}
 </template>
 
