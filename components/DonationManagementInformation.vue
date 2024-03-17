@@ -1,0 +1,39 @@
+<template lang="pug">
+.flex.gap-5.justify-around
+    div
+      p.text-center.mt-10 Family 
+      .flex.flex-col.w-full.justify-center.gap-5.mt-5
+        .border.border-grey-500.p-5
+          p.self-center.text-center Total Donations 
+          p.text-center.mt-2 {{ donationFormat(props.totalPageDonations) }}
+        .border.border-grey-500.p-5
+          p.self-center.text-center All Funds Distributed
+          p.text-center.mt-2 {{ donationFormat(props.totalDistributed) }}
+        .border.border-grey-500.p-5
+          p.self-center.text-center Remaining Amount to Distribute
+          p.text-center.mt-2 {{ donationFormat(props.totalRemaining) }}
+    div
+      p.text-center.mt-10 Page 
+      .flex.flex-col.w-full.justify-center.gap-5.mt-5
+        .border.border-grey-500.p-5
+          p.self-center.text-center All Page Donations
+          p.text-center.mt-2 {{ donationFormat(props.amount_raised) }}
+        .border.border-grey-500.p-5
+          p.self-center.text-center All Page Funds Distributed
+          p.text-center.mt-2 {{ donationFormat(props.amount_distributed) }}
+        .border.border-grey-500.p-5
+          p.self-center.text-center Remaining Amount to Distribute
+          p.text-center.mt-2 {{ donationFormat(props.amount_raised - props.amount_distributed) }}
+</template>
+    
+<script setup lang="ts">
+import { donationFormat } from "@/utils"
+const props = defineProps<{
+  totalPageDonations: number,
+  totalDistributed: number,
+  totalRemaining: number,
+  amount_raised: number,
+  amount_distributed: number
+}>()
+
+</script>

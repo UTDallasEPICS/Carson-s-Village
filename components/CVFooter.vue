@@ -7,7 +7,7 @@ div
         div.absolute(style="margin-left: auto;margin-right: auto; left: 0;right: 0; text-align: center;")
             LinkButton.absolute.bottom-4.mx-auto.text-md(class="left-1/2" to='https://carsonsvillage.org/contact-us/') Contact Us
     div.bg-black.flex(style="color:gray; font-weight: 700; justify-content:center; align-items: center; height: 100px;")
-        label COPYRIGHT 2023 CARSON'S VILLAGE |&nbsp;
+        label COPYRIGHT {{ (new Date()).toLocaleDateString('en', {year:'numeric'}) }} CARSON'S VILLAGE |&nbsp;
         .col
             NuxtLink(to='https://carsonsvillage.org/privacy-policy/') PRIVACY POLICY |&nbsp;
         .col

@@ -110,31 +110,7 @@ const { data: Families } = await useFetch<Family[]>('/api/families', {
         ListboxButton(class='text-left bg-white relative rounded-md pl-2 pr-10 py-2 sm:text-sm w-96') {{ currentPageCuid ? currentPage.page_name : 'Select Page' }}
   
   .flex.gap-5.justify-around
-    //these next two divs could theoretically be their own component with props
-    div
-      p.text-center.mt-10 Family 
-      .flex.flex-col.w-full.justify-center.gap-5.mt-5
-        .border.border-grey-500.p-5
-          p.self-center.text-center Total Donations 
-          p.text-center.mt-2 {{ donationFormat(totalPageDonations) }}
-        .border.border-grey-500.p-5
-          p.self-center.text-center All Funds Distributed
-          p.text-center.mt-2 {{ donationFormat(totalDistributed) }}
-        .border.border-grey-500.p-5
-          p.self-center.text-center Remaining Amount to Distribute
-          p.text-center.mt-2 {{ donationFormat(totalRemaining) }}
-    div
-      p.text-center.mt-10 Page 
-      .flex.flex-col.w-full.justify-center.gap-5.mt-5
-        .border.border-grey-500.p-5
-          p.self-center.text-center All Page Donations
-          p.text-center.mt-2 {{ donationFormat(currentPage?.amount_raised) }}
-        .border.border-grey-500.p-5
-          p.self-center.text-center All Page Funds Distributed
-          p.text-center.mt-2 {{ donationFormat(currentPage?.amount_distributed) }}
-        .border.border-grey-500.p-5
-          p.self-center.text-center Remaining Amount to Distribute
-          p.text-center.mt-2 {{ donationFormat(currentPage?.amount_raised - currentPage?.amount_distributed) }}
+    DonationManagementInformation(:totalPageDonations="totalPageDonations" :totalDistributed="totalDistributed" :totalRemaining="totalRemaining" :amount_raised="currentPage?.amount_raised" :amount_distributed="currentPage?.amount_distributed")
     div(class="basis-1/3")
       PayoutRecord(:currentPage="currentPage" :currentFamily="currentFamily")
 

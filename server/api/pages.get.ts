@@ -26,10 +26,10 @@ if(event.context.user.cuid != undefined) { //if the user is not logged in, do no
       data:  pagesResult
     };
   }
-
-  const searchQuerySpacesRemoved = (searchQuery as string).replaceAll(" ", "")
+  console.log(searchQuery as string)
+  //const searchQuerySpacesRemoved = (searchQuery as string).replaceAll(" ", "")
   // Makes sure that an empty searchQuery returns no results and that searchQueries with all spaces return no results (prevents returning all pages with a first and last name using a space).
-  if((searchQuery as string) != "" && searchQuerySpacesRemoved.length != 0) {
+  if((searchQuery as string) != "") { //&& searchQuerySpacesRemoved.length != 0) {
     // Pagination via taking the absolute page number with 12 records per page 
     const [count, pagesResult] = await prisma.$transaction([
       prisma.page.count({ where: { page_name: {
