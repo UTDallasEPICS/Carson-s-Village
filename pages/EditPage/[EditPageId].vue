@@ -281,7 +281,7 @@ CVContainer
                     ListboxButton(class='text-left bg-white relative rounded-md pl-2 pr-10 py-2 sm:text-sm w-96') {{ familyCuid ? currentFamily.family_name : 'Select family to add the page to' }}
         ImagePreview(v-model:images="imageData" :images="data.Images" :profileImage="profileImage" :pageCuid="cuid_data" @profileImage="setProfileImage" @images="setImagesPreview")
         .information.rounded-md.mx-9.my-2.text-center(class="sm:text-start text-white bg-blue-999")
-            legend.ml-2(class="sm:py-1" style="font-weight: 700; text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") Profile Image Selection        
+            legend.ml-2(class="sm:py-1" style="font-weight: 700;") Profile Image Selection        
         .py-4.grid(class="sm:grid-cols-3") 
             CVLabel Profile Image
             .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
