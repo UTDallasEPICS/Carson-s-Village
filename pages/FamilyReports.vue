@@ -1,4 +1,8 @@
 <template lang="pug">
+//todo: style the date selection and have date selection on all the following: donation deadline, start date, and goal met date (use HTML select?)
+//todo: num pages per family
+//todo: add selection for families instead of all at once and toggle between all at once and all families by having the first option as displaying every page
+//todo: 3 column by however many needed rows (flex-wrap) of checkboxes to enable and disable columns. Future idea: put a nicer version as a sidebar
 div
         h2(style="margin-top: 2.5rem; margin-left:1.65rem; font-weight:700") Family Reports 
 <br/>
@@ -37,9 +41,12 @@ div
                 td(style="text-align: center;") {{ page.status }}
                 td(style="text-align: center;")
                   ActionButton(style="color: white; background-color:red;" @click="togglePageStatus(page)") {{ "X" }}
+
 </template>
     
 <script setup lang='ts'>
+    // todo: Make the table resizable with custom dimensions. Possible application of the standard table 
+    // todo: add number of family family pages an advocate is responsible, total amount raised by the families an advocate is responsible for
     //import { Family } from '@prisma/client'; 
     import type { Family, User, Page as Page2 } from '@/types.d.ts'
     import { Page, User as User2 } from '@prisma/client'
@@ -49,12 +56,17 @@ div
     const isAdminAdvocate = computed(() => cvuser.value?.user_role == "advocate" || cvuser.value?.user_role == "admin" )
     const families = ref<Family[]>([]);
     const familyPages = ref<Partial<Page[]>>([])
+    const familiesRaw = ref<Family[]>([])
+    const currentPage = ref(0);
     const currentFamily = ref(null);
     const currentFamilyId = ref(null);
     const filedownloadlink = ref("")
     const dataset = ref("")
     const downloadName = ref("")
-  
+    const totalLength = ref(0)
+    const start_date = ref("1/01/2015")
+    const end_date = ref(new Date().toLocaleDateString())
+
     const data_family = ref<Family>({
       cuid: '',
       family_name: '',
@@ -133,6 +145,7 @@ div
         } else if(!confirmReactivate) {
         return ""
         }
+
       }
         booleanChanged = false          
 
@@ -153,4 +166,5 @@ div
   // Invoke the initial data loading
   loadReports();
   
+
 </script>

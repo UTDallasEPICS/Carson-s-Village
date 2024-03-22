@@ -89,7 +89,7 @@ export default defineEventHandler(async event => {
         console.log("Transaction already completed.")
       }
 
-      const pageLink = "/Page/"+transaction?.pageCuid;
+      const pageLink = "/Page/"+ transaction?.pageCuid;
       await sendRedirect(event, pageLink)
       return true;
     } catch (e) {

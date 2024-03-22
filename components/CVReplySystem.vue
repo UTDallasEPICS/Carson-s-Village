@@ -21,9 +21,12 @@ const replyData = ref<Partial<Reply>>({
 
 const clearSuccessMessage = () => {
     successMessage.value = '';
+    //replyData.value.name = ""; // Clear name field
+    //replyData.value.reply = ""; // Clear reply field
 }
 
 const successMessage = ref("");
+// todo: change to $fetch
 const submitComment = async () => {
     const response = await $fetch('/api/replies', {  // look at nuxt documentation for $fetch
       method: 'POST',

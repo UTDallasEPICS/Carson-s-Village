@@ -22,15 +22,18 @@ const donationData = ref<PageDonation>({
     cuid: "",
     pageCuid: props.pageCuid,
     familyCuid: props.familyCuid,
-    transaction_id : "",
+    transaction_id: "",
     donorFirstName: "",
     donorLastName: "",
-    comments: "", 
-    isAnonymous : false
+    comments: "",
+    Page: ref<Page[]>([]).value[0],
+    userCuid: '',
+    isAnonymous: false
 });
 
 const stripeLink_ref = ref("")
 const create_checkout_session = async () => {
+    // todo: depreciate
     const donorData = {
         first_name: donationData.value.donorFirstName,
         last_name: donationData.value.donorLastName,
@@ -64,7 +67,7 @@ const create_checkout_session = async () => {
         span.bg-gray-light.py-2.px-1.text-lg(style="text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25); border: 1px solid #c4c4c4; border-right:none;") $
         input#donation_amount.bg-gray-light.outline-0.rounded-r-md.border-box.w-full.p-2(style="border: 1px solid #c4c4c4; border-left:none;" name='donation_amount' type="number" min="0.00" step="0.01" v-model="donationData.amount" required)
 .col-md-8.ml-4.pt-6.pr-5.flex.items-center.justify-center
-    ActionButton.mx-auto.text-md(name='submit' @click="create_checkout_session") DONATE NOW
+    ActionButton.mx-auto.text-md(name='submit' @click="create_checkout_session" class="transition duration-300 bg-orange-999 hover:bg-green-600") DONATE NOW
 </template>
 
 <style scoped></style>

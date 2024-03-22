@@ -1,8 +1,8 @@
 <script lang="ts" setup>
 import type { Image } from '@/types.d.ts'
-const props = defineProps<{ images: Image[], profileImage: Image }>()
+const props = defineProps<{ images: Image[], profileImage: Image, pageCuid: string }>()
 const emit = defineEmits(["images","update:images","profileImage"])
-
+console.log(props.pageCuid)
 const previewCuid = ref("")
 onMounted(() => {
   previewCuid.value = props.images[0]?.cuid || ""
@@ -29,7 +29,7 @@ const emptyImage = ref<Image>({
 })
 
 // Method to remove a single image
-const removeImage = async (cuid:string, isPreview: boolean) => {
+const removeImage = async (cuid: string, isPreview: boolean) => {
   if(cuid == previewCuid.value){
     isPreview = true;
   }
@@ -37,12 +37,13 @@ const removeImage = async (cuid:string, isPreview: boolean) => {
   // Confirmation of image deletetion. If no is pressed nothing happens
   if(confirm('Are you sure you want to delete this image?')){
     const theImage = props.images.find((i:Image)=> i.cuid == cuid)
+    // todo: change to $fetch
     await useFetch('/api/image', {
     method: 'delete',
     body: (theImage as Image)
     });
-    let imagesTemp = props.images.filter((i:Image) => i.cuid != cuid) 
-    emit("images", props.images.filter((i:Image) => i.cuid != cuid));
+    let imagesTemp = props.images.filter((i: Image) => i.cuid != cuid) //todo: replace emit on "images" with this?
+    emit("images", props.images.filter((i: Image) => i.cuid != cuid));
     if(isPreview && imagesTemp.length !=0){
         previewCuid.value =  imagesTemp[0].cuid
     } else if(imagesTemp.length === 0){
@@ -68,7 +69,7 @@ const saveImage = async (theImage: Image) => {
 </script>
 
 <template lang="pug">
-.information.bg-gray-300.rounded-md.mx-9.my-2.text-center(class="sm:text-start")
+.information.rounded-md.mx-9.my-2.text-center(class="sm:text-start text-white bg-blue-999")
     CVLegend Images   
 .py-4.grid(class="sm:grid-cols-3") 
     div(v-if="images.length !=0" style='position: relative;') 
@@ -76,7 +77,7 @@ const saveImage = async (theImage: Image) => {
         .absolute(style='top: 10px; right: 150px')
             button.bg-red-500(class='w-40 sm:64' style="align-items: center;justify-content: center; line-height: 1;text-align: center; color: white; font-weight: 450; positon: absolute; top:0px; left: 0px; width: 30px; height: 2rem; border-radius: 50%; padding-bottom: 4px;" @click = "removeImage(previewCuid, true)") x
     a.ml-10.pt-1(style="text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") image upload
-        ImageUpload(@imageUploaded="saveImage")
+        ImageUpload(@imageUploaded="saveImage" :pageCuid="props.pageCuid")
 .py-4.grid.flex-box.flex-row.item-centered.gap-1(v-if="images.length!= 0" class="sm:grid-cols-3" style="line-height: 0px;text-align: center")
     div(style="width:1200px" class="")
         div(class="flex" style="overflow-x: auto")
