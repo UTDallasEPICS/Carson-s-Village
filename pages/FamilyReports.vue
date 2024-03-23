@@ -181,6 +181,7 @@ div
       currentPage.value = 0
       loadReports()
     })
+    
     const data_family = ref<Family>({
       cuid: '',
       family_name: '',

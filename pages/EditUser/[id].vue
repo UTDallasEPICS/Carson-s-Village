@@ -40,8 +40,7 @@ const data_family = ref<Family>({
     created_at: "",
     updated_at: Date.toString(),
     family_name: "",
-    advocateCuid: cvuser.value.cuid 
-
+    advocateCuid: cvuser.value.cuid
 })
 
 const data_all_families = ref<Family[]>([])

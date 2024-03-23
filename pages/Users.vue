@@ -49,7 +49,7 @@ const nextPage = () => {
     } 
 }
 
-const prevPage= () => {
+const prevPage = () => {
     if(currentPage.value != 0){
         currentPage.value--
         if(isAuthorized.value) {
