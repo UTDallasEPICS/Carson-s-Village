@@ -1,6 +1,8 @@
 <script lang="ts" setup>
 import type { User, Page } from "@/types.d.ts"
 import { donationFormat, dateFormat } from '@/utils'
+//import searchOnEnter from '@/Search.vue'
+//import pageSearch from '@Search.vue'
 const cvuser = useCookie<User>('cvuser');
 const cvtoken = useCookie('cvtoken');
 const isAdvocateAdmin = computed(() => cvuser.value?.user_role == "admin" || cvuser.value?.user_role == "advocate")
@@ -13,6 +15,13 @@ const searchQuery = ref('');
 const route = useRoute()
 const isNotSearch = computed(() => route.path !== "/Search/")
 console.log(route.path)
+
+const onEnter = async() => {
+  // For now, simply navigate to the search page with the entered query
+  await navigateTo (`/Search/?search=${searchQuery.value}&isPageList=0`);
+  
+}
+
 </script>
 
 <template lang="pug">
@@ -59,7 +68,8 @@ ClientOnly
     
     //&& isLoggedIn")
     .flex.w-max(v-if="isNotSearch")
-      input(class="border border-gray-300 py-2 px-4 rounded-lg focus:outline-none focus:border-black-500" type="search" placeholder=" " v-model="searchQuery")
+      input(class="border border-gray-300 py-2 px-4 rounded-lg focus:outline-none focus:border-black-500" 
+      type="search" placeholder=" " v-model="searchQuery" v-on:keyup.enter="onEnter")
       NuxtLink.inline(:to="`/Search/?search=${searchQuery}&isPageList=0`")
         img(src="/CVSearchIcon.png")
     //.flex.w-max(v-else) Todo: add to search page

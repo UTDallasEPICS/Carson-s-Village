@@ -153,6 +153,7 @@ div
     }).join('\n')
   }
 
+
   // creates download link to csv of family reports table
   const createCsvDownloadLink = (csv: string) => {
       const csvFile = new File([csv], "file", {
@@ -215,14 +216,22 @@ div
           const confirmReactivate = confirm('Are you sure you want to reactivate this page?')
           if(confirmReactivate) {
             page.status = "active"
+
             booleanChanged = true
-          } else if(!confirmReactivate) {
+          } else if(!confirmDeactivate){
           return ""
           }
+      } else if(page.status == "inactive" && !booleanChanged) {
+        const confirmReactivate = confirm('Are you sure you want to reactivate this page?')
+        if(confirmReactivate) {
+          page.status = "active"
+          booleanChanged = true
+        } else if(!confirmReactivate) {
+        return ""
         }
+
           booleanChanged = false          
-          // todo: change to $fetch
-          const toggledStatus = useFetch('api/page', {
+          const toggledStatus = $fetch('api/page', {
             method: "PUT",
             body: { ...page }
           })
@@ -245,4 +254,5 @@ const prevPage= () => {
   }
 // Invoke the initial data loading
 loadReports();
-</script>
+    }
+    </script>
