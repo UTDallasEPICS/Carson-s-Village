@@ -217,7 +217,7 @@ await getDataPageList()
         td
           LinkButton(class="sm:my-2 transition duration-300 bg-orange-999 hover:bg-green-600" style="--tw-bg-opacity: 1; white-space: nowrap; display: flex; flex-direction: row; padding: 14px 24px; gap: 10px;" :to="`/Page/${item.cuid}`") View
   .container.bg-blue-300.mx-auto(class="w-auto sm:w-[1200px]" style="--tw-bg-opacity: 1; background-color: #5aadc2; height: 50px; border-radius: 0px 0px 60px 60px;")
-.ml-9.mb-9.py-7.flex.flex-wrap.gap-2.place-content-center
+.mb-9.py-7.flex.flex-wrap.gap-2.place-content-center
   .col-md-10.px-2.mt-2
       button(@click="prevPage") &lt
   .col-md-10.px-2.mt-2

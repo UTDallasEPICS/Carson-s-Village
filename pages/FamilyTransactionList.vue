@@ -152,7 +152,7 @@ const { data: Families } = await useFetch<Family[]>('/api/families', {
               td.font-poppins.text-gray-dark.font-bold(style="text-align: center")  {{ item?.page_name }}
               td.font-poppins.text-gray-dark.font-bold(style="text-align: center")  {{ donationFormat(item.amount_raised) }}
               td.font-poppins.text-gray-dark.font-bold(style="text-align: center")  {{ donationFormat(item.amount_raised-item.amount_distributed) }}
-  .ml-9.mb-9.py-7.flex.flex-wrap.gap-2.place-content-center
+  .mb-9.py-7.flex.flex-wrap.gap-2.place-content-center
     .col-md-10.px-2.mt-2
         button(@click="prevPage") &lt
     .col-md-10.px-2.mt-2

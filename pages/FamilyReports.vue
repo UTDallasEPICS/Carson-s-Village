@@ -4,7 +4,7 @@
 //todo: add selection for families instead of all at once and toggle between all at once and all families by having the first option as displaying every page
 //todo: 3 column by however many needed rows (flex-wrap) of checkboxes to enable and disable columns. Future idea: put a nicer version as a sidebar
 div
-    h2(style="margin-top: 2.5rem;") Family Reports 
+    TitleComp.border-1.border-black  Family Reports 
     br
     .flex.flex-col.gap-5.px-4.mx-auto.mt-8(class="w-3/4 sm:px-16")
       //img.mx-auto(v-if="profileImage?.url" class="w-[122px] h-[122px] rounded-[8px]" :src="`${profileImage?.url}`")
@@ -14,31 +14,34 @@ div
           button.absolute.left-4.top-64.bg-black.text-white(@click="prevImage" style="opacity:0.7; --tw-text-opacity: 1; width: 46px; height: 46px; border-radius:50%; align-items: center; justify-content: center; line-height: 2; text-align: center;color: white;") &#60;
           button.absolute.right-8.top-64.bg-black.text-white(@click="nextImage" style="opacity:0.7; --tw-text-opacity: 1; width: 46px; height: 46px; border-radius:50%; align-items: center; justify-content: center; line-height: 2; text-align: center;color: white;") &#62;
           img.w-96(style="object-fit:cover" :src="imageData[currentImage].url")
-    .py-4.grid(class="sm:grid-cols-5") 
-            CVLabel Date Range
+    .py-4.grid(class="sm:grid-cols-9") 
             .col-md-8.mx-9(class="sm:col-span-1 sm:mr-11")
+            CVLabel Date Range
+            .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
               CVDatepicker(v-model='start_date' @update:model-value="currentPage=0; loadReports();")
             .col-md-8.mx-9(class="sm:col-span-1 sm:mr-11")  
               p(style="text-align:center;") {{ "-" }}
-            .col-md-8.mx-9(class="sm:col-span-1 sm:mr-11")  
-              CVDatepicker(v-model='end_date' @update:modelValue="currentPage=0; loadReports()" )          
-    .flex.gap-2.justify-center.cols-2
+            .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")  
+              CVDatepicker(v-model='end_date' @update:modelValue="currentPage=0; loadReports()" )  
+            .col-md-8.mx-9(class="sm:col-span-1 sm:mr-11")
+            a.mr-9.mt-1.p-6.px-6.pr-6.pt-3.pb-3.bg-orange-999(class="transition duration-300 bg-orange-999 hover:bg-green-600" style="border-radius: 100px; height: 50px; color: white; font-weight: 700;" :href="filedownloadlink" :download="downloadName" :dataset.downloadurl="dataset") Download        
+    .flex.gap-2.justify-center.cols-2.pl-6.pr-6
       table(style="margin-top: 1.25rem; width: 100%; border-spacing: 0; border-collapse: collapse;" v-if="isAdminAdvocate")
           thead(style="color: white;")
               tr
                   th(style="padding: 1rem; background-color: #6eabbf; border-radius: 60px 0 0 0; width: 12%;") Page Name
                   th(style="padding: 1rem; background-color: #6eabbf; width: 12%;") Advocate
-                  th(style="padding: 1rem; background-color: #6eabbf; width: 12%;") Duration
+                  th(style="padding: 1rem; background-color: #6eabbf; width: 10%;") Duration
                   th(style="padding: 1rem; background-color: #6eabbf; width: 7%;") Goal Met
                   th(style="padding: 1rem; background-color: #6eabbf; width: 10%;") Goal Met Date
-                  th(style="padding: 1rem; background-color: #6eabbf; width: 12%;") Start Date
+                  th(style="padding: 1rem; background-color: #6eabbf;") Start Date
                   th(style="padding: 1rem; background-color: #6eabbf; width: 5%") Owed
                   //th(style="padding: 1rem; background-color: #6eabbf; width: 5%") Owed %
                   th(style="padding: 1rem; background-color: #6eabbf; width: 5%") Paid
                   th(style="padding: 1rem; background-color: #6eabbf; width: 5%") Goal
                   th(style="padding: 1rem; background-color: #6eabbf; width: 7%") Goal Date
                   th(style="padding: 1rem; background-color: #6eabbf; width: 7%") Status
-                  th(style="padding: 1rem; background-color: #6eabbf; border-radius: 0 60px 0 0; width: 7%;") Toggle Status
+                  th(style="padding: 1rem; background-color: #6eabbf; border-radius: 0 60px 0 0; width: 9%;") Toggle Status
           tbody
               tr(v-for="(page, i) in families" 
               :class="{'bg-gray-200': (i+1) % 2}") 
@@ -56,8 +59,8 @@ div
                   td(style="text-align: center;") {{ page.status }}
                   td(style="text-align: center;")
                     ActionButton(style="color: white; background-color: red;" @click="togglePageStatus(page)") {{ "X" }}
-      a.mr-9.mt-1.p-4.px-6.pt-2.bg-orange-999(class="transition duration-300 bg-orange-999 hover:bg-green-600" style="border-radius: 100px; height: 50px; color: white; font-weight: 700;" :href="filedownloadlink" :download="downloadName" :dataset.downloadurl="dataset") Download
-.ml-9.mb-9.py-7.flex.flex-wrap.gap-2.place-content-center
+
+.mb-9.py-7.flex.flex-wrap.gap-2.place-content-center
   .col-md-10.px-2.mt-2
       button(@click="prevPage") &lt
   .col-md-10.px-2.mt-2
