@@ -13,6 +13,7 @@ import ImageUpload from '@/components/ImageUpload.vue'
 import CVInput from '@/components/CVInput.vue'
 import CVLabel from '@/components/CVLabel.vue'
 import CVDatepicker from '@/components/CVDatepicker.vue'
+import CVHelpButton from '@/components/CVHelpButton.vue'
 import '@vuepic/vue-datepicker/dist/main.css';
 import {
     Listbox,
@@ -20,7 +21,6 @@ import {
     ListboxOptions,
     ListboxOption,
 } from '@headlessui/vue'
-
 
 import type { Image, Page, User, PageDonation, Reply } from '@/types.d.ts'
 import { Family } from "@prisma/client"
@@ -262,12 +262,17 @@ CVContainer
         br
         .bar.mx-9(style="border-top: 0.5px solid #646464;")
     br
-    .div
-        .information.rounded-md.mx-9.my-2.text-center(class="sm:text-start text-white bg-blue-999")
+    div
+        .information.rounded-md.my-2.text-center(class="sm:text-start text-white bg-blue-999")
             CVLegend Personal Information
-        .py-4.grid(class="sm:grid-cols-3") 
-            CVLabel Page Name
-            .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
+        .py-4.flex.gap-60
+            .flex
+                CVLabel Page Name
+                CVHelpButton(class="inline-block" 
+    description="The first and last name of the recently deceased person this page should be dedicated to should be entered here") 
+                // TODO: Fix this frontend bit to facilitate page name => first and last name
+            CVInput.mx-11(v-model='data.page_name' placeholder="required" required)
+        //    .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
                 CVInput(v-model='data.page_name' placeholder="required" required)
         .py-4.grid(class="sm:grid-cols-3" v-if="isAdvocate")
             CVLabel Family
@@ -281,19 +286,21 @@ CVContainer
                 )
                             ListboxOptions(as='div' class='w-full absolute z-10 mt-10 bg-white shadow-lg max-h-60 rounded-md px-2 py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm' )
                                 ListboxOption(as='div' v-for="family in data_all_users" :key="family.cuid" :value="family.cuid" class="px-2 border border-grey-500 py-1 my-1") {{ family.family_name }}
-                    ListboxButton(class='text-left bg-white relative rounded-md pl-2 pr-10 py-2 sm:text-sm w-96') {{ familyCuid ? currentFamily.family_name : 'Select family to add the page to' }}
+                    ListboxButton(class='text-left bg-white relative rounded-md pl-2 pr-10 py-2 sm:text-sm w-96') {{ familyCuid ? currentFamily.family_name : 'Select Family to add the page to' }}
         ImagePreview(v-model:images="imageData" :images="data.Images" :profileImage="profileImage" :pageCuid="cuid_data" @profileImage="setProfileImage" @images="setImagesPreview")
-        .information.rounded-md.mx-9.my-2.text-center(class="sm:text-start text-white bg-blue-999")
+        .information.rounded-md.my-2.text-center(class="sm:text-start text-white bg-blue-999")
             legend.ml-2(class="sm:py-1" style="font-weight: 700; text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") Profile Image Selection        
-        .py-4.grid(class="sm:grid-cols-3") 
-            CVLabel Profile Image
-            .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
-                Listbox.rounded-md.outline-0.border-box.w-full.p-2.bg-white(style="width:350px; border: 1px solid #c4c4c4;" v-model="data.profileImageCuid" as="div") 
-                    ListboxButton(class='bg-white relative rounded-md pl-2 py-2 sm:text-sm')
-                        img.rounded-lg(style="padding: 10px;" :src="profileImage?.url")
-                    ListboxOptions(as='div' style="width:350px;" class='w-full absolute z-10 mt-10 bg-white shadow-lg max-h-60 rounded-md px-2 py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm' )
-                        ListboxOption(v-for="(image,k) in imageData" :key="image.cuid" :value="image.cuid")
-                            img.rounded-lg(style="padding: 10px;" :src="image.url")
+        .py-4.flex.gap-72
+            .flex
+                CVLabel Profile Image
+                CVHelpButton(class="inline-block" 
+    description="Here, you select from photos you uploaded to show up first on the Family Page") 
+            Listbox.rounded-md.outline-0.border-box.w-full.p-2.bg-white(style="width:350px; border: 1px solid #c4c4c4;" v-model="data.profileImageCuid" as="div") 
+                ListboxButton(class='bg-white relative rounded-md pl-2 py-2 sm:text-sm')
+                    img.rounded-lg(style="padding: 10px;" :src="profileImage?.url")
+                ListboxOptions(as='div' style="width:350px;" class='w-full absolute z-10 mt-10 bg-white shadow-lg max-h-60 rounded-md px-2 py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm' )
+                    ListboxOption(v-for="(image,k) in imageData" :key="image.cuid" :value="image.cuid")
+                        img.rounded-lg(style="padding: 10px;" :src="image.url")
                           
         .py-4.grid(class="sm:grid-cols-3") 
             CVLabel Day of Birth
@@ -303,7 +310,7 @@ CVContainer
             CVLabel Day of Passing 
             .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
                 CVDatepicker(v-model='data.day_of_passing')
-        .information.rounded-md.mx-9.my-2.text-center(class="sm:text-start text-white bg-blue-999")
+        .information.rounded-md.my-2.text-center(class="sm:text-start text-white bg-blue-999")
             CVLegend Visitation Information 
         .py-4.grid(class="sm:grid-cols-3") 
             CVLabel Date
@@ -318,7 +325,7 @@ CVContainer
             .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
                 CVTextArea(v-model='data.visitation_description' placeholder="optional")
 
-        .information.rounded-md.mx-9.my-2.text-center(class="sm:text-start text-white bg-blue-999")
+        .information.rounded-md.my-2.text-center(class="sm:text-start text-white bg-blue-999")
             CVLegend Funeral Information       
         .py-4.grid(class="sm:grid-cols-3")
             CVLabel Date    
@@ -336,12 +343,14 @@ CVContainer
             CVLabel Obituary
             .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
                 CVTextArea(v-model='data.obituary' placeholder="optional")
-        .information.rounded-md.mx-9.my-2(class="sm:text-star text-white bg-blue-999")
+        .information.rounded-md.my-2(class="sm:text-star text-white bg-blue-999")
             CVLegend Fundraising Information
         .py-4.grid(class="sm:grid-cols-3")
-            CVLabel Goal    
-            .col-md-8.flex.mx-9(class="sm:col-span-2 sm:mr-11")
-                span.rounded-l-md.bg-gray-200.text-lg.p-2(style="text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25); border: 1px solid #c4c4c4;") $
+            .flex
+                CVLabel Goal
+                CVHelpButton(class="inline-block" description="If the Donation Goal is 0, it is assumed that there are no donations required") 
+            .flex.col-md-8.mx-9
+                span.rounded-l-md.bg-gray-200.text-lg.p-2.whitespace-nowrap(style="text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25); border: 1px solid #c4c4c4;") $
                 input.outline-0.rounded-r-md.border-box.w-full.p-2(style="border: 1px solid #c4c4c4;" v-model='data.donation_goal' placeholder="required" required)
         .py-4.grid(class="sm:grid-cols-3")
             CVLabel Deadline Date
