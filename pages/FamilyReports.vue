@@ -251,4 +251,5 @@ const prevPage= () => {
   }
 // Invoke the initial data loading
 loadReports();
-</script>
+    }
+    </script>

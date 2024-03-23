@@ -155,10 +155,10 @@ const save = async () => {
     )
     try {
 
-        if (saveSuccess.value == true && isAdvocate.value) {
+        if (saveSuccess == true && isAdvocate.value) {
             errorInPage.value = false;
             await navigateTo('/PageList/' + data.value.userCuid + '?fromUsers=1')
-        } else if(saveSuccess.value == true && !isAdvocate.value){
+        } else if(saveSuccess == true && !isAdvocate.value){
             await navigateTo('/PageList/' + data.value.familyCuid + '?fromUsers=0')
         } else {
             errorInPage.value = true;
