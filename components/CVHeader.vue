@@ -33,27 +33,27 @@ ClientOnly
       href="/api/logout"
       ) 
         p.uppercase.white.w-max LOGOUT
-      NavLinkButton(:to="`/PageList/${cuid}/?fromUsers=0`" v-if="isAdvocateAdmin") 
+      NavLinkButton(:to="`/pageList/${cuid}/?fromUsers=0`" v-if="isAdvocateAdmin" :class="{'!text-black border-green-999 bg-white': route.path.includes('/page') || route.path.includes('/Page')}") 
         p.uppercase.white.w-max Pages
-      NavLinkButton(:to="`/pageList/${familyCuid}/?fromUsers=0`" v-if="!isAdvocateAdmin")
+      NavLinkButton(:to="`/pageList/${familyCuid}/?fromUsers=0`" v-if="!isAdvocateAdmin" :class="{'!text-black border-green-999 bg-white': route.path.includes('/pageList')}")
         p.uppercase.white.w-max Pages
-      NavLinkButton(to='/EditPage/0') 
+      NavLinkButton(to='/EditPage/0' :class="{'!text-black border-green-999 bg-white': route.path.includes('/EditPage')}") 
         p.uppercase.white.w-max New page
-      NavLinkButton( v-if="isAdvocateAdmin" to='/Users') 
+      NavLinkButton( v-if="isAdvocateAdmin" to='/Users' :class="{'!text-black border-green-999 bg-white': route.path.includes('/Users')}") 
         p.uppercase.white.w-max Users
-      NavLinkButton( v-if="isAdvocateAdmin" to='/EditUser/0') 
+      NavLinkButton( v-if="isAdvocateAdmin" to='/EditUser/0' :class="{'!text-black border-green-999 bg-white': route.path.includes('/EditUser')}") 
         p.uppercase.white.w-max Invite user
-      NavLinkButton( v-if="isAdvocateAdmin" to='/EditFamily') 
+      NavLinkButton( v-if="isAdvocateAdmin" to='/EditFamily' :class="{'!text-black border-green-999 bg-white': route.path == '/EditFamily'}") 
         p.uppercase.white.w-max Create Family
-      NavLinkButton(to="/") 
+      NavLinkButton(to="/" :class="{'!text-black border-green-999 bg-white': route.path == '/'}") 
         p.uppercase.white.w-max Home
-      NavLinkButton(v-if="isAdmin" to='/FamilyTransactionList') 
+      NavLinkButton(v-if="isAdmin" to='/FamilyTransactionList' :class="{'!text-black border-green-999 bg-white': route.path == '/FamilyTransactionList'}") 
         p.uppercase.white.w-max Donations
-      NavLinkButton(v-if="isAdvocateAdmin" to='/FamilyReports')
+      NavLinkButton(v-if="isAdvocateAdmin" to='/FamilyReports' :class="{'!text-black border-green-999 bg-white': route.path == '/FamilyReports'}")
         p.uppercase.white.w-max Family Reports
     div.max-w-min.mx-auto.flex.gap-2(v-else)
       a.items-center.px-2.py-2.text-base.font-medium.rounded-md.text-gray-999.cursor-pointer(
-      class='hover:text-black border border-gray-999 hover:border-green-999 bg-white'  
+      class='hover:!text-black border border-gray-999 hover:border-green-999 bg-white'  
       href="/api/login"
       ) 
         p.uppercase.white.w-max LOGIN
