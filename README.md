@@ -16,6 +16,7 @@ Need Private keys for
  - Stripe
  - AWS
  - Auth0
+ - Constant Contacts
  Need 
  - email source for AWS SES
  - S3 bucket URL
@@ -23,12 +24,13 @@ Need Private keys for
 
 Install the dependencies:
 
+Ideally use npm
 ```bash
-# yarn
-yarn install
-
 # npm
-npm install
+npm install 
+
+# yarn
+yarn install 
 
 # pnpm
 pnpm install --shamefully-hoist

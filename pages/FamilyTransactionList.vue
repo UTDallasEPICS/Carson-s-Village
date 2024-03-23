@@ -24,13 +24,12 @@ const currentFamilyPageNumber = ref(0)
 const cvuser = useCookie<User>('cvuser');
 const isAdmin = computed(() => cvuser.value?.user_role == "admin")
 const isAdvocate = computed(() => cvuser.value?.user_role == "advocate")
-//if(isAdmin  ) {
-  const { data: Families } = await useFetch<Family[]>('/api/families', {
+const { data: Families } = await useFetch<Family[]>('/api/families', {
     method: 'GET',
     default() {
       return [] as any
     }, 
-  });
+});
 
   const currentFamilyCuid = ref<string>("")
   const currentFamily = computed(() => Families.value?.find(({ cuid }: Family) => cuid == currentFamilyCuid.value) || {})
@@ -68,7 +67,7 @@ const isAdvocate = computed(() => cvuser.value?.user_role == "advocate")
         currentFamilyPageNumber.value++
     } 
   }
-  const prevPage= () => {
+  const prevPage = () => {
     if(currentFamilyPageNumber.value != 0){
         currentFamilyPageNumber.value--
     } 
@@ -143,9 +142,9 @@ const isAdvocate = computed(() => cvuser.value?.user_role == "advocate")
   table.mt-5.table.table-striped.w-full
       thead
           tr(style="color: white;")
-              th.px-8(style="--tw-bg-opacity: 1; background-color: rgb(110 171 191 / var(--tw-bg-opacity));border-radius: 60px 0px 0px 0px; width:33.33%; overflow: hidden") Page Name
-              th.px-8(style="--tw-bg-opacity: 1; background-color: rgb(110 171 191 / var(--tw-bg-opacity));") Raised
-              th.font-poppins.font-bold(style="--tw-bg-opacity: 1; border-radius: 0px 60px 0px 0px; background-color: rgb(110 171 191 / var(--tw-bg-opacity)); width:33.33%") Remaining
+              th.px-8(style="--tw-bg-opacity: 1; background-color: #5aadc2;border-radius: 60px 0px 0px 0px; width:33.33%; overflow: hidden") Page Name
+              th.px-8(style="--tw-bg-opacity: 1; background-color: #5aadc2;") Raised
+              th.font-poppins.font-bold(style="--tw-bg-opacity: 1; border-radius: 0px 60px 0px 0px; background-color: #5aadc2; width:33.33%") Remaining
           tr(v-for="(item, i) in familyData.data" 
               :key="i" 
               :class="{'bg-gray-200': (i+1) % 2}"
@@ -157,16 +156,16 @@ const isAdvocate = computed(() => cvuser.value?.user_role == "advocate")
     .col-md-10.px-2.mt-2
         button(@click="prevPage") &lt
     .col-md-10.px-2.mt-2
-        p {{  currentFamilyPageNumber }}
+        p {{  currentFamilyPageNumber + 1}}
     .col-md-10.px-2.mt-2
         button(@click="nextPage") >
   CVLegend.mt-10 Family Donations
   table.mt-5.table.table-striped(style="width:100%;")
       thead
           tr(style="color: white;")
-              th.px-8(style="--tw-bg-opacity: 1; background-color: rgb(110 171 191 / var(--tw-bg-opacity));border-radius: 60px 0px 0px 0px; width:33.33%; overflow: hidden") Transaction id
-              th.font-poppins.font-bold(style="--tw-bg-opacity: 1; background-color: rgb(110 171 191 / var(--tw-bg-opacity));") Page Name
-              th.px-8(style="width:33.33%; --tw-bg-opacity: 1; border-radius: 0px 60px 0px 0px; background-color: rgb(110 171 191 / var(--tw-bg-opacity));") Amount
+              th.px-8(style="--tw-bg-opacity: 1; background-color: #5aadc2;border-radius: 60px 0px 0px 0px; width:33.33%; overflow: hidden") Transaction id
+              th.font-poppins.font-bold(style="--tw-bg-opacity: 1; background-color: #5aadc2;") Page Name
+              th.px-8(style="width:33.33%; --tw-bg-opacity: 1; border-radius: 0px 60px 0px 0px; background-color: #5aadc2;") Amount
           tr(v-for="(item, i) in donations" 
               :key="i" 
               :class="{'bg-gray-200': (i+1) % 2}"
