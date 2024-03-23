@@ -121,7 +121,7 @@ const data_all_users = ref<Family[]>([])
 
 const imageData = ref<Image[]>([])
 const profile_image = ref("")
-
+const left = ref(true)
 const familyCuid = ref("")
 const cuid_data = computed(() => router.params.id);
 const cuid = cuid_data.value as string
@@ -286,9 +286,12 @@ CVContainer
             CVLabel Profile Image
             .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
                 Listbox.rounded-md.outline-0.border-box.w-full.p-2.bg-white(style="width:350px; border: 1px solid #c4c4c4;" v-model="data.profileImageCuid" as="div") 
-                    ListboxButton(class='bg-white relative rounded-md pl-2 py-2 sm:text-sm')
-                        img.rounded-lg(style="padding: 10px;" :src="profileImage?.url")
-                    ListboxOptions(as='div' style="width:350px;" class='w-full absolute z-10 mt-10 bg-white shadow-lg max-h-60 rounded-md px-2 py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm' )
+                    ListboxButton(@click="left=!left" class='bg-white relative rounded-md pl-2 py-2 sm:text-sm')
+                        div.flex
+                            img.rounded-lg(class="w-50" style="padding: 10px;" :src="profileImage?.url")
+                            p.p-2(v-if="left" style="font-size: 20px") &lt
+                            p.p-2(v-else style="font-size: 20px") v
+                    ListboxOptions(as='div' style="width:350px;" class='absolute z-10 mt-10 bg-white shadow-lg max-h-60 rounded-md px-2 py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm' )
                         ListboxOption(v-for="(image,k) in imageData" :key="image.cuid" :value="image.cuid")
                             img.rounded-lg(style="padding: 10px;" :src="image.url")
                           

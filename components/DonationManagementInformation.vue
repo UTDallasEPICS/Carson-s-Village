@@ -24,16 +24,24 @@
         .border.border-grey-500.p-5
           p.self-center.text-center Remaining Amount to Distribute
           p.text-center.mt-2 {{ donationFormat(props.amount_raised - props.amount_distributed) }}
+        .border.border-grey-500.p-5
+          p.self-center.text-center Donation Status
+          p.text-center.mt-2 {{ props.donationStatus }}
+        .border.border-grey-500.p-5
+          p.self-center.text-center Start Date
+          p.text-center.mt-2 {{ dateFormat(props.startDate) }}
 </template>
     
 <script setup lang="ts">
-import { donationFormat } from "@/utils"
+import { donationFormat, dateFormat } from "@/utils"
 const props = defineProps<{
   totalPageDonations: number,
   totalDistributed: number,
   totalRemaining: number,
   amount_raised: number,
-  amount_distributed: number
+  amount_distributed: number,
+  donationStatus: string,
+  startDate: string
 }>()
 
 </script>

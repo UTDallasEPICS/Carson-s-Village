@@ -110,7 +110,7 @@ const { data: Families } = await useFetch<Family[]>('/api/families', {
         ListboxButton(class='text-left bg-white relative rounded-md pl-2 pr-10 py-2 sm:text-sm w-96') {{ currentPageCuid ? currentPage.page_name : 'Select Page' }}
   
   .flex.gap-5.justify-around
-    DonationManagementInformation(:totalPageDonations="totalPageDonations" :totalDistributed="totalDistributed" :totalRemaining="totalRemaining" :amount_raised="currentPage?.amount_raised" :amount_distributed="currentPage?.amount_distributed")
+    DonationManagementInformation(:donationStatus="currentPage?.donation_status" :startDate="currentPage?.start_date" :totalPageDonations="totalPageDonations" :totalDistributed="totalDistributed" :totalRemaining="totalRemaining" :amount_raised="currentPage?.amount_raised" :amount_distributed="currentPage?.amount_distributed")
     div(class="basis-1/3")
       PayoutRecord(:currentPage="currentPage" :currentFamily="currentFamily")
 
