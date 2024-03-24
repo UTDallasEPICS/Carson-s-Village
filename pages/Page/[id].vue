@@ -10,7 +10,7 @@
 */
 
 import type { Page, PageDonation, Image, Reply, Family} from '@/types.d.ts'
-import {  dateFormat, donationFormat } from '@/utils'
+import { dateFormat, donationFormat } from '@/utils'
 import CVReplySystem from '@/components/CVReplySystem.vue'
 
 const pageData = ref<Page>({

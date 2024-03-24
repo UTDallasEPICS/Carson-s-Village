@@ -1,5 +1,5 @@
 <script lang = "ts" setup>
-import type { Page, User } from '@/types.d.ts'
+import type { Page, User, Image, PageDonation, Reply } from '@/types.d.ts'
 import { dateFormat, donationFormat} from '@/utils'
 import { RoutingRuleFilterSensitiveLog } from '@aws-sdk/client-s3'
 import { Family } from '@prisma/client'
@@ -21,13 +21,45 @@ import {
 
 
 // todo: clean up and finish advocate managment system functionality to page list
+export type Page2 = {
+    page_name: string,
+    cuid: string,
+    userCuid: string,
+    familyCuid: string,
+    day_of_birth: Date | string,
+    day_of_passing: Date | string,
+    visitation_date: Date | string,
+    visitation_location: string,
+    visitation_description: string,
+    funeral_date: Date | string,
+    funeral_description: string,
+    funeral_location: string,
+    obituary: string,
+    deadline: Date | string,
+    donation_goal: number | string
+    amount_raised: number | string
+    amount_distributed: number | string
+    profileImageCuid: string
+    Images: Image[],
+    Family: Family,
+    status: string,
+    donation_status: string,
+    duration: string, 
+    start_date: string
+    goal_met_date: string
+    PageDonations: PageDonation[]
+    Reply: Reply[]
+    User: User
+}
+
 const family_cuid = ref("")
 const router = useRoute()
 const family_cuid_data = computed(() => router.params.id)
 family_cuid.value = family_cuid_data.value as string;
 const user_cuid_data = computed(() => router.params.id)
 const user_cuid = user_cuid_data.value as string
-const pages = ref<Page[]>([])
+const pages = ref<Page2[]>([])
+//const pages2 = ref<Page[]>([])
 const cvuser = useCookie<User>('cvuser')
 const user_cuid2 = cvuser.value.cuid
 const isAdmin = computed(() => cvuser.value?.user_role == "admin")
@@ -61,7 +93,8 @@ const getDataPageList = async () => {
       method: 'GET',
       query: { searchQuery: ref(""), page_number: currentPage, isPageList: 1 }
     })
-    pages.value = pagesData.value?.data as unknown as Page[]
+
+    pages.value = pagesData.value?.data as unknown as Page2[]
     totalLength.value = pagesData.value?.Pagination.total as unknown as number
   }
 
@@ -85,7 +118,7 @@ const getDataPageList = async () => {
         return [] as any
       }
     }) 
-      pages.value = family_pages.value.data as unknown as Page[]
+      pages.value = family_pages.value.data as unknown as Page2[]
       totalLength.value = family_pages.value.Pagination.total as unknown as number
     } 
   // handles the family pages of a family member
@@ -97,7 +130,7 @@ const getDataPageList = async () => {
         return [] as any
       }
     }) 
-    pages.value = (family_pages.value.data) as unknown as Page[]
+    pages.value = (family_pages.value.data) as unknown as Page2[]
     totalLength.value = family_pages.value.Pagination.total as unknown as number
   }
     const isEmpty = computed(() => pages.value.length == 0)
@@ -111,7 +144,7 @@ const getDataPageList = async () => {
           return [] as any
         }
       })
-        pages.value = (familyData.value.data) as unknown as Page[]
+        pages.value = (familyData.value.data) as unknown as Page2[]
         totalLength.value = familyData.value.Pagination.total as unknown as number
   }
 }
@@ -183,6 +216,8 @@ await getDataPageList()
     thead
       tr
         th.font-poppins.font-bold.p-2(style="color:white;--tw-bg-opacity: 1; background-color: rgb(110 171 191 / var(--tw-bg-opacity)); overflow: hidden; border-radius: 60px 0px 0px 0px; width:30%; ")  Page Name
+        th.font-poppins.font-bold(style="color:white; width: 10%; --tw-bg-opacity: 1; background-color: rgb(110 171 191 / var(--tw-bg-opacity));") Creating User
+        th.font-poppins.font-bold(style="color:white; width: 10%; --tw-bg-opacity: 1; background-color: rgb(110 171 191 / var(--tw-bg-opacity));") Advocate 
         th.font-poppins.font-bold(style="color:white; --tw-bg-opacity: 1; background-color: rgb(110 171 191 / var(--tw-bg-opacity));") Total Donated
         th.font-poppins.font-bold(style="color:white; width:30%; --tw-bg-opacity: 1; background-color: rgb(110 171 191 / var(--tw-bg-opacity));") Creation Date
         th.font-poppins.font-bold(style="color:white; width:30%; --tw-bg-opacity: 1; background-color: rgb(110 171 191 / var(--tw-bg-opacity));") Donation Deadline
@@ -194,6 +229,8 @@ await getDataPageList()
       :class="{'bg-gray-200': (i+1) % 2}"
       )
         td.font-poppins.text-gray-dark.font-bold(style="text-align: center;") {{ item.page_name }}
+        td.font-poppins.text-gray-dark.font-bold(style="text-align: center;") {{ item.User?.first_name + " " + item.User?.last_name }}
+        td.font-poppins.text-gray-dark.font-bold(style="text-align: center;") {{ item.Family?.AdvocateResponsible.first_name + " " + item.Family?.AdvocateResponsible.last_name }}
         td.font-poppins.text-gray-dark.font-bold(style="text-align: center;") {{ donationFormat(item.amount_raised) }}
         td.font-poppins.text-gray-dark.font-bold(style="text-align: center;") {{ dateFormat(item.start_date) }}
         td.font-poppins.text-gray-dark.font-bold(style="text-align: center;") {{ dateFormat(item.deadline) }}
