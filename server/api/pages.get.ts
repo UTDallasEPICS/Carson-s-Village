@@ -27,26 +27,45 @@ if(event.context.user.cuid != undefined) { //if the user is not logged in, do no
     };
   }
 
-  const searchQuerySpacesRemoved = (searchQuery as string).replaceAll(" ", "")
-  // Makes sure that an empty searchQuery returns no results and that searchQueries with all spaces return no results (prevents returning all pages with a first and last name using a space).
-  if((searchQuery as string) != "" && searchQuerySpacesRemoved.length != 0) {
-    // Pagination via taking the absolute page number with 12 records per page 
-    const [count, pagesResult] = await prisma.$transaction([
-      prisma.page.count({ where: { page_name: {
-        contains: searchQuery as string,
-        mode: 'insensitive',
-      } }}),
-      prisma.page.findMany({
-    where: {
-    page_name: {
+  console.log(page_number)
+  
+  // Pagination via taking the absolute page number with 12 records per page 
+  // Transaction is a Database thing
+  // You can get away with doing multiple operations at once. 
+  // count gets the amount of pages with the same name
+  // 
+  const [count, pagesResult] = await prisma.$transaction([
+    prisma.page.count({ where: { 
+      OR: [ {
+      page_first_name: {
       contains: searchQuery as string,
       mode: 'insensitive',
-    }
+    } },
+      { page_last_name: {
+        contains: searchQuery as string,
+      mode: 'insensitive',
+      }}] }}),
+    prisma.page.findMany({
+  where: {
+    OR: [ {
+      page_first_name: {
+        contains: searchQuery as string,
+        mode: 'insensitive',
+      }
     },
-    skip: page_number as number * 12,
-    take: 12, 
-  })
-    ])
+    {
+      page_last_name: {
+        contains: searchQuery as string,
+        mode: 'insensitive',
+      }
+    }
+    ]
+  },
+  skip: page_number as number * 12,
+  take: 12, 
+})
+  ])
+
 
     return {
       Pagination: {
