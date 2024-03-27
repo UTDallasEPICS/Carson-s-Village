@@ -53,6 +53,7 @@ const errorInPage = ref(false);
 
 // Method that creates a new user on the database on the backend
 const save = async () => {
+
   if(isAuthorized){
     const data = await $fetch('/api/user', {
       method: (cuid.value as string) !== "0" ? 'PUT' : 'POST',
@@ -66,6 +67,7 @@ const save = async () => {
         errorInPage.value = true;
     }
   }
+
 }
 
 const currentFamily = computed(() => data_all_families.value?.find(({ cuid }: Family) => cuid == familyCuid.value) || {});
@@ -91,7 +93,9 @@ const getUsers = async () => {
 if ((cuid.value as string) !== "0") {
   await getData(cuid.value as string);
 }
+
 await getUsers()
+
 </script>
 
 <template lang="pug">

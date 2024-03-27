@@ -4,43 +4,70 @@
 //todo: add selection for families instead of all at once and toggle between all at once and all families by having the first option as displaying every page
 //todo: 3 column by however many needed rows (flex-wrap) of checkboxes to enable and disable columns. Future idea: put a nicer version as a sidebar
 div
-        h2(style="margin-top: 2.5rem; margin-left:1.65rem; font-weight:700") Family Reports 
-<br/>
-    a.mt-3.p-4.px-6.pt-4.bg-orange-400.rounded-full(style="color: white; font-weight:700; text-align: center; margin-left: 17.5px" :href="filedownloadlink" :download="downloadName" :dataset.downloadurl="dataset") Download
-    a.mt-3.p-4.px-6.pt-4.bg-orange-400.rounded-full(style="color: white; font-weight:700; text-align: center; margin-left: 1000px") Archived Pages
-    table(style="margin-top: 1.25rem; width: 100%; border-spacing: 0; border-collapse: collapse;" v-if="isAdminAdvocate")
-        thead(style="color:white;")
-            tr
-                th(style="padding: 1rem; background-color: #6eabbf; border-radius: 60px 0 0 0; width: 12%;") Page Name
-                th(style="padding: 1rem; background-color: #6eabbf; width: 12%;") Advocate
-                th(style="padding: 1rem; background-color: #6eabbf; width: 12%;") Duration
-                th(style="padding: 1rem; background-color: #6eabbf; width: 7%;") Goal Met
-                th(style="padding: 1rem; background-color: #6eabbf; width: 10%;") Goal Met Date
-                th(style="padding: 1rem; background-color: #6eabbf; width: 12%;") Start Date
-                th(style="padding: 1rem; background-color: #6eabbf; width: 5%") Owed
-                th(style="padding: 1rem; background-color: #6eabbf; width: 5%") Owed %
-                th(style="padding: 1rem; background-color: #6eabbf; width: 5%") Paid
-                th(style="padding: 1rem; background-color: #6eabbf; width: 5%") Goal
-                th(style="padding: 1rem; background-color: #6eabbf; width: 7%") Goal Date
-                th(style="padding: 1rem; background-color: #6eabbf; width: 7%") Status
-                th(style="padding: 1rem; background-color: #6eabbf; border-radius: 0 60px 0 0; width: 7%;") Toggle Status
-        tbody(v-for="family in families")
-            tr(v-for="(page,i) in family.Pages" 
-            :class="{'bg-gray-200': (i+1) % 2}") 
-                td(style="text-align: center;") {{ page.page_first_name + " " + page.page_last_name}}
-                td(style="text-align: center;") {{ family.AdvocateResponsible.first_name  + " " + family.AdvocateResponsible.last_name }}
-                td(style="text-align: center;") {{ page.duration }} 
-                td(style="text-align: center;") {{  page.donation_status }}
-                td(style="text-align: center;") {{ (page.goal_met_date) ? dateFormat(page.goal_met_date, true) : "Goal Not Reached" }}
-                td(style="text-align: center;") {{ dateFormat(page.start_date, true) }}
-                td(style="text-align: center;") {{ donationFormat((page.amount_raised - page.amount_distributed)) }}
-                td(style="text-align: center;") {{ (page.donation_goal) ? ((page.amount_raised - page.amount_distributed)/(page.donation_goal) * 100) + "%" : "No donation goal"}}
-                td(style="text-align: center;") {{ donationFormat(page.amount_distributed) }}
-                td(style="text-align: center;") {{ donationFormat(page.donation_goal) }}
-                td(style="text-align: center;") {{ dateFormat(page.deadline)}}
-                td(style="text-align: center;") {{ page.status }}
-                td(style="text-align: center;")
-                  ActionButton(style="color: white; background-color:red;" @click="togglePageStatus(page)") {{ "X" }}
+
+    TitleComp.border-1.border-black  Family Reports 
+    br
+    .flex.flex-col.gap-5.px-4.mx-auto.mt-8(class="w-3/4 sm:px-16")
+      //img.mx-auto(v-if="profileImage?.url" class="w-[122px] h-[122px] rounded-[8px]" :src="`${profileImage?.url}`")
+      .text-gray-dark.mx-auto.w-max.font-poppins.text-md {{ dateFormat(start_date, true) + ' - ' + dateFormat(end_date, true) }} 
+      //.flex.flex-col-reverse.gap-5(class="sm:grid sm:grid-cols-2")
+        .relative.w-96.p-1(v-if="imageData.length != 0" )
+          button.absolute.left-4.top-64.bg-black.text-white(@click="prevImage" style="opacity:0.7; --tw-text-opacity: 1; width: 46px; height: 46px; border-radius:50%; align-items: center; justify-content: center; line-height: 2; text-align: center;color: white;") &#60;
+          button.absolute.right-8.top-64.bg-black.text-white(@click="nextImage" style="opacity:0.7; --tw-text-opacity: 1; width: 46px; height: 46px; border-radius:50%; align-items: center; justify-content: center; line-height: 2; text-align: center;color: white;") &#62;
+          img.w-96(style="object-fit:cover" :src="imageData[currentImage].url")
+    .py-4.grid(class="sm:grid-cols-9") 
+            .col-md-8.mx-9(class="sm:col-span-1 sm:mr-11")
+            CVLabel Date Range
+            .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
+              CVDatepicker(v-model='start_date' @update:model-value="currentPage=0; loadReports();")
+            .col-md-8.mx-9(class="sm:col-span-1 sm:mr-11")  
+              p(style="text-align:center;") {{ "-" }}
+            .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")  
+              CVDatepicker(v-model='end_date' @update:modelValue="currentPage=0; loadReports()" )  
+            .col-md-8.mx-9(class="sm:col-span-1 sm:mr-11")
+            a.mr-9.mt-1.p-6.px-6.pr-6.pt-3.pb-3.bg-orange-999(class="transition duration-300 bg-orange-999 hover:bg-green-600" style="border-radius: 100px; height: 50px; color: white; font-weight: 700;" :href="filedownloadlink" :download="downloadName" :dataset.downloadurl="dataset") Download        
+    .flex.gap-2.justify-center.cols-2.pl-6.pr-6
+      table(style="margin-top: 1.25rem; width: 100%; border-spacing: 0; border-collapse: collapse;" v-if="isAdminAdvocate")
+          thead(style="color: white;")
+              tr
+                  th(style="padding: 1rem; background-color: #6eabbf; border-radius: 60px 0 0 0; width: 12%;") Page Name
+                  th(style="padding: 1rem; background-color: #6eabbf; width: 12%;") Advocate
+                  th(style="padding: 1rem; background-color: #6eabbf; width: 10%;") Duration
+                  th(style="padding: 1rem; background-color: #6eabbf; width: 7%;") Goal Met
+                  th(style="padding: 1rem; background-color: #6eabbf; width: 10%;") Goal Met Date
+                  th(style="padding: 1rem; background-color: #6eabbf;") Start Date
+                  th(style="padding: 1rem; background-color: #6eabbf; width: 5%") Owed
+                  //th(style="padding: 1rem; background-color: #6eabbf; width: 5%") Owed %
+                  th(style="padding: 1rem; background-color: #6eabbf; width: 5%") Paid
+                  th(style="padding: 1rem; background-color: #6eabbf; width: 5%") Goal
+                  th(style="padding: 1rem; background-color: #6eabbf; width: 7%") Goal Date
+                  th(style="padding: 1rem; background-color: #6eabbf; width: 7%") Status
+                  th(style="padding: 1rem; background-color: #6eabbf; border-radius: 0 60px 0 0; width: 9%;") Toggle Status
+          tbody
+              tr(v-for="(page, i) in families" 
+              :class="{'bg-gray-200': (i+1) % 2}") 
+                  td(style="text-align: center;") {{ page.page_name }}
+                  td(style="text-align: center;") {{ page.Family.AdvocateResponsible.first_name  + " " + page.Family.AdvocateResponsible?.last_name }}
+                  td(style="text-align: center;") {{ page.duration }} 
+                  td(style="text-align: center;") {{  page.donation_status }}
+                  td(style="text-align: center;") {{ (page.goal_met_date) ? dateFormat(page.goal_met_date, true) : "Goal Not Reached" }}
+                  td(style="text-align: center;") {{ dateFormat(page.start_date, true) }}
+                  td(style="text-align: center;") {{ donationFormat((page.amount_raised - page.amount_distributed)) }}
+                  //td(style="text-align: center;") {{ (page.donation_goal) ? ((page.amount_raised - page.amount_distributed)/(page.donation_goal) * 100).toFixed(2) + "%" : "No donation goal"}}
+                  td(style="text-align: center;") {{ donationFormat(page.amount_distributed) }}
+                  td(style="text-align: center;") {{ donationFormat(page.donation_goal) }}
+                  td(style="text-align: center;") {{ dateFormat(page.deadline)}}
+                  td(style="text-align: center;") {{ page.status }}
+                  td(style="text-align: center;")
+                    ActionButton(style="color: white; background-color: red;" @click="togglePageStatus(page)") {{ "X" }}
+
+.mb-9.py-7.flex.flex-wrap.gap-2.place-content-center
+  .col-md-10.px-2.mt-2
+      button(@click="prevPage") &lt
+  .col-md-10.px-2.mt-2
+      p {{  currentPage + 1 }}
+  .col-md-10.px-2.mt-2
+      button(@click="nextPage") >
 
 </template>
     
@@ -96,6 +123,19 @@ div
     const headers = ["page_first_name", "page_last_name", "donation_goal", "amount_raised", "deadline", "amount_distributed", "donation_status", "duration", "start_date", "goal_met_date", "first_name", "middle_name", "last_name", "Amount Owed / Goal Percentage" ]
     return arr.reduce((acc: any[], page: any) => [...acc, headers.reduce((acc: string[], header: string) => [...acc, page[header]], []).join(",")], []).join("\n")
   }
+
+
+  // creates download link to csv of family reports table
+  const createCsvDownloadLink = (csv: string) => {
+      const csvFile = new File([csv], "file", {
+      type: "text/csv" } )
+      // unique filename based on current time
+      const filename = "family_report_" + formatReportDate(dateFormat(new Date().toString(), true).replaceAll("/", "-")) + ".csv"
+      console.log(filename)
+      filedownloadlink.value = window.URL.createObjectURL(csvFile);
+      dataset.value = ["text/csv", filename, filedownloadlink.value].join(':');
+      downloadName.value = filename
+    }
   
   // loads family report data from the families database table and joins and creates a download link for the file
   const loadReports = async () => {
@@ -114,25 +154,37 @@ div
     }
   }
 
-  // creates download link to csv
-  const createCsvDownloadLink = (csv: string) => {
-    const csvFile = new File([csv], "file", {
-    type: "text/csv" } )
-    const filename = "report-" + dateFormat(new Date().toString())+".csv"
-    filedownloadlink.value = window.URL.createObjectURL(csvFile);
-    dataset.value = ["text/csv", filename, filedownloadlink.value].join(':');
-    downloadName.value = filename
-  }
-  // method activated by Advocate or Admin to manual remove the ability to donate to a family page after about a week of the donation deadline.
-  // an advocate or admin can also re-enable a page to set its status from 'inactive' to 'active'
-  const togglePageStatus = (page: Page) => {
-    if(isAdminAdvocate.value) {
-      console.log(page.status)
-      let booleanChanged = false 
-      if(page.status == "active") {
-        const confirmDeactivate = confirm('Are you sure you want to deactivate this page?')
-          if(confirmDeactivate) {
-            page.status = "inactive"
+
+    // Formats report date to the format 'yyyy-mm-dd'
+    function formatReportDate(date: string) {
+      const dates = date.split("-")
+      const month = dates[0]
+      const day = dates[1]
+      const year = dates[2]
+      const formatedMonth = parseInt(month) >= 10 ? month : 0 + "" + month
+      const formatedDay = parseInt(day) >= 10 ? day : 0 + "" + day
+      return year + "-" + formatedMonth + "-" + formatedDay 
+    }
+    
+    
+    // method activated by Advocate or Admin to manual remove the ability to donate to a family page after about a week of the donation deadline.
+    // an advocate or admin can also re-enable a page to set its status from 'inactive' to 'active'
+    const togglePageStatus = (page: Page) => {
+      if(isAdminAdvocate.value) {
+        let booleanChanged = false 
+        if(page.status == "active") {
+          const confirmDeactivate = confirm('Are you sure you want to deactivate this page?')
+            if(confirmDeactivate) {
+              page.status = "inactive"
+              booleanChanged = true
+            } else if(!confirmDeactivate){
+              return ""
+            }
+        } else if(page.status == "inactive" && !booleanChanged) {
+          const confirmReactivate = confirm('Are you sure you want to reactivate this page?')
+          if(confirmReactivate) {
+            page.status = "active"
+
             booleanChanged = true
           } else if(!confirmDeactivate){
           return ""
@@ -146,25 +198,31 @@ div
         return ""
         }
 
-      }
-        booleanChanged = false          
 
-        const toggledStatus = $fetch('api/page', {
-          method: "PUT",
-          body: { ...page }
-        })
-      }
+          booleanChanged = false          
+          const toggledStatus = $fetch('api/page', {
+            method: "PUT",
+            body: { ...page }
+          })
+        }
+    }
+    
+// Pagination control, move the page counter forwards and backwards and searches
+const nextPage = () => { 
+  console.log(totalLength.value / 12)
+    if(currentPage.value < ((totalLength.value / 12) - 1)){
+        currentPage.value++
+        loadReports()
+    } 
+}
+const prevPage= () => {
+    if(currentPage.value != 0){
+        currentPage.value--
+        loadReports()
+    } 
   }
-  const goToNextPage = () => {
-    // existing logic for pagination
-  };
-  
-  const goToPreviousPage = () => {
-    // existing logic for pagination
-  };
-  
-  // Invoke the initial data loading
-  loadReports();
-  
+// Invoke the initial data loading
+loadReports();
+    }
+    </script>
 
-</script>
