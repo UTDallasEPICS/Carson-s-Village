@@ -120,7 +120,7 @@ div
   
   // converts array of family pages and their advocate responsible for the family into a csv
   function convertToCSV(arr : Partial<Page[]>) {
-    const headers = ["page_first_name", "page_last_name", "donation_goal", "amount_raised", "deadline", "amount_distributed", "donation_status", "duration", "start_date", "goal_met_date", "first_name", "middle_name", "last_name", "Amount Owed / Goal Percentage" ]
+    const headers = ["first_name", "last_name", "donation_goal", "amount_raised", "deadline", "amount_distributed", "donation_status", "duration", "start_date", "goal_met_date", "first_name", "middle_name", "last_name", "Amount Owed / Goal Percentage" ]
     return arr.reduce((acc: any[], page: any) => [...acc, headers.reduce((acc: string[], header: string) => [...acc, page[header]], []).join(",")], []).join("\n")
   }
 

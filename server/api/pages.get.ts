@@ -37,24 +37,24 @@ if(event.context.user.cuid != undefined) { //if the user is not logged in, do no
   const [count, pagesResult] = await prisma.$transaction([
     prisma.page.count({ where: { 
       OR: [ {
-      page_first_name: {
+      first_name: {
       contains: searchQuery as string,
       mode: 'insensitive',
     } },
-      { page_last_name: {
+      { last_name: {
         contains: searchQuery as string,
       mode: 'insensitive',
       }}] }}),
     prisma.page.findMany({
   where: {
     OR: [ {
-      page_first_name: {
+      first_name: {
         contains: searchQuery as string,
         mode: 'insensitive',
       }
     },
     {
-      page_last_name: {
+      last_name: {
         contains: searchQuery as string,
         mode: 'insensitive',
       }
