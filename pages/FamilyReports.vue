@@ -201,7 +201,7 @@ div
     
     // method activated by Advocate or Admin to manual remove the ability to donate to a family page after about a week of the donation deadline.
     // an advocate or admin can also re-enable a page to set its status from 'inactive' to 'active'
-    const togglePageStatus = (page: Page) => {
+    const togglePageStatus = async(page: Page) => {
       if(isAdminAdvocate.value) {
         let booleanChanged = false 
         if(page.status == "active") {
@@ -218,7 +218,7 @@ div
             page.status = "active"
 
             booleanChanged = true
-          } else if(!confirmDeactivate){
+          } else if(!confirmReactivate){
           return ""
           }
       } else if(page.status == "inactive" && !booleanChanged) {
@@ -229,14 +229,17 @@ div
         } else if(!confirmReactivate) {
         return ""
         }
+      }
 
-          booleanChanged = false          
-          const toggledStatus = $fetch('api/page', {
+        //booleanChanged = false         
+        if(booleanChanged) {
+          const toggledStatus = await $fetch('api/page', {
             method: "PUT",
             body: { ...page }
           })
         }
     }
+  }
     
 // Pagination control, move the page counter forwards and backwards and searches
 const nextPage = () => { 
@@ -246,7 +249,7 @@ const nextPage = () => {
         loadReports()
     } 
 }
-const prevPage= () => {
+const prevPage = () => {
     if(currentPage.value != 0){
         currentPage.value--
         loadReports()
@@ -254,5 +257,4 @@ const prevPage= () => {
   }
 // Invoke the initial data loading
 loadReports();
-    }
-    </script>
+</script>

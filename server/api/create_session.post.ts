@@ -19,11 +19,11 @@ export default defineEventHandler(async event => {
     const transaction_id = nanoid();
     const stripe = new Stripe(runtime.STRIPE_SECRET, { apiVersion:"2022-11-15"})
     const body = await readBody(event)
-    const page_cuid = body.pageCuid
-    const donorComments = body.comments;
+    const page_cuid = body._value.pageCuid
+    const donorComments = body._value.comments;
     const state = {}; 
-    const userCuid = body.userCuid
-    const familyCuid = body.family_cuid 
+    const userCuid = body._value.userCuid
+    const familyCuid = body._value.familyCuid 
   try{
     const page = await prisma.page.findFirst({
       where: {
@@ -37,7 +37,7 @@ export default defineEventHandler(async event => {
 			{
 				price_data: {
 					currency: 'usd',
-					unit_amount: body.amount_raised,
+					unit_amount: Math.trunc(parseFloat(body._value.amount as unknown as string) * 100) as number,
 					product_data: {
 						name: `Donation to ${page?.page_name}`,
 					},
@@ -47,7 +47,7 @@ export default defineEventHandler(async event => {
 		],
 		metadata: {
 			transaction_id: transaction_id,
-			amount: body.amount_raised,
+			amount: Math.trunc(parseFloat(body._value.amount as unknown as string) * 100) as number,
 			target_user_id: userCuid,
       target_family_id: familyCuid,
 			target_page_name: page?.page_name as string,
@@ -58,14 +58,14 @@ export default defineEventHandler(async event => {
 		cancel_url: `${runtime.BASEURL}page/${page_cuid}`,
 	});
 
-	console.log(body)
+	console.log(body._value)
 
     const queryRes = await prisma.pageDonation.create({
       data: {
         transaction_id: transaction_id,
-        amount: body.amount_raised,
-        donorFirstName: body.donorFirstName,
-        donorLastName: body.donorLastName,
+        amount: Math.trunc(parseFloat(body._value.amount as unknown as string) * 100) as number,
+        donorFirstName: body._value.donorFirstName,
+        donorLastName: body._value.donorLastName,
         comments: donorComments, 
         Family: {
           connect: {

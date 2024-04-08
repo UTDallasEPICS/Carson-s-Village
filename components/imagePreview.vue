@@ -38,7 +38,7 @@ const removeImage = async (cuid: string, isPreview: boolean) => {
   if(confirm('Are you sure you want to delete this image?')){
     const theImage = props.images.find((i:Image)=> i.cuid == cuid)
     // todo: change to $fetch
-    await useFetch('/api/image', {
+    await $fetch('/api/image', {
     method: 'delete',
     body: (theImage as Image)
     });
