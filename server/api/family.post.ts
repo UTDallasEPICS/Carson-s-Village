@@ -35,7 +35,7 @@ export default defineEventHandler(async event => {
   };
 
 const body = await readBody(event);
-const now = (new Date()).toString();
+const now = (new Date()).toISOString();
   const { family_name,
     first_name,
     email,

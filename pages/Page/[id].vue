@@ -77,6 +77,7 @@ const donationData = ref<PageDonation>({
     donorLastName: "",
     comments: "", 
     isAnonymous : false,
+    donationDate: "",
     Page: ref<Page[]>([]).value[0]
 });
 

@@ -10,7 +10,7 @@ export default defineEventHandler(async (event) => {
       data: { ...replyData}
     });
 
-    return { reply: newReply };
+    return newReply;
   /*} catch (error) {
     console.error(error);
   } finally {

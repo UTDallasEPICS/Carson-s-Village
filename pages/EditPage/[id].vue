@@ -142,7 +142,7 @@ const save = async () => {
     }
 
     if(router.params.id === "0") {
-        data.value.start_date = new Date().toString()
+        data.value.start_date = new Date().toISOString()
     }
 
     // todo: change to $fetch

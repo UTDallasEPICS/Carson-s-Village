@@ -36,7 +36,7 @@ const sendEmail = async (to: string, template: string, subject: string, data: st
 };
 
 const body = await readBody(event)
-const now = (new Date()).toString();
+const now = (new Date()).toISOString();
 
 if(event.context.user?.user_role === "advocate" || event.context.user.user_role === "admin"){
   try{

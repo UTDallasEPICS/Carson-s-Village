@@ -54,7 +54,7 @@ export default defineEventHandler(async event => {
         setCookie(event, "cvuser", JSON.stringify(event.context.user))
         
         // check if the family has a stripe account and onboarding them with stripe if not
-        if(event.context.user?.Family?.stripe_account_id == undefined ) {
+        if(event.context.user?.Family?.stripe_account_id == undefined) {
           try {
             if (event.context.user?.user_role == "family") {
                     // todo: change to custom accounts or potentially stick with express accounts
@@ -83,15 +83,20 @@ export default defineEventHandler(async event => {
         }
       }
       } catch (e) {
+        
         console.error(e) 
         setCookie(event,'cvtoken','')
         setCookie(event,'cvuser','')
-    
+
         return await sendRedirect(event, loginRedirectUrl())
       }
     }
   } catch(e){
     console.error(e)
+    setCookie(event,'cvtoken','')
+    setCookie(event,'cvuser','')
+    // log user out if they are stuck in an error due to auth errors (jwt expired)
+    return await sendRedirect(event, logoutRedirectUrl(cvtoken))
   }
 }
 }

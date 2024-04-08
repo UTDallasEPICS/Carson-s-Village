@@ -17,7 +17,7 @@ import {
     ListboxOption,
 } from '@headlessui/vue'
 import type { User, Page, PageDonation, donation_payout, Family } from "@/types.d.ts"
-import { donationFormat } from "@/utils"
+import { donationFormat, dateFormat } from "@/utils"
 //import { Family } from "@prisma/client"
 const currentFamilyPageNumber = ref(0)
 //const familyPagesLength = ref(0)
@@ -50,8 +50,33 @@ const { data: Families } = await useFetch<Family[]>('/api/families', {
   const familyPagesLength = computed(() => familyData.value.Pagination.total)
   const currentPageCuid = ref<string>("");
   const currentPage = computed(() => familyData.value?.raw_data.find(({ cuid }: Page) => cuid == currentPageCuid.value) || {});
-  watchEffect(() => currentPageCuid.value = familyData.value.raw_data![0]?.cuid || "");
+  watchEffect(() => currentPageCuid.value = familyData.value.raw_data![0]?.cuid || "");  
   
+ /* const { data: lastDonationDate } = await useFetch('/api/find_last_donation', {
+    method: 'GET',
+    query: { page_cuid: currentPageCuid},
+    watch: [currentPageCuid, currentFamilyPageNumber],
+    default() {
+      "";
+    },
+  });
+
+  const find_last_donation = async(cuid: string) => {
+    const { data: lastDonationDate2 } = await useFetch('/api/find_last_donation', {
+    method: 'GET',
+    query: { page_cuid: cuid },
+    default() {
+      "";
+    },
+  });
+  
+  return lastDonationDate2.value._max.donationDate || ""
+}*/
+
+  /*watch(familyData, async() => {
+    familyData.value.data.map(async(page: (Page & { last_donation: string | undefined} )) => { page.last_donation = await find_last_donation(page.cuid) || "" })
+  })*/
+
   const { data: donations } = await useFetch<PageDonation[]>('/api/family_donation', {
     method: 'GET',
     query: { family_cuid: currentFamilyCuid },
@@ -79,7 +104,7 @@ const { data: Families } = await useFetch<Family[]>('/api/families', {
 </script>
 
 <template lang="pug">
-.px-10(v-if="isAdmin" )   
+.px-10(v-if="isAdmin")   
   TitleComp.border-1.border-black Family Transaction List
   .flex.flex-wrap.w-full.justify-center.gap-5.mt-10
     // these two list boxes can be a distinct reusable component
@@ -110,7 +135,7 @@ const { data: Families } = await useFetch<Family[]>('/api/families', {
         ListboxButton(class='text-left bg-white relative rounded-md pl-2 pr-10 py-2 sm:text-sm w-96') {{ currentPageCuid ? currentPage.page_name : 'Select Page' }}
   
   .flex.gap-5.justify-around
-    DonationManagementInformation(:donationStatus="currentPage?.donation_status" :startDate="currentPage?.start_date" :totalPageDonations="totalPageDonations" :totalDistributed="totalDistributed" :totalRemaining="totalRemaining" :amount_raised="currentPage?.amount_raised" :amount_distributed="currentPage?.amount_distributed")
+    DonationManagementInformation(:lastDonationDate="currentPage?.last_donation_date" :donationStatus="currentPage?.donation_status" :startDate="currentPage?.start_date" :totalPageDonations="totalPageDonations" :totalDistributed="totalDistributed" :totalRemaining="totalRemaining" :amount_raised="currentPage?.amount_raised" :amount_distributed="currentPage?.amount_distributed")
     div(class="basis-1/3")
       PayoutRecord(:currentPage="currentPage" :currentFamily="currentFamily")
 
@@ -119,6 +144,9 @@ const { data: Families } = await useFetch<Family[]>('/api/families', {
       thead
           tr(style="color: white;")
               th.px-8(style="--tw-bg-opacity: 1; background-color: rgb(110 171 191 / var(--tw-bg-opacity));border-radius: 60px 0px 0px 0px; width:33.33%; overflow: hidden") Page Name
+              th.px-8(style="--tw-bg-opacity: 1; background-color: rgb(110 171 191 / var(--tw-bg-opacity));") Start Date
+              th.px-8(style="--tw-bg-opacity: 1; background-color: rgb(110 171 191 / var(--tw-bg-opacity));") Last Donation
+              th.px-8(style="--tw-bg-opacity: 1; background-color: rgb(110 171 191 / var(--tw-bg-opacity));") Goal Met
               th.px-8(style="--tw-bg-opacity: 1; background-color: rgb(110 171 191 / var(--tw-bg-opacity));") Raised
               th.font-poppins.font-bold(style="--tw-bg-opacity: 1; border-radius: 0px 60px 0px 0px; background-color: rgb(110 171 191 / var(--tw-bg-opacity)); width:33.33%") Remaining
           tr(v-for="(item, i) in familyData.data" 
@@ -126,6 +154,9 @@ const { data: Families } = await useFetch<Family[]>('/api/families', {
               :class="{'bg-gray-200': (i+1) % 2}"
           )
               td.font-poppins.text-gray-dark.font-bold(style="text-align: center")  {{ item?.page_name }}
+              td.font-poppins.text-gray-dark.font-bold(style="text-align: center")  {{ dateFormat(item?.start_date) }}
+              td.font-poppins.text-gray-dark.font-bold(style="text-align: center")  {{ item.last_donation_date ? dateFormat(item?.last_donation_date) : "No Donations" }}
+              td.font-poppins.text-gray-dark.font-bold(style="text-align: center")  {{ item?.donation_status}}
               td.font-poppins.text-gray-dark.font-bold(style="text-align: center")  {{ donationFormat(item.amount_raised) }}
               td.font-poppins.text-gray-dark.font-bold(style="text-align: center")  {{ donationFormat(item.amount_raised-item.amount_distributed) }}
   .ml-9.mb-9.py-7.flex.flex-wrap.gap-2.place-content-center

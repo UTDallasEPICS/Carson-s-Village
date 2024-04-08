@@ -268,6 +268,14 @@ div
         console.log(families.value)
         // gathering the family data into an array of family pages and their advocate responsible
         familiesRaw.value = familiesData.value?.all_families as unknown as Family[]
+/*
+        {
+          ...page,
+          page_last_name: page.last_name,
+          ...advocateResponsible
+        }
+*/
+        
         familiesRaw.value.forEach((element: Family)  => { element.Pages.forEach((element2) => {familyPages.value.push( { ...element2 as unknown as Page[], ...element.AdvocateResponsible as any }) })})
         const familyPagesArr = [...familyPages.value]
         const csv = convertToCSV(familyPagesArr, listOfTags.value)
@@ -289,7 +297,7 @@ div
     
     // method activated by Advocate or Admin to manual remove the ability to donate to a family page after about a week of the donation deadline.
     // an advocate or admin can also re-enable a page to set its status from 'inactive' to 'active'
-    const togglePageStatus = (page: Page) => {
+    const togglePageStatus = async(page: Page) => {
       if(isAdminAdvocate.value) {
         let booleanChanged = false 
         if(page.status == "active") {
@@ -311,7 +319,7 @@ div
         }
           booleanChanged = false          
           // todo: change to $fetch
-          const toggledStatus = useFetch('api/page', {
+          const toggledStatus = await useFetch('api/page', {
             method: "PUT",
             body: { ...page }
           })

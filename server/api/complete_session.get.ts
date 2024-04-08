@@ -51,7 +51,7 @@ export default defineEventHandler(async event => {
           if (newAmountRaised >= transaction.Page.donation_goal) {
             donation_status = 'Successful';
             if(goal_met_date == "")
-              goal_met_date = new Date().toString(); 
+              goal_met_date = new Date().toISOString(); 
           }
           
           if(new Date().getTime() > new Date(transaction.Page.deadline).getTime() && transaction.Page.donation_status == "in progress") {
@@ -60,7 +60,7 @@ export default defineEventHandler(async event => {
           // Calculate duration if needed
           const startDate = new Date(transaction.Page.start_date);
           let duration: number | string = Math.round((new Date().getTime() - startDate.getTime()) / (1000 * 3600 * 24)) + " days";
-          if( duration == "1 days") {
+          if(duration == "1 days") {
             duration = "1 day"
           }
           if(transaction.Page.donation_status == "Successful") {
@@ -76,6 +76,7 @@ export default defineEventHandler(async event => {
            prisma.page.update({
             where: { cuid: transaction?.pageCuid },
             data: {
+              last_donation_date: new Date().toISOString(),
               amount_raised: {increment: transaction?.amount},
               donation_status: donation_status,
               goal_met_date: goal_met_date,

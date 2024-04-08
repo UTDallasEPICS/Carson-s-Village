@@ -80,6 +80,7 @@ model Page {
   donation_status    String           @default("in progress")
   duration           String           @default("0 days")
   start_date         String           @default("")
+  last_donation_date String           @default("")
   goal_met_date      String           @default("")
   Reply              Reply[]
 
@@ -96,7 +97,8 @@ model PageDonation {
   isAnonymous    Boolean @default(false)
   success        Boolean @default(false)
   transaction_id String  @unique
-  amount         Int //In cents
+  donationDate   String  @default("") //todo: change to ""  
+  amount         Int     //In cents
   Family         Family  @relation(fields: [familyCuid], references: cuid)
   Page           Page    @relation(fields: [pageCuid], references: cuid)
 

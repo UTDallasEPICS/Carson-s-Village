@@ -159,7 +159,7 @@ const { data: family_pages } = await useFetch('/api/page_list', {
     }
   })
 const totalLength2 = computed(() => family_pages.value?.Pagination.total as unknown as number)
-  
+pages.value = (family_pages.value.data) as unknown as Page2[]
 
   // Todo: Talk to Taz about this
   /*

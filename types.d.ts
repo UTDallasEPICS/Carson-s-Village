@@ -119,6 +119,7 @@ export type PageDonation = {
   isAnonymous: boolean,
   comments: string,
   Page: Page,
+  donationDate: string
   //User: User
 }
 
