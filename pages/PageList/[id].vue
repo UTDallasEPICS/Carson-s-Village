@@ -215,19 +215,18 @@ await getDataPageList()
   table(style="table-layout: auto;")
     thead
       tr
-        th.font-poppins.font-bold.p-2(style="color:white;--tw-bg-opacity: 1; background-color: rgb(110 171 191 / var(--tw-bg-opacity)); overflow: hidden; border-radius: 60px 0px 0px 0px; width:30%; ")  Page Name
+      th.font-poppins.font-bold.p-2(style="color:white;--tw-bg-opacity: 1; background-color: #5aadc2; overflow: hidden; border-radius: 60px 0px 0px 0px; width:30%; ")  Page Name
         th.font-poppins.font-bold(style="color:white; width: 10%; --tw-bg-opacity: 1; background-color: rgb(110 171 191 / var(--tw-bg-opacity));") Creating User
         th.font-poppins.font-bold(style="color:white; width: 10%; --tw-bg-opacity: 1; background-color: rgb(110 171 191 / var(--tw-bg-opacity));") Advocate 
         th.font-poppins.font-bold(style="color:white; --tw-bg-opacity: 1; background-color: rgb(110 171 191 / var(--tw-bg-opacity));") Total Donated
         th.font-poppins.font-bold(style="color:white; width:30%; --tw-bg-opacity: 1; background-color: rgb(110 171 191 / var(--tw-bg-opacity));") Creation Date
-        th.font-poppins.font-bold(style="color:white; width:30%; --tw-bg-opacity: 1; background-color: rgb(110 171 191 / var(--tw-bg-opacity));") Donation Deadline
+        th.font-poppins.font-bold(style="color:white; width:30%; --tw-bg-opacity: 1; background-color: #5aadc2;") Donation Deadline
         th.font-poppins.font-bold(style="color:white; --tw-bg-opacity: 1; background-color: rgb(110 171 191 / var(--tw-bg-opacity));") Donation Goal
-        th.font-poppins.font-bold(style="width:10%; --tw-bg-opacity: 1; background-color: rgb(110 171 191 / var(--tw-bg-opacity)); color: rgb(110 171 191 / var(--tw-bg-opacity));")  {{ "_______________________" }}
-        th.font-poppins.font-bold(style="border-radius: 0px 60px 0px 0px; width:20%; --tw-bg-opacity: 1; background-color: rgb(110 171 191 / var(--tw-bg-opacity));color:rgb(110 171 191 / var(--tw-bg-opacity));") {{ "_____________" }}
-        th.font-poppins.font-bold.p-2(style="color:white;--tw-bg-opacity: 1; background-color: #5aadc2; overflow: hidden; border-radius: 60px 0px 0px 0px; width:30%; ")  Page Name
-        th.font-poppins.font-bold(style="color:white; width:35%; --tw-bg-opacity: 1; background-color: #5aadc2;") Donation Deadline
         th.font-poppins.font-bold(style="width:10%; --tw-bg-opacity: 1; background-color: #5aadc2; color: #5aadc2;")  {{ "_______________________" }}
         th.font-poppins.font-bold(style="border-radius: 0px 60px 0px 0px; width:20%; --tw-bg-opacity: 1; background-color: #5aadc2;color:#5aadc2;") {{ "_____________" }}
+        
+        
+        
       tr(v-for="(item, i) in pages" 
       :key="i" 
       :class="{'bg-gray-200': (i+1) % 2}"

@@ -330,9 +330,8 @@ div
         } else if(!confirmReactivate) {
         return ""
         }
-
-          booleanChanged = false          
-          const toggledStatus = $fetch('api/page', {
+          
+          const toggledStatus = await $fetch('api/page', {
             method: "PUT",
             body: { ...page }
           })
