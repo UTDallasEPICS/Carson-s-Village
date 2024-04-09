@@ -126,12 +126,12 @@ const isActive = computed(() => pageDataDB.value?.status == "active")
 
 // todo: Set as pop up?
 const shareFacebook = () => {
-  const facebookShareLink = `https://www.facebook.com/sharer/sharer.php?caption=${pageDataDB.value?.page_name}&u=${window.location.href}`
+  const facebookShareLink = `https://www.facebook.com/sharer/sharer.php?caption=${pageDataDB.value?.page_first_name}${pageDataDB.value?.page_last_name}&u=${window.location.href}`
   window.open(facebookShareLink)
 }
 
-const shareXFormalyKnownAsTwitter = () => {
-  const xShareLink = `https://twitter.com/intent/tweet?text=${pageDataDB.value?.page_name}&url=${window.location.href}`
+const shareXFormerlyKnownAsTwitter = () => {
+  const xShareLink = `https://twitter.com/intent/tweet?text=${pageDataDB.value?.page_first_name}${pageDataDB.value?.page_last_name}&url=${window.location.href}`
   window.open(xShareLink)
 }
 
@@ -191,7 +191,7 @@ console.log(pageDataDB.value?.funeral_date)
 // the header overlay with image and name
 .mt-2.min-h-24.text-white.uppercase.w-full(style="background-image: url('https://carsonsvillage.org/wp-content/uploads/2018/11/iStock-862083112-BW.jpg');") 
   .h-full.py-8.self-center.w-full.text-center.flex.flex-col(style="background-color: rgba(50, 119, 136, .8)") 
-    p.my-auto.font-bold.text-4xl {{ pageDataDB.page_name }}
+    p.my-auto.font-bold.text-4xl {{ pageDataDB.page_first_name + " " + pageDataDB.page_last_name }}
 
 .flex.flex-col.gap-5.px-4.mx-auto.mt-8(class="w-3/4 sm:px-16")
   img.mx-auto(v-if="profileImage?.url" class="w-[122px] h-[122px] rounded-[8px]" :src="`${profileImage?.url}`")
@@ -267,7 +267,7 @@ console.log(pageDataDB.value?.funeral_date)
             button(@click="shareFacebook")
               img(src="/facebook-fa.png" style="width:30px; height:33px;") 
           .col
-            button(@click="shareXFormalyKnownAsTwitter")
+            button(@click="shareXFormerlyKnownAsTwitter")
                 img(src="/twitter_fa.png" style="width:30px; height:29px;") 
           .col
             button(@click="shareMail")

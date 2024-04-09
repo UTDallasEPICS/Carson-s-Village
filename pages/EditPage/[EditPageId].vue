@@ -33,7 +33,8 @@ const cvuser2 = useCookie<User2>('cvuser')
 const data = ref<Page>({
     cuid: "",
     userCuid: "",
-    page_name: "",
+    page_first_name: "",
+    page_last_name: "",
     day_of_birth: "",
     day_of_passing:"",
     visitation_date: "",
@@ -145,15 +146,14 @@ const save = async () => {
         data.value.start_date = new Date().toString()
     }
 
-
     const saveSuccess = await $fetch('/api/page', {
-
         // Checks if there is a pre-existing page to edit or if to create a new page    
         method: router.params.EditPageId !== "0" ? 'PUT' : 'POST',
         body: ({ ...data.value })
     }
     )
     try {
+
 
         if (saveSuccess == true && isAdvocate.value) {
             errorInPage.value = false;
@@ -265,15 +265,16 @@ CVContainer
     div
         .information.rounded-md.my-2.text-center(class="sm:text-start text-white bg-blue-999")
             CVLegend Personal Information
-        .py-4.flex.gap-60
-            .flex
-                CVLabel Page Name
-                CVHelpButton(class="inline-block" 
-    description="The first and last name of the recently deceased person this page should be dedicated to should be entered here") 
-                // TODO: Fix this frontend bit to facilitate page name => first and last name
-            CVInput.mx-11(v-model='data.page_name' placeholder="required" required)
-        //    .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
-                CVInput(v-model='data.page_name' placeholder="required" required)
+
+        .py-4.grid(class="sm:grid-cols-3") 
+            CVLabel First Name
+            .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
+                CVInput(v-model='data.page_first_name' placeholder="required" required)
+        .py-4.grid(class="sm:grid-cols-3") 
+            CVLabel Last Name
+            .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
+                CVInput(v-model='data.page_last_name' placeholder="required" required)
+
         .py-4.grid(class="sm:grid-cols-3" v-if="isAdvocate")
             CVLabel Family
             .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")

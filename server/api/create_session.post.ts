@@ -39,7 +39,7 @@ export default defineEventHandler(async event => {
 					currency: 'usd',
 					unit_amount: Math.trunc(parseFloat(body._value.amount as unknown as string) * 100) as number,
 					product_data: {
-						name: `Donation to ${page?.page_name}`,
+						name: `Donation to ${page?.page_first_name} ${page?.page_last_name}`,
 					},
 				},
 				quantity: 1
@@ -50,7 +50,8 @@ export default defineEventHandler(async event => {
 			amount: Math.trunc(parseFloat(body._value.amount as unknown as string) * 100) as number,
 			target_user_id: userCuid,
       target_family_id: familyCuid,
-			target_page_name: page?.page_name as string,
+			target_first_name: page?.page_first_name as string,
+      target_last_name: page?.page_last_name as string,
 			target_page_cuid: page?.cuid as string,
       comments: donorComments,
 		},
