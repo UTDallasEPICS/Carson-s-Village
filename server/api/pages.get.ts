@@ -2,9 +2,9 @@ import { PrismaClient } from "@prisma/client"
 const prisma = new PrismaClient()
 
 /*
-*	/PageList/cuid
-*	function:	POST
-*	retrive family pages details from database for a partial or complete page name
+*    /PageList/cuid
+*    function:    POST
+*    retrive family pages details from database for a partial or complete page name
 */
 
 export default defineEventHandler(async event => {
@@ -79,11 +79,4 @@ if(event.context.user.cuid != undefined) { //if the user is not logged in, do no
     }, 
     data:  []
   };
-} 
-  return {
-    Pagination: {
-    total: 0
-    }, 
-    data:  []
-  };
-  })
+})
