@@ -146,8 +146,7 @@ const save = async () => {
         data.value.start_date = new Date().toString()
     }
 
-
-    const saveSuccess= await $fetch('/api/page', {
+    const saveSuccess = await $fetch('/api/page', {
         // Checks if there is a pre-existing page to edit or if to create a new page    
         method: router.params.EditPageId !== "0" ? 'PUT' : 'POST',
         body: ({ ...data.value })

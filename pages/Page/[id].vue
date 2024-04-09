@@ -81,7 +81,7 @@ const donationData = ref<PageDonation>({
 });
 
 const userCuid = ref("0")
-const familyCuid = computed(() => pageDataDB.value?.familyCuid)
+
 const profileImageLink = ref("")
 const family_cuid = ref("0")
 const router = useRoute();
@@ -94,7 +94,6 @@ const stripeLink_ref = ref("")
 *  This creates a stripe session and redirects the user to stripe.
 *  Then it redirects to /PageDonation/pageCuid/transactionId
 */
-// todo: change to $fetch
 const create_checkout_session = async () => {
     const sessionInfo = await $fetch('/api/create_session', {
         method: 'POST',
@@ -103,7 +102,7 @@ const create_checkout_session = async () => {
         cuid: id.value,
         pageCuid: id.value,
         familyCuid: pageDataDB.value?.familyCuid,
-        amount_raised: Math.trunc(parseFloat(donationData.amount as unknown as string) * 100) as number
+        amount_raised: Math.trunc(parseFloat(donationData.value.amount as unknown as string) * 100) as number
       }
     });
     stripeLink_ref.value = sessionInfo as string
@@ -141,6 +140,7 @@ const shareMail = () => {
   window.open(MailShareLink)
 }
 
+const familyCuid = computed(() => pageDataDB.value?.familyCuid)
 const donated_percentage = computed(() => (((pageDataDB.value?.amount_raised as number) / (pageDataDB.value?.donation_goal as number )) * 100).toFixed(1) + "");
 const donation_goal_provided = computed(() => pageDataDB.value?.donation_goal as number > 0)
 const comments = computed(() => pageDataDB.value?.PageDonations)
@@ -254,7 +254,7 @@ console.log(pageDataDB.value?.funeral_date)
                         .div.comment-header(style="font-size: 0.75rem; font-weight: bold; margin-bottom: 1.5rem;") {{ comment.donorFirstName }} {{ comment.donorLastName }}
                         p.comment-body(style="font-size: 0.75rem; width: fit-content; color: #666;") {{ comment.comments }}
                         .div.comment-donation-amount(style="font-size: 0.75rem; color: #666;") Amount Donated: {{ donationFormat(comment.amount) }}
-        CVReplySystem(:pageCuid="pageCuid" :familyCuid="familyCuid" :replies="replies" @displayReply="displayReply")
+        CVReplySystem(:pageCuid="id" :familyCuid="familyCuid" :replies="replies" @displayReply="displayReply")
         .py-4.grid.flex-box.flex-row.item-centered.gap-1(v-if="replies?.length" style="line-height: 0px;text-align: center")
             div(class="flex")
             .div(v-for="(reply,i) in replies" :key="i" class="reply-box")
