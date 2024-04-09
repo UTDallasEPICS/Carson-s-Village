@@ -57,7 +57,6 @@ const create_checkout_session = async () => {
         isAnonymous: donationData.value.isAnonymous,
         comments: donationData.value.comments
     };
-
     const sessionInfo = await $fetch('/api/create_session', {
 
         method: 'POST',

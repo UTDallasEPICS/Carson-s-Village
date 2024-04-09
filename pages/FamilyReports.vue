@@ -90,6 +90,7 @@ div
       p {{  currentPage + 1 }}
   .col-md-10.px-2.mt-2
       button(@click="nextPage") >
+
 </template>
     
 <script setup lang='ts'>
@@ -288,6 +289,7 @@ div
     }
   }
 
+
     // Formats report date to the format 'yyyy-mm-dd'
     function formatReportDate(date: string) {
       const dates = date.split("-")
@@ -319,7 +321,7 @@ div
             page.status = "active"
 
             booleanChanged = true
-          } else if(!confirmDeactivate){
+          } else if(!confirmReactivate){
           return ""
           }
       } else if(page.status == "inactive" && !booleanChanged) {
@@ -330,13 +332,15 @@ div
         } else if(!confirmReactivate) {
         return ""
         }
-          
-          const toggledStatus = await $fetch('api/page', {
+
+          booleanChanged = false          
+          const toggledStatus = $fetch('api/page', {
             method: "PUT",
             body: { ...page }
           })
         }
     }
+  }
     
 // Pagination control, move the page counter forwards and backwards and searches
 const nextPage = () => { 
@@ -354,5 +358,4 @@ const prevPage = () => {
   }
 // Invoke the initial data loading
 loadReports();
-    }
-    </script>
+</script>

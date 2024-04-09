@@ -65,8 +65,7 @@ const save = async () => {
     } else {
         errorInPage.value = true;
     }
-
-}
+  }
 
 }
 
@@ -94,7 +93,7 @@ if ((cuid.value as string) !== "0") {
   await getData(cuid.value as string);
 }
 
-    await getUsers()
+await getUsers()
 
 </script>
 

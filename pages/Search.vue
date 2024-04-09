@@ -102,7 +102,7 @@ const searchOnEnter = () => {
       tbody
         tr(v-for="(page, i) in pages" :class="{'bg-gray-200': (i+1) % 2}")
           td(style="text-align: center")   
-            NuxtLink(:to="`/Page/${page.cuid}`") {{ page.page_name}}
+            NuxtLink(:to="`/Page/${page.cuid}`") {{ page.page_first_name + " " + page.page_last_name }}
           td(style="text-align: center") {{ donationFormat(page.donation_goal) }}
           td(style="text-align: center") {{ dateFormat(page.deadline) }}
   .ml-9.mb-9.py-7.flex.flex-wrap.gap-2.place-content-center

@@ -12,11 +12,12 @@ const props = defineProps<{
     replies: Reply[]
 }>()
 
+console.log(props.familyCuid)
 const replyData = ref<Partial<Reply>>({
     name: "",
     reply:"",
-    pageCuid: "",
-    familyCuid:"",
+    pageCuid: props.pageCuid,
+    familyCuid: props.familyCuid,
 })
 
 const clearSuccessMessage = () => {
@@ -26,7 +27,6 @@ const clearSuccessMessage = () => {
 }
 
 const successMessage = ref("");
-// todo: change to $fetch
 const submitComment = async () => {
     const response = await $fetch('/api/replies', {  // look at nuxt documentation for $fetch
       method: 'POST',
