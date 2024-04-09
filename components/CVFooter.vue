@@ -4,8 +4,8 @@
 div
     div.relative
         img(src='/footer.png')
-        div.absolute(style="margin-left: auto;margin-right: auto; left: 0;right: 0; text-align: center;")
-            LinkButton.absolute.bottom-4.mx-auto.text-md(class="left-1/2" to='https://carsonsvillage.org/contact-us/') Contact Us
+        div.absolute(style="margin-left: auto;margin-right: auto; left: 0;right: 0;")
+            LinkButton.absolute.bottom-4.mx-auto.text-md(class="transition duration-300 bg-orange-999 hover:bg-green-600 left-1/2 -translate-x-1/2 text-white" to='https://carsonsvillage.org/contact-us/') Contact Us
     div.bg-black.flex(style="color:gray; font-weight: 700; justify-content:center; align-items: center; height: 100px;")
         label COPYRIGHT {{ (new Date()).toLocaleDateString('en', {year:'numeric'}) }} CARSON'S VILLAGE |&nbsp;
         .col

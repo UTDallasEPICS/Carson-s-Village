@@ -51,20 +51,19 @@ const errorInPage = ref(false);
 
 // Method that creates a new family on the backend and adds the first user
 const createFamily = async () => {
-    if(isAuthorized){
-        const { data: result } = await useFetch('/api/family', {
-        method: 'POST',
-        body: ({family_name: data_family.value.family_name, ...data_user.value})
+  if(isAuthorized){
+    const result = await $fetch('/api/family', {
+      method: 'POST',
+      body: ({family_name: data_family.value.family_name, ...data_user.value})
     })
-    data_family.value = result.value as unknown as Family
-    console.log(result.value)
-    if( result.value ){
+    data_family.value = result as unknown as Family
+    if( result ){
         errorInPage.value = false;
         await navigateTo('/Users')
     } else {
         errorInPage.value = true;
     }
-} 
+  } 
 }
 </script>
 
@@ -100,7 +99,7 @@ CVContainer
             .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
                 CVInput(v-model='data_user.phone' placeholder="(user defined, optional)")
             .col-md-10.py-2
-                ActionButton(@click="createFamily()") Save    
+                ActionButton(@click="createFamily()" class="transition duration-300 bg-orange-999 hover:bg-green-600") Save    
         .py-4.grid(class="sm:grid-cols-3" Style="color:red" v-if="errorInPage")
             CVLabel Error Creating Family and First Family Member in the System.
 </template>

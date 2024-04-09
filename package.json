@@ -9,6 +9,7 @@
   },
   "devDependencies": {
     "@types/email-templates": "^10.0.1",
+    "@vue/language-plugin-pug": "^2.0.7",
     "nuxt": "3.6.2"
   },
   "dependencies": {

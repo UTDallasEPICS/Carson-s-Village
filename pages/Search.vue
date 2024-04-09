@@ -69,7 +69,17 @@ onMounted(() => {
     console.log(searchQueryInput.value)
   }
 })
+
+const searchOnEnter = () => {
+  currentPage.value = 0; // Reset current page to 0
+  pageSearch(searchQueryInput.value); // Trigger search
+}
+
+
 </script>
+
+
+
 
 <template lang="pug">
 .container.mx-auto(v-if="isLoggedIn")
@@ -77,17 +87,18 @@ onMounted(() => {
   
   br
   legend(class='text-m indent-8') Search memorial pages
-  input(class="border border-gray-300 py-2 px-4 ml-8 rounded-lg focus:outline-none focus:border-black-500" type="search" placeholder=" " v-model.trim="searchQueryInput")
+  input(class="border border-gray-300 py-2 px-4 ml-8 rounded-lg focus:outline-none focus:border-black-500" 
+  type="search" placeholder=" " v-model.trim="searchQueryInput" v-on:keyup.enter="searchOnEnter")
   button(class='text-m bg-gray-300 p-2 mt-1 mb-2' @click='currentPage=0; pageSearch(searchQueryInput)') SEARCH
   .container
   br
   b(class="ml-8 text-xl")     Search Results 
   table.table.table-striped(style="width:100%;")
       thead
-        tr.bg-green-400.text-white
-          th.px-8 Page 
-          th.px-8 Donation Goal
-          th.px-8 Deadline
+        tr.text-white
+          th.px-8(style="background-color: #5aadc2; border-radius: 60px 0px 0px 0px;") Page 
+          th.px-8(style="background-color: #5aadc2;") Donation Goal
+          th.px-8(style="background-color: #5aadc2; border-radius: 0px 60px 0px 0px;") Deadline
       tbody
         tr(v-for="(page, i) in pages" :class="{'bg-gray-200': (i+1) % 2}")
           td(style="text-align: center")   

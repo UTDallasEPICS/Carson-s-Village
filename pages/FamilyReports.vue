@@ -4,7 +4,7 @@
 //todo: add selection for families instead of all at once and toggle between all at once and all families by having the first option as displaying every page
 //todo: 3 column by however many needed rows (flex-wrap) of checkboxes to enable and disable columns. Future idea: put a nicer version as a sidebar
 div
-    h2.mt-4.ml-4 Family Reports 
+    TitleComp.border-1.border-black Family Reports 
     br
     h2.mt-4.m1-4 Table Dimensions
       .div.flex.flex-box.flex-wrap.gap-10(style="width: 450px") 
@@ -28,7 +28,7 @@ div
       input(type='checkbox' v-model="display.goal_date")
       label.mt-4.ml-4.text-md(class="sm:mt-0" style="letter-spacing: 0.35px;") Donation Goal
       input(type='checkbox' v-model="display.donation_goal")
-    //.flex.flex-col.gap-5.px-4.mx-auto.mt-8(class="w-3/4 sm:px-16")
+    .flex.flex-col.gap-5.px-4.mx-auto.mt-8(class="w-3/4 sm:px-16")
       img.mx-auto(v-if="profileImage?.url" class="w-[122px] h-[122px] rounded-[8px]" :src="`${profileImage?.url}`")
       .text-gray-dark.mx-auto.w-max.font-poppins.text-md {{ dateFormat(start_date, true) + ' - ' + dateFormat(end_date, true) }} 
       .flex.flex-col-reverse.gap-5(class="sm:grid sm:grid-cols-2")
@@ -39,28 +39,32 @@ div
     //.py-4.grid(class="sm:grid-cols-5") 
             CVLabel Date Range
             .col-md-8.mx-9(class="sm:col-span-1 sm:mr-11")
+            CVLabel Date Range
+            .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
               CVDatepicker(v-model='start_date' @update:model-value="currentPage=0; loadReports();")
             .col-md-8.mx-9(class="sm:col-span-1 sm:mr-11")  
               p(style="text-align:center;") {{ "-" }}
-            .col-md-8.mx-9(class="sm:col-span-1 sm:mr-11")  
-              CVDatepicker(v-model='end_date' @update:modelValue="currentPage=0; loadReports()" )          
-    .flex.gap-2.justify-center.cols-2
+            .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")  
+              CVDatepicker(v-model='end_date' @update:modelValue="currentPage=0; loadReports()" )  
+            .col-md-8.mx-9(class="sm:col-span-1 sm:mr-11")
+            a.mr-9.mt-1.p-6.px-6.pr-6.pt-3.pb-3.bg-orange-999(class="transition duration-300 bg-orange-999 hover:bg-green-600" style="border-radius: 100px; height: 50px; color: white; font-weight: 700;" :href="filedownloadlink" :download="downloadName" :dataset.downloadurl="dataset") Download        
+    .flex.gap-2.justify-center.cols-2.pl-6.pr-6
       table(style="margin-top: 1.25rem; width: 100%; border-spacing: 0; border-collapse: collapse;" v-if="isAdminAdvocate")
           thead(style="color: white;")
               tr
                   th(style="padding: 1rem; background-color: #6eabbf; border-radius: 60px 0 0 0; width: 12%;") Page Name
                   th(style="padding: 1rem; background-color: #6eabbf; width: 12%;") Advocate
-                  th(style="padding: 1rem; background-color: #6eabbf; width: 12%;" v-if="display.duration") Duration
+                  th(style="padding: 1rem; background-color: #6eabbf; width: 10%;" v-if="display.duration") Duration
                   th(style="padding: 1rem; background-color: #6eabbf; width: 7%;" v-if="display.goal_met") Goal Met
                   th(style="padding: 1rem; background-color: #6eabbf; width: 10%;" v-if="display.goal_met_date") Goal Met Date
                   th(style="padding: 1rem; background-color: #6eabbf; width: 12%;" v-if="display.start_date") Start Date
-                  th(style="padding: 1rem; background-color: #6eabbf; width: 5%" v-if="display.owed") Owed
+                  th(style="padding: 1rem; background-color: #6eabbf; width: 5%;" v-if="display.owed") Owed
                   //th(style="padding: 1rem; background-color: #6eabbf; width: 5%") Owed %
                   th(style="padding: 1rem; background-color: #6eabbf; width: 5%" v-if="display.paid") Paid
                   th(style="padding: 1rem; background-color: #6eabbf; width: 5%" v-if="display.donation_goal") Goal
                   th(style="padding: 1rem; background-color: #6eabbf; width: 7%" v-if="display.goal_date") Goal Date
                   th(style="padding: 1rem; background-color: #6eabbf; width: 7%") Status
-                  th(style="padding: 1rem; background-color: #6eabbf; border-radius: 0 60px 0 0; width: 7%;") Toggle Status
+                  th(style="padding: 1rem; background-color: #6eabbf; border-radius: 0 60px 0 0; width: 9%;") Toggle Status
           tbody
               tr(v-for="(page, i) in families" 
               :class="{'bg-gray-200': (i+1) % 2}" :key="listOfTagsLen") 
@@ -78,8 +82,8 @@ div
                   td(style="text-align: center;") {{ page.status }}
                   td(style="text-align: center;")
                     ActionButton(style="color: white; background-color: red;" @click="togglePageStatus(page)") {{ "X" }}
-      a.mr-9.mt-1.p-4.px-6.pt-2.bg-orange-400(style="border-radius: 100px; height: 50px; color: white; font-weight: 700;" :href="filedownloadlink" :download="downloadName" :dataset.downloadurl="dataset") download
-.ml-9.mb-9.py-7.flex.flex-wrap.gap-2.place-content-center
+
+.mb-9.py-7.flex.flex-wrap.gap-2.place-content-center
   .col-md-10.px-2.mt-2
       button(@click="prevPage") &lt
   .col-md-10.px-2.mt-2
@@ -242,6 +246,7 @@ div
     }).join('\n')
   }
 
+
   // creates download link to csv of family reports table
   const createCsvDownloadLink = (csv: string) => {
       const csvFile = new File([csv], "file", {
@@ -312,14 +317,22 @@ div
           const confirmReactivate = confirm('Are you sure you want to reactivate this page?')
           if(confirmReactivate) {
             page.status = "active"
+
             booleanChanged = true
-          } else if(!confirmReactivate) {
+          } else if(!confirmDeactivate){
           return ""
           }
+      } else if(page.status == "inactive" && !booleanChanged) {
+        const confirmReactivate = confirm('Are you sure you want to reactivate this page?')
+        if(confirmReactivate) {
+          page.status = "active"
+          booleanChanged = true
+        } else if(!confirmReactivate) {
+        return ""
         }
+
           booleanChanged = false          
-          // todo: change to $fetch
-          const toggledStatus = await useFetch('api/page', {
+          const toggledStatus = $fetch('api/page', {
             method: "PUT",
             body: { ...page }
           })
@@ -342,4 +355,5 @@ const prevPage = () => {
   }
 // Invoke the initial data loading
 loadReports();
-</script>
+    }
+    </script>

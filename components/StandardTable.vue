@@ -84,13 +84,13 @@ tr(v-for="row in rows")
     table(style="table-layout: auto;")
         thead
             tr
-                th.font-poppins.font-bold.font-bold.p-2(style="--tw-bg-opacity: 1; background-color: rgb(110 171 191 / var(--tw-bg-opacity));border-radius: 60px 0px 0px 0px; width:33%; overflow: hidden") 
+                th.font-poppins.font-bold.font-bold.p-2(style="--tw-bg-opacity: 1; background-color: #5aadc2;border-radius: 60px 0px 0px 0px; width:33%; overflow: hidden") 
                     slot
-                th.font-poppins.font-bold(style="width:34%; --tw-bg-opacity: 1; background-color: rgb(110 171 191 / var(--tw-bg-opacity));") 
+                th.font-poppins.font-bold(style="width:34%; --tw-bg-opacity: 1; background-color: #5aadc2;") 
                     slot
-                th.font-poppins.font-bold(style="--tw-bg-opacity: 1; background-color: rgb(110 171 191 / var(--tw-bg-opacity));")
+                th.font-poppins.font-bold(style="--tw-bg-opacity: 1; background-color: #5aadc2;")
                     slot
-                th.font-poppins.font-bold(style="width:33%; --tw-bg-opacity: 1; border-radius: 0px 60px 0px 0px; background-color: rgb(110 171 191 / var(--tw-bg-opacity));")
+                th.font-poppins.font-bold(style="width:33%; --tw-bg-opacity: 1; border-radius: 0px 60px 0px 0px; background-color: #5aadc2;")
                     slot
             tr(v-for="(item, i) in itemList" 
                 :key="i" 
@@ -102,7 +102,7 @@ tr(v-for="row in rows")
                 td
                 LinkButton(class="sm:my-2" style="white-space: nowrap; display: flex; flex-direction: row; padding: 14px 24px; gap: 10px;" :to="") 
                     slot
-    .container.mx-auto(class="w-auto sm:w-[1000px]" style="--tw-bg-opacity: 1; background-color: rgb(110 171 191 / var(--tw-bg-opacity));height: 50px; border-radius: 0px 0px 60px 60px;")
+    .container.mx-auto(class="w-auto sm:w-[1000px]" style="--tw-bg-opacity: 1; background-color: #5aadc2;height: 50px; border-radius: 0px 0px 60px 60px;")
 </template>
 
 <style scoped></style>

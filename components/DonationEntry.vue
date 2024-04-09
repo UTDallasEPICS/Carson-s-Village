@@ -58,12 +58,12 @@ const create_checkout_session = async () => {
         comments: donationData.value.comments
     };
 
-    // todo: change to $fetch
-    const { data : sessionInfo } = await useFetch('/api/create_session', {
+    const sessionInfo = await $fetch('/api/create_session', {
+
         method: 'POST',
-        body: { ...donationData.value, cuid: props.pageCuid, family_cuid: props.familyCuid, amount_raised: Math.trunc(parseFloat(donationData.value.amount as unknown as string) * 100) as number}
+        body: { ...donationData, cuid: props.pageCuid, family_cuid: props.familyCuid, amount_raised: Math.trunc(parseFloat(donationData.value.amount as unknown as string) * 100) as number}
     });
-    stripeLink_ref.value = sessionInfo.value as string
+    stripeLink_ref.value = sessionInfo as string
     await navigateTo(stripeLink_ref.value as string,  { external: true } )
 };
 
@@ -90,7 +90,7 @@ img(v-if="donationData.amount < 5" src="/tooLowDonations.png" style="height:115p
 input(type='checkbox' v-model='feeRecovery')
 CVLabel I'd like to help cover the transaction fees of ${{ props.isActive ? (0.035 * donationData.amount).toFixed(2) : 0}} for my donation. 
 .col-md-8.ml-4.pt-6.pr-5.flex.items-center.justify-center
-    ActionButton.mx-auto.text-md(name='submit' @click="create_checkout_session" :disabled="donationData.amount < 5") DONATE NOW
+    ActionButton.mx-auto.text-md(name='submit' @click="create_checkout_session" class="transition duration-300 bg-orange-999 hover:bg-green-600" :disabled="donationData.amount < 5") DONATE NOW
 </template>
 
 <style scoped></style>
