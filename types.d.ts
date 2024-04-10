@@ -147,4 +147,5 @@ export type Reply = {
   familyCuid: string
   name: string
   reply: string
+  suspended: boolean
 }

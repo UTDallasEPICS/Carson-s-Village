@@ -2,16 +2,17 @@
 
 /*
 * Namra Zubair
-*	ECS 2200
+*	EPCS 2200
 *	Carson's Village: Automated Family Page
 *	PageList.vue 
 *	Displays a family page and allows for donation processing
 *	Located under "/Page/"
 */
 
-import type { Page, PageDonation, Image, Reply, Family} from '@/types.d.ts'
+import type { User, Page, PageDonation, Image, Reply, Family} from '@/types.d.ts'
 import {  dateFormat, donationFormat } from '@/utils'
 import CVReplySystem from '@/components/CVReplySystem.vue'
+
 
 const pageData = ref<Page>({
     cuid: "",
@@ -89,6 +90,8 @@ const id = computed(() => router.params.id);
 const pageCuid = id.value as string
 const cvuser = useCookie<Page>('cvuser')
 const stripeLink_ref = ref("")
+const isAdvocateAdmin = computed(() => cvuser.value?.user_role == "admin" || cvuser.value?.user_role == "advocate")
+
 
 /* 
 *  This creates a stripe session and redirects the user to stripe.
@@ -257,7 +260,7 @@ console.log(pageDataDB.value?.funeral_date)
         CVReplySystem(:pageCuid="id" :familyCuid="familyCuid" :replies="replies" @displayReply="displayReply")
         .py-4.grid.flex-box.flex-row.item-centered.gap-1(v-if="replies?.length" style="line-height: 0px;text-align: center")
             div(class="flex")
-            .div(v-for="(reply,i) in replies" :key="i" class="reply-box")
+            .div(v-for="(reply,i) in replies" :key="i" class="reply-box" v-if="!(reply.suspended)")
                 .reply-box(v-if="reply.reply.length > 0" style="padding: 1rem; text-align: left; border-bottom: 1px solid black") 
                     .reply-header(style="font-size: 1rem; font-weight: bold; margin-bottom: 2.5rem; margin-left: 1rem") {{reply.name}}
                     .reply-body(style="font-size: 1rem; color: #666; margin-bottom: 2.5rem;") {{reply.reply}}
