@@ -123,17 +123,17 @@ const imageData = ref<Image[]>([])
 const profile_image = ref("")
 const left = ref(true)
 const familyCuid = ref("")
-const cuid_data = computed(() => router.parmams.EditPageId);
+const cuid_data = computed(() => router.params.EditPageId);
 const cuid = cuid_data.value as string
 const user_cuid_data = computed(() => cvuser.value?.cuid)
 const user_cuid = user_cuid_data.value as string
-const pageCuid = computed(() => router.parmams.EditPageId)
+const pageCuid = computed(() => router.params.EditPageId)
 data.value.cuid = cuid;
 data.value.userCuid = user_cuid;
 console.log(data.value)
 const errorInPage = ref(false)
 
-// Method that saves form data to the database for a page that has cuid: router.parmams.EditPageId
+// Method that saves form data to the database for a page that has cuid: router.params.EditPageId
 const save = async () => {
     if(isAdvocate.value) {
         data.value.familyCuid = familyCuid.value
@@ -141,14 +141,14 @@ const save = async () => {
         data.value.familyCuid = cvuser.value.familyCuid as string
     }
 
-    if(router.parmams.EditPageId === "0") {
+    if(router.params.EditPageId === "0") {
         data.value.start_date = new Date().toISOString()
     }
 
     // todo: change to $fetch
     const { data: saveSuccess } = await useFetch('/api/page', {
         // Checks if there is a pre-existing page to edit or if to create a new page    
-        method: router.parmams.EditPageId !== "0" ? 'PUT' : 'POST',
+        method: router.params.EditPageId !== "0" ? 'PUT' : 'POST',
         body: ({ ...data.value })
     }
     )
@@ -169,8 +169,8 @@ const currentFamily = computed(() => data_all_users.value?.find(({ cuid }: Famil
 
 // Method to populate the form when editing a pre-existing page
 const getData = async (cuid: string) => {
-    const pageFoundFromUser = cvuser.value.Pages.find((i: Page) => i.cuid == router.parmams.EditPageId) != undefined
-    const pageFoundFromFamily = cvuser2.value.Family?.Pages.find((i: Page) => i.cuid == router.parmams.EditPageId) != undefined
+    const pageFoundFromUser = cvuser.value.Pages.find((i: Page) => i.cuid == router.params.EditPageId) != undefined
+    const pageFoundFromFamily = cvuser2.value.Family?.Pages.find((i: Page) => i.cuid == router.params.EditPageId) != undefined
     console.log(data_all_users)
     // Allowing access to the user's EditPage only if user is an advocate or it is one of the family's family pages.
     if (pageFoundFromUser || pageFoundFromFamily || cvuser.value.user_role == "advocate" || cvuser.value.user_role == "admin") {
@@ -246,7 +246,7 @@ if( isAdvocate.value ) {
         data_all_users.value = Families.value as unknown as Family[]
 }
 
-await getData(useRoute().parmams.EditPageId as string)
+await getData(useRoute().params.EditPageId as string)
 const profileImage = computed(() => data.value?.Images.find((i: Image) => i.cuid == data.value?.profileImageCuid))
 </script>
 
