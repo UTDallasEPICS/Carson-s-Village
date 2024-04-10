@@ -107,7 +107,8 @@ model Reply {
   familyCuid String  @map("family_cuid")
   reply      String  @default("")
   name       String? @default("")
-  Page       Page    @relation(fields: [pageCuid], references: [cuid])
+  Page       Page    @relation(fields: [pageCuid], references: cuid)
+  suspended  Boolean @default(false)
 }
 
 model Image {
