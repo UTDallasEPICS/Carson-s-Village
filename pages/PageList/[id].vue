@@ -160,44 +160,52 @@ const prevPage = () => {
 }
 const currentFamily = computed(() => data_families.value?.find(({ cuid }: Family) => cuid == familyCuid.value) || {});
 
+
 await getDataPageList()
 </script>
 
 <template lang ="pug">
-.py-4.grid(class="sm:grid-cols-3" v-if="isAdvocate && !fromUser")
+TitleComp.border-1.border-black  Pages
+.container.flex.justify-between.items-center.mx-auto.my-4
+  .py-4.grid(class="sm:grid-cols-3" v-if="isAdvocate && !fromUser")
     CVLabel Family
     .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
       Listbox.shadow-sm.border.border-1.rounded-lg(v-if="isAdmin || isAdvocate" as='div' v-model="familyCuid")
         .relative
-          Transition(
+  .py-4.grid(class="sm:grid-cols-3" v-if="isAdvocate && !fromUser")
+      CVLabel Family
+      .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
+        Listbox.shadow-sm.border.border-1.rounded-lg(v-if="isAdmin || isAdvocate" as='div' v-model="familyCuid")
+          .relative
+            Transition(
                     leave-active-class='transition ease-in duration-100'
                     leave-from-class='opacity-100'
                     leave-to-class='opacity-0'
                     )
-            ListboxOptions(as='div' class='w-full absolute z-10 mt-10 bg-white shadow-lg max-h-60 rounded-md px-2 py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm' )
-                ListboxOption(as='div' v-for="family in data_families" :key="family.cuid" :value="family.cuid" class="px-2 border border-grey-500 py-1 my-1") {{ family.family_name }}
-          ListboxButton(class='text-left bg-white relative rounded-md pl-2 pr-10 py-2 sm:text-sm w-96') {{ familyCuid ? currentFamily.family_name : 'Select family to view pages from' }}  
-//todo: reduce this to one table
-.mx-auto.mt-1(class="w-11/12 sm:w-[1200px]" v-if="!isAdvocate || isAdmin || fromUser")
-  table(style="table-layout: auto;")
-    thead
-      tr
-        th.font-poppins.font-bold.p-2(style="color:white;--tw-bg-opacity: 1; background-color: #5aadc2; overflow: hidden; border-radius: 60px 0px 0px 0px; width:30%; ")  Page Name
-        th.font-poppins.font-bold(style="color:white; width:35%; --tw-bg-opacity: 1; background-color: #5aadc2;") Donation Deadline
-        th.font-poppins.font-bold(style="width:10%; --tw-bg-opacity: 1; background-color: #5aadc2; color: #5aadc2;")  {{ "_______________________" }}
-        th.font-poppins.font-bold(style="border-radius: 0px 60px 0px 0px; width:20%; --tw-bg-opacity: 1; background-color: #5aadc2;color:#5aadc2;") {{ "_____________" }}
-      tr(v-for="(item, i) in pages" 
-      :key="i" 
-      :class="{'bg-gray-200': (i+1) % 2}"
-      )
-        td.font-poppins.text-gray-dark.font-bold(style="text-align: center;") {{ item.page_first_name + " " + item.page_last_name }}
-        //- td.font-poppins.text-gray-dark.font-bold(style="text-align: center;" v-if="isAdmin") {{ item.userCuid }}
-        td.font-poppins.text-gray-dark.font-bold(style="text-align: center;") {{ dateFormat(item.deadline) }}
-        td
-          LinkButton(class="sm:my-2 transition duration-300 bg-orange-999 hover:bg-green-600" style="--tw-bg-opacity: 1; white-space: nowrap; display: flex; flex-direction: row; padding: 14px 24px; gap: 10px;" :to="`/EditPage/${item.cuid}`") Edit
-        td
-          LinkButton(class="sm:my-2 transition duration-300 bg-orange-999 hover:bg-green-600" style="--tw-bg-opacity: 1; white-space: nowrap; display: flex; flex-direction: row; padding: 14px 24px; gap: 10px;" :to="`/Page/${item.cuid}`") View
-  .container.bg-blue-300.mx-auto(class="w-auto sm:w-[1200px]" style="--tw-bg-opacity: 1; background-color: #5aadc2; height: 50px; border-radius: 0px 0px 60px 60px;")
+              ListboxOptions(as='div' class='w-full absolute z-10 mt-10 bg-white shadow-lg max-h-60 rounded-md px-2 py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm' )
+                  ListboxOption(as='div' v-for="family in data_families" :key="family.cuid" :value="family.cuid" class="px-2 border border-grey-500 py-1 my-1") {{ family.family_name }}
+            ListboxButton(class='text-left bg-white relative rounded-md pl-2 pr-10 py-2 sm:text-sm w-96') {{ familyCuid ? currentFamily.family_name : 'Select family to view pages from' }}  
+  //todo: reduce this to one table
+  .mx-auto.mt-4(class="w-11/12 sm:w-[1200px]" v-if="!isAdvocate || isAdmin || fromUser")
+    table(style="table-layout: auto;")
+      thead
+        tr
+          th.font-poppins.font-bold.p-2(style="color:white;--tw-bg-opacity: 1; background-color: #5aadc2; overflow: hidden; border-radius: 60px 0px 0px 0px; width:30%; ")  Page Name
+          th.font-poppins.font-bold(style="color:white; width:35%; --tw-bg-opacity: 1; background-color: #5aadc2;") Donation Deadline
+          th.font-poppins.font-bold(style="width:10%; --tw-bg-opacity: 1; background-color: #5aadc2; color: #5aadc2;")  {{ "_______________________" }}
+          th.font-poppins.font-bold(style="border-radius: 0px 60px 0px 0px; width:20%; --tw-bg-opacity: 1; background-color: #5aadc2;color:#5aadc2;") {{ "_____________" }}
+        tr(v-for="(item, i) in pages" 
+        :key="i" 
+        :class="{'bg-gray-200': (i+1) % 2}"
+        )
+          td.font-poppins.text-gray-dark.font-bold(style="text-align: center;") {{ item.page_first_name + " " + item.page_last_name }}
+          //- td.font-poppins.text-gray-dark.font-bold(style="text-align: center;" v-if="isAdmin") {{ item.userCuid }}
+          td.font-poppins.text-gray-dark.font-bold(style="text-align: center;") {{ dateFormat(item.deadline) }}
+          td
+            LinkButton(class="sm:my-2 transition duration-300 bg-orange-999 hover:bg-green-600" style="--tw-bg-opacity: 1; white-space: nowrap; display: flex; flex-direction: row; padding: 14px 24px; gap: 10px;" :to="`/EditPage/${item.cuid}`") Edit
+          td
+            LinkButton(class="sm:my-2 transition duration-300 bg-orange-999 hover:bg-green-600" style="--tw-bg-opacity: 1; white-space: nowrap; display: flex; flex-direction: row; padding: 14px 24px; gap: 10px;" :to="`/Page/${item.cuid}`") View
+    .container.bg-blue-300.mx-auto.mt(class="w-auto sm:w-[1200px]" style="--tw-bg-opacity: 1; background-color: #5aadc2; height: 50px; border-radius: 0px 0px 60px 60px;")
 
 .mx-auto.mt-1(class="w-11/12 sm:w-[1200px]" v-if="!fromUser && isAdvocate")
   table(style="table-layout: auto;")
@@ -218,8 +226,7 @@ await getDataPageList()
           LinkButton(class="sm:my-2 transition duration-300 bg-orange-999 hover:bg-green-600" style="--tw-bg-opacity: 1; white-space: nowrap; display: flex; flex-direction: row; padding: 14px 24px; gap: 10px;" :to="`/EditPage/${item.cuid}`") Edit
         td
           LinkButton(class="sm:my-2 transition duration-300 bg-orange-999 hover:bg-green-600" style="--tw-bg-opacity: 1; white-space: nowrap; display: flex; flex-direction: row; padding: 14px 24px; gap: 10px;" :to="`/Page/${item.cuid}`") View
-  .container.bg-blue-300.mx-auto(class="w-auto sm:w-[1200px]" style="--tw-bg-opacity: 1; background-color: #5aadc2; height: 50px; border-radius: 0px 0px 60px 60px;")
-.mb-9.py-7.flex.flex-wrap.gap-2.place-content-center
+          .container.bg-blue-300.mx-auto.mt-4(class="w-auto sm:w-[1200px]" style="--tw-bg-opacity: 1; background-color: #5aadc2; height: 50px; border-radius: 0px 0px 60px 60px;").mb-9.py-7.flex.flex-wrap.gap-2.place-content-center
   .col-md-10.px-2.mt-2
       button(@click="prevPage") &lt
   .col-md-10.px-2.mt-2
