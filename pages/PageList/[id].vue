@@ -190,7 +190,8 @@ await getDataPageList()
       :key="i" 
       :class="{'bg-gray-200': (i+1) % 2}"
       )
-        td.font-poppins.text-gray-dark.font-bold(style="text-align: center;") {{ item.page_name }}
+        td.font-poppins.text-gray-dark.font-bold(style="text-align: center;") {{ item.page_first_name + " " + item.page_last_name }}
+        //- td.font-poppins.text-gray-dark.font-bold(style="text-align: center;" v-if="isAdmin") {{ item.userCuid }}
         td.font-poppins.text-gray-dark.font-bold(style="text-align: center;") {{ dateFormat(item.deadline) }}
         td
           LinkButton(class="sm:my-2 transition duration-300 bg-orange-999 hover:bg-green-600" style="--tw-bg-opacity: 1; white-space: nowrap; display: flex; flex-direction: row; padding: 14px 24px; gap: 10px;" :to="`/EditPage/${item.cuid}`") Edit
@@ -210,7 +211,8 @@ await getDataPageList()
       :key="i" 
       :class="{'bg-gray-200': (i+1) % 2}"
       )
-        td.font-poppins.text-gray-dark.font-bold(style="text-align: center;") {{ item.page_name }}
+        td.font-poppins.text-gray-dark.font-bold(style="text-align: center;") {{ item.page_first_name + " " + item.page_last_name }}
+        td.font-poppins.text-gray-dark.font-bold(style="text-align: center;" v-if="isAdmin") {{ item.userCuid }}
         td.font-poppins.text-gray-dark.font-bold(style="text-align: center;") {{ dateFormat(item.deadline) }}
         td
           LinkButton(class="sm:my-2 transition duration-300 bg-orange-999 hover:bg-green-600" style="--tw-bg-opacity: 1; white-space: nowrap; display: flex; flex-direction: row; padding: 14px 24px; gap: 10px;" :to="`/EditPage/${item.cuid}`") Edit

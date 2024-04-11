@@ -4,6 +4,7 @@
 //todo: add selection for families instead of all at once and toggle between all at once and all families by having the first option as displaying every page
 //todo: 3 column by however many needed rows (flex-wrap) of checkboxes to enable and disable columns. Future idea: put a nicer version as a sidebar
 div
+
     TitleComp.border-1.border-black  Family Reports 
     br
     .flex.flex-col.gap-5.px-4.mx-auto.mt-8(class="w-3/4 sm:px-16")
@@ -68,6 +69,7 @@ div
       p {{  currentPage + 1 }}
   .col-md-10.px-2.mt-2
       button(@click="nextPage") >
+
 </template>
     
 <script setup lang='ts'>
@@ -119,39 +121,8 @@ div
   
   // converts array of family pages and their advocate responsible for the family into a csv
   function convertToCSV(arr : Partial<Page[]>) {
-    // todo: clean up and remove usages of any, idea for this is to use the pick type from typescript
-    // problem for Samuel: page_name will be set as first_name and last_name which will be on the same level as the user first_name and last_name
-    const listOfTags = ["page_name", "donation_goal", "amount_raised", "deadline", "amount_distributed", "donation_status", "duration", "start_date", "goal_met_date", "first_name", "middle_name", "last_name", "Amount Owed / Goal Percentage" ]
-    // removes every column not in list of tags
-    Object.keys(arr[0] || "").forEach((element: string) => {
-      const currentArr = ref<Partial<Page[]>>([])
-      if(!listOfTags.includes(element)) {
-        arr.forEach((d: any) => {
-        const { [element]: removedSeries , ...newObject  } = d
-        currentArr.value.push(newObject)
-    });
-      arr = currentArr.value 
-      }
-    })
-
-    //adds owed Percent
-    //todo: add something useful here or depreciate
-    type pageReport = Partial<Page> & { owedPercent: number | undefined }
-    const currentArr = ref<pageReport[]>([])
-    arr.forEach((d) => {
-        const owed = (d?.amount_raised as number) - (d?.amount_distributed as number)
-        const goal = (d?.donation_goal as number)
-        const owedPercent: number | undefined = goal != 0 ? ((100 * owed) / goal) : 0
-        
-        currentArr.value.push({...d, ['owedPercent']: owedPercent | 0} )
-    });
-
-    const array = [listOfTags].concat(currentArr.value as unknown as string[])
-  
-    // creates CSV
-    return array.map(it => {
-      return Object.values(it).toString()
-    }).join('\n')
+    const headers = ["page_first_name", "page_last_name", "donation_goal", "amount_raised", "deadline", "amount_distributed", "donation_status", "duration", "start_date", "goal_met_date", "first_name", "middle_name", "last_name", "Amount Owed / Goal Percentage" ]
+    return arr.reduce((acc: any[], page: any) => [...acc, headers.reduce((acc: string[], header: string) => [...acc, page[header]], []).join(",")], []).join("\n")
   }
 
 
@@ -170,23 +141,20 @@ div
   // loads family report data from the families database table and joins and creates a download link for the file
   const loadReports = async () => {
     if( isAdminAdvocate ) { 
-        const { data: familiesData } = await useFetch('/api/familiesReports', {
-        method: 'GET', 
-        query: { page_number: currentPage, start_date: start_date.value, end_date: end_date.value },
-        watch: [currentPage, start_date, end_date]
-        });
-        
-        families.value = familiesData.value?.paginated_pages as unknown as Family[]
-        totalLength.value = familiesData.value?.Pagination.total as unknown as number
-        console.log(families.value)
-        // gathering the family data into an array of family pages and their advocate responsible
-        familiesRaw.value = familiesData.value?.all_families as unknown as Family[]
-        familiesRaw.value.forEach((element: Family)  => { element.Pages.forEach((element2) => {familyPages.value.push( { ...element2 as unknown as Page[], ...element.AdvocateResponsible as any }) })})
-        const familyPagesArr = [...familyPages.value]
-        const csv = convertToCSV( familyPagesArr )
-        createCsvDownloadLink(csv)
+      const familiesData = await useFetch('/api/families', {
+        method: 'GET' 
+      });
+      
+      families.value = familiesData as unknown as Family[]
+      // gathering the family data into an array of family pages and their advocate responsible
+      families.value.forEach((element: Family)  => { element.Pages.forEach((element2) => {familyPages.value.push( { ...element2 as unknown as Page[], ...element.AdvocateResponsible as any }) })})
+      const familyPagesArr = [...familyPages.value]
+      
+      const csv = convertToCSV( familyPagesArr )
+      createCsvDownloadLink(csv)
     }
   }
+
 
     // Formats report date to the format 'yyyy-mm-dd'
     function formatReportDate(date: string) {
@@ -202,7 +170,7 @@ div
     
     // method activated by Advocate or Admin to manual remove the ability to donate to a family page after about a week of the donation deadline.
     // an advocate or admin can also re-enable a page to set its status from 'inactive' to 'active'
-    const togglePageStatus = (page: Page) => {
+    const togglePageStatus = async(page: Page) => {
       if(isAdminAdvocate.value) {
         let booleanChanged = false 
         if(page.status == "active") {
@@ -219,7 +187,7 @@ div
             page.status = "active"
 
             booleanChanged = true
-          } else if(!confirmDeactivate){
+          } else if(!confirmReactivate){
           return ""
           }
       } else if(page.status == "inactive" && !booleanChanged) {
@@ -230,14 +198,19 @@ div
         } else if(!confirmReactivate) {
         return ""
         }
+      }
 
-          booleanChanged = false          
-          const toggledStatus = $fetch('api/page', {
+        //booleanChanged = false         
+        if(booleanChanged) {
+          const toggledStatus = await $fetch('api/page', {
             method: "PUT",
             body: { ...page }
           })
         }
     }
+
+  }
+    
 
 // Pagination control, move the page counter forwards and backwards and searches
 const nextPage = () => { 
@@ -247,7 +220,7 @@ const nextPage = () => {
         loadReports()
     } 
 }
-const prevPage= () => {
+const prevPage = () => {
     if(currentPage.value != 0){
         currentPage.value--
         loadReports()
@@ -255,5 +228,4 @@ const prevPage= () => {
   }
 // Invoke the initial data loading
 loadReports();
-    }
-    </script>
+</script>

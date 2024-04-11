@@ -22,11 +22,17 @@ const onFile = async (event: Event) => {
     const file = Files[i];
     // Creates the presigned url and enters the image into the database
     // todo: change to $fetch
-    const { data: imageData } = await useFetch('/api/image_upload', {
+    const imageDataObj = {
+      contentLength: file.size, 
+      contentType: file.type, 
+      file,
+      pageCuid: props.pageCuid
+    }
+    const imageData = await $fetch('/api/image_upload', {
       method: 'POST',
-      body: { contentLength: file.size, contentType: file.type, file, pageCuid: ref(props.pageCuid) }
+      body: imageDataObj
     });
-  const { uploadUrl, image} = imageData.value as unknown as imageLinkTypes;
+  const { uploadUrl, image } = imageData as unknown as imageLinkTypes;
 
   // Executing the image upload by using the presigned url and file as well as its size and type in the request
   const response = await fetch(uploadUrl, {
