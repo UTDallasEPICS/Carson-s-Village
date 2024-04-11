@@ -12,21 +12,21 @@ const props = defineProps<{
     replies: Reply[]
 }>()
 
+console.log(props.familyCuid)
 const replyData = ref<Partial<Reply>>({
     name: "",
     reply:"",
-    pageCuid: "",
-    familyCuid:"",
+    pageCuid: props.pageCuid,
+    familyCuid: props.familyCuid,
 })
 
 const clearSuccessMessage = () => {
     successMessage.value = '';
-    //replyData.value.name = ""; // Clear name field
-    //replyData.value.reply = ""; // Clear reply field
+    replyData.value.name = ""; // Clear name field
+    replyData.value.reply = ""; // Clear reply field
 }
 
 const successMessage = ref("");
-// todo: change to $fetch
 const submitComment = async () => {
     const response = await $fetch('/api/replies', {  // look at nuxt documentation for $fetch
       method: 'POST',
@@ -38,16 +38,16 @@ const submitComment = async () => {
     });
 
     if (response) {
-        replyData.value.pageCuid = props.pageCuid;
-        replyData.value.familyCuid = props.familyCuid;
-        emit('displayReply', replyData.value);
+        //replyData.value.pageCuid = props.pageCuid;
+        //replyData.value.familyCuid = props.familyCuid;
+        emit('displayReply', {...replyData.value});
         // replyData.value.name = ""; // Clear name field
         // replyData.value.reply = ""; // Clear reply field
         // need to find a way to clear fields after submitting a response without messing up the emitted data
         
-        successMessage.value = "Comment submitted successfully!"; // Set success message
+        //successMessage.value = "Comment submitted successfully!"; // Set success message
 
-        setTimeout(clearSuccessMessage, 3000);
+        setTimeout(clearSuccessMessage, 1500);
     }
     
 };

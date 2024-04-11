@@ -4,13 +4,13 @@ const prisma = new PrismaClient();
 
 export default defineEventHandler(async (event) => {
   //try {
-    const {pageCuid, familyCuid, replyData} = await readBody(event)
-    console.log(replyData)
+    const {pageCuid, familyCuid,replyData} = await readBody(event)
+    console.log(replyData._value)
     const newReply = await prisma.reply.create({
-      data: { ...replyData}
+      data: { ...replyData._value}
     });
 
-    return { reply: newReply };
+    return newReply;
   /*} catch (error) {
     console.error(error);
   } finally {

@@ -81,7 +81,7 @@ const donationData = ref<PageDonation>({
 });
 
 const userCuid = ref("0")
-const familyCuid = computed(() => pageDataDB.value?.familyCuid)
+
 const profileImageLink = ref("")
 const family_cuid = ref("0")
 const router = useRoute();
@@ -94,7 +94,6 @@ const stripeLink_ref = ref("")
 *  This creates a stripe session and redirects the user to stripe.
 *  Then it redirects to /PageDonation/pageCuid/transactionId
 */
-// todo: change to $fetch
 const create_checkout_session = async () => {
     const sessionInfo = await $fetch('/api/create_session', {
         method: 'POST',
@@ -103,7 +102,7 @@ const create_checkout_session = async () => {
         cuid: id.value,
         pageCuid: id.value,
         familyCuid: pageDataDB.value?.familyCuid,
-        amount_raised: Math.trunc(parseFloat(donationData.amount as unknown as string) * 100) as number
+        amount_raised: Math.trunc(parseFloat(donationData.value.amount as unknown as string) * 100) as number
       }
     });
     stripeLink_ref.value = sessionInfo as string
@@ -127,12 +126,12 @@ const isActive = computed(() => pageDataDB.value?.status == "active")
 
 // todo: Set as pop up?
 const shareFacebook = () => {
-  const facebookShareLink = `https://www.facebook.com/sharer/sharer.php?caption=${pageDataDB.value?.page_name}&u=${window.location.href}`
+  const facebookShareLink = `https://www.facebook.com/sharer/sharer.php?caption=${pageDataDB.value?.page_first_name}${pageDataDB.value?.page_last_name}&u=${window.location.href}`
   window.open(facebookShareLink)
 }
 
-const shareXFormalyKnownAsTwitter = () => {
-  const xShareLink = `https://twitter.com/intent/tweet?text=${pageDataDB.value?.page_name}&url=${window.location.href}`
+const shareXFormerlyKnownAsTwitter = () => {
+  const xShareLink = `https://twitter.com/intent/tweet?text=${pageDataDB.value?.page_first_name}${pageDataDB.value?.page_last_name}&url=${window.location.href}`
   window.open(xShareLink)
 }
 
@@ -141,6 +140,7 @@ const shareMail = () => {
   window.open(MailShareLink)
 }
 
+const familyCuid = computed(() => pageDataDB.value?.familyCuid)
 const donated_percentage = computed(() => (((pageDataDB.value?.amount_raised as number) / (pageDataDB.value?.donation_goal as number )) * 100).toFixed(1) + "");
 const donation_goal_provided = computed(() => pageDataDB.value?.donation_goal as number > 0)
 const comments = computed(() => pageDataDB.value?.PageDonations)
@@ -191,7 +191,7 @@ console.log(pageDataDB.value?.funeral_date)
 // the header overlay with image and name
 .mt-2.min-h-24.text-white.uppercase.w-full(style="background-image: url('https://carsonsvillage.org/wp-content/uploads/2018/11/iStock-862083112-BW.jpg');") 
   .h-full.py-8.self-center.w-full.text-center.flex.flex-col(style="background-color: rgba(50, 119, 136, .8)") 
-    p.my-auto.font-bold.text-4xl {{ pageDataDB.page_name }}
+    p.my-auto.font-bold.text-4xl {{ pageDataDB.page_first_name + " " + pageDataDB.page_last_name }}
 
 .flex.flex-col.gap-5.px-4.mx-auto.mt-8(class="w-3/4 sm:px-16")
   img.mx-auto(v-if="profileImage?.url" class="w-[122px] h-[122px] rounded-[8px]" :src="`${profileImage?.url}`")
@@ -254,7 +254,7 @@ console.log(pageDataDB.value?.funeral_date)
                         .div.comment-header(style="font-size: 0.75rem; font-weight: bold; margin-bottom: 1.5rem;") {{ comment.donorFirstName }} {{ comment.donorLastName }}
                         p.comment-body(style="font-size: 0.75rem; width: fit-content; color: #666;") {{ comment.comments }}
                         .div.comment-donation-amount(style="font-size: 0.75rem; color: #666;") Amount Donated: {{ donationFormat(comment.amount) }}
-        CVReplySystem(:pageCuid="pageCuid" :familyCuid="familyCuid" :replies="replies" @displayReply="displayReply")
+        CVReplySystem(:pageCuid="id" :familyCuid="familyCuid" :replies="replies" @displayReply="displayReply")
         .py-4.grid.flex-box.flex-row.item-centered.gap-1(v-if="replies?.length" style="line-height: 0px;text-align: center")
             div(class="flex")
             .div(v-for="(reply,i) in replies" :key="i" class="reply-box")
@@ -267,7 +267,7 @@ console.log(pageDataDB.value?.funeral_date)
             button(@click="shareFacebook")
               img(src="/facebook-fa.png" style="width:30px; height:33px;") 
           .col
-            button(@click="shareXFormalyKnownAsTwitter")
+            button(@click="shareXFormerlyKnownAsTwitter")
                 img(src="/twitter_fa.png" style="width:30px; height:29px;") 
           .col
             button(@click="shareMail")
