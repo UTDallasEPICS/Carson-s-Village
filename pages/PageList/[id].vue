@@ -182,8 +182,10 @@ await getDataPageList()
   table(style="table-layout: auto;")
     thead
       tr
-        th.font-poppins.font-bold.p-2(style="color:white;--tw-bg-opacity: 1; background-color: #5aadc2; overflow: hidden; border-radius: 60px 0px 0px 0px; width:30%; ")  Page Name
-        th.font-poppins.font-bold(style="color:white; width:35%; --tw-bg-opacity: 1; background-color: #5aadc2;") Donation Deadline
+        th.font-poppins.font-bold.p-2(style="color:white;--tw-bg-opacity: 1; background-color: #5aadc2; overflow: hidden; border-radius: 60px 0px 0px 0px; width:30%; ")
+          button(@click="toggleSort('page_name')") Page Name
+        th.font-poppins.font-bold(style="color:white; width:35%; --tw-bg-opacity: 1; background-color: #5aadc2;")
+          button(@click="toggleSort('donation_deadline')") Donation Deadline
         th.font-poppins.font-bold(style="width:10%; --tw-bg-opacity: 1; background-color: #5aadc2; color: #5aadc2;")  {{ "_______________________" }}
         th.font-poppins.font-bold(style="border-radius: 0px 60px 0px 0px; width:20%; --tw-bg-opacity: 1; background-color: #5aadc2;color:#5aadc2;") {{ "_____________" }}
       tr(v-for="(item, i) in pages" 
@@ -202,8 +204,10 @@ await getDataPageList()
   table(style="table-layout: auto;")
     thead
       tr
-        th.font-poppins.font-bold.p-2(style="color:white;--tw-bg-opacity: 1; background-color: #5aadc2; overflow: hidden; border-radius: 60px 0px 0px 0px; width:30%; ")  Page Name
-        th.font-poppins.font-bold(style="color:white; width:35%; --tw-bg-opacity: 1; background-color: #5aadc2;") Donation Deadline
+        th.font-poppins.font-bold.p-2(style="color:white;--tw-bg-opacity: 1; background-color: #5aadc2; overflow: hidden; border-radius: 60px 0px 0px 0px; width:30%; ") 
+          button(@click="toggleSort('page_name')") Page Name
+        th.font-poppins.font-bold(style="color:white; width:35%; --tw-bg-opacity: 1; background-color: #5aadc2;") 
+          button(@click="toggleSort('donation_deadline')") Donation Deadline
         th.font-poppins.font-bold(style="width:10%; --tw-bg-opacity: 1; background-color: #5aadc2; color: #5aadc2;")  {{ "_______________________" }}
         th.font-poppins.font-bold(style="border-radius: 0px 60px 0px 0px; width:20%; --tw-bg-opacity: 1; background-color: #5aadc2;color: #5aadc2;") {{ "_____________" }}
       tr(v-for="(item, i) in family_pages.data" 

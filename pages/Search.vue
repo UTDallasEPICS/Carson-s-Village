@@ -10,7 +10,7 @@
 */
 
 import type { Page, User } from '@/types.d.ts'
-import { donationFormat, dateFormat } from '@/utils'
+import { donationFormat, dateFormat, SortDonationAsc, SortDonationDesc} from '@/utils'
 
 const currentPage = ref(0)
 const lastPage = ref(0)
@@ -96,9 +96,12 @@ const searchOnEnter = () => {
   table.table.table-striped(style="width:100%;")
       thead
         tr.text-white
-          th.px-8(style="background-color: #5aadc2; border-radius: 60px 0px 0px 0px;") Page 
-          th.px-8(style="background-color: #5aadc2;") Donation Goal
-          th.px-8(style="background-color: #5aadc2; border-radius: 0px 60px 0px 0px;") Deadline
+          th.px-8(style="background-color: #5aadc2; border-radius: 60px 0px 0px 0px;")
+            button(@click="SortDonationDesc(pages)") Page
+          th.px-8(style="background-color: #5aadc2;")
+            button(@click="SortDonationDesc(pages)") Donation Goal
+          th.px-8(style="background-color: #5aadc2; border-radius: 0px 60px 0px 0px;")
+            button(@click="SortDonationDesc(pages)") Deadline
       tbody
         tr(v-for="(page, i) in pages" :class="{'bg-gray-200': (i+1) % 2}")
           td(style="text-align: center")   
