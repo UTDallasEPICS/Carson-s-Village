@@ -166,6 +166,7 @@ await getDataPageList()
 
 <template lang ="pug">
 TitleComp.border-1.border-black  Pages
+a.mr-2.mt-1.p-1.px-4.pt-2.pb-2.bg-orange-999.float-right.w-24.ml-auto(class="transition duration-300 bg-orange-999 hover:bg-green-600" style="border-radius: 100px; height: 40px; color: white; font-weight: 700;") Archive
 .container.flex.justify-between.items-center.mx-auto.my-4
   .py-4.grid(class="sm:grid-cols-3" v-if="isAdvocate && !fromUser")
     CVLabel Family
