@@ -47,8 +47,8 @@ const props = defineProps<{
   amount_raised: number,
   amount_distributed: number,
   donationStatus: string,
-  startDate: string,
-  lastDonationDate: string
+  startDate: Date | string | null,
+  lastDonationDate: Date | string | null
 }>()
 
 </script>

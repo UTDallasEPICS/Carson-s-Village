@@ -51,31 +51,6 @@ const { data: Families } = await useFetch<Family[]>('/api/families', {
   const currentPageCuid = ref<string>("");
   const currentPage = computed(() => familyData.value?.raw_data.find(({ cuid }: Page) => cuid == currentPageCuid.value) || {});
   watchEffect(() => currentPageCuid.value = familyData.value.raw_data![0]?.cuid || "");  
-  
- /* const { data: lastDonationDate } = await useFetch('/api/find_last_donation', {
-    method: 'GET',
-    query: { page_cuid: currentPageCuid},
-    watch: [currentPageCuid, currentFamilyPageNumber],
-    default() {
-      "";
-    },
-  });
-
-  const find_last_donation = async(cuid: string) => {
-    const { data: lastDonationDate2 } = await useFetch('/api/find_last_donation', {
-    method: 'GET',
-    query: { page_cuid: cuid },
-    default() {
-      "";
-    },
-  });
-  
-  return lastDonationDate2.value._max.donationDate || ""
-}*/
-
-  /*watch(familyData, async() => {
-    familyData.value.data.map(async(page: (Page & { last_donation: string | undefined} )) => { page.last_donation = await find_last_donation(page.cuid) || "" })
-  })*/
 
   const { data: donations } = await useFetch<PageDonation[]>('/api/family_donation', {
     method: 'GET',
@@ -158,7 +133,7 @@ const { data: Families } = await useFetch<Family[]>('/api/families', {
               td.font-poppins.text-gray-dark.font-bold(style="text-align: center")  {{ item.last_donation_date ? dateFormat(item?.last_donation_date) : "No Donations" }}
               td.font-poppins.text-gray-dark.font-bold(style="text-align: center")  {{ item?.donation_status}}
               td.font-poppins.text-gray-dark.font-bold(style="text-align: center")  {{ donationFormat(item.amount_raised) }}
-              td.font-poppins.text-gray-dark.font-bold(style="text-align: center")  {{ donationFormat(item.amount_raised-item.amount_distributed) }}
+              td.font-poppins.text-gray-dark.font-bold(style="text-align: center")  {{ donationFormat(item.amount_raised - item.amount_distributed) }}
   .mb-9.py-7.flex.flex-wrap.gap-2.place-content-center
     .col-md-10.px-2.mt-2
         button(@click="prevPage") &lt
@@ -178,7 +153,7 @@ const { data: Families } = await useFetch<Family[]>('/api/families', {
               :class="{'bg-gray-200': (i+1) % 2}"
           )
               td.font-poppins.text-gray-dark.font-bold(style="text-align: center")  {{ item.transaction_id }}
-              td.font-poppins.text-gray-dark.font-bold(style="text-align: center")  {{ item.cuid }}
+              //td.font-poppins.text-gray-dark.font-bold(style="text-align: center")  {{ item.cuid }}
               td.font-poppins.text-gray-dark.font-bold(style="text-align: center")  {{ item.Page.page_first_name + " " + item.Page.page_last_name }}
               td.font-poppins.text-gray-dark.font-bold(style="text-align: center")  {{ donationFormat(item.amount) }}
 </template>

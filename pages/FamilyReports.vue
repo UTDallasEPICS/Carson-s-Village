@@ -29,9 +29,9 @@ div
       label.mt-4.ml-4.text-md(class="sm:mt-0" style="letter-spacing: 0.35px;") Donation Goal
       input(type='checkbox' v-model="display.donation_goal")
     .flex.flex-col.gap-5.px-4.mx-auto.mt-8(class="w-3/4 sm:px-16")
-      img.mx-auto(v-if="profileImage?.url" class="w-[122px] h-[122px] rounded-[8px]" :src="`${profileImage?.url}`")
+      //img.mx-auto(v-if="profileImage?.url" class="w-[122px] h-[122px] rounded-[8px]" :src="`${profileImage?.url}`")
       .text-gray-dark.mx-auto.w-max.font-poppins.text-md {{ dateFormat(start_date, true) + ' - ' + dateFormat(end_date, true) }} 
-      .flex.flex-col-reverse.gap-5(class="sm:grid sm:grid-cols-2")
+      //.flex.flex-col-reverse.gap-5(class="sm:grid sm:grid-cols-2")
         .relative.w-96.p-1(v-if="imageData.length != 0" )
           button.absolute.left-4.top-64.bg-black.text-white(@click="prevImage" style="opacity:0.7; --tw-text-opacity: 1; width: 46px; height: 46px; border-radius:50%; align-items: center; justify-content: center; line-height: 2; text-align: center;color: white;") &#60;
           button.absolute.right-8.top-64.bg-black.text-white(@click="nextImage" style="opacity:0.7; --tw-text-opacity: 1; width: 46px; height: 46px; border-radius:50%; align-items: center; justify-content: center; line-height: 2; text-align: center;color: white;") &#62;
@@ -47,8 +47,9 @@ div
             .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")  
               CVDatepicker(v-model='end_date' @update:modelValue="currentPage=0; loadReports()" )  
             .col-md-8.mx-9(class="sm:col-span-1 sm:mr-11")
-            a.mr-9.mt-1.p-6.px-6.pr-6.pt-3.pb-3.bg-orange-999(class="transition duration-300 bg-orange-999 hover:bg-green-600" style="border-radius: 100px; height: 50px; color: white; font-weight: 700;" :href="filedownloadlink" :download="downloadName" :dataset.downloadurl="dataset") Download        
+                    
     .flex.gap-2.justify-center.cols-2.pl-6.pr-6
+      a.mr-9.mt-1.p-6.px-6.pr-6.pt-3.pb-3.bg-orange-999(class="transition duration-300 bg-orange-999 hover:bg-green-600" style="border-radius: 100px; height: 50px; color: white; font-weight: 700;" :href="filedownloadlink" :download="downloadName" :dataset.downloadurl="dataset") Download
       table(style="margin-top: 1.25rem; width: 100%; border-spacing: 0; border-collapse: collapse;" v-if="isAdminAdvocate")
           thead(style="color: white;")
               tr
@@ -68,8 +69,8 @@ div
           tbody
               tr(v-for="(page, i) in families" 
               :class="{'bg-gray-200': (i+1) % 2}" :key="listOfTagsLen") 
-                  td(style="text-align: center;") {{ page.page_name }}
-                  td(style="text-align: center;") {{ page.Family.AdvocateResponsible.first_name  + " " + page.Family.AdvocateResponsible?.last_name }}
+                  td(style="text-align: center;") {{ page.page_first_name + " " + page.page_last_name }}
+                  td(style="text-align: center;") {{ page.Family.AdvocateResponsible?.first_name  + " " + page.Family.AdvocateResponsible?.last_name }}
                   td(style="text-align: center;" v-if="display.duration") {{ page.duration }} 
                   td(style="text-align: center;" v-if="display.goal_met") {{  page.donation_status }}
                   td(style="text-align: center;" v-if="display.goal_met_date") {{ (page.goal_met_date) ? dateFormat(page.goal_met_date, true) : "Goal Not Reached" }}
@@ -112,11 +113,11 @@ div
     const dataset = ref("")
     const downloadName = ref("")
     const totalLength = ref(0)
-    const start_date = ref("1/01/2015")
-    const end_date = ref(new Date().toLocaleDateString())
-    const listOfTags = ref(["page_name", "donation_goal", "amount_raised", "deadline", "amount_distributed", "donation_status", "duration", "start_date", "goal_met_date", "first_name", "middle_name", "last_name", "owed"])
+    const start_date = ref(new Date("1/01/2015"))
+    const end_date = ref(new Date())
+    const listOfTags = ref(["donation_goal", "amount_raised", "deadline", "amount_distributed", "donation_status", "duration", "start_date", "goal_met_date", "page_first_name", "page_last_name", "first_name", "middle_name", "last_name", "owed"])
     // computed variable used as a key for each element of the table so that the striping of the table re-renders when the table is resized.
-    const listOfTagsLen = computed(() => listOfTags.value.length)
+    const listOfTagsLen = computed(() => listOfTags.value?.length)
     // number of family pages in the family reports table per page with @default=12 pages
     const dimensions = ref(12)
     type DisplayReport = {
@@ -146,7 +147,7 @@ div
     watch(display, async() => {
       //const listOfTags1 = ["page_name", "donation_goal", "amount_raised", "deadline", "amount_distributed", "donation_status", "duration", "start_date", "goal_met_date", "first_name", "middle_name", "last_name", "Amount Owed / Goal Percentage" ]
       //, "first_name", "middle_name", "last_name" ]
-      listOfTags.value = ["page_name"]
+      listOfTags.value = []
       if(display.value.donation_goal) {
         listOfTags.value.push("donation_goal")
       }
@@ -169,6 +170,8 @@ div
       if(display.value.goal_met_date) {
         listOfTags.value.push("goal_met_date")
       }
+      listOfTags.value.push("page_first_name")
+      listOfTags.value.push("page_last_name")
       listOfTags.value.push("first_name")
       listOfTags.value.push("middle_name") 
       listOfTags.value.push("last_name")
@@ -334,7 +337,7 @@ div
         }
 
           booleanChanged = false          
-          const toggledStatus = $fetch('api/page', {
+          const toggledStatus = await $fetch('api/page', {
             method: "PUT",
             body: { ...page }
           })

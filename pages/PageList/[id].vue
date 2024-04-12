@@ -26,12 +26,12 @@ export type Page2 = {
     cuid: string,
     userCuid: string,
     familyCuid: string,
-    day_of_birth: Date | string,
-    day_of_passing: Date | string,
-    visitation_date: Date | string,
+    day_of_birth: Date | string | null,
+    day_of_passing: Date | string | null,
+    visitation_date: Date | string | null,
     visitation_location: string,
     visitation_description: string,
-    funeral_date: Date | string,
+    funeral_date: Date | string | null,
     funeral_description: string,
     funeral_location: string,
     obituary: string,
@@ -45,11 +45,12 @@ export type Page2 = {
     status: string,
     donation_status: string,
     duration: string, 
-    start_date: string
-    goal_met_date: string
+    start_date: Date | string | null,
+    goal_met_date: Date | string | null,
     PageDonations: PageDonation[]
     Reply: Reply[]
-    User: User
+    User: User, 
+    last_donation_date: Date | string | null
 }
 
 const family_cuid = ref("")
@@ -77,8 +78,6 @@ const data = ref<User>({
   phone: "",
   Pages: [],
   familyCuid: ""
-  //PageDonations: [],
-  //DonationPayouts: []
 })
 
 const isFamily = ref(false)
@@ -198,7 +197,7 @@ await getDataPageList()
 
 <template lang ="pug">
 .py-4.grid(class="sm:grid-cols-3" v-if="isAdvocate && !fromUser")
-    CVLabel Family
+    CVLabel Current Family
     .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
       Listbox.shadow-sm.border.border-1.rounded-lg(v-if="isAdmin || isAdvocate" as='div' v-model="familyCuid")
         .relative
@@ -215,15 +214,15 @@ await getDataPageList()
   table(style="table-layout: auto;")
     thead
       tr
-      th.font-poppins.font-bold.p-2(style="color:white;--tw-bg-opacity: 1; background-color: #5aadc2; overflow: hidden; border-radius: 60px 0px 0px 0px; width:30%; ")  Page Name
+        th.font-poppins.font-bold.p-2(style="color:white;--tw-bg-opacity: 1; background-color: #5aadc2; overflow: hidden; border-radius: 60px 0px 0px 0px; width:20%; ")  Page Name
         th.font-poppins.font-bold(style="color:white; width: 10%; --tw-bg-opacity: 1; background-color: rgb(110 171 191 / var(--tw-bg-opacity));") Creating User
         th.font-poppins.font-bold(style="color:white; width: 10%; --tw-bg-opacity: 1; background-color: rgb(110 171 191 / var(--tw-bg-opacity));") Advocate 
-        th.font-poppins.font-bold(style="color:white; --tw-bg-opacity: 1; background-color: rgb(110 171 191 / var(--tw-bg-opacity));") Total Donated
-        th.font-poppins.font-bold(style="color:white; width:30%; --tw-bg-opacity: 1; background-color: rgb(110 171 191 / var(--tw-bg-opacity));") Creation Date
-        th.font-poppins.font-bold(style="color:white; width:30%; --tw-bg-opacity: 1; background-color: #5aadc2;") Donation Deadline
+        th.font-poppins.font-bold(style="color:white; width: 10%;--tw-bg-opacity: 1; background-color: rgb(110 171 191 / var(--tw-bg-opacity));") Total Donated
+        th.font-poppins.font-bold(style="color:white; width:20%; --tw-bg-opacity: 1; background-color: rgb(110 171 191 / var(--tw-bg-opacity));") Creation Date
+        th.font-poppins.font-bold(style="color:white; width:20%; --tw-bg-opacity: 1; background-color: #5aadc2;") Donation Deadline
         th.font-poppins.font-bold(style="color:white; --tw-bg-opacity: 1; background-color: rgb(110 171 191 / var(--tw-bg-opacity));") Donation Goal
-        th.font-poppins.font-bold(style="width:10%; --tw-bg-opacity: 1; background-color: #5aadc2; color: #5aadc2;")  {{ "_______________________" }}
-        th.font-poppins.font-bold(style="border-radius: 0px 60px 0px 0px; width:20%; --tw-bg-opacity: 1; background-color: #5aadc2;color:#5aadc2;") {{ "_____________" }}
+        th.font-poppins.font-bold(style="width:15%; --tw-bg-opacity: 1; background-color: #5aadc2; color: white;")  {{ "Page Editor" }}
+        th.font-poppins.font-bold(style="border-radius: 0px 60px 0px 0px; width:25%; --tw-bg-opacity: 1; background-color: #5aadc2;color: white;") {{ "Family Page" }}
         
         
         
@@ -250,8 +249,8 @@ await getDataPageList()
       tr
         th.font-poppins.font-bold.p-2(style="color:white;--tw-bg-opacity: 1; background-color: #5aadc2; overflow: hidden; border-radius: 60px 0px 0px 0px; width:30%; ")  Page Name
         th.font-poppins.font-bold(style="color:white; width:35%; --tw-bg-opacity: 1; background-color: #5aadc2;") Donation Deadline
-        th.font-poppins.font-bold(style="width:10%; --tw-bg-opacity: 1; background-color: #5aadc2; color: #5aadc2;")  {{ "_______________________" }}
-        th.font-poppins.font-bold(style="border-radius: 0px 60px 0px 0px; width:20%; --tw-bg-opacity: 1; background-color: #5aadc2;color: #5aadc2;") {{ "_____________" }}
+        th.font-poppins.font-bold(style="width:15%; --tw-bg-opacity: 1; background-color: #5aadc2; color: white;")  {{  "Page Editor" }}
+        th.font-poppins.font-bold(style="border-radius: 0px 60px 0px 0px; width:15%; --tw-bg-opacity: 1; background-color: #5aadc2;color: white;") {{ "Family Page" }}
       tr(v-for="(item, i) in family_pages.data" 
       :key="i" 
       :class="{'bg-gray-200': (i+1) % 2}"
