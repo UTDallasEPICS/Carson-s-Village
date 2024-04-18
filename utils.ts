@@ -25,14 +25,3 @@ export function donationFormat(amount = 0){
     currency: "usd"
   })
 }
-
-
-export function SortDonationAsc(pages:Page[]){
-  console.log(pages)
-  return pages.sort((a:Page, b:Page) => (a.donation_goal as number) - (b.donation_goal as number))
-}
-
-export function SortDonationDesc(pages:any){
-  return pages.sort((a:Page, b:Page) => (b.donation_goal as number) - (a.donation_goal as number))
-}
-

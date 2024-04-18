@@ -10,7 +10,7 @@
 */
 
 import type { Page, User } from '@/types.d.ts'
-import { donationFormat, dateFormat, SortDonationAsc, SortDonationDesc} from '@/utils'
+import { donationFormat, dateFormat } from '@/utils'
 
 const currentPage = ref(0)
 const lastPage = ref(0)
@@ -26,6 +26,8 @@ const isLoggedIn = computed(() => cvuser.value?.cuid != undefined)
 const searchQueryInput = ref("");
 const totalLength = ref(0)
 
+const order = ref('')
+const OrderField = ref('page_name')
   
 type paginated_results = {
   data: Page[]
@@ -34,11 +36,22 @@ type paginated_results = {
   }
 }
 
+function SortDonationAsc(pages:Page[]){
+  console.log(pages)
+  return pages.sort((a:Page, b:Page) => (a.donation_goal as number) - (b.donation_goal as number))
+}
+
+function SortDonationDesc(pages:any, OrderFields:string){
+   OrderField.value = OrderFields as string
+   order.value = 'desc'
+   pageSearch(searchQueryInput.value)
+}
+
 // Method to populate search results for pages
 const pageSearch = async(searchQuery: string) => { 
     const { data: pageData } = await useFetch<paginated_results>('/api/pages', {
     method: 'GET',
-    query: {searchQuery: searchQuery, page_number: currentPage.value, isPageList: 0},
+    query: {searchQuery: searchQuery, page_number: currentPage.value, isPageList: 0, sortedColumn:OrderField.value, order:order.value},
     watch: [currentPage]
 })
     // api/pages returns both the pages 12 at a time and the length for upper bounds checking
@@ -99,7 +112,7 @@ const searchOnEnter = () => {
           th.px-8(style="background-color: #5aadc2; border-radius: 60px 0px 0px 0px;")
             button(@click="SortDonationDesc(pages)") Page
           th.px-8(style="background-color: #5aadc2;")
-            button(@click="SortDonationDesc(pages)") Donation Goal
+            button(@click="SortDonationDesc(pages, 'donation_goal')") Donation Goal
           th.px-8(style="background-color: #5aadc2; border-radius: 0px 60px 0px 0px;")
             button(@click="SortDonationDesc(pages)") Deadline
       tbody
