@@ -47,18 +47,18 @@ div
           tbody
               tr(v-for="(page, i) in families" 
               :class="{'bg-gray-200': (i+1) % 2}") 
-                  td(style="text-align: center;") {{ page.page_name }}
-                  td(style="text-align: center;") {{ page.Family.AdvocateResponsible.first_name  + " " + page.Family.AdvocateResponsible?.last_name }}
-                  td(style="text-align: center;") {{ page.duration }} 
-                  td(style="text-align: center;") {{  page.donation_status }}
-                  td(style="text-align: center;") {{ (page.goal_met_date) ? dateFormat(page.goal_met_date, true) : "Goal Not Reached" }}
-                  td(style="text-align: center;") {{ dateFormat(page.start_date, true) }}
-                  td(style="text-align: center;") {{ donationFormat((page.amount_raised - page.amount_distributed)) }}
+                  td(style="text-align: center;") {{ page?.page_first_name + " " + page?.page_last_name }}
+                  td(style="text-align: center;") {{ page?.Family?.AdvocateResponsible?.first_name  + " " + page?.Family?.AdvocateResponsible?.last_name }}
+                  td(style="text-align: center;") {{ page?.duration }} 
+                  td(style="text-align: center;") {{  page?.donation_status }}
+                  td(style="text-align: center;") {{ (page?.goal_met_date) ? dateFormat(page?.goal_met_date, true) : "Goal Not Reached" }}
+                  td(style="text-align: center;") {{ dateFormat(page?.start_date, true) }}
+                  td(style="text-align: center;") {{ donationFormat((page?.amount_raised - page?.amount_distributed)) }}
                   //td(style="text-align: center;") {{ (page.donation_goal) ? ((page.amount_raised - page.amount_distributed)/(page.donation_goal) * 100).toFixed(2) + "%" : "No donation goal"}}
-                  td(style="text-align: center;") {{ donationFormat(page.amount_distributed) }}
-                  td(style="text-align: center;") {{ donationFormat(page.donation_goal) }}
-                  td(style="text-align: center;") {{ dateFormat(page.deadline)}}
-                  td(style="text-align: center;") {{ page.status }}
+                  td(style="text-align: center;") {{ donationFormat(page?.amount_distributed) }}
+                  td(style="text-align: center;") {{ donationFormat(page?.donation_goal) }}
+                  td(style="text-align: center;") {{ dateFormat(page?.deadline)}}
+                  td(style="text-align: center;") {{ page?.status }}
                   td(style="text-align: center;")
                     ActionButton(style="color: white; background-color: red;" @click="togglePageStatus(page)") {{ "X" }}
 
@@ -147,7 +147,7 @@ div
       
       families.value = familiesData as unknown as Family[]
       // gathering the family data into an array of family pages and their advocate responsible
-      families.value.forEach((element: Family)  => { element.Pages.forEach((element2) => {familyPages.value.push( { ...element2 as unknown as Page[], ...element.AdvocateResponsible as any }) })})
+      families?.value?.forEach((element: Family)  => { element?.Pages?.forEach((element2) => {familyPages.value.push( { ...element2 as unknown as Page[], ...element.AdvocateResponsible as any }) })})
       const familyPagesArr = [...familyPages.value]
       
       const csv = convertToCSV( familyPagesArr )
