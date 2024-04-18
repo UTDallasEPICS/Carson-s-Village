@@ -91,8 +91,8 @@ div
     const dataset = ref("")
     const downloadName = ref("")
     const totalLength = ref(0)
-    const start_date = ref("1/01/2015")
-    const end_date = ref(new Date().toLocaleDateString())
+    const start_date = ref()
+    const end_date = ref()
 
     const data_family = ref<Family>({
       cuid: '',
