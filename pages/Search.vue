@@ -36,12 +36,13 @@ type paginated_results = {
   }
 }
 
-function SortDonationAsc(pages:Page[]){
-  console.log(pages)
-  return pages.sort((a:Page, b:Page) => (a.donation_goal as number) - (b.donation_goal as number))
+function SortAsc(pages:any, OrderFields:string){
+   OrderField.value = OrderFields as string
+   order.value = 'asc'
+   pageSearch(searchQueryInput.value)
 }
 
-function SortDonationDesc(pages:any, OrderFields:string){
+function SortDesc(pages:any, OrderFields:string){
    OrderField.value = OrderFields as string
    order.value = 'desc'
    pageSearch(searchQueryInput.value)
