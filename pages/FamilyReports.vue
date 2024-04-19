@@ -129,6 +129,7 @@ div
       start_date: boolean,
     }
 
+
     const display = ref<DisplayReport>({
       duration: true,
       goal_met: true,
