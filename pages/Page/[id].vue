@@ -12,7 +12,7 @@
 import type { User, Page, PageDonation, Image, Reply, Family} from '@/types.d.ts'
 import {  dateFormat, donationFormat } from '@/utils'
 import CVReplySystem from '@/components/CVReplySystem.vue'
-import CVReply from '@components/CVReply.vue'
+import CVReply from '@/components/CVReply.vue'
 
 
 const pageData = ref<Page>({
