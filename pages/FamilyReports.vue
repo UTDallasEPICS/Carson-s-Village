@@ -140,7 +140,7 @@ div
   // loads family report data from the families database table and joins and creates a download link for the file
   const loadReports = async () => {
     if( isAdminAdvocate ) { 
-      const familiesData = await useFetch('/api/families', {
+      const familiesData = await useFetch('/api/familiesReports', {
         method: 'GET' 
       });
       
@@ -201,7 +201,7 @@ div
 
         //booleanChanged = false         
         if(booleanChanged) {
-          const toggledStatus = await $fetch('api/page', {
+          const toggledStatus = await useFetch('api/page', {
             method: "PUT",
             body: { ...page }
           })

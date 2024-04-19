@@ -12,7 +12,7 @@
 import type { User, Page, PageDonation, Image, Reply, Family} from '@/types.d.ts'
 import {  dateFormat, donationFormat } from '@/utils'
 import CVReplySystem from '@/components/CVReplySystem.vue'
-import { CVSuspendButton } '@/components/CVSuspendButton.vue'
+import CVReply from '@components/CVReply.vue'
 
 
 const pageData = ref<Page>({
@@ -262,10 +262,8 @@ console.log(pageDataDB.value?.funeral_date)
         CVReplySystem(:pageCuid="id" :familyCuid="familyCuid" :replies="replies" @displayReply="displayReply")
         .py-4.grid.flex-box.flex-row.item-centered.gap-1(v-if="replies?.length" style="line-height: 0px;text-align: center")
             div(class="flex")
-            .div(v-for="(reply,i) in replies" :key="i" class="reply-box" v-if="!(reply.suspended) || isAdvocateAdmin")
-                .reply-box(v-if="reply.reply.length > 0" style="padding: 1rem; text-align: left; border-bottom: 1px solid black") 
-                    .reply-header(style="font-size: 1rem; font-weight: bold; margin-bottom: 2.5rem; margin-left: 1rem") {{reply.name}}
-                    .reply-body(style="font-size: 1rem; color: #666; margin-bottom: 2.5rem;") {{reply.reply}}
+            .div(v-for="(reply,i) in replies" :key="i" class="reply-box" v-if="!(reply.suspended)")
+                CVReply(:modelValue="reply")
             .div(v-for="(reply, i) in replies" :key="i")
         div.flex(style="color:gray; font-weight: 700; justify-content:center; align-items: center; height: 100px;")
           label SHARE THIS PAGE |&nbsp;

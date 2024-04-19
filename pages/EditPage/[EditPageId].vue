@@ -14,7 +14,9 @@ import CVInput from '@/components/CVInput.vue'
 import CVLabel from '@/components/CVLabel.vue'
 import CVDatepicker from '@/components/CVDatepicker.vue'
 import CVHelpButton from '@/components/CVHelpButton.vue'
+import CVReply from '@/components/CVReply.vue'
 import '@vuepic/vue-datepicker/dist/main.css';
+import CVSuspendButton from '@/components/CVSuspendButton.vue'
 import {
     Listbox,
     ListboxButton,
@@ -357,6 +359,13 @@ CVContainer
             CVLabel Deadline Date
             .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
                 CVDatepicker(v-model='data.deadline')
+        CVReplySystem(:pageCuid="id" :familyCuid="familyCuid" :replies="replies" @displayReply="displayReply")
+        .py-4.grid.flex-box.flex-row.item-centered.gap-1(v-if="replies?.length" style="line-height: 0px;text-align: center")
+            div(class="flex")
+            .div(v-for="(reply,i) in replies" :key="i" class="reply-box")
+                CVReply(:modelValue="reply")
+                CVSuspendButton(:modelValue="reply.suspended")
+            .div(v-for="(reply, i) in replies" :key="i")
         .ml-9.mb-9.py-7.flex.flex-wrap.gap-2
             .col-md-10.px-2.mt-2
                 ActionButton(@click="save" class="transition duration-300 bg-orange-999 hover:bg-green-600") Save
