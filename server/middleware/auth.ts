@@ -135,7 +135,7 @@ product_description: "This is Carson's Village account used for donations on a f
       const id = event.context.user?.Family?.stripe_account_id
       const stripeAccountFull = await stripe.accounts.retrieve(
         id as string)
-      console.log(stripeAccountFull)
+      //console.log(stripeAccountFull)
       if(stripeAccountFull.charges_enabled) {
         console.log("good")
       }

@@ -9,6 +9,7 @@ const prisma = new PrismaClient()
 
 export default defineEventHandler(async event => {
     const { page_cuid } = getQuery(event);
+    
     if((page_cuid as string) == "0" || page_cuid == undefined) {
         return ""
     }

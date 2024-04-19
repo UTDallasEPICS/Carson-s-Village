@@ -1,14 +1,12 @@
 <template lang="pug">
 //todo: style the date selection and have date selection on all the following: donation deadline, start date, and goal met date (use HTML select?)
-//todo: num pages per family
 //todo: add selection for families instead of all at once and toggle between all at once and all families by having the first option as displaying every page
-//todo: 3 column by however many needed rows (flex-wrap) of checkboxes to enable and disable columns. Future idea: put a nicer version as a sidebar
 div
     TitleComp.border-1.border-black Family Reports 
     br
     h2.mt-4.m1-4 Table Dimensions
       .div.flex.flex-box.flex-wrap.gap-10(style="width: 450px") 
-        CVLable() Number Of Table Rows
+        CVLabel Number Of Table Rows
         CVInput(v-model="dimensions")
     h2.mt-4.m1-4 Fields to Show
     .div.flex.flex-box.flex-wrap.gap-10(style="width: 450px") 
@@ -30,7 +28,7 @@ div
       input(type='checkbox' v-model="display.donation_goal")
     .flex.flex-col.gap-5.px-4.mx-auto.mt-8(class="w-3/4 sm:px-16")
       //img.mx-auto(v-if="profileImage?.url" class="w-[122px] h-[122px] rounded-[8px]" :src="`${profileImage?.url}`")
-      .text-gray-dark.mx-auto.w-max.font-poppins.text-md {{ dateFormat(start_date, true) + ' - ' + dateFormat(end_date, true) }} 
+      //.text-gray-dark.mx-auto.w-max.font-poppins.text-md {{ dateFormat(start_date, true) + ' - ' + dateFormat(end_date, true) }} 
       //.flex.flex-col-reverse.gap-5(class="sm:grid sm:grid-cols-2")
         .relative.w-96.p-1(v-if="imageData.length != 0" )
           button.absolute.left-4.top-64.bg-black.text-white(@click="prevImage" style="opacity:0.7; --tw-text-opacity: 1; width: 46px; height: 46px; border-radius:50%; align-items: center; justify-content: center; line-height: 2; text-align: center;color: white;") &#60;
@@ -70,7 +68,7 @@ div
               tr(v-for="(page, i) in families" 
               :class="{'bg-gray-200': (i+1) % 2}" :key="listOfTagsLen") 
                   td(style="text-align: center;") {{ page.page_first_name + " " + page.page_last_name }}
-                  td(style="text-align: center;") {{ page.Family.AdvocateResponsible?.first_name  + " " + page.Family.AdvocateResponsible?.last_name }}
+                  td(style="text-align: center;") {{ page.Family?.AdvocateResponsible?.first_name  + " " + page.Family?.AdvocateResponsible?.last_name }}
                   td(style="text-align: center;" v-if="display.duration") {{ page.duration }} 
                   td(style="text-align: center;" v-if="display.goal_met") {{  page.donation_status }}
                   td(style="text-align: center;" v-if="display.goal_met_date") {{ (page.goal_met_date) ? dateFormat(page.goal_met_date, true) : "Goal Not Reached" }}
@@ -258,7 +256,9 @@ div
       // unique filename based on current time
       const filename = "family_report_" + formatReportDate(dateFormat(new Date().toString(), true).replaceAll("/", "-")) + ".csv"
       console.log(filename)
+      //if(typeof window !== undefined) {
       filedownloadlink.value = window.URL.createObjectURL(csvFile);
+      //}
       dataset.value = ["text/csv", filename, filedownloadlink.value].join(':');
       downloadName.value = filename
     }
@@ -354,7 +354,7 @@ const nextPage = () => {
     } 
 }
 const prevPage = () => {
-    if(currentPage.value != 0){
+    if(currentPage.value != 0) {
         currentPage.value--
         loadReports()
     } 

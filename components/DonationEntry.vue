@@ -43,8 +43,10 @@ const stripeLink_ref = ref("")
 const create_checkout_session = async () => {
     console.log(feeRecovery.value)
     if(feeRecovery.value) {
-      donationData.value.amount = 1.035 * donationData.value.amount
-    }
+      donationData.value.amount = donationData.value.amount * 100 // converting to cents for better accuracy 
+      donationData.value.amount = 1.029 * donationData.value.amount + 0.30
+      donationData.value.amount = donationData.value.amount / 100 
+    } 
     if(anonymous.value) {
         donationData.value.donorFirstName = "anonymous"
         donationData.value.donorLastName = ""
@@ -87,7 +89,7 @@ const create_checkout_session = async () => {
         br
 img(v-if="donationData.amount < 5" src="/tooLowDonations.png" style="height:115px; width:600px")
 input(type='checkbox' v-model='feeRecovery')
-CVLabel I'd like to help cover the transaction fees of ${{ props.isActive ? (0.035 * donationData.amount).toFixed(2) : 0}} for my donation. 
+CVLabel I'd like to help cover the transaction fees of ${{ props.isActive ? (0.029 * donationData.amount + 0.30).toFixed(2) : 0}} for my donation. 
 .col-md-8.ml-4.pt-6.pr-5.flex.items-center.justify-center
     ActionButton.mx-auto.text-md(name='submit' @click="create_checkout_session" class="transition duration-300 bg-orange-999 hover:bg-green-600" :disabled="donationData.amount < 5") DONATE NOW
 </template>
