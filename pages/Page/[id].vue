@@ -263,7 +263,7 @@ console.log(pageDataDB.value?.funeral_date)
         .py-4.grid.flex-box.flex-row.item-centered.gap-1(v-if="replies?.length" style="line-height: 0px;text-align: center")
             div(class="flex")
             .div(v-for="(reply,i) in replies" :key="i" class="reply-box" v-if="!(reply.suspended)")
-                CVReply(:modelValue="reply")
+                CVReply(r='reply')
             .div(v-for="(reply, i) in replies" :key="i")
         div.flex(style="color:gray; font-weight: 700; justify-content:center; align-items: center; height: 100px;")
           label SHARE THIS PAGE |&nbsp;

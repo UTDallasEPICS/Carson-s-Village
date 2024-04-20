@@ -362,8 +362,8 @@ CVContainer
         .py-4.grid.flex-box.flex-row.item-centered.gap-1(v-if="replies?.length" style="line-height: 0px;text-align: center")
             div(class="flex")
             .div(v-for="(reply,i) in replies" :key="i" class="reply-box")
-                CVReply(:modelValue="reply")
-                CVSuspendButton(:modelValue="reply.suspended")
+                CVReply(r='reply')
+                CVSuspendButton(modelValue='reply.suspended')
             .div(v-for="(reply, i) in replies" :key="i")
         .ml-9.mb-9.py-7.flex.flex-wrap.gap-2
             .col-md-10.px-2.mt-2
