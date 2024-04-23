@@ -27,24 +27,26 @@ const searchQueryInput = ref("");
 const totalLength = ref(0)
 
 const order = ref('')
-const OrderField = ref('page_name')
+const OrderField = ref('')
   
 type paginated_results = {
   data: Page[]
   Pagination: {
     total: number
   }
+  raw_data: Page[]
 }
 
-function SortAsc(pages:any, OrderFields:string){
-   OrderField.value = OrderFields as string
-   order.value = 'asc'
-   pageSearch(searchQueryInput.value)
-}
-
-function SortDesc(pages:any, OrderFields:string){
-   OrderField.value = OrderFields as string
-   order.value = 'desc'
+function SortCV(pages:any, OrderFields:string){
+  OrderField.value = OrderFields as string
+  if (order.value === ''){
+    order.value = 'desc'
+   } else if (order.value === 'desc') {
+    order.value = 'asc'
+   } else if (order.value === 'asc') {
+    OrderField.value = ''
+    order.value = ''
+   }
    pageSearch(searchQueryInput.value)
 }
 
@@ -56,7 +58,11 @@ const pageSearch = async(searchQuery: string) => {
     watch: [currentPage]
 })
     // api/pages returns both the pages 12 at a time and the length for upper bounds checking
-    pages.value = pageData.value?.data as unknown as Page[]
+    if(OrderField.value) {
+      pages.value = pageData.value?.data as unknown as Page[]
+    } else {
+      pages.value = pageData.value?.raw_data as unknown as Page[]
+    }
     totalLength.value = pageData.value?.Pagination.total as unknown as number
 }
 
@@ -111,11 +117,11 @@ const searchOnEnter = () => {
       thead
         tr.text-white
           th.px-8(style="background-color: #5aadc2; border-radius: 60px 0px 0px 0px;")
-            button(@click="SortDonationDesc(pages)") Page
+            button(@click="SortCV(pages, 'page_name')") Page
           th.px-8(style="background-color: #5aadc2;")
-            button(@click="SortDonationDesc(pages, 'donation_goal')") Donation Goal
+            button(@click="SortCV(pages, 'donation_goal')") Donation Goal
           th.px-8(style="background-color: #5aadc2; border-radius: 0px 60px 0px 0px;")
-            button(@click="SortDonationDesc(pages)") Deadline
+            button(@click="SortCV(pages, 'deadline')") Deadline
       tbody
         tr(v-for="(page, i) in pages" :class="{'bg-gray-200': (i+1) % 2}")
           td(style="text-align: center")   

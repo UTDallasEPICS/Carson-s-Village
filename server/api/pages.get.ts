@@ -35,16 +35,26 @@ if(event.context.user.cuid != undefined) { //if the user is not logged in, do no
   // Makes sure that an empty searchQuery returns no results and that searchQueries with all spaces return no results (prevents returning all pages with a first and last name using a space).
   if((searchQuery as string) != "" && searchQuerySpacesRemoved.length != 0) {
     // Pagination via taking the absolute page number with 12 records per page 
-    const [count, pagesResult] = await prisma.$transaction([
+    const [count, pagesResult, unsortedPages] = await prisma.$transaction([
       prisma.page.count({ where: { page_name: {
         contains: searchQuery as string,
         mode: 'insensitive',
       } }}),
       prisma.page.findMany({
     orderBy: {
-      page_name: 'asc'
+      [(sortedColumn as string) || 'page_name'] : (order as string) || 'asc'
      // sortedColumnString : (order as string) || 'asc',
-      } as any,
+      } as const,
+    where: {
+    page_name: {
+      contains: searchQuery as string,
+      mode: 'insensitive',
+    }
+    },
+    skip: page_number as number * 12,
+    take: 12, 
+  }),
+      prisma.page.findMany({
     where: {
     page_name: {
       contains: searchQuery as string,
@@ -54,12 +64,14 @@ if(event.context.user.cuid != undefined) { //if the user is not logged in, do no
     skip: page_number as number * 12,
     take: 12, 
   })
+      
     ])
 
     return {
       Pagination: {
       total: count },
-      data:  pagesResult
+      data:  pagesResult,
+      raw_data: unsortedPages
     };
   }
   return {
