@@ -194,6 +194,7 @@ const prevPage = () => {
 }
 const currentFamily = computed(() => data_families.value?.find(({ cuid }: Family) => cuid == familyCuid.value) || {});
 
+
 await getDataPageList()
 </script>
 
@@ -203,7 +204,12 @@ await getDataPageList()
     .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
       Listbox.shadow-sm.border.border-1.rounded-lg(v-if="isAdmin || isAdvocate" as='div' v-model="familyCuid")
         .relative
-          Transition(
+  .py-4.grid(class="sm:grid-cols-3" v-if="isAdvocate && !fromUser")
+      CVLabel Family
+      .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
+        Listbox.shadow-sm.border.border-1.rounded-lg(v-if="isAdmin || isAdvocate" as='div' v-model="familyCuid")
+          .relative
+            Transition(
                     leave-active-class='transition ease-in duration-100'
                     leave-from-class='opacity-100'
                     leave-to-class='opacity-0'
@@ -243,8 +249,7 @@ await getDataPageList()
           LinkButton(class="sm:my-2 transition duration-300 bg-orange-999 hover:bg-green-600" style="--tw-bg-opacity: 1; white-space: nowrap; display: flex; flex-direction: row; padding: 14px 24px; gap: 10px;" :to="`/EditPage/${item.cuid}`") Edit
         td
           LinkButton(class="sm:my-2 transition duration-300 bg-orange-999 hover:bg-green-600" style="--tw-bg-opacity: 1; white-space: nowrap; display: flex; flex-direction: row; padding: 14px 24px; gap: 10px;" :to="`/Page/${item.cuid}`") View
-  .container.bg-blue-300.mx-auto(class="w-auto sm:w-[1200px]" style="--tw-bg-opacity: 1; background-color: #5aadc2; height: 50px; border-radius: 0px 0px 60px 60px;")
-.mb-9.py-7.flex.flex-wrap.gap-2.place-content-center
+          .container.bg-blue-300.mx-auto.mt-4(class="w-auto sm:w-[1200px]" style="--tw-bg-opacity: 1; background-color: #5aadc2; height: 50px; border-radius: 0px 0px 60px 60px;").mb-9.py-7.flex.flex-wrap.gap-2.place-content-center
   .col-md-10.px-2.mt-2
       button(@click="prevPage") &lt
   .col-md-10.px-2.mt-2
