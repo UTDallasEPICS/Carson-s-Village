@@ -55,6 +55,7 @@ div
             a.mr-2.mt-1.p-2.px-9.pt-3.pb-3.bg-orange-999(class="transition duration-300 bg-orange-999 hover:bg-green-600" style="border-radius: 100px; height: 50px; color: white; font-weight: 700;") Archive        
     .flex.gap-2.justify-center.cols-2.pl-6.pr-6
       a.mr-9.mt-1.p-6.px-6.pr-6.pt-3.pb-3.bg-orange-999(class="transition duration-300 bg-orange-999 hover:bg-green-600" style="border-radius: 100px; height: 50px; color: white; font-weight: 700;" :href="filedownloadlink" :download="downloadName" :dataset.downloadurl="dataset") Download
+      a.mr-2.mt-1.p-2.px-9.pt-3.pb-3.bg-orange-999(class="transition duration-300 bg-orange-999 hover:bg-green-600" style="border-radius: 100px; height: 50px; color: white; font-weight: 700;") Archive
       table(style="margin-top: 1.25rem; width: 100%; border-spacing: 0; border-collapse: collapse;" v-if="isAdminAdvocate")
           thead(style="color: white;")
               tr
