@@ -349,6 +349,7 @@ div
         } else if(!confirmReactivate) {
         return ""
         }
+        }
 
 
           booleanChanged = false          
@@ -357,7 +358,6 @@ div
             method: "PUT",
             body: { ...page }
           })
-        }
     }
   }
     
