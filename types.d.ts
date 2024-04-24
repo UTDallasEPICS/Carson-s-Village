@@ -53,16 +53,16 @@ export type Page = {
     cuid: string,
     userCuid: string,
     familyCuid: string,
-    day_of_birth: Date | string,
-    day_of_passing: Date | string,
-    visitation_date: Date | string,
+    day_of_birth: Date | string | null,
+    day_of_passing: Date | string | null,
+    visitation_date: Date | string | null,
     visitation_location: string,
     visitation_description: string,
-    funeral_date: Date | string,
+    funeral_date: Date | string | null,
     funeral_description: string,
     funeral_location: string,
     obituary: string,
-    deadline: Date | string,
+    deadline: Date | string | null,
     donation_goal: number | string
     amount_raised: number | string
     amount_distributed: number | string
@@ -73,9 +73,10 @@ export type Page = {
     status: string,
     donation_status: string,
     duration: string, 
-    start_date: string
-    goal_met_date: string
+    start_date: Date | string | null
+    goal_met_date: Date | string | null
     PageDonations: PageDonation[]
+    last_donation_date: Date | string | null
     Reply: Reply[]
   }
 
@@ -83,8 +84,8 @@ export type Family = {
   cuid: string;
   family_name: string;
   stripe_account_id: string | null;
-  created_at: string;
-  updated_at: string;
+  created_at: Date | string | null;
+  updated_at: Date | string | null;
   advocateCuid: string;
   Pages: Page[];
   FamilyMembers: User[];
@@ -102,7 +103,7 @@ export type User = {
     middle_name: string,
     phone: string,
     Pages: Page[],
-    familyCuid: String
+    familyCuid: String,     
     //PageDonations: PageDonation[]
     //DonationPayouts: DonationPayout[]  
 }
@@ -120,6 +121,7 @@ export type PageDonation = {
   isAnonymous: boolean,
   comments: string,
   Page: Page,
+  donationDate: Date | string | null
   //User: User
 }
 
@@ -129,7 +131,7 @@ export type donation_payout = {
     transaction_id: string,
     userCuid: string
     amount_to_record: number,
-    transaction_recording_date: string,
+    transaction_recording_date: Date | string | null,
     familyCuid: string,
     page: Page
 }
