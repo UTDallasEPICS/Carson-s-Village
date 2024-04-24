@@ -45,15 +45,14 @@ div
     //.py-4.grid(class="sm:grid-cols-5") 
             CVLabel Date Range
             .col-md-8.mx-9(class="sm:col-span-1 sm:mr-11")
-            CVLabel Date Range
-            .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
               CVDatepicker(v-model='start_date' @update:model-value="currentPage=0; loadReports();")
-            .col-md-8.mx-9(class="sm:col-span-1 sm:mr-11")  
+            .col-md-8.mx-9(class="sm:col-span-1 sm:mr-9")  
               p(style="text-align:center;") {{ "-" }}
-            .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")  
+            .col-md-8.mx-9(class="sm:col-span-2 sm:mr-9")  
               CVDatepicker(v-model='end_date' @update:modelValue="currentPage=0; loadReports()" )  
             .col-md-8.mx-9(class="sm:col-span-1 sm:mr-11")
-                    
+            a.mr-2.mt-1.p-2.px-6.pt-3.pb-3.bg-orange-999(class="transition duration-300 bg-orange-999 hover:bg-green-600" style="border-radius: 100px; height: 50px; color: white; font-weight: 700;" :href="filedownloadlink" :download="downloadName" :dataset.downloadurl="dataset") Download        
+            a.mr-2.mt-1.p-2.px-9.pt-3.pb-3.bg-orange-999(class="transition duration-300 bg-orange-999 hover:bg-green-600" style="border-radius: 100px; height: 50px; color: white; font-weight: 700;") Archive        
     .flex.gap-2.justify-center.cols-2.pl-6.pr-6
       a.mr-9.mt-1.p-6.px-6.pr-6.pt-3.pb-3.bg-orange-999(class="transition duration-300 bg-orange-999 hover:bg-green-600" style="border-radius: 100px; height: 50px; color: white; font-weight: 700;" :href="filedownloadlink" :download="downloadName" :dataset.downloadurl="dataset") Download
       table(style="margin-top: 1.25rem; width: 100%; border-spacing: 0; border-collapse: collapse;" v-if="isAdminAdvocate")
@@ -352,8 +351,10 @@ div
           })
         }
     }
+
   }
     
+
 // Pagination control, move the page counter forwards and backwards and searches
 const nextPage = () => { 
   console.log(totalLength.value / dimensions.value)
