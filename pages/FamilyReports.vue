@@ -4,28 +4,36 @@
 div
     TitleComp.border-1.border-black Family Reports 
     br
-    h2.mt-4.m1-4 Table Dimensions
+    h2.mt-4.ml-4.border-1.border-black.underline(style="font-size: 23px") Table Dimensions
       .div.flex.flex-box.flex-wrap.gap-10(style="width: 450px") 
-        CVLabel Number Of Table Rows
-        CVInput(v-model="dimensions")
-    h2.mt-4.m1-4 Fields to Show
-    .div.flex.flex-box.flex-wrap.gap-10(style="width: 450px") 
+        h1.ml-1(style="font-size: 18px") Number of Table Rows
+          CVInput(v-model="dimensions")
+    h2.mt-4.ml-5.underline(style="font-size: 18px") Fields to Show
+    .div.flex.flex-box.flex-wrap.gap-10.stretch.grid.ml-2(class="sm:grid-cols-3" style="width: 700px") 
       label.mt-4.ml-4.text-md(class="sm:mt-0" style="letter-spacing: 0.35px;") Duration
-      input(type='checkbox' v-model="display.duration")
-      label.mt-4.ml-4.text-md(class="sm:mt-0" style="letter-spacing: 0.35px;") goal met
-      input(type='checkbox' v-model="display.goal_met")
-      label.mt-4.ml-4.text-md(class="sm:mt-0" style="letter-spacing: 0.35px;") Goal Met date
-      input(type='checkbox' v-model="display.goal_met_date")
-      label.mt-4.ml-4.text-md(class="sm:mt-0" style="letter-spacing: 0.35px;") Start Date 
-      input(type='checkbox' v-model="display.start_date")
-      label.mt-4.ml-4.text-md(class="sm:mt-0" style="letter-spacing: 0.35px;") Amount Owed 
-      input(type='checkbox' v-model="display.owed") 
+        div(class="w-full")
+          input.div(type='checkbox' v-model="display.duration")
+      label.mt-4.ml-4.text-md(class="sm:mt-0" style="letter-spacing: 0.35px;") Goal Met
+        div
+          input(type='checkbox' v-model="display.goal_met")
+      label.mt-4.ml-4.text-md(class="sm:mt-0" style="letter-spacing: 0.35px;") Goal Met Date
+        div
+          input(type='checkbox' v-model="display.goal_met_date")
+      label.mt-4.ml-4.text-md(class="sm:mt-0" style="letter-spacing: 0.35px;") Start Date
+        div
+          input(type='checkbox' v-model="display.start_date")
+      label.mt-4.ml-4.text-md(class="sm:mt-0" style="letter-spacing: 0.35px;") Amount Owed
+        div
+          input(type='checkbox' v-model="display.owed") 
       label.mt-4.ml-4.text-md(class="sm:mt-0" style="letter-spacing: 0.35px;") Amount Paid Out
-      input(type='checkbox' v-model="display.paid")
+        div
+          input(type='checkbox' v-model="display.paid")
       label.mt-4.ml-4.text-md(class="sm:mt-0" style="letter-spacing: 0.35px;") Goal Date
-      input(type='checkbox' v-model="display.goal_date")
+        div
+          input(type='checkbox' v-model="display.goal_date")
       label.mt-4.ml-4.text-md(class="sm:mt-0" style="letter-spacing: 0.35px;") Donation Goal
-      input(type='checkbox' v-model="display.donation_goal")
+        div
+          input(type='checkbox' v-model="display.donation_goal")
     .flex.flex-col.gap-5.px-4.mx-auto.mt-8(class="w-3/4 sm:px-16")
       //img.mx-auto(v-if="profileImage?.url" class="w-[122px] h-[122px] rounded-[8px]" :src="`${profileImage?.url}`")
       //.text-gray-dark.mx-auto.w-max.font-poppins.text-md {{ dateFormat(start_date, true) + ' - ' + dateFormat(end_date, true) }} 
