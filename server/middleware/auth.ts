@@ -36,7 +36,8 @@ export default defineEventHandler(async event => {
               select: {
                 stripe_account_id: true,
                 Pages: { select: {
-                  cuid: true
+                  cuid: true,
+                  status: true
                 }
               }
             }
@@ -58,17 +59,58 @@ export default defineEventHandler(async event => {
           try {
             if (event.context.user?.user_role == "family") {
                     // todo: change to custom accounts or potentially stick with express accounts
-                    // incomplete code for custom account is available in embedded UI pr and branch
+                    // incomplete code for custom account is available in embedded UI pr and 
+                    // todo: fill with useable address type done
+                    //todo: add support_address
+                          //todo: add the industry type
+                          //todo: add buissness website done
+                          /*
+                        
+product_description: "This is Carson's Village account used for donations on a family page" todo add back
+                          */
+                         // we can prefil some customer stuff with salesforce one day
                     const newStripeAccount = await stripe.accounts.create({
+                        business_profile: {
+                          //industry: "Charities or social service organizations",
+                          product_description: "This is Carson's Village account used for donations on a family page",
+                          mcc: "8398",
+                          support_email: "jason@carsonsvillage.org",
+                          support_phone: "(469)-323-8657",
+                          support_url: "carsonsvillage.org",
+                          name: "Carson's Village",
+                          url: 'https://pages.carsonsvillage.org/PageList/' + event.context.user?.familyCuid,
+                          /*support_address: {
+                             city : 'Dallas',
+                             country : 'US',
+                             line1 : '2904 Floyd Street',
+                             line2 : null,
+                             postal_code : 75204,
+                             state: 'TX'
+                          }*/
+                        },
+                        settings: {
+                          payments: {
+                            statement_descriptor: 'Carsons Village'
+                          },
+                          card_payments: {
+                            statement_descriptor_prefix: 'Carsons V'
+                          }
+                        },
                         type: 'standard',
-                        email: event.context.user.email,
+                        email: event.context.user.email
                     });
 
-                    await event.context.client.family.update({
+                    const transaction = await event.context.client.$transaction([
+                      event.context.client.family.update({
                         where: { cuid: event.context.user.familyCuid },
                         data: { stripe_account_id: newStripeAccount.id }
-                    });
-    
+                    }), event.context.client.page.updateMany({
+                      where: {
+                          familyCuid : event.context.user.familyCuid as string
+                      },
+                      data: { status: 'active'} 
+                      })
+                    ])
                     const stripeAccountId = newStripeAccount.id;
     
                 if (stripeAccountId) {
@@ -81,13 +123,21 @@ export default defineEventHandler(async event => {
                     
             return await sendRedirect(event, accountLink.url);
         }
-      }
+      } 
       } catch (e) {
         console.error(e) 
         setCookie(event,'cvtoken','')
         setCookie(event,'cvuser','')
     
         return await sendRedirect(event, loginRedirectUrl())
+      }
+    } else {
+      const id = event.context.user?.Family?.stripe_account_id
+      const stripeAccountFull = await stripe.accounts.retrieve(
+        id as string)
+      //console.log(stripeAccountFull)
+      if(stripeAccountFull.charges_enabled) {
+        console.log("good")
       }
     }
   } catch(e){

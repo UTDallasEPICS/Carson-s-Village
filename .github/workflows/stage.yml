@@ -32,6 +32,7 @@ jobs:
           script: |
             cd carsons-village-stage
             git checkout stage
+            git stash
             git pull
             npm install
             cp .env ./.output/server/.env

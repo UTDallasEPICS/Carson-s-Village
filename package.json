@@ -28,6 +28,7 @@
     "jsonwebtoken": "^9.0.0",
     "nanoid": "^4.0.0",
     "nuxt-stripe-module": "^3.2.0",
+    "pnpm": "^8.15.6",
     "prisma": "^4.8.0",
     "s3": "^4.4.0",
     "stripe": "^12.4.0",
