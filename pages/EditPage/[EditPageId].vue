@@ -363,11 +363,11 @@ description="Here, you select from photos you uploaded to show up first on the F
                 CVDatepicker(v-model='data.deadline')
         .ml-9.mb-9.py-7.flex.flex-wrap.gap-2
             .col-md-10.px-2.mt-2
-                ActionButton(@click="save") Save
+                ActionButton(class="sm:my-2 transition duration-300 bg-orange-999 hover:bg-green-600" @click="save") Save
             .col-md-10.py-2.mt-2
-                LinkButton(v-if="pageCuid!=0" :to="`/Page/${cuid}`") View Page
+                LinkButton(class="sm:my-2 transition duration-300 bg-orange-999 hover:bg-green-600" v-if="pageCuid!=0" :to="`/Page/${cuid}`") View Page
             .col-md-10.p-2.pt-6.mt-2(class="sm:pt-2 sm:ml-auto sm:mr-6")
-                LinkButton(v-if="pageCuid!=0" to='#') Delete Page
+                LinkButton(class="sm:my-2 transition duration-300 bg-orange-999 hover:bg-green-600" v-if="pageCuid!=0" to='#') Delete Page
         .py-4.grid(class="sm:grid-cols-3" Style="color:red" v-if="errorInPage")
             CVLabel Error in Creating/Editing page in the system.
 </template>

@@ -158,8 +158,10 @@ const { data: family_pages } = await useFetch('/api/page_list', {
     }
   })
 const totalLength2 = computed(() => family_pages.value?.Pagination.total as unknown as number)
-pages.value = (family_pages.value.data) as unknown as Page2[]
 
+watch(family_pages, () => {
+  pages.value = (family_pages.value.data) as unknown as Page2[]
+})
   // Todo: Talk to Taz about this
   /*
     // For winter clean up
@@ -210,7 +212,7 @@ await getDataPageList()
                 ListboxOption(as='div' v-for="family in data_families" :key="family.cuid" :value="family.cuid" class="px-2 border border-grey-500 py-1 my-1") {{ family.family_name }}
           ListboxButton(class='text-left bg-white relative rounded-md pl-2 pr-10 py-2 sm:text-sm w-96') {{ familyCuid ? currentFamily.family_name : 'Select family to view pages from' }}  
 //todo: reduce this to one table
-.mx-auto.mt-1(class="w-11/12 sm:w-[1200px]" v-if="!isAdvocate || isAdmin || fromUser")
+.mx-auto.mt-1(class="w-11/12 sm:w-[1200px]")
   table(style="table-layout: auto;")
     thead
       tr
@@ -218,8 +220,8 @@ await getDataPageList()
         th.font-poppins.font-bold(style="color:white; width: 10%; --tw-bg-opacity: 1; background-color: rgb(110 171 191 / var(--tw-bg-opacity));") Creating User
         th.font-poppins.font-bold(style="color:white; width: 10%; --tw-bg-opacity: 1; background-color: rgb(110 171 191 / var(--tw-bg-opacity));") Advocate 
         th.font-poppins.font-bold(style="color:white; width: 10%;--tw-bg-opacity: 1; background-color: rgb(110 171 191 / var(--tw-bg-opacity));") Total Donated
-        th.font-poppins.font-bold(style="color:white; width:20%; --tw-bg-opacity: 1; background-color: rgb(110 171 191 / var(--tw-bg-opacity));") Creation Date
-        th.font-poppins.font-bold(style="color:white; width:20%; --tw-bg-opacity: 1; background-color: #5aadc2;") Donation Deadline
+        th.font-poppins.font-bold(style="color:white; width: 20%; --tw-bg-opacity: 1; background-color: rgb(110 171 191 / var(--tw-bg-opacity));") Creation Date
+        th.font-poppins.font-bold(style="color:white; width: 20%; --tw-bg-opacity: 1; background-color: #5aadc2;") Donation Deadline
         th.font-poppins.font-bold(style="color:white; --tw-bg-opacity: 1; background-color: rgb(110 171 191 / var(--tw-bg-opacity));") Donation Goal
         th.font-poppins.font-bold(style="width:15%; --tw-bg-opacity: 1; background-color: #5aadc2; color: white;")  {{ "Page Editor" }}
         th.font-poppins.font-bold(style="border-radius: 0px 60px 0px 0px; width:25%; --tw-bg-opacity: 1; background-color: #5aadc2;color: white;") {{ "Family Page" }}
@@ -237,27 +239,6 @@ await getDataPageList()
         td.font-poppins.text-gray-dark.font-bold(style="text-align: center;") {{ dateFormat(item.start_date) }}
         td.font-poppins.text-gray-dark.font-bold(style="text-align: center;") {{ dateFormat(item.deadline) }}
         td.font-poppins.text-gray-dark.font-bold(style="text-align: center;") {{ donationFormat(item.donation_goal) }}
-        td
-          LinkButton(class="sm:my-2 transition duration-300 bg-orange-999 hover:bg-green-600" style="--tw-bg-opacity: 1; white-space: nowrap; display: flex; flex-direction: row; padding: 14px 24px; gap: 10px;" :to="`/EditPage/${item.cuid}`") Edit
-        td
-          LinkButton(class="sm:my-2 transition duration-300 bg-orange-999 hover:bg-green-600" style="--tw-bg-opacity: 1; white-space: nowrap; display: flex; flex-direction: row; padding: 14px 24px; gap: 10px;" :to="`/Page/${item.cuid}`") View
-  .container.bg-blue-300.mx-auto(class="w-auto sm:w-[1200px]" style="--tw-bg-opacity: 1; background-color: #5aadc2; height: 50px; border-radius: 0px 0px 60px 60px;")
-
-.mx-auto.mt-1(class="w-11/12 sm:w-[1200px]" v-if="!fromUser && isAdvocate")
-  table(style="table-layout: auto;")
-    thead
-      tr
-        th.font-poppins.font-bold.p-2(style="color:white;--tw-bg-opacity: 1; background-color: #5aadc2; overflow: hidden; border-radius: 60px 0px 0px 0px; width:30%; ")  Page Name
-        th.font-poppins.font-bold(style="color:white; width:35%; --tw-bg-opacity: 1; background-color: #5aadc2;") Donation Deadline
-        th.font-poppins.font-bold(style="width:15%; --tw-bg-opacity: 1; background-color: #5aadc2; color: white;")  {{  "Page Editor" }}
-        th.font-poppins.font-bold(style="border-radius: 0px 60px 0px 0px; width:15%; --tw-bg-opacity: 1; background-color: #5aadc2;color: white;") {{ "Family Page" }}
-      tr(v-for="(item, i) in family_pages.data" 
-      :key="i" 
-      :class="{'bg-gray-200': (i+1) % 2}"
-      )
-        td.font-poppins.text-gray-dark.font-bold(style="text-align: center;") {{ item.page_first_name + " " + item.page_last_name }}
-        td.font-poppins.text-gray-dark.font-bold(style="text-align: center;" v-if="isAdmin") {{ item.userCuid }}
-        td.font-poppins.text-gray-dark.font-bold(style="text-align: center;") {{ dateFormat(item.deadline) }}
         td
           LinkButton(class="sm:my-2 transition duration-300 bg-orange-999 hover:bg-green-600" style="--tw-bg-opacity: 1; white-space: nowrap; display: flex; flex-direction: row; padding: 14px 24px; gap: 10px;" :to="`/EditPage/${item.cuid}`") Edit
         td

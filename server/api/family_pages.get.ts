@@ -26,7 +26,12 @@ export default defineEventHandler(async event => {
             skip: page_number as number * 12,
             take: 12,    
             include: {
-              User: true
+              User: true,
+              Family: {
+                include: {
+                  AdvocateResponsible: true
+                }
+              }
             }
     }), 
     prisma.page.findMany({
@@ -34,7 +39,12 @@ export default defineEventHandler(async event => {
           familyCuid : family_cuid as string
       },
       include: {
-        User: true
+        User: true,
+        Family: {
+          include: {
+            AdvocateResponsible: true
+          }
+        }
       }
 })
   ])

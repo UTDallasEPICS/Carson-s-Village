@@ -88,8 +88,8 @@ const create_checkout_session = async () => {
         input#donation_amount.bg-gray-light.outline-0.rounded-r-md.border-box.w-full.p-2(style="border: 1px solid #c4c4c4; border-left:none;" name='donation_amount' type="number" min="0.00" step="0.01" v-model="donationData.amount" required)
         br
 img(v-if="donationData.amount < 5" src="/tooLowDonations.png" style="height:115px; width:600px")
-input(type='checkbox' v-model='feeRecovery')
-CVLabel I'd like to help cover the transaction fees of ${{ props.isActive ? (0.029 * donationData.amount + 0.30).toFixed(2) : 0}} for my donation. 
+input(type='checkbox' class="sm:ml-1" v-model='feeRecovery')
+label.mt-4.ml-4.text-md(for='anonymous' class="sm:mt-0" style="letter-spacing: 0.35px;") I'd like to help cover the transaction fees of ${{ props.isActive ? (0.029 * donationData.amount + 0.30).toFixed(2) : 0}} for my donation. 
 .col-md-8.ml-4.pt-6.pr-5.flex.items-center.justify-center
     ActionButton.mx-auto.text-md(name='submit' @click="create_checkout_session" class="transition duration-300 bg-orange-999 hover:bg-green-600" :disabled="donationData.amount < 5") DONATE NOW
 </template>
