@@ -11,16 +11,16 @@ const prisma = new PrismaClient()
 */
 
 export default defineEventHandler(async event => {
-  const { page_number, start_date, end_date } = getQuery(event)
+  const { page_number, dimensions} = getQuery(event) //start_date, end_date } = getQuery(event)
 
   if(event.context.user.user_role === "advocate"  || event.context.user.user_role === "admin"){
     const [ count, all_families, paginated_pages  ] = await prisma.$transaction([
-      prisma.page.count({ where: {
+      prisma.page.count(/*{ where: {
         deadline: {
           gte: start_date as string,
           lte: end_date as string
         }
-      }}),
+      }}*/),
       prisma.family.findMany({
         include: {
           Pages: true,
@@ -34,14 +34,14 @@ export default defineEventHandler(async event => {
               AdvocateResponsible: true
             }
           }
-        }, where: {
-          deadline: {
-            gte: start_date as string,
-            lte: end_date as string
+        },/*, where: {
+              deadline: {
+                gte: start_date as string,
+                lte: end_date as string
           }
-        },
-      skip: 12 * (page_number as number),
-      take: 12
+        },*/
+      skip: (parseInt(dimensions as string) as number) * (page_number as number),
+      take: (parseInt(dimensions as string) as number)
     }),
   ]);
 
