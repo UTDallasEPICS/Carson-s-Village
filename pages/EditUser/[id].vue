@@ -9,8 +9,8 @@
 *	Located under "/EditUser/"
 */
 
-import type { User } from '@/types.d.ts'
-import { Family } from '@prisma/client';
+import type { User, Family } from '@/types.d.ts'
+//import { Family } from '@prisma/client';
 import {
     Listbox,
     ListboxButton,
@@ -35,13 +35,28 @@ const data_user = ref<User>({
 
 const familyCuid = ref("") 
 const data_family = ref<Family>({
-    cuid: "",
-    stripe_account_id: "",
-    created_at: "",
-    updated_at: Date.toString(),
-    family_name: "",
-    advocateCuid: cvuser.value.cuid 
-
+cuid: "",
+stripe_account_id: "",
+created_at: "null",
+updated_at: new Date(),
+family_name: "",
+advocateCuid: cvuser.value.cuid,
+Pages: [],
+FamilyMembers: [],
+AdvocateResponsible: {
+cuid: '',
+first_name: '',
+last_name: '',
+user_role: '',
+email: '',
+middle_name: '',
+phone: '',
+Pages: [],
+familyCuid: '',
+AdvocateFamily: []
+},
+FamilyDonations: [],
+FamilyDonationPayouts: []
 })
 
 const data_all_families = ref<Family[]>([])
@@ -53,7 +68,6 @@ const errorInPage = ref(false);
 
 // Method that creates a new user on the database on the backend
 const save = async () => {
-
   if(isAuthorized){
     const data = await $fetch('/api/user', {
       method: (cuid.value as string) !== "0" ? 'PUT' : 'POST',
@@ -79,6 +93,7 @@ const getData = async (cuid: string) => {
       query: { cuid: cuid }
   })
   data_user.value = userData.value as unknown as User;
+  familyCuid.value = data_user.value.familyCuid as unknown as string
 }
 
 // boolean indicating that we need the family selection listbox 

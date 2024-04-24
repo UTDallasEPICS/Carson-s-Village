@@ -17,7 +17,7 @@ import {
     ListboxOption,
 } from '@headlessui/vue'
 import type { User, Page, PageDonation, donation_payout, Family } from "@/types.d.ts"
-import { donationFormat } from "@/utils"
+import { donationFormat, dateFormat } from "@/utils"
 //import { Family } from "@prisma/client"
 const currentFamilyPageNumber = ref(0)
 //const familyPagesLength = ref(0)
@@ -50,8 +50,8 @@ const { data: Families } = await useFetch<Family[]>('/api/families', {
   const familyPagesLength = computed(() => familyData.value.Pagination.total)
   const currentPageCuid = ref<string>("");
   const currentPage = computed(() => familyData.value?.raw_data.find(({ cuid }: Page) => cuid == currentPageCuid.value) || {});
-  watchEffect(() => currentPageCuid.value = familyData.value.raw_data![0]?.cuid || "");
-  
+  watchEffect(() => currentPageCuid.value = familyData.value.raw_data![0]?.cuid || "");  
+
   const { data: donations } = await useFetch<PageDonation[]>('/api/family_donation', {
     method: 'GET',
     query: { family_cuid: currentFamilyCuid },
@@ -79,7 +79,7 @@ const { data: Families } = await useFetch<Family[]>('/api/families', {
 </script>
 
 <template lang="pug">
-.px-10(v-if="isAdmin" )   
+.px-10(v-if="isAdmin")   
   TitleComp.border-1.border-black Family Transaction List
   .flex.flex-wrap.w-full.justify-center.gap-5.mt-10
     // these two list boxes can be a distinct reusable component
@@ -110,31 +110,7 @@ const { data: Families } = await useFetch<Family[]>('/api/families', {
         ListboxButton(class='text-left bg-white relative rounded-md pl-2 pr-10 py-2 sm:text-sm w-96') {{ currentPageCuid ? (currentPage.page_first_name || currentPage.page_last_name) : 'Select Page' }}
   
   .flex.gap-5.justify-around
-    //these next two divs could theoretically be their own component with props
-    div
-      p.text-center.mt-10 Family 
-      .flex.flex-col.w-full.justify-center.gap-5.mt-5
-        .border.border-grey-500.p-5
-          p.self-center.text-center Total Donations 
-          p.text-center.mt-2 {{ donationFormat(totalPageDonations) }}
-        .border.border-grey-500.p-5
-          p.self-center.text-center All Funds Distributed
-          p.text-center.mt-2 {{ donationFormat(totalDistributed) }}
-        .border.border-grey-500.p-5
-          p.self-center.text-center Remaining Amount to Distribute
-          p.text-center.mt-2 {{ donationFormat(totalRemaining) }}
-    div
-      p.text-center.mt-10 Page 
-      .flex.flex-col.w-full.justify-center.gap-5.mt-5
-        .border.border-grey-500.p-5
-          p.self-center.text-center All Page Donations
-          p.text-center.mt-2 {{ donationFormat(currentPage?.amount_raised) }}
-        .border.border-grey-500.p-5
-          p.self-center.text-center All Page Funds Distributed
-          p.text-center.mt-2 {{ donationFormat(currentPage?.amount_distributed) }}
-        .border.border-grey-500.p-5
-          p.self-center.text-center Remaining Amount to Distribute
-          p.text-center.mt-2 {{ donationFormat(currentPage?.amount_raised - currentPage?.amount_distributed) }}
+    DonationManagementInformation(:lastDonationDate="currentPage?.last_donation_date" :donationStatus="currentPage?.donation_status" :startDate="currentPage?.start_date" :totalPageDonations="totalPageDonations" :totalDistributed="totalDistributed" :totalRemaining="totalRemaining" :amount_raised="currentPage?.amount_raised" :amount_distributed="currentPage?.amount_distributed")
     div(class="basis-1/3")
       PayoutRecord(:currentPage="currentPage" :currentFamily="currentFamily")
 
@@ -142,16 +118,22 @@ const { data: Families } = await useFetch<Family[]>('/api/families', {
   table.mt-5.table.table-striped.w-full
       thead
           tr(style="color: white;")
-              th.px-8(style="--tw-bg-opacity: 1; background-color: #5aadc2;border-radius: 60px 0px 0px 0px; width:33.33%; overflow: hidden") Page Name
-              th.px-8(style="--tw-bg-opacity: 1; background-color: #5aadc2;") Raised
-              th.font-poppins.font-bold(style="--tw-bg-opacity: 1; border-radius: 0px 60px 0px 0px; background-color: #5aadc2; width:33.33%") Remaining
+              th.px-8(style="background-color: #5aadc2;border-radius: 60px 0px 0px 0px; width:33.33%; overflow: hidden") Page Name
+              th.px-8(style="background-color: #5aadc2;") Start Date
+              th.px-8(style="background-color: #5aadc2;") Last Donation
+              th.px-8(style="background-color: #5aadc2;") Goal Met
+              th.px-8(style="background-color: #5aadc2;") Raised
+              th.font-poppins.font-bold(style="border-radius: 0px 60px 0px 0px; background-color: #5aadc2; width:33.33%") Remaining
           tr(v-for="(item, i) in familyData.data" 
               :key="i" 
               :class="{'bg-gray-200': (i+1) % 2}"
           )
               td.font-poppins.text-gray-dark.font-bold(style="text-align: center")  {{ item?.page_first_name + " " + item?.page_last_name }}
+              td.font-poppins.text-gray-dark.font-bold(style="text-align: center")  {{ dateFormat(item?.start_date) }}
+              td.font-poppins.text-gray-dark.font-bold(style="text-align: center")  {{ item.last_donation_date ? dateFormat(item?.last_donation_date) : "No Donations" }}
+              td.font-poppins.text-gray-dark.font-bold(style="text-align: center")  {{ item?.donation_status}}
               td.font-poppins.text-gray-dark.font-bold(style="text-align: center")  {{ donationFormat(item.amount_raised) }}
-              td.font-poppins.text-gray-dark.font-bold(style="text-align: center")  {{ donationFormat(item.amount_raised-item.amount_distributed) }}
+              td.font-poppins.text-gray-dark.font-bold(style="text-align: center")  {{ donationFormat(item.amount_raised - item.amount_distributed) }}
   .mb-9.py-7.flex.flex-wrap.gap-2.place-content-center
     .col-md-10.px-2.mt-2
         button(@click="prevPage") &lt
@@ -171,7 +153,7 @@ const { data: Families } = await useFetch<Family[]>('/api/families', {
               :class="{'bg-gray-200': (i+1) % 2}"
           )
               td.font-poppins.text-gray-dark.font-bold(style="text-align: center")  {{ item.transaction_id }}
-              td.font-poppins.text-gray-dark.font-bold(style="text-align: center")  {{ item.cuid }}
+              //td.font-poppins.text-gray-dark.font-bold(style="text-align: center")  {{ item.cuid }}
               td.font-poppins.text-gray-dark.font-bold(style="text-align: center")  {{ item.Page.page_first_name + " " + item.Page.page_last_name }}
               td.font-poppins.text-gray-dark.font-bold(style="text-align: center")  {{ donationFormat(item.amount) }}
 </template>

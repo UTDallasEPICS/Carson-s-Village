@@ -10,17 +10,18 @@
 */
 
 import type { Page, PageDonation, Image, Reply, Family} from '@/types.d.ts'
-import {  dateFormat, donationFormat } from '@/utils'
+import { dateFormat, donationFormat } from '@/utils'
 import CVReplySystem from '@/components/CVReplySystem.vue'
 
 const pageData = ref<Page>({
     cuid: "",
     userCuid: "",
     familyCuid: "",
-    page_name: "",
-    day_of_birth: "",
-    day_of_passing: "",
-    visitation_date: "",
+    page_first_name: "",
+    page_last_name: "",
+    day_of_birth: null,
+    day_of_passing: null,
+    visitation_date: null,
     visitation_location: "",
     visitation_description: "",
     funeral_date: "",
@@ -36,16 +37,17 @@ const pageData = ref<Page>({
     status: "active",
     donation_status: "in progress",
     duration: "",
-    start_date: "",
-    goal_met_date: "",
+    start_date: null,
+    goal_met_date: null,
+    last_donation_date: null,
     PageDonations: [],
     Reply: [],
     Family: {
       cuid: "",
       family_name: "",
       stripe_account_id: "",
-      created_at: "",
-      updated_at: "",
+      created_at: null,
+      updated_at: null,
       FamilyMembers: [],
       FamilyDonationPayouts: [],
       Pages: [],
@@ -66,7 +68,7 @@ const pageData = ref<Page>({
 });
 
 const donationData = ref<PageDonation>({
-    amount: 0,
+    amount: 5,
     success: false,
     userCuid: "",
     cuid: "",
@@ -77,9 +79,12 @@ const donationData = ref<PageDonation>({
     donorLastName: "",
     comments: "", 
     isAnonymous : false,
+    donationDate: "",
     Page: ref<Page[]>([]).value[0]
 });
 
+const feeRecovery = ref(false)
+//const feeRecoveryAmount = ref(0)
 const userCuid = ref("0")
 
 const profileImageLink = ref("")
@@ -95,6 +100,11 @@ const stripeLink_ref = ref("")
 *  Then it redirects to /PageDonation/pageCuid/transactionId
 */
 const create_checkout_session = async () => {
+    if(feeRecovery.value) {
+      donationData.value.amount = 1.035 * donationData.value.amount
+    }
+    
+
     const sessionInfo = await $fetch('/api/create_session', {
         method: 'POST',
       body: {
@@ -246,7 +256,10 @@ console.log(pageDataDB.value?.funeral_date)
             //CVProgress(v-else style="text-align:center;" modelBarWidth="0")  {{ donated_percentage   + "%" }}
         .well.well-sm
             h1.ml-4.pt-9.text-2xl.text-gray-dark(class="sm:text-3xl" style="font-weight: 600; letter-spacing: 0.35px;") Donor Information
-        DonationEntry(v-if="isActive" :donationData="donationData" :pageCuid="pageCuid" :familyCuid="familyCuid")
+        DonationEntry(v-if="isActive" :isActive="isActive" :donationData="donationData" :pageCuid="pageCuid" :familyCuid="familyCuid")
+        img(v-else src="/InActiveDonationForm.png")
+        //input(type='checkbox' v-model='feeRecovery')
+        //CVLabel I'd like to help cover the transaction fees of ¢{{ isActive ? 0.035 * donationData.amount : 0}} for my donation. 
         .py-4.grid.gap-1(v-if="comments?.length" style="text-align: center")
             .div.py-4.grid(class="w-full" style="grid-template-columns: repeat(3, 1fr);")
                 .div(v-for="(comment, i) in comments" :key="i" class="comment-box")
@@ -275,5 +288,5 @@ console.log(pageDataDB.value?.funeral_date)
           .col
             p {{ "" }}
     .col-md-8.mx-9(class="sm:col-span-1 sm:mr-11")
-        .div.px-8.py-4(style="color: #6E6E6E; font-weight: 500; font-size: 14px; line-height: 28px; letter-spacing: -0.078px; word-break: break-word;" id="obituary") {{ pageDataDB.obituary }}
+        .div.px-8.py-4(style="color: #6E6E6E; font-weight: 500; font-size: 18px; line-height: 28px; letter-spacing: -0.078px; word-break: break-word;" id="obituary") {{ pageDataDB.obituary }}
 </template>

@@ -1,5 +1,5 @@
 <script lang = "ts" setup>
-import type { Page, User } from '@/types.d.ts'
+import type { Page, User, Image, PageDonation, Reply } from '@/types.d.ts'
 import { dateFormat, donationFormat} from '@/utils'
 import { RoutingRuleFilterSensitiveLog } from '@aws-sdk/client-s3'
 import { Family } from '@prisma/client'
@@ -21,13 +21,46 @@ import {
 
 
 // todo: clean up and finish advocate managment system functionality to page list
+export type Page2 = {
+    page_name: string,
+    cuid: string,
+    userCuid: string,
+    familyCuid: string,
+    day_of_birth: Date | string | null,
+    day_of_passing: Date | string | null,
+    visitation_date: Date | string | null,
+    visitation_location: string,
+    visitation_description: string,
+    funeral_date: Date | string | null,
+    funeral_description: string,
+    funeral_location: string,
+    obituary: string,
+    deadline: Date | string,
+    donation_goal: number | string
+    amount_raised: number | string
+    amount_distributed: number | string
+    profileImageCuid: string
+    Images: Image[],
+    Family: Family,
+    status: string,
+    donation_status: string,
+    duration: string, 
+    start_date: Date | string | null,
+    goal_met_date: Date | string | null,
+    PageDonations: PageDonation[]
+    Reply: Reply[]
+    User: User, 
+    last_donation_date: Date | string | null
+}
+
 const family_cuid = ref("")
 const router = useRoute()
 const family_cuid_data = computed(() => router.params.id)
 family_cuid.value = family_cuid_data.value as string;
 const user_cuid_data = computed(() => router.params.id)
 const user_cuid = user_cuid_data.value as string
-const pages = ref<Page[]>([])
+const pages = ref<Page2[]>([])
+//const pages2 = ref<Page[]>([])
 const cvuser = useCookie<User>('cvuser')
 const user_cuid2 = cvuser.value.cuid
 const isAdmin = computed(() => cvuser.value?.user_role == "admin")
@@ -45,8 +78,6 @@ const data = ref<User>({
   phone: "",
   Pages: [],
   familyCuid: ""
-  //PageDonations: [],
-  //DonationPayouts: []
 })
 
 const isFamily = ref(false)
@@ -61,7 +92,8 @@ const getDataPageList = async () => {
       method: 'GET',
       query: { searchQuery: ref(""), page_number: currentPage, isPageList: 1 }
     })
-    pages.value = pagesData.value?.data as unknown as Page[]
+
+    pages.value = pagesData.value?.data as unknown as Page2[]
     totalLength.value = pagesData.value?.Pagination.total as unknown as number
   }
 
@@ -85,7 +117,7 @@ const getDataPageList = async () => {
         return [] as any
       }
     }) 
-      pages.value = family_pages.value.data as unknown as Page[]
+      pages.value = family_pages.value.data as unknown as Page2[]
       totalLength.value = family_pages.value.Pagination.total as unknown as number
     } 
   // handles the family pages of a family member
@@ -97,7 +129,7 @@ const getDataPageList = async () => {
         return [] as any
       }
     }) 
-    pages.value = (family_pages.value.data) as unknown as Page[]
+    pages.value = (family_pages.value.data) as unknown as Page2[]
     totalLength.value = family_pages.value.Pagination.total as unknown as number
   }
     const isEmpty = computed(() => pages.value.length == 0)
@@ -111,7 +143,7 @@ const getDataPageList = async () => {
           return [] as any
         }
       })
-        pages.value = (familyData.value.data) as unknown as Page[]
+        pages.value = (familyData.value.data) as unknown as Page2[]
         totalLength.value = familyData.value.Pagination.total as unknown as number
   }
 }
@@ -126,7 +158,7 @@ const { data: family_pages } = await useFetch('/api/page_list', {
     }
   })
 const totalLength2 = computed(() => family_pages.value?.Pagination.total as unknown as number)
-  
+pages.value = (family_pages.value.data) as unknown as Page2[]
 
   // Todo: Talk to Taz about this
   /*
@@ -165,7 +197,7 @@ await getDataPageList()
 
 <template lang ="pug">
 .py-4.grid(class="sm:grid-cols-3" v-if="isAdvocate && !fromUser")
-    CVLabel Family
+    CVLabel Current Family
     .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
       Listbox.shadow-sm.border.border-1.rounded-lg(v-if="isAdmin || isAdvocate" as='div' v-model="familyCuid")
         .relative
@@ -182,17 +214,29 @@ await getDataPageList()
   table(style="table-layout: auto;")
     thead
       tr
-        th.font-poppins.font-bold.p-2(style="color:white;--tw-bg-opacity: 1; background-color: #5aadc2; overflow: hidden; border-radius: 60px 0px 0px 0px; width:30%; ")  Page Name
-        th.font-poppins.font-bold(style="color:white; width:35%; --tw-bg-opacity: 1; background-color: #5aadc2;") Donation Deadline
-        th.font-poppins.font-bold(style="width:10%; --tw-bg-opacity: 1; background-color: #5aadc2; color: #5aadc2;")  {{ "_______________________" }}
-        th.font-poppins.font-bold(style="border-radius: 0px 60px 0px 0px; width:20%; --tw-bg-opacity: 1; background-color: #5aadc2;color:#5aadc2;") {{ "_____________" }}
+        th.font-poppins.font-bold.p-2(style="color:white;--tw-bg-opacity: 1; background-color: #5aadc2; overflow: hidden; border-radius: 60px 0px 0px 0px; width:20%; ")  Page Name
+        th.font-poppins.font-bold(style="color:white; width: 10%; --tw-bg-opacity: 1; background-color: rgb(110 171 191 / var(--tw-bg-opacity));") Creating User
+        th.font-poppins.font-bold(style="color:white; width: 10%; --tw-bg-opacity: 1; background-color: rgb(110 171 191 / var(--tw-bg-opacity));") Advocate 
+        th.font-poppins.font-bold(style="color:white; width: 10%;--tw-bg-opacity: 1; background-color: rgb(110 171 191 / var(--tw-bg-opacity));") Total Donated
+        th.font-poppins.font-bold(style="color:white; width:20%; --tw-bg-opacity: 1; background-color: rgb(110 171 191 / var(--tw-bg-opacity));") Creation Date
+        th.font-poppins.font-bold(style="color:white; width:20%; --tw-bg-opacity: 1; background-color: #5aadc2;") Donation Deadline
+        th.font-poppins.font-bold(style="color:white; --tw-bg-opacity: 1; background-color: rgb(110 171 191 / var(--tw-bg-opacity));") Donation Goal
+        th.font-poppins.font-bold(style="width:15%; --tw-bg-opacity: 1; background-color: #5aadc2; color: white;")  {{ "Page Editor" }}
+        th.font-poppins.font-bold(style="border-radius: 0px 60px 0px 0px; width:25%; --tw-bg-opacity: 1; background-color: #5aadc2;color: white;") {{ "Family Page" }}
+        
+        
+        
       tr(v-for="(item, i) in pages" 
       :key="i" 
       :class="{'bg-gray-200': (i+1) % 2}"
       )
         td.font-poppins.text-gray-dark.font-bold(style="text-align: center;") {{ item.page_first_name + " " + item.page_last_name }}
-        //- td.font-poppins.text-gray-dark.font-bold(style="text-align: center;" v-if="isAdmin") {{ item.userCuid }}
+        td.font-poppins.text-gray-dark.font-bold(style="text-align: center;") {{ item.User?.first_name + " " + item.User?.last_name }}
+        td.font-poppins.text-gray-dark.font-bold(style="text-align: center;") {{ item.Family?.AdvocateResponsible.first_name + " " + item.Family?.AdvocateResponsible.last_name }}
+        td.font-poppins.text-gray-dark.font-bold(style="text-align: center;") {{ donationFormat(item.amount_raised) }}
+        td.font-poppins.text-gray-dark.font-bold(style="text-align: center;") {{ dateFormat(item.start_date) }}
         td.font-poppins.text-gray-dark.font-bold(style="text-align: center;") {{ dateFormat(item.deadline) }}
+        td.font-poppins.text-gray-dark.font-bold(style="text-align: center;") {{ donationFormat(item.donation_goal) }}
         td
           LinkButton(class="sm:my-2 transition duration-300 bg-orange-999 hover:bg-green-600" style="--tw-bg-opacity: 1; white-space: nowrap; display: flex; flex-direction: row; padding: 14px 24px; gap: 10px;" :to="`/EditPage/${item.cuid}`") Edit
         td
@@ -205,8 +249,8 @@ await getDataPageList()
       tr
         th.font-poppins.font-bold.p-2(style="color:white;--tw-bg-opacity: 1; background-color: #5aadc2; overflow: hidden; border-radius: 60px 0px 0px 0px; width:30%; ")  Page Name
         th.font-poppins.font-bold(style="color:white; width:35%; --tw-bg-opacity: 1; background-color: #5aadc2;") Donation Deadline
-        th.font-poppins.font-bold(style="width:10%; --tw-bg-opacity: 1; background-color: #5aadc2; color: #5aadc2;")  {{ "_______________________" }}
-        th.font-poppins.font-bold(style="border-radius: 0px 60px 0px 0px; width:20%; --tw-bg-opacity: 1; background-color: #5aadc2;color: #5aadc2;") {{ "_____________" }}
+        th.font-poppins.font-bold(style="width:15%; --tw-bg-opacity: 1; background-color: #5aadc2; color: white;")  {{  "Page Editor" }}
+        th.font-poppins.font-bold(style="border-radius: 0px 60px 0px 0px; width:15%; --tw-bg-opacity: 1; background-color: #5aadc2;color: white;") {{ "Family Page" }}
       tr(v-for="(item, i) in family_pages.data" 
       :key="i" 
       :class="{'bg-gray-200': (i+1) % 2}"

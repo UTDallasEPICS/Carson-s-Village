@@ -43,7 +43,7 @@ const headers = [
   }, 
   {
     name: "current date",
-    property: new Date().toString(),
+    property: new Date().toISOString(),
     kind: "date"
   }
 ]
