@@ -122,6 +122,8 @@ const data_family = ref<Family>({
 const isAdvocate = computed(() => cvuser.value?.user_role == "advocate" ||  cvuser.value?.user_role == "admin")
 const data_all_users = ref<Family[]>([])
 
+
+const replies = ref<Reply[]>([])
 const imageData = ref<Image[]>([])
 const profile_image = ref("")
 
@@ -206,8 +208,12 @@ const getData = async (cuid: string) => {
             data.value.amount_raised = donationFormat(data.value.amount_raised as unknown as number).replace("$", "");
             data.value.donation_goal = donationFormat(data.value.donation_goal as unknown as number).replace("$", "");
         }
+        replies.value = data.value?.Reply
     }
 }
+
+
+
 
 // Method that saves images to the frontend on image upload.
 const saveImage = async (theImage: Image) => {
@@ -218,6 +224,7 @@ const saveImage = async (theImage: Image) => {
         data.value.profileImageCuid = theImage.cuid;
     }
 };
+
 
 // Method to set an uploaded image as the profile image of a page
 // There is no network request because the profiile image cuid is saved with the rest of the form
@@ -362,8 +369,8 @@ CVContainer
         .py-4.grid.flex-box.flex-row.item-centered.gap-1(v-if="replies?.length" style="line-height: 0px;text-align: center")
             div(class="flex")
             .div(v-for="(reply,i) in replies" :key="i" class="reply-box")
-                CVReply(r='reply')
-                CVSuspendButton(modelValue='reply.suspended')
+                CVReply(:r="reply")
+                CVSuspendButton(:modelValue="reply.suspended")
             .div(v-for="(reply, i) in replies" :key="i")
         .ml-9.mb-9.py-7.flex.flex-wrap.gap-2
             .col-md-10.px-2.mt-2

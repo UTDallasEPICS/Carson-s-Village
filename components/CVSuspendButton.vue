@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-const props = defineProps<{ modelValue: boolean}>()
+const props = defineProps<{ modelValue: boolean }>()
 const emit = defineEmits(["update:modelValue"]) // define event emitted by component
 
 
