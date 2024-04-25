@@ -140,15 +140,6 @@ div
     const dataset = ref("")
     const downloadName = ref("")
     const totalLength = ref(0)
-
-    // const emit = defineEmits(["update:tableToggle"])
-    // const props = defineProps({
-    //   tableToggle: {
-    //     type: Boolean,
-    //     default: false
-    //   }
-    // });
-
     const tableToggle = ref(false)
 
 
