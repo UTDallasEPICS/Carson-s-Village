@@ -3,9 +3,9 @@ import type { Page } from '@/types.d.ts'
 const prisma = new PrismaClient()
 
 /*
-*	/PageList/cuid
-*	function:	POST
-*	retrive family pages details from database for a partial or complete page name
+*    /PageList/cuid
+*    function:    POST
+*    retrive family pages details from database for a partial or complete page name
 */
 
 export default defineEventHandler(async event => {
@@ -30,6 +30,7 @@ if(event.context.user.cuid != undefined) { //if the user is not logged in, do no
       data:  pagesResult
     };
   }
+
 
   const searchQuerySpacesRemoved = (searchQuery as string).replaceAll(" ", "")
   // Makes sure that an empty searchQuery returns no results and that searchQueries with all spaces return no results (prevents returning all pages with a first and last name using a space).
@@ -59,14 +60,24 @@ if(event.context.user.cuid != undefined) { //if the user is not logged in, do no
     page_name: {
       contains: searchQuery as string,
       mode: 'insensitive',
-    }
+    } },
+      { page_last_name: {
+        contains: searchQuery as string,
+      mode: 'insensitive',
+      }}] }}),
+    prisma.page.findMany({
+  where: {
+    OR: [ {
+      page_first_name: {
+        contains: searchQuery as string,
+        mode: 'insensitive',
+      }
     },
     skip: page_number as number * 12,
     take: 12, 
   })
       
     ])
-
     return {
       Pagination: {
       total: count },
@@ -80,11 +91,4 @@ if(event.context.user.cuid != undefined) { //if the user is not logged in, do no
     }, 
     data:  []
   };
-} 
-  return {
-    Pagination: {
-    total: 0
-    }, 
-    data:  []
-  };
-  })
+})
