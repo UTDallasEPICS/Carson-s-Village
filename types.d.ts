@@ -148,3 +148,9 @@ export type Reply = {
   name: string
   reply: string
 }
+
+export type EmailListUser = {
+  first_name: string,
+  last_name: string,
+  email: string
+}

@@ -54,7 +54,7 @@ div
                   td(style="text-align: center;") {{ (page?.goal_met_date) ? dateFormat(page?.goal_met_date, true) : "Goal Not Reached" }}
                   td(style="text-align: center;") {{ dateFormat(page?.start_date, true) }}
                   td(style="text-align: center;") {{ donationFormat((page?.amount_raised - page?.amount_distributed)) }}
-                  //td(style="text-align: center;") {{ (page.donation_goal) ? ((page.amount_raised - page.amount_distributed)/(page.donation_goal) * 100).toFixed(2) + "%" : "No donation goal"}}
+                  // td(style="text-align: center;") {{ (page.donation_goal) ? ((page.amount_raised - page.amount_distributed)/(page.donation_goal) * 100).toFixed(2) + "%" : "No donation goal"}}
                   td(style="text-align: center;") {{ donationFormat(page?.amount_distributed) }}
                   td(style="text-align: center;") {{ donationFormat(page?.donation_goal) }}
                   td(style="text-align: center;") {{ dateFormat(page?.deadline)}}
@@ -92,8 +92,8 @@ div
     const dataset = ref("")
     const downloadName = ref("")
     const totalLength = ref(0)
-    const start_date = ref("1/01/2015")
-    const end_date = ref(new Date().toLocaleDateString())
+    const start_date = ref("")
+    const end_date = ref("")
 
     const data_family = ref<Family>({
       cuid: '',
@@ -141,13 +141,13 @@ div
   // loads family report data from the families database table and joins and creates a download link for the file
   const loadReports = async () => {
     if( isAdminAdvocate ) { 
-      const familiesData = await useFetch('/api/families', {
+      const familiesData = await useFetch('/api/familiesnpnReports', {
         method: 'GET' 
       });
       
       families.value = familiesData as unknown as Family[]
       // gathering the family data into an array of family pages and their advocate responsible
-      families?.value?.forEach((element: Family)  => { element?.Pages?.forEach((element2) => {familyPages.value.push( { ...element2 as unknown as Page[], ...element.AdvocateResponsible as any }) })})
+      families.value?.forEach((element: Family)  => { element.Pages?.forEach((element2) => {familyPages.value.push( { ...element2 as unknown as Page[], ...element.AdvocateResponsible as any }) })})
       const familyPagesArr = [...familyPages.value]
       
       const csv = convertToCSV( familyPagesArr )
