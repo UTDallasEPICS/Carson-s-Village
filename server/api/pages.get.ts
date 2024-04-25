@@ -16,9 +16,17 @@ if(event.context.user.cuid != undefined) { //if the user is not logged in, do no
       prisma.page.count(),
       prisma.page.findMany({
       skip: page_number as number * 12,
-      take: 12
-    })
+      take: 12,
+      include: {
+        User: true, 
+        Family: {
+          include: {
+            AdvocateResponsible: true
+          }
+        }
+    }})
     ])
+    console.log(pagesResult)
     return {
       Pagination: {
       total:  count
@@ -34,6 +42,7 @@ if(event.context.user.cuid != undefined) { //if the user is not logged in, do no
   // You can get away with doing multiple operations at once. 
   // count gets the amount of pages with the same name
   // 
+  if((searchQuery as string) != "") {
   const [count, pagesResult] = await prisma.$transaction([
     prisma.page.count({ where: { 
       OR: [ {
@@ -79,4 +88,5 @@ if(event.context.user.cuid != undefined) { //if the user is not logged in, do no
     }, 
     data:  []
   };
+}
 })
