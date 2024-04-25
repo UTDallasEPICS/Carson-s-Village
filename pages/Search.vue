@@ -26,23 +26,43 @@ const isLoggedIn = computed(() => cvuser.value?.cuid != undefined)
 const searchQueryInput = ref("");
 const totalLength = ref(0)
 
+const order = ref('')
+const OrderField = ref('')
   
 type paginated_results = {
   data: Page[]
   Pagination: {
     total: number
   }
+  raw_data: Page[]
+}
+
+function SortCV(pages:any, OrderFields:string){
+  OrderField.value = OrderFields as string
+  if (order.value === ''){
+    order.value = 'desc'
+   } else if (order.value === 'desc') {
+    order.value = 'asc'
+   } else if (order.value === 'asc') {
+    OrderField.value = ''
+    order.value = ''
+   }
+   pageSearch(searchQueryInput.value)
 }
 
 // Method to populate search results for pages
 const pageSearch = async(searchQuery: string) => { 
     const { data: pageData } = await useFetch<paginated_results>('/api/pages', {
     method: 'GET',
-    query: {searchQuery: searchQuery, page_number: currentPage.value, isPageList: 0},
+    query: {searchQuery: searchQuery, page_number: currentPage.value, isPageList: 0, sortedColumn:OrderField.value, order:order.value},
     watch: [currentPage]
 })
     // api/pages returns both the pages 12 at a time and the length for upper bounds checking
-    pages.value = pageData.value?.data as unknown as Page[]
+    if(OrderField.value) {
+      pages.value = pageData.value?.data as unknown as Page[]
+    } else {
+      pages.value = pageData.value?.raw_data as unknown as Page[]
+    }
     totalLength.value = pageData.value?.Pagination.total as unknown as number
 }
 
@@ -96,9 +116,12 @@ const searchOnEnter = () => {
   table.table.table-striped(style="width:100%;")
       thead
         tr.text-white
-          th.px-8(style="background-color: #5aadc2; border-radius: 60px 0px 0px 0px;") Page 
-          th.px-8(style="background-color: #5aadc2;") Donation Goal
-          th.px-8(style="background-color: #5aadc2; border-radius: 0px 60px 0px 0px;") Deadline
+          th.px-8(style="background-color: #5aadc2; border-radius: 60px 0px 0px 0px;")
+            button(@click="SortCV(pages, 'page_name')") Page
+          th.px-8(style="background-color: #5aadc2;")
+            button(@click="SortCV(pages, 'donation_goal')") Donation Goal
+          th.px-8(style="background-color: #5aadc2; border-radius: 0px 60px 0px 0px;")
+            button(@click="SortCV(pages, 'deadline')") Deadline
       tbody
         tr(v-for="(page, i) in pages" :class="{'bg-gray-200': (i+1) % 2}")
           td(style="text-align: center")   

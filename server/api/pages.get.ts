@@ -1,4 +1,5 @@
 import { PrismaClient } from "@prisma/client"
+import type { Page } from '@/types.d.ts'
 const prisma = new PrismaClient()
 
 /*
@@ -9,14 +10,17 @@ const prisma = new PrismaClient()
 
 export default defineEventHandler(async event => {
 const runtime = useRuntimeConfig()
+type OrderField = keyof Page
 if(event.context.user.cuid != undefined) { //if the user is not logged in, do not let them see all the pages
-  const { searchQuery, page_number, isPageList } = getQuery(event);
+  const { searchQuery, page_number, isPageList, order, sortedColumn } = getQuery(event);
+  let sortedColumnString = sortedColumn as string
+  console.log(sortedColumn)
   if((searchQuery as string) == "" && event.context.user.user_role == "admin" && (isPageList == 1) as boolean) { 
     const [count, pagesResult] = await prisma.$transaction([
       prisma.page.count(),
       prisma.page.findMany({
       skip: page_number as number * 12,
-      take: 12
+      take: 12,
     })
     ])
     return {
@@ -27,17 +31,33 @@ if(event.context.user.cuid != undefined) { //if the user is not logged in, do no
     };
   }
 
-  console.log(page_number)
-  
-  // Pagination via taking the absolute page number with 12 records per page 
-  // Transaction is a Database thing
-  // You can get away with doing multiple operations at once. 
-  // count gets the amount of pages with the same name
-  // 
-  const [count, pagesResult] = await prisma.$transaction([
-    prisma.page.count({ where: { 
-      OR: [ {
-      page_first_name: {
+
+  const searchQuerySpacesRemoved = (searchQuery as string).replaceAll(" ", "")
+  // Makes sure that an empty searchQuery returns no results and that searchQueries with all spaces return no results (prevents returning all pages with a first and last name using a space).
+  if((searchQuery as string) != "" && searchQuerySpacesRemoved.length != 0) {
+    // Pagination via taking the absolute page number with 12 records per page 
+    const [count, pagesResult, unsortedPages] = await prisma.$transaction([
+      prisma.page.count({ where: { page_name: {
+        contains: searchQuery as string,
+        mode: 'insensitive',
+      } }}),
+      prisma.page.findMany({
+    orderBy: {
+      [(sortedColumn as string) || 'page_name'] : (order as string) || 'asc'
+     // sortedColumnString : (order as string) || 'asc',
+      } as const,
+    where: {
+    page_name: {
+      contains: searchQuery as string,
+      mode: 'insensitive',
+    }
+    },
+    skip: page_number as number * 12,
+    take: 12, 
+  }),
+      prisma.page.findMany({
+    where: {
+    page_name: {
       contains: searchQuery as string,
       mode: 'insensitive',
     } },
@@ -53,24 +73,16 @@ if(event.context.user.cuid != undefined) { //if the user is not logged in, do no
         mode: 'insensitive',
       }
     },
-    {
-      page_last_name: {
-        contains: searchQuery as string,
-        mode: 'insensitive',
-      }
-    }
-    ]
-  },
-  skip: page_number as number * 12,
-  take: 12, 
-})
-  ])
-
-
+    skip: page_number as number * 12,
+    take: 12, 
+  })
+      
+    ])
     return {
       Pagination: {
       total: count },
-      data:  pagesResult
+      data:  pagesResult,
+      raw_data: unsortedPages
     };
   }
   return {
