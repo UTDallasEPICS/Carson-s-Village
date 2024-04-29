@@ -376,7 +376,7 @@ description="Here, you select from photos you uploaded to show up first on the F
             div(class="flex")
             .div(v-for="(reply,i) in replies" :key="i" class="reply-box")
                 CVReply(:r="reply")
-                CVSuspendButton(:modelValue="reply.suspended")
+                CVSuspendButton(:suspend="reply.suspended" :rep="reply")
             .div(v-for="(reply, i) in replies" :key="i")
         .ml-9.mb-9.py-7.flex.flex-wrap.gap-2
             .col-md-10.px-2.mt-2
