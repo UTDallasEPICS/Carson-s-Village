@@ -259,6 +259,19 @@ if( isAdvocate.value ) {
         data_all_users.value = Families.value as unknown as Family[]
 }
 
+const updateSuspendButton = (reply:Reply, suspend:boolean) => { // updates the front end of the suspend button
+    replies.value.filter((rep:Reply)=> { // ignore filter error for now
+        if (rep.cuid == reply.cuid) {
+            rep.suspended = suspend;
+        }
+    })
+
+
+    return;
+}
+
+
+
 await getData(useRoute().params.EditPageId as string)
 const profileImage = computed(() => data.value?.Images.find((i: Image) => i.cuid == data.value?.profileImageCuid))
 </script>
@@ -376,7 +389,7 @@ description="Here, you select from photos you uploaded to show up first on the F
             div(class="flex")
             .div(v-for="(reply,i) in replies" :key="i" class="reply-box")
                 CVReply(:r="reply")
-                CVSuspendButton(:suspend="reply.suspended" :rep="reply")
+                CVSuspendButton(:suspend="reply.suspended" :rep="reply" @update:suspend="updateSuspendButton")
             .div(v-for="(reply, i) in replies" :key="i")
         .ml-9.mb-9.py-7.flex.flex-wrap.gap-2
             .col-md-10.px-2.mt-2
