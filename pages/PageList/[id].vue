@@ -9,6 +9,7 @@ import {
     ListboxOptions,
     ListboxOption,
 } from '@headlessui/vue'
+import { ChevronUpIcon, ChevronDownIcon, ChevronUpDownIcon } from '@heroicons/vue/24/solid'
 
 /*
 *   Ofek Shaltiel
@@ -53,6 +54,32 @@ const isFamily = ref(false)
 const familyCuid = ref("")
 const data_families = ref<Family[]>([])
 const fromUser = computed(() => router.query.fromUsers as string == '1')
+
+//page sorting
+const searchQueryInput = ref("");
+const order = ref('')
+const OrderField = ref('')
+  
+type paginated_results = {
+  data: Page[]
+  Pagination: {
+    total: number
+  }
+  raw_data: Page[]
+}
+
+function SortCV(pages:any, OrderFields:string){
+  OrderField.value = OrderFields as string
+  if (order.value === ''){
+    order.value = 'desc'
+   } else if (order.value === 'desc') {
+    order.value = 'asc'
+   } else if (order.value === 'asc') {
+    OrderField.value = ''
+    order.value = ''
+   }
+   getDataPageList()
+}
 
 // Method to populate the page list with data based on the cuid of the user in the url
 const getDataPageList = async () => {
@@ -191,8 +218,22 @@ a.mr-2.mt-1.p-1.px-4.pt-2.pb-2.bg-orange-999.float-right.w-24.ml-auto(class="tra
     table(style="table-layout: auto;")
       thead
         tr
-          th.font-poppins.font-bold.p-2(style="color:white;--tw-bg-opacity: 1; background-color: #5aadc2; overflow: hidden; border-radius: 60px 0px 0px 0px; width:30%; ")  Page Name
-          th.font-poppins.font-bold(style="color:white; width:35%; --tw-bg-opacity: 1; background-color: #5aadc2;") Donation Deadline
+          th.font-poppins.font-bold.p-2(style="color:white;--tw-bg-opacity: 1; background-color: #5aadc2; overflow: hidden; border-radius: 60px 0px 0px 0px; width:30%; ")
+            button(@click="SortCV(pages, 'page_last_name')") Page Name &nbsp;
+            span(v-if="order === 'asc' && OrderField==='page_last_name'" style="padding-right:3px; padding-top: 3px;")
+              ChevronUpIcon.h-6.inline-flex
+            span(v-else-if="order === 'desc' && OrderField==='page_last_name'" style="padding-right:3px; padding-top: 3px;")
+              ChevronDownIcon.h-6.inline-flex
+            span(v-else style="padding-right:3px; padding-top: 3px;")
+              ChevronUpDownIcon.h-6.inline-flex
+          th.font-poppins.font-bold(style="color:white; width:35%; --tw-bg-opacity: 1; background-color: #5aadc2;")
+            button(@click="SortCV(pages, 'deadline')") Donation Deadline &nbsp;
+            span(v-if="order === 'asc' && OrderField==='deadline'" style="padding-right:3px; padding-top: 3px;")
+              ChevronUpIcon.h-6.inline-flex
+            span(v-else-if="order === 'desc' && OrderField==='deadline'" style="padding-right:3px; padding-top: 3px;")
+              ChevronDownIcon.h-6.inline-flex
+            span(v-else style="padding-right:3px; padding-top: 3px;")
+              ChevronUpDownIcon.h-6.inline-flex
           th.font-poppins.font-bold(style="width:10%; --tw-bg-opacity: 1; background-color: #5aadc2; color: #5aadc2;")  {{ "_______________________" }}
           th.font-poppins.font-bold(style="border-radius: 0px 60px 0px 0px; width:20%; --tw-bg-opacity: 1; background-color: #5aadc2;color:#5aadc2;") {{ "_____________" }}
         tr(v-for="(item, i) in pages" 

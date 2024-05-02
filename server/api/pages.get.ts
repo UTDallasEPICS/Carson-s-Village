@@ -37,34 +37,49 @@ if(event.context.user.cuid != undefined) { //if the user is not logged in, do no
   if((searchQuery as string) != "" && searchQuerySpacesRemoved.length != 0) {
     // Pagination via taking the absolute page number with 12 records per page 
     const [count, pagesResult, unsortedPages] = await prisma.$transaction([
-      prisma.page.count({ where: { page_name: {
-        contains: searchQuery as string,
-        mode: 'insensitive',
-      } }}),
+      prisma.page.count({
+        where: {
+          OR: [ { 
+            page_first_name: {
+            contains: searchQuery as string,
+          mode: 'insensitive',
+        } },
+          { page_last_name: {
+            contains: searchQuery as string,
+          mode: 'insensitive',
+          }}] 
+        }}),
       prisma.page.findMany({
     orderBy: {
-      [(sortedColumn as string) || 'page_name'] : (order as string) || 'asc'
+      [(sortedColumn as string) || 'page_last_name'] : (order as string) || 'asc'
      // sortedColumnString : (order as string) || 'asc',
       } as const,
     where: {
-    page_name: {
-      contains: searchQuery as string,
+      OR: [ { 
+        page_first_name: {
+        contains: searchQuery as string,
       mode: 'insensitive',
-    }
+    } },
+      { page_last_name: {
+        contains: searchQuery as string,
+      mode: 'insensitive',
+      }}]
     },
     skip: page_number as number * 12,
     take: 12, 
   }),
       prisma.page.findMany({
     where: {
-    page_name: {
-      contains: searchQuery as string,
+      OR: [ { 
+        page_first_name: {
+        contains: searchQuery as string,
       mode: 'insensitive',
     } },
       { page_last_name: {
         contains: searchQuery as string,
       mode: 'insensitive',
-      }}] }}),
+      }}] 
+    }}),
     prisma.page.findMany({
   where: {
     OR: [ {
@@ -73,11 +88,16 @@ if(event.context.user.cuid != undefined) { //if the user is not logged in, do no
         mode: 'insensitive',
       }
     },
+    { page_last_name: {
+      contains: searchQuery as string,
+    mode: 'insensitive',
+    }}]
+  },
     skip: page_number as number * 12,
     take: 12, 
-  })
-      
+  })  
     ])
+    
     return {
       Pagination: {
       total: count },
@@ -85,10 +105,13 @@ if(event.context.user.cuid != undefined) { //if the user is not logged in, do no
       raw_data: unsortedPages
     };
   }
+
   return {
     Pagination: {
     total: 0
     }, 
-    data:  []
+    data:  [],
+    raw_data: []
   };
+}
 })

@@ -11,6 +11,7 @@
 
 import type { Page, User } from '@/types.d.ts'
 import { donationFormat, dateFormat } from '@/utils'
+import { ChevronUpIcon, ChevronDownIcon, ChevronUpDownIcon } from '@heroicons/vue/24/solid'
 
 const currentPage = ref(0)
 const lastPage = ref(0)
@@ -23,9 +24,9 @@ const isLoggedIn = computed(() => cvuser.value?.cuid != undefined)
 // We use the search query from the url from nav based searches, and we use the input field when on the search page.
 // to call /api/pages
 
+//page sorting
 const searchQueryInput = ref("");
 const totalLength = ref(0)
-
 const order = ref('')
 const OrderField = ref('')
   
@@ -116,12 +117,30 @@ const searchOnEnter = () => {
   table.table.table-striped(style="width:100%;")
       thead
         tr.text-white
-          th.px-8(style="background-color: #5aadc2; border-radius: 60px 0px 0px 0px;")
-            button(@click="SortCV(pages, 'page_name')") Page
-          th.px-8(style="background-color: #5aadc2;")
-            button(@click="SortCV(pages, 'donation_goal')") Donation Goal
-          th.px-8(style="background-color: #5aadc2; border-radius: 0px 60px 0px 0px;")
-            button(@click="SortCV(pages, 'deadline')") Deadline
+          th.px-8(style="background-color: #5aadc2; border-radius: 60px 0px 0px 0px; align-items: center; justify-content: center; width: 33.33%")
+            button(@click="SortCV(pages, 'page_last_name')") Page &nbsp;
+            span(v-if="order === 'asc' && OrderField==='page_last_name'" style="padding-right:3px; padding-top: 3px;")
+              ChevronUpIcon.h-6.inline-flex
+            span(v-else-if="order === 'desc' && OrderField==='page_last_name'" style="padding-right:3px; padding-top: 3px;")
+              ChevronDownIcon.h-6.inline-flex
+            span(v-else style="padding-right:3px; padding-top: 3px;")
+              ChevronUpDownIcon.h-6.inline-flex
+          th.px-8(style="background-color: #5aadc2; justify-content: center; width: 33.33%")
+            button(@click="SortCV(pages, 'donation_goal')") Donation Goal &nbsp;
+            span(v-if="order === 'asc' && OrderField==='donation_goal'" style="padding-right:3px; padding-top: 3px;")
+              ChevronUpIcon.h-6.inline-flex
+            span(v-else-if="order === 'desc' && OrderField==='donation_goal'" style="padding-right:3px; padding-top: 3px;")
+              ChevronDownIcon.h-6.inline-flex
+            span(v-else style="padding-right:3px; padding-top: 3px;")
+              ChevronUpDownIcon.h-6.inline-flex
+          th.px-8(style="background-color: #5aadc2; border-radius: 0px 60px 0px 0px; justify-content: center; width: 33.33%")
+            button(@click="SortCV(pages, 'deadline')") Deadline &nbsp;
+            span(v-if="order === 'asc' && OrderField==='deadline'" style="padding-right:3px; padding-top: 3px;")
+              ChevronUpIcon.h-6.inline-flex
+            span(v-else-if="order === 'desc' && OrderField==='deadline'" style="padding-right:3px; padding-top: 3px;")
+              ChevronDownIcon.h-6.inline-flex
+            span(v-else style="padding-right:3px; padding-top: 3px;")
+              ChevronUpDownIcon.h-6.inline-flex
       tbody
         tr(v-for="(page, i) in pages" :class="{'bg-gray-200': (i+1) % 2}")
           td(style="text-align: center")   
