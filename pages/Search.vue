@@ -35,7 +35,7 @@ type paginated_results = {
   Pagination: {
     total: number
   }
-  raw_data: Page[]
+  unsorted_data: Page[]
 }
 
 function SortCV(pages:any, OrderFields:string){
@@ -62,7 +62,7 @@ const pageSearch = async(searchQuery: string) => {
     if(OrderField.value) {
       pages.value = pageData.value?.data as unknown as Page[]
     } else {
-      pages.value = pageData.value?.raw_data as unknown as Page[]
+      pages.value = pageData.value?.unsorted_data as unknown as Page[]
     }
     totalLength.value = pageData.value?.Pagination.total as unknown as number
 }

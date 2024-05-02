@@ -102,7 +102,7 @@ if(event.context.user.cuid != undefined) { //if the user is not logged in, do no
       Pagination: {
       total: count },
       data:  pagesResult,
-      raw_data: unsortedPages
+      unsorted_data: unsortedPages
     };
   }
 
@@ -111,7 +111,7 @@ if(event.context.user.cuid != undefined) { //if the user is not logged in, do no
     total: 0
     }, 
     data:  [],
-    raw_data: []
+    unsorted_data: []
   };
 }
 })
