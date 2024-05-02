@@ -385,7 +385,7 @@ description="Here, you select from photos you uploaded to show up first on the F
             CVLabel Deadline Date
             .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
                 CVDatepicker(v-model='data.deadline')
-        .py-4.grid.flex-box.flex-row.item-centered.gap-1(v-if="replies?.length" style="line-height: 0px;text-align: center")
+        .py-4.grid.flex-box.flex-row.item-centered.gap-1(v-if="replies?.length" style="line-height: 0px;")
             div(class="flex")
             .div(v-for="(reply,i) in replies" :key="i" class="reply-box")
                 CVReply(:r="reply")
