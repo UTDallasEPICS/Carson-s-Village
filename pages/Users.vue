@@ -99,10 +99,10 @@ if( (isAuthorized.value as boolean) == true )
                     span(v-else style="padding-right:3px; padding-top: 3px;")
                         ChevronUpDownIcon.h-6.inline-flex
                 th.font-poppins.font-bold(style="color: white; width: 25%; --tw-bg-opacity: 1; background-color: #5aadc2;")
-                    button(@click="SortCV(users, 'Family?.family_name')") Family Name &nbsp;
-                    span(v-if="order === 'asc' && OrderField==='Family?.family_name'" style="padding-right:3px; padding-top: 3px;")
+                    button(@click="SortCV(users, 'Family.family_name')") Family Name &nbsp;
+                    span(v-if="order === 'asc' && OrderField==='Family.family_name'" style="padding-right:3px; padding-top: 3px;")
                         ChevronUpIcon.h-6.inline-flex
-                    span(v-else-if="order === 'desc' && OrderField==='Family?.family_name'" style="padding-right:3px; padding-top: 3px;")
+                    span(v-else-if="order === 'desc' && OrderField==='Family.family_name'" style="padding-right:3px; padding-top: 3px;")
                         ChevronDownIcon.h-6.inline-flex
                     span(v-else style="padding-right:3px; padding-top: 3px;")
                         ChevronUpDownIcon.h-6.inline-flex

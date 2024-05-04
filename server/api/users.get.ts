@@ -13,12 +13,16 @@ export default defineEventHandler(async event => {
   
   if(event.context.user.user_role === "advocate" || event.context.user.user_role === "admin"){
     // Pagination via taking the absolute table page number with 12 records per page
+    let orderBy = {};
+    if (sortedColumn === 'Family.family_name') {
+      orderBy = { Family: { family_name: order || 'asc' }};
+    } else {
+      orderBy = { [(sortedColumn as string) || 'last_name']: order || 'asc' };
+    }
     const [ count, userData, unsortedUsers ] = await prisma.$transaction([
       prisma.user.count(),
       prisma.user.findMany({
-    orderBy: {
-      [(sortedColumn as string) || 'last_name'] : (order as string) || 'asc'
-      } as const,
+    orderBy: orderBy,
       skip: page_number as number * 12,
       take: 12,
       include: {
