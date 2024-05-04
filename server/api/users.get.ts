@@ -14,7 +14,7 @@ export default defineEventHandler(async event => {
   if(event.context.user.user_role === "advocate" || event.context.user.user_role === "admin"){
     // Pagination via taking the absolute table page number with 12 records per page
     let orderBy = {};
-    if (sortedColumn === 'Family.family_name') {
+    if (sortedColumn === 'family_name') {
       orderBy = { Family: { family_name: order || 'asc' }};
     } else {
       orderBy = { [(sortedColumn as string) || 'last_name']: order || 'asc' };
