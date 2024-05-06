@@ -140,6 +140,15 @@ div
     const dataset = ref("")
     const downloadName = ref("")
     const totalLength = ref(0)
+
+    // const emit = defineEmits(["update:tableToggle"])
+    // const props = defineProps({
+    //   tableToggle: {
+    //     type: Boolean,
+    //     default: false
+    //   }
+    // });
+
     const tableToggle = ref(false)
 
 
@@ -300,7 +309,6 @@ div
   // loads family report data from the families database table and joins and creates a download link for the file
   const loadReports = async () => {
     if( isAdminAdvocate ) { 
-
         const { data: familiesData } = await useFetch('/api/familiesReports', {
         method: 'GET', 
         query: { page_number: currentPage, dimensions },//start_date: start_date.value, end_date: end_date.value },
@@ -324,6 +332,7 @@ div
         const familyPagesArr = [...familyPages.value]
         const csv = convertToCSV(familyPagesArr, listOfTags.value)
         createCsvDownloadLink(csv)
+
     }
   }
 

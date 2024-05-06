@@ -205,6 +205,9 @@ console.log(pageDataDB.value?.funeral_date)
 
 <template lang="pug">
 // the header overlay with image and name
+
+.flex.gap-2.justify-center.cols-2.pl-6.pr-6
+    a.mr-2.mt-1.p-2.px-9.pt-3.pb-3.bg-orange-999(class="transition duration-300 bg-orange-999 hover:bg-green-600" style="border-radius: 100px; height: 50px; color: white; font-weight: 700;") Archive
 .mt-2.min-h-24.text-white.uppercase.w-full(style="background-image: url('https://carsonsvillage.org/wp-content/uploads/2018/11/iStock-862083112-BW.jpg');") 
   .h-full.py-8.self-center.w-full.text-center.flex.flex-col(style="background-color: rgba(50, 119, 136, .8)") 
     p.my-auto.font-bold.text-4xl {{ pageDataDB.page_first_name + " " + pageDataDB.page_last_name }}

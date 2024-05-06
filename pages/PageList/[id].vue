@@ -1,5 +1,6 @@
 <script lang = "ts" setup>
 import type { Page, User, Image, PageDonation, Reply } from '@/types.d.ts'
+import { ref } from "vue";
 import { dateFormat, donationFormat} from '@/utils'
 import { RoutingRuleFilterSensitiveLog } from '@aws-sdk/client-s3'
 import { Family } from '@prisma/client'
@@ -52,6 +53,8 @@ export type Page2 = {
     User: User, 
     last_donation_date: Date | string | null
 }
+
+const tableToggle = ref(false)
 
 const family_cuid = ref("")
 const router = useRoute()
@@ -198,6 +201,8 @@ await getDataPageList()
 </script>
 
 <template lang ="pug">
+  
+button(type="button" class="my-4 bg-orange-999 text-white px-4 py-2 rounded-full w-32" @click="tableToggle = !tableToggle") Archive
 .py-4.grid(class="sm:grid-cols-3" v-if="isAdvocate && !fromUser")
     CVLabel Current Family
     .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
@@ -210,7 +215,7 @@ await getDataPageList()
                     )
             ListboxOptions(as='div' class='w-full absolute z-10 mt-10 bg-white shadow-lg max-h-60 rounded-md px-2 py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm' )
                 ListboxOption(as='div' v-for="family in data_families" :key="family.cuid" :value="family.cuid" class="px-2 border border-grey-500 py-1 my-1") {{ family.family_name }}
-          ListboxButton(class='text-left bg-white relative rounded-md pl-2 pr-10 py-2 sm:text-sm w-96') {{ familyCuid ? currentFamily.family_name : 'Select family to view pages from' }}  
+          ListboxButton(class='text-left bg-white relative rounded-md pl-2 pr-10 py-2 sm:text-sm w-96') {{ familyCuid ? currentFamily.family_name : 'Select family to view pages from' }}      
 //todo: reduce this to one table
 .mx-auto.mt-1(class="w-11/12 sm:w-[1200px]")
   table(style="table-layout: auto;")
@@ -225,9 +230,20 @@ await getDataPageList()
         th.font-poppins.font-bold(style="color:white; --tw-bg-opacity: 1; background-color: rgb(110 171 191 / var(--tw-bg-opacity));") Donation Goal
         th.font-poppins.font-bold(style="width:15%; --tw-bg-opacity: 1; background-color: #5aadc2; color: white;")  {{ "Page Editor" }}
         th.font-poppins.font-bold(style="border-radius: 0px 60px 0px 0px; width:25%; --tw-bg-opacity: 1; background-color: #5aadc2;color: white;") {{ "Family Page" }}
-        
-        
-        
+    tbody(v-if="tableToggle == false") 
+      tr(v-for="(item, i) in pages.filter(item => item.status === 'active')" :key="i" :class="{'bg-gray-200': (i + 1) % 2}")
+        td.font-poppins.text-gray-dark.font-bold(style="text-align: center;") {{ item.page_first_name + " " + item.page_last_name }}
+        td.font-poppins.text-gray-dark.font-bold(style="text-align: center;") {{ item.User?.first_name + " " + item.User?.last_name }}
+        td.font-poppins.text-gray-dark.font-bold(style="text-align: center;") {{ item.Family?.AdvocateResponsible.first_name + " " + item.Family?.AdvocateResponsible.last_name }}
+        td.font-poppins.text-gray-dark.font-bold(style="text-align: center;") {{ donationFormat(item.amount_raised) }}
+        td.font-poppins.text-gray-dark.font-bold(style="text-align: center;") {{ dateFormat(item.start_date) }}
+        td.font-poppins.text-gray-dark.font-bold(style="text-align: center;") {{ dateFormat(item.deadline) }}
+        td.font-poppins.text-gray-dark.font-bold(style="text-align: center;") {{ donationFormat(item.donation_goal) }}
+        td
+          LinkButton(class="sm:my-2 transition duration-300 bg-orange-999 hover:bg-green-600" style="--tw-bg-opacity: 1; white-space: nowrap; display: flex; flex-direction: row; padding: 14px 24px; gap: 10px;" :to="`/EditPage/${item.cuid}`") Edit
+        td
+          LinkButton(class="sm:my-2 transition duration-300 bg-orange-999 hover:bg-green-600" style="--tw-bg-opacity: 1; white-space: nowrap; display: flex; flex-direction: row; padding: 14px 24px; gap: 10px;" :to="`/Page/${item.cuid}`") View
+    tbody(v-else-if="tableToggle == true")
       tr(v-for="(item, i) in pages" 
       :key="i" 
       :class="{'bg-gray-200': (i+1) % 2}"
