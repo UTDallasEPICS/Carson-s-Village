@@ -224,9 +224,6 @@ await getDataPageList()
         th.font-poppins.font-bold(style="color:white; --tw-bg-opacity: 1; background-color: rgb(110 171 191 / var(--tw-bg-opacity));") Donation Goal
         th.font-poppins.font-bold(style="width:15%; --tw-bg-opacity: 1; background-color: #5aadc2; color: white;")  {{ "Page Editor" }}
         th.font-poppins.font-bold(style="border-radius: 0px 60px 0px 0px; width:25%; --tw-bg-opacity: 1; background-color: #5aadc2;color: white;") {{ "Family Page" }}
-        
-        
-        
       tr(v-for="(item, i) in pages" 
       :key="i" 
       :class="{'bg-gray-200': (i+1) % 2}"
