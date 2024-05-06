@@ -1,10 +1,37 @@
-# Nuxt 3 Minimal Starter
+# Carson's Village
+## Project Background and Introduction
 
+Carson's Village, inspired by Jason Dyke's personal tragedy, emerged to address the dearth of support for grieving families. Established as an innovative bereavement program, it offers comprehensive aid to families navigating loss. In 2023, it served 2,200 families nationwide, providing resources, advice, and practical assistance without financial obligations.
+
+Our project at UTD EPICS aims to enhance Carson's Village services by developing an Automated Family Page, streamlining the process of creating tribute pages for deceased family members. By automating this aspect, the project seeks to alleviate the burden on both Advocates and grieving families during an already stressful period. The primary objectives include updating the page based on user feedback, integrating a reporting tool for increased functionality, and implementing iterative UI/UX improvements to enhance user experience.
+
+Admin:
+ - Primarily 
+ - Collaborate with project team to ensure the efficacy of the Automated Family
+Page
+
+Advocates: 
+ - Facilitate the creation of Automated Family Pages.
+ - Provide support and guidance to families throughout the mourning process.
+ - Utilize the reporting tool to gather feedback and improve services.
+
+Families
+ - Engage with Advocates to navigate the grieving process.
+ - Provide necessary information and content for the Automated Family Page.
+ - Access resources and support provided by Carson's Village.
+ - Offer feedback on the Automated Family Page for further enhancement. 
+
+
+
+## Nuxt 3 Minimal Starter
+ 
 Look at the [Nuxt 3 documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
 
 ## Dependency Software to Install
 Nodejs, Docker, IDE with command line, Git, WSL2 (windows only)
 * Note: Docker will ask you to create an account for Docker, which is not required for most development. Don't make the account unless you like having your data harvested.
+
+
 
 ## Setup
 

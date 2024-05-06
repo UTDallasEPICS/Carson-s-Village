@@ -2,7 +2,6 @@
 import type { Page, User, Image, PageDonation, Reply } from '@/types.d.ts'
 import { ref } from "vue";
 import { dateFormat, donationFormat} from '@/utils'
-import { RoutingRuleFilterSensitiveLog } from '@aws-sdk/client-s3'
 import { Family } from '@prisma/client'
 import {
     Listbox,
@@ -230,6 +229,7 @@ button(type="button" class="my-4 bg-orange-999 text-white px-4 py-2 rounded-full
         th.font-poppins.font-bold(style="color:white; --tw-bg-opacity: 1; background-color: rgb(110 171 191 / var(--tw-bg-opacity));") Donation Goal
         th.font-poppins.font-bold(style="width:15%; --tw-bg-opacity: 1; background-color: #5aadc2; color: white;")  {{ "Page Editor" }}
         th.font-poppins.font-bold(style="border-radius: 0px 60px 0px 0px; width:25%; --tw-bg-opacity: 1; background-color: #5aadc2;color: white;") {{ "Family Page" }}
+
     tbody(v-if="tableToggle == false") 
       tr(v-for="(item, i) in pages.filter(item => item.status === 'active')" :key="i" :class="{'bg-gray-200': (i + 1) % 2}")
         td.font-poppins.text-gray-dark.font-bold(style="text-align: center;") {{ item.page_first_name + " " + item.page_last_name }}
@@ -244,6 +244,8 @@ button(type="button" class="my-4 bg-orange-999 text-white px-4 py-2 rounded-full
         td
           LinkButton(class="sm:my-2 transition duration-300 bg-orange-999 hover:bg-green-600" style="--tw-bg-opacity: 1; white-space: nowrap; display: flex; flex-direction: row; padding: 14px 24px; gap: 10px;" :to="`/Page/${item.cuid}`") View
     tbody(v-else-if="tableToggle == true")
+
+
       tr(v-for="(item, i) in pages" 
       :key="i" 
       :class="{'bg-gray-200': (i+1) % 2}"
