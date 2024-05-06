@@ -122,6 +122,7 @@ if( (isAuthorized.value as boolean) == true )
                         ChevronDownIcon.h-6.inline-flex
                     span(v-else style="padding-right:3px; padding-top: 3px;")
                         ChevronUpDownIcon.h-6.inline-flex
+                th.font-poppins.font-bold(style="width:25%; --tw-bg-opacity: 1; background-color: #5aadc2; color: #5aadc2;") {{  "__________" }}
                 th.font-poppins.font-bold(style="width:25%; --tw-bg-opacity: 1; border-radius: 0px 60px 0px 0px; background-color: #5aadc2; color: #5aadc2;") {{  "__________" }}
             tr(v-for="(item, i) in users" 
                 :key="i"
