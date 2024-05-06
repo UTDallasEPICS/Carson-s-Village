@@ -36,18 +36,19 @@ const submitComment = async () => {
         replyData,
       },
     });
-
+    //console.log(response != false)
     if (response) {
-        //replyData.value.pageCuid = props.pageCuid;
-        //replyData.value.familyCuid = props.familyCuid;
-        emit('displayReply', {...replyData.value});
-        // replyData.value.name = ""; // Clear name field
-        // replyData.value.reply = ""; // Clear reply field
+        console.log("here")
+        replyData.value.pageCuid = props.pageCuid;
+        replyData.value.familyCuid = props.familyCuid;
+        emit('displayReply', {...replyData.value });
+        //replyData.value.name = ""; // Clear name field
+        //replyData.value.reply = ""; // Clear reply field
         // need to find a way to clear fields after submitting a response without messing up the emitted data
         
         //successMessage.value = "Comment submitted successfully!"; // Set success message
-
-        setTimeout(clearSuccessMessage, 1500);
+        //clearSuccessMessage()
+        setTimeout(clearSuccessMessage, 800);
     }
     
 };

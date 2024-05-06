@@ -55,6 +55,7 @@ div
             a.mr-2.mt-1.p-2.px-9.pt-3.pb-3.bg-orange-999(class="transition duration-300 bg-orange-999 hover:bg-green-600" style="border-radius: 100px; height: 50px; color: white; font-weight: 700;") Archive        
     .flex.gap-2.justify-center.cols-2.pl-6.pr-6
       a.mr-9.mt-1.p-6.px-6.pr-6.pt-3.pb-3.bg-orange-999(class="transition duration-300 bg-orange-999 hover:bg-green-600" style="border-radius: 100px; height: 50px; color: white; font-weight: 700;" :href="filedownloadlink" :download="downloadName" :dataset.downloadurl="dataset") Download
+      a.mr-2.mt-1.p-2.px-9.pt-3.pb-3.bg-orange-999(class="transition duration-300 bg-orange-999 hover:bg-green-600" style="border-radius: 100px; height: 50px; color: white; font-weight: 700;") Archive
       table(style="margin-top: 1.25rem; width: 100%; border-spacing: 0; border-collapse: collapse;" v-if="isAdminAdvocate")
           thead(style="color: white;")
               tr
@@ -73,6 +74,7 @@ div
                   th(style="padding: 1rem; background-color: #6eabbf; border-radius: 0 60px 0 0; width: 9%;") Toggle Status
           tbody
               tr(v-for="(page, i) in families" 
+
               :class="{'bg-gray-200': (i+1) % 2}" :key="listOfTagsLen") 
                   td(style="text-align: center;") {{ page.page_first_name + " " + page.page_last_name }}
                   td(style="text-align: center;") {{ page.Family?.AdvocateResponsible?.first_name  + " " + page.Family?.AdvocateResponsible?.last_name }}
@@ -81,6 +83,7 @@ div
                   td(style="text-align: center;" v-if="display.goal_met_date") {{ (page.goal_met_date) ? dateFormat(page.goal_met_date, true) : "Goal Not Reached" }}
                   td(style="text-align: center;" v-if="display.start_date") {{ dateFormat(page.start_date, true) }}
                   td(style="text-align: center;" v-if="display.owed") {{ donationFormat((page.amount_raised - page.amount_distributed)) }}
+
                   //td(style="text-align: center;") {{ (page.donation_goal) ? ((page.amount_raised - page.amount_distributed)/(page.donation_goal) * 100).toFixed(2) + "%" : "No donation goal"}}
                   td(style="text-align: center;"  v-if="display.paid") {{ donationFormat(page.amount_distributed) }}
                   td(style="text-align: center;" v-if="display.donation_goal" ) {{ donationFormat(page.donation_goal) }}
@@ -119,6 +122,7 @@ div
     const dataset = ref("")
     const downloadName = ref("")
     const totalLength = ref(0)
+
     const start_date = ref(new Date("1/01/2015"))
     const end_date = ref(new Date())
     const listOfTags = ref(["donation_goal", "amount_raised", "deadline", "amount_distributed", "donation_status", "duration", "start_date", "goal_met_date", "page_first_name", "page_last_name", "first_name", "middle_name", "last_name", "owed"])
@@ -136,6 +140,7 @@ div
       donation_goal: boolean,
       start_date: boolean,
     }
+
 
 
     const display = ref<DisplayReport>({
@@ -298,6 +303,7 @@ div
         const familyPagesArr = [...familyPages.value]
         const csv = convertToCSV(familyPagesArr, listOfTags.value)
         createCsvDownloadLink(csv)
+
     }
   }
 
@@ -344,13 +350,15 @@ div
         } else if(!confirmReactivate) {
         return ""
         }
+        }
+
 
           booleanChanged = false          
           const toggledStatus = await $fetch('api/page', {
+
             method: "PUT",
             body: { ...page }
           })
-        }
     }
 
   }

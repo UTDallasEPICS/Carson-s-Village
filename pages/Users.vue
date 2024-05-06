@@ -72,7 +72,7 @@ const nextPage = () => {
     } 
 }
 
-const prevPage= () => {
+const prevPage = () => {
     if(currentPage.value != 0){
         currentPage.value--
         if(isAuthorized.value) {
@@ -131,7 +131,11 @@ if( (isAuthorized.value as boolean) == true )
                 td.font-poppins.text-gray-dark.font-bold(style="text-align: center") {{ item.Family?.family_name }}
                 td.font-poppins.text-gray-dark.font-bold(style="text-align: center") {{ item.user_role }}
                 td.font-poppins.text-gray-dark.font-bold(style="text-align: center") {{ item.email }}
-                LinkButton(class="sm:my-2 transition duration-300 bg-orange-999 hover:bg-green-600" style="--tw-bg-opacity: 1; white-space: nowrap; display: flex; flex-direction: row; padding: 14px 24px; gap: 10px;" :to="`/pageList/${item.cuid}?fromUsers=1`") View
+                td
+                    LinkButton(class="sm:my-2 transition duration-300 bg-orange-999 hover:bg-green-600" style="--tw-bg-opacity: 1; white-space: nowrap; display: flex; flex-direction: row; padding: 14px 24px; gap: 10px;" :to="`/EditUser/${item.cuid}`") Edit
+                    
+                td
+                    LinkButton(class="sm:my-2 transition duration-300 bg-orange-999 hover:bg-green-600" style="--tw-bg-opacity: 1; white-space: nowrap; display: flex; flex-direction: row; padding: 14px 24px; gap: 10px;" :to="`/pageList/${item.cuid}?fromUsers=1`") View
     .container.mx-auto(class="w-auto sm:w-[1200px]" style="--tw-bg-opacity: 1; background-color: #5aadc2; height: 50px; border-radius: 0px 0px 60px 60px;")
 .mb-9.py-7.flex.flex-wrap.gap-2.place-content-center
     .col-md-10.px-2.mt-2

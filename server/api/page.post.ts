@@ -18,6 +18,11 @@ export default defineEventHandler(async event => {
     data.donation_goal = Math.trunc(data.donation_goal * 100);
     data.amount_raised = Math.trunc(data.amount_raised * 100);
     try{
+      const family = await prisma.family.findFirst({
+        where: { cuid: familyCuid as string }
+      })
+      //todo: evaluate ways of reactivating page. All pages reactivate once family is onboarded with charges enabled?
+      data.status = family?.stripe_account_id ? 'active' : 'no family stripe account'
       // Creates a new entry in the database in the page model to a specfic user
       const queryRes = await prisma.page.create({
         data: {

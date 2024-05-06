@@ -85,8 +85,8 @@ const prevPage = () => {
 // Calling the search method using the url from the nav when the user searches from the nav. This is only called once.
 onMounted(() => { 
   if(isLoggedIn.value) { 
-    pageSearch(router.query.search as string)    
-    searchQueryInput.value = router.query.search as string
+    pageSearch((router.query.search as string).trim())    
+    searchQueryInput.value = (router.query.search as string).trim()
     console.log(searchQueryInput.value)
   }
 })
@@ -109,7 +109,7 @@ const searchOnEnter = () => {
   br
   legend(class='text-m indent-8') Search memorial pages
   input(class="border border-gray-300 py-2 px-4 ml-8 rounded-lg focus:outline-none focus:border-black-500" 
-  type="search" placeholder=" " v-model="searchQueryInput" v-on:keyup.enter="searchOnEnter")
+  type="search" placeholder=" " v-model.trim="searchQueryInput" v-on:keyup.enter="searchOnEnter")
   button(class='text-m bg-gray-300 p-2 mt-1 mb-2' @click='currentPage=0; pageSearch(searchQueryInput)') SEARCH
   .container
   br

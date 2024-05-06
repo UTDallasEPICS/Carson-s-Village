@@ -19,8 +19,16 @@ if(event.context.user.cuid != undefined) { //if the user is not logged in, do no
       prisma.page.findMany({
       skip: page_number as number * 12,
       take: 12,
-    })
+      include: {
+        User: true, 
+        Family: {
+          include: {
+            AdvocateResponsible: true
+          }
+        }
+    }})
     ])
+    console.log(pagesResult)
     return {
       Pagination: {
       total:  count
@@ -28,7 +36,6 @@ if(event.context.user.cuid != undefined) { //if the user is not logged in, do no
       data:  pagesResult
     };
   }
-
 
   const searchQuerySpacesRemoved = (searchQuery as string).replaceAll(" ", "")
   // Makes sure that an empty searchQuery returns no results and that searchQueries with all spaces return no results (prevents returning all pages with a first and last name using a space).

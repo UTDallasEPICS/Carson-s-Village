@@ -35,7 +35,7 @@ export default defineEventHandler(async event => {
   };
 
 const body = await readBody(event);
-const now = (new Date()).toString();
+//const now = (new Date()).toISOString();
   const { family_name,
     first_name,
     email,
@@ -51,8 +51,8 @@ if(event.context.user?.user_role == "advocate" || event.context.user.user_role =
           AdvocateResponsible: {
             connect: { cuid: event.context.user.cuid }
           },
-          created_at: now,
-          updated_at: "",
+          created_at: new Date(),
+          updated_at: null,
           cuid: undefined,
           FamilyMembers: {
             create: {

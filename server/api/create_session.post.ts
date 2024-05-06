@@ -24,11 +24,11 @@ export default defineEventHandler(async event => {
     const state = {}; 
     const userCuid = body._value.userCuid
     const familyCuid = body._value.familyCuid 
-  try{
-    const page = await prisma.page.findFirst({
-      where: {
-        cuid: page_cuid
-      }
+    try {
+      const page = await prisma.page.findFirst({
+        where: {
+          cuid: page_cuid
+        }
     })
     
 	const session = await stripe.checkout.sessions.create({
@@ -68,6 +68,7 @@ export default defineEventHandler(async event => {
         donorFirstName: body._value.donorFirstName,
         donorLastName: body._value.donorLastName,
         comments: donorComments, 
+        donationDate: new Date().toISOString(),
         Family: {
           connect: {
             cuid: familyCuid
@@ -81,9 +82,8 @@ export default defineEventHandler(async event => {
     }})
 
     return session.url;
-  }catch(e) {
+  } catch(e) {
     console.error(e);
   }
-
-    
+ 
 });
