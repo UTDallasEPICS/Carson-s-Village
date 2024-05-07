@@ -1,7 +1,7 @@
 # Carson's Village
 ## Project Background and Introduction
 
-Carson's Village, inspired by Jason Dyke's personal tragedy, emerged to address the dearth of support for grieving families. Established as an innovative bereavement program, it offers comprehensive aid to families navigating loss. In 2023, it served 2,200 families nationwide, providing resources, advice, and practical assistance without financial obligations.
+Carson's Village, inspired by Jason Dyke's personal tragedy, emerged to address the death of support for grieving families. Established as an innovative bereavement program, it offers comprehensive aid to families navigating loss. In 2023, it served 2,200 families nationwide, providing resources, advice, and practical assistance without financial obligations.
 
 Our project at UTD EPICS aims to enhance Carson's Village services by developing an Automated Family Page, streamlining the process of creating tribute pages for deceased family members. By automating this aspect, the project seeks to alleviate the burden on both Advocates and grieving families during an already stressful period. The primary objectives include updating the page based on user feedback, integrating a reporting tool for increased functionality, and implementing iterative UI/UX improvements to enhance user experience.
 
