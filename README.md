@@ -21,8 +21,42 @@ Families
  - Access resources and support provided by Carson's Village.
  - Offer feedback on the Automated Family Page for further enhancement. 
 
+## Functional Requirments:
+ Pages:
+ - Primarily 
+ - Collaborate with project team to ensure the efficacy of the Automated Family
+   
+New Page: 
+ - Facilitate the creation of Automated Family Pages.
+ - Provide support and guidance to families throughout the mourning process.
+ - Utilize the reporting tool to gather feedback and improve services.
 
+Users:
+ - Engage with Advocates to navigate the grieving process.
+ - Provide necessary information and content for the Automated Family Page.
+ - Access resources and support provided by Carson's Village.
+ - Offer feedback on the Automated Family Page for further enhancement.
 
+Invite User:
+ - Allow for new User's to be invited given user email, name and phone number.
+ -  Additional functionality includes defining new user role as family, advocate or admin.
+
+Create Family:
+  - Allow for new Family to be created given family name, email, name and phone number.
+
+Home:
+ - Home page offers information on the admin that is logged in including name, email and phone number.
+
+Donations:
+ - Monitor and Manage Donation to track and oversee all family page-specific donations
+ - Update and Record transactions to keep accurate records of all transactions, including donations received, distributed funds, and remaining balances.
+ - Access comprehensive reports to have detailed reports on donation statuses, distribution history, and financial summaries.
+
+Family Reports:
+- Report Customization to adjust visible fields to customize reports, toggle page statuses for updates and to manage financial tracking with detailed information on donation goals and payments.
+ - Advocate Support Tracking to monitor assignments of advocates to fabiliy pages ensuring personalized support is consistently provided to help families meet the funding objectives.
+ - Document Handling to easily download or archive reports to streamline management of financial records.
+ 
 ## Nuxt 3 Minimal Starter
  
 Look at the [Nuxt 3 documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
