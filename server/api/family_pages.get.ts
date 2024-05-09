@@ -29,10 +29,15 @@ export default defineEventHandler(async event => {
               User: true,
               Family: {
                 include: {
-                  AdvocateResponsible: true
+                  AdvocateResponsible: {
+                    select: {
+                      first_name: true,
+                      last_name: true
+                    }
                 }
               }
             }
+          }
     }), 
     prisma.page.findMany({
       where: {
@@ -42,10 +47,15 @@ export default defineEventHandler(async event => {
         User: true,
         Family: {
           include: {
-            AdvocateResponsible: true
+            AdvocateResponsible: {
+              select: {
+                first_name: true,
+                last_name: true
+              }
           }
         }
       }
+    }
 })
   ])
 

@@ -27,8 +27,10 @@ const data_user = ref<User>({
     middle_name: "",
     user_role: "",
     phone: "",
+    address: "",
     Pages: [],
-    familyCuid: ""
+    familyCuid: "",
+    AdvocateFamily: []
     //PageDonations: [],
     //DonationPayouts: []
 })
@@ -53,6 +55,7 @@ middle_name: '',
 phone: '',
 Pages: [],
 familyCuid: '',
+address: '',
 AdvocateFamily: []
 },
 FamilyDonations: [],
@@ -160,6 +163,10 @@ CVContainer
             CVLabel Phone
             .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
                 CVInput(v-model='data_user.phone' placeholder="(user defined, optional)")
+        .py-4.grid(class="sm:grid-cols-3")
+            CVLabel Address
+            .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
+                CVInput(v-model='data_user.address' placeholder="(user defined, optional)")
             .col-md-10.py-2
                 ActionButton(@click="save" class="transition duration-300 bg-orange-999 hover:bg-green-600") Save    
         .py-4.grid(class="sm:grid-cols-3" Style="color:red" v-if="errorInPage")

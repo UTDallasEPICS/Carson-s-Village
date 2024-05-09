@@ -41,7 +41,7 @@ const body = await readBody(event);
     email,
     middle_name,
     last_name,
-    phone } = body
+    phone, address } = body
 if(event.context.user?.user_role == "advocate" || event.context.user.user_role === "admin") {
     try {
       await sendEmail(body.email, "invitation", "Invitation to Carson's village", ({...body, url: `${runtime.BASEURL}api/login`}))
@@ -61,6 +61,7 @@ if(event.context.user?.user_role == "advocate" || event.context.user.user_role =
               middle_name,
               last_name,
               phone,
+              address,
             }
           }
         }

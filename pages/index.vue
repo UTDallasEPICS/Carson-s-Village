@@ -30,6 +30,8 @@ const isAdmin = computed(() => cvuser.value?.user_role == 'admin')
     TextGrayField {{ cvuser?.email}}
     TextGrayField(class="sm:mx-auto") Phone:
     TextGrayField {{ cvuser?.phone}}
+    TextGrayField(class="sm:mx-auto") Address:
+    TextGrayField {{ cvuser?.address}}
 </template>
 
 <style scoped></style>

@@ -15,7 +15,7 @@ export default defineEventHandler(async event => {
     if((cuid as string) == "0"  || cuid == undefined){
         return []
     }
-    if(event.context.user.user_role === "advocate"  || event.context.user?.user_role == "admin" || event.context.user?.cuid === cuid ||  event.context.user?.family_cuid === cuid){
+    if(event.context.user.user_role === "advocate"  || event.context.user?.user_role === "admin" || event.context.user?.cuid == cuid ||  event.context.user?.familyCuid == cuid){
       const [count, pagesResult, pagesUnpaginated] = await prisma.$transaction([
         prisma.page.count({ where: {
           OR: [ { 

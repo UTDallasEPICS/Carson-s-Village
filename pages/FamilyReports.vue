@@ -1,13 +1,22 @@
 <template lang="pug">
-//todo: style the date selection and have date selection on all the following: donation deadline, start date, and goal met date (use HTML select?)
 //todo: add selection for families instead of all at once and toggle between all at once and all families by having the first option as displaying every page
 div
     TitleComp.border-1.border-black Family Reports 
     br
+    .py-4.grid(class="sm:grid-cols-3" v-if="date_ranged")
+        CVLabel Date Field
+        .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
+            select.rounded-md.outline-0.border-box.w-full.p-2.bg-white(style="border: 1px solid #c4c4c4;" v-model='date_field') Select User Role
+                option deadline
+                option start_date
+                option goal_met_date
+    .flex.gap-5(style="align-items: center; justify-content: center;" v-if="date_ranged")
+      CVLabel Date Range
+      CVDatepicker(v-model='date' @update:model-value="currentPage=0; loadReports();" range)
     h2.mt-4.ml-4.border-1.border-black.underline(style="font-size: 23px") Table Dimensions
       .div.flex.flex-box.flex-wrap.gap-10(style="width: 450px") 
         h1.ml-1(style="font-size: 18px") Number of Table Rows
-          CVInput(v-model="dimensions")
+          CVInputNumerical(v-model="dimensions")
     h2.mt-4.ml-5.underline(style="font-size: 18px") Fields to Show
     .div.flex.flex-box.flex-wrap.gap-10.stretch.grid.ml-2(class="sm:grid-cols-3" style="width: 700px") 
       label.mt-4.ml-4.text-md(class="sm:mt-0" style="letter-spacing: 0.35px;") Duration
@@ -35,26 +44,9 @@ div
         div
           input(type='checkbox' v-model="display.donation_goal")
     .flex.flex-col.gap-5.px-4.mx-auto.mt-8(class="w-3/4 sm:px-16")
-      //img.mx-auto(v-if="profileImage?.url" class="w-[122px] h-[122px] rounded-[8px]" :src="`${profileImage?.url}`")
-      //.text-gray-dark.mx-auto.w-max.font-poppins.text-md {{ dateFormat(start_date, true) + ' - ' + dateFormat(end_date, true) }} 
-      //.flex.flex-col-reverse.gap-5(class="sm:grid sm:grid-cols-2")
-        .relative.w-96.p-1(v-if="imageData.length != 0" )
-          button.absolute.left-4.top-64.bg-black.text-white(@click="prevImage" style="opacity:0.7; --tw-text-opacity: 1; width: 46px; height: 46px; border-radius:50%; align-items: center; justify-content: center; line-height: 2; text-align: center;color: white;") &#60;
-          button.absolute.right-8.top-64.bg-black.text-white(@click="nextImage" style="opacity:0.7; --tw-text-opacity: 1; width: 46px; height: 46px; border-radius:50%; align-items: center; justify-content: center; line-height: 2; text-align: center;color: white;") &#62;
-          img.w-96(style="object-fit:cover" :src="imageData[currentImage].url")
-    //.py-4.grid(class="sm:grid-cols-5") 
-            CVLabel Date Range
-            .col-md-8.mx-9(class="sm:col-span-1 sm:mr-11")
-            CVLabel Date Range
-            .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
-              CVDatepicker(v-model='start_date' @update:model-value="currentPage=0; loadReports();")
-            .col-md-8.mx-9(class="sm:col-span-1 sm:mr-11")  
-              p(style="text-align:center;") {{ "-" }}
-            .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")  
-              CVDatepicker(v-model='end_date' @update:modelValue="currentPage=0; loadReports()" )  
-            .col-md-8.mx-9(class="sm:col-span-1 sm:mr-11")
-                    
+    
     .flex.gap-2.justify-center.cols-2.pl-6.pr-6
+      a.mr-9.mt-1.p-6.px-6.pr-6.pt-3.pb-3.bg-orange-999(class="transition duration-300 bg-orange-999 hover:bg-green-600" style="border-radius: 125px; height: 75px; color: white; font-weight: 700;" @click="date_ranged=!date_ranged; currentPage=0; loadReports()") {{ "Display In Date Range" }}
       a.mr-9.mt-1.p-6.px-6.pr-6.pt-3.pb-3.bg-orange-999(class="transition duration-300 bg-orange-999 hover:bg-green-600" style="border-radius: 100px; height: 50px; color: white; font-weight: 700;" :href="filedownloadlink" :download="downloadName" :dataset.downloadurl="dataset") Download
       table(style="margin-top: 1.25rem; width: 100%; border-spacing: 0; border-collapse: collapse;" v-if="isAdminAdvocate")
           thead(style="color: white;")
@@ -97,7 +89,6 @@ div
       p {{  currentPage + 1 }}
   .col-md-10.px-2.mt-2
       button(@click="nextPage") >
-
 </template>
     
 <script setup lang='ts'>
@@ -119,13 +110,20 @@ div
     const dataset = ref("")
     const downloadName = ref("")
     const totalLength = ref(0)
-    const start_date = ref(new Date("1/01/2015"))
+    const start_date = ref(new Date("1/01/2023"))
     const end_date = ref(new Date())
+    const endDate = new Date();
+    const startDate = new Date(new Date().setDate(endDate.getDate() - 31));
+    
     const listOfTags = ref(["donation_goal", "amount_raised", "deadline", "amount_distributed", "donation_status", "duration", "start_date", "goal_met_date", "page_first_name", "page_last_name", "first_name", "middle_name", "last_name", "owed"])
     // computed variable used as a key for each element of the table so that the striping of the table re-renders when the table is resized.
     const listOfTagsLen = computed(() => listOfTags.value?.length)
     // number of family pages in the family reports table per page with @default=12 pages
     const dimensions = ref(12)
+    const date_ranged = ref(false)
+    const date = ref([startDate, endDate])
+    date.value = [startDate, endDate]
+    const date_field = ref("start_date")
     type DisplayReport = {
       duration: boolean,
       goal_date: boolean,
@@ -136,7 +134,6 @@ div
       donation_goal: boolean,
       start_date: boolean,
     }
-
 
     const display = ref<DisplayReport>({
       duration: true,
@@ -152,8 +149,6 @@ div
     // todo: improve performance (we do not want to rebuild the list everytime).
     // selects the list of tags to show in the report csv
     watch(display, async() => {
-      //const listOfTags1 = ["page_name", "donation_goal", "amount_raised", "deadline", "amount_distributed", "donation_status", "duration", "start_date", "goal_met_date", "first_name", "middle_name", "last_name", "Amount Owed / Goal Percentage" ]
-      //, "first_name", "middle_name", "last_name" ]
       listOfTags.value = []
       if(display.value.donation_goal) {
         listOfTags.value.push("donation_goal")
@@ -192,11 +187,16 @@ div
       createCsvDownloadLink(csv)
     },  { deep: true })
     
+    // The next three watches respond to changing the top input, date field, and date range and reload reports accordingly
     watch(dimensions, async() => {
       currentPage.value = 0
       loadReports()
     })
-    
+    watch(date_field, async() => {
+      currentPage.value = 0
+      loadReports()
+    })
+
     const data_family = ref<Family>({
       cuid: '',
       family_name: '',
@@ -214,6 +214,7 @@ div
       email: '',
       middle_name: '',
       phone: '',
+      address: '',
       Pages: [],
       familyCuid: ''
   },
@@ -273,28 +274,31 @@ div
     }
   
   // loads family report data from the families database table and joins and creates a download link for the file
+  // Additionally, if the user presses display date ranged, the UI table filters by a cirtain date range specified by start_date and end_date on the date_field
   const loadReports = async () => {
     if( isAdminAdvocate ) { 
         const { data: familiesData } = await useFetch('/api/familiesReports', {
         method: 'GET', 
-        query: { page_number: currentPage, dimensions },//start_date: start_date.value, end_date: end_date.value },
-        watch: [currentPage] // start_date, end_date]
+        query: { page_number: currentPage, dimensions, start_date: date.value[0].toISOString(), end_date: date.value[1].toISOString(), date_field: date_field.value },
+        watch: [currentPage, date, date_field]
         });
         
-        families.value = familiesData.value?.paginated_pages as unknown as Family[]
-        totalLength.value = familiesData.value?.Pagination.total as unknown as number
+        if(date_ranged.value) {
+          families.value = familiesData.value?.date_ranged_pages as unknown as Family[]
+          totalLength.value = familiesData.value?.Pagination.total_date_ranged as unknown as number
+        } else {
+          families.value = familiesData.value?.paginated_pages as unknown as Family[]
+          totalLength.value = familiesData.value?.Pagination.total as unknown as number
+        }
+        
         console.log(families.value)
         // gathering the family data into an array of family pages and their advocate responsible
         familiesRaw.value = familiesData.value?.all_families as unknown as Family[]
-/*
-        {
-          ...page,
-          page_last_name: page.last_name,
-          ...advocateResponsible
-        }
-*/
-        
-        familiesRaw.value.forEach((element: Family)  => { element.Pages.forEach((element2) => {familyPages.value.push( { ...element2 as unknown as Page[], ...element.AdvocateResponsible as any }) })})
+        //families.value.forEach((family: Family) => { family.Pages?.forEach((pages: any) => { pages.page_first_name_2 = pages.page_first_name })})
+        console.log(families.value)     
+        // loading every single family in the database into the report. This has to be different than families because families is paginated and thus lacks records
+        familiesRaw.value.forEach((family: Family)  => { family.Pages?.forEach((pages) => {familyPages.value.push( { ...pages as unknown as Page[], ...family.AdvocateResponsible as any }) })}) //page_first_name: pages.first_name, page_last_name: pages.last_name
+        console.log(familyPages.value) 
         const familyPagesArr = [...familyPages.value]
         const csv = convertToCSV(familyPagesArr, listOfTags.value)
         createCsvDownloadLink(csv)
@@ -344,13 +348,13 @@ div
         } else if(!confirmReactivate) {
         return ""
         }
-
+      }
           booleanChanged = false          
           const toggledStatus = await $fetch('api/page', {
             method: "PUT",
             body: { ...page }
           })
-        }
+        
     }
   }
     

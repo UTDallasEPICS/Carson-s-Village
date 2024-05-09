@@ -76,18 +76,30 @@ const data = ref<User>({
   email: "",
   middle_name: "",
   phone: "",
+  address: "",
   Pages: [],
-  familyCuid: ""
+  familyCuid: "", 
+  AdvocateFamily: []
 })
 
 const isFamily = ref(false)
 const familyCuid = ref("")
+if(cvuser.value?.user_role == 'family') {
+  familyCuid.value = router.params.id as string
+}
 const data_families = ref<Family[]>([])
 const fromUser = computed(() => router.query.fromUsers as string == '1')
+const entityCuid = computed(() => fromUser.value ? user_cuid : familyCuid.value)
 
 // Method to populate the page list with data based on the cuid of the user in the url
 const getDataPageList = async () => {
   if(cvuser.value.user_role == "admin") {
+    const { data: all_families } = await useFetch('/api/families', {
+      method: 'GET',
+      default() {
+        return [] as any
+      }
+    })
     const { data: pagesData } = await useFetch('/api/pages', {
       method: 'GET',
       query: { searchQuery: ref(""), page_number: currentPage, isPageList: 1 }
@@ -108,59 +120,27 @@ const getDataPageList = async () => {
     })
     data_families.value = advocateFamilies.value?.AdvocateFamily as unknown as Family[]
     
-    // handles request to show the family pages created by a user. 
-    if(fromUser.value) {
-      const { data: family_pages } = await useFetch('/api/family_pages', {
-      method: 'GET',
-      query: { family_cuid, page_number: currentPage },
-      default() {
-        return [] as any
-      }
-    }) 
-      pages.value = family_pages.value.data as unknown as Page2[]
-      totalLength.value = family_pages.value.Pagination.total as unknown as number
-    } 
-  // handles the family pages of a family member
-  } else if(cvuser.value.familyCuid === family_cuid.value ){
-    const { data: family_pages } = await useFetch('/api/family_pages', {
-      method: 'GET',
-      query: { family_cuid, page_number: currentPage },
-      default() {
-        return [] as any
-      }
-    }) 
-    pages.value = (family_pages.value.data) as unknown as Page2[]
-    totalLength.value = family_pages.value.Pagination.total as unknown as number
-  }
-    const isEmpty = computed(() => pages.value.length == 0)
-    const entityCuid = computed(() => fromUser.value ? user_cuid : family_cuid)
-    //  handles the family pages an advocate made themselves, do not admin back into if statement, it will crash
-    if(cvuser.value.user_role == "advocate" ) {
-        const { data: familyData } = await useFetch('/api/page_list', {
-        method: 'GET',
-        query: { cuid: entityCuid, page_number: currentPage },
-        default() {
-          return [] as any
-        }
-      })
-        pages.value = (familyData.value.data) as unknown as Page2[]
-        totalLength.value = familyData.value.Pagination.total as unknown as number
   }
 }
 
 // handles changes of family selected for advocates or admins
 const { data: family_pages } = await useFetch('/api/page_list', {
     method: 'GET',
-    query: { cuid: familyCuid, page_number: currentPage },
-    watch: [ familyCuid ],
+    query: { cuid: entityCuid, page_number: currentPage },
+    watch: [ familyCuid, currentPage ],
     default() {
       return [] as any
     }
   })
 const totalLength2 = computed(() => family_pages.value?.Pagination.total as unknown as number)
 
-watch(family_pages, () => {
+if(cvuser.value?.user_role == 'family' || fromUser.value) {
   pages.value = (family_pages.value.data) as unknown as Page2[]
+}
+watch(family_pages, () => {
+  console.log("here")
+  pages.value = (family_pages.value.data) as unknown as Page2[]
+  totalLength.value = totalLength2.value
 })
   // Todo: Talk to Taz about this
   /*
@@ -176,7 +156,16 @@ watch(family_pages, () => {
 //pages.value = family_pages.value as unknown as Page[]
 //watchEffect(() => familyCuid.value = data_families.value![0]?.cuid || "");
 //pages.value = familyData.value?.Pages as unknown as Page[]
+// one main endpoint for maintainability
+/*
 
+const { data: family_pages } = await useFetch('/api/page_list', {
+      method: 'GET',
+      query: { family_cuid, page_number: currentPage, fromUser:  },
+      default() {
+        return [] as any
+      }
+*/
 const nextPage = () => { 
     if(currentPage.value < Math.max(((totalLength.value / 12) - 1), ((totalLength2.value / 12) - 1))){
         currentPage.value++
@@ -211,18 +200,18 @@ await getDataPageList()
             ListboxOptions(as='div' class='w-full absolute z-10 mt-10 bg-white shadow-lg max-h-60 rounded-md px-2 py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm' )
                 ListboxOption(as='div' v-for="family in data_families" :key="family.cuid" :value="family.cuid" class="px-2 border border-grey-500 py-1 my-1") {{ family.family_name }}
           ListboxButton(class='text-left bg-white relative rounded-md pl-2 pr-10 py-2 sm:text-sm w-96') {{ familyCuid ? currentFamily.family_name : 'Select family to view pages from' }}  
-//todo: reduce this to one table
 .mx-auto.mt-1(class="w-11/12 sm:w-[1200px]")
   table(style="table-layout: auto;")
     thead
       tr
         th.font-poppins.font-bold.p-2(style="color:white;--tw-bg-opacity: 1; background-color: #5aadc2; overflow: hidden; border-radius: 60px 0px 0px 0px; width:20%; ")  Page Name
-        th.font-poppins.font-bold(style="color:white; width: 10%; --tw-bg-opacity: 1; background-color: rgb(110 171 191 / var(--tw-bg-opacity));") Creating User
-        th.font-poppins.font-bold(style="color:white; width: 10%; --tw-bg-opacity: 1; background-color: rgb(110 171 191 / var(--tw-bg-opacity));") Advocate 
-        th.font-poppins.font-bold(style="color:white; width: 10%;--tw-bg-opacity: 1; background-color: rgb(110 171 191 / var(--tw-bg-opacity));") Total Donated
-        th.font-poppins.font-bold(style="color:white; width: 20%; --tw-bg-opacity: 1; background-color: rgb(110 171 191 / var(--tw-bg-opacity));") Creation Date
+        th.font-poppins.font-bold(style="color:white; width: 10%; --tw-bg-opacity: 1; background-color: #5aadc2;") Creating User
+        th.font-poppins.font-bold(style="color:white; width: 10%; --tw-bg-opacity: 1; background-color: #5aadc2;") Advocate 
+        th.font-poppins.font-bold(style="color:white; width: 10%; --tw-bg-opacity: 1; background-color: #5aadc2;") Family 
+        th.font-poppins.font-bold(style="color:white; width: 10%;--tw-bg-opacity: 1; background-color: #5aadc2;") Total Donated
+        th.font-poppins.font-bold(style="color:white; width: 20%; --tw-bg-opacity: 1; background-color: #5aadc2;") Creation Date
         th.font-poppins.font-bold(style="color:white; width: 20%; --tw-bg-opacity: 1; background-color: #5aadc2;") Donation Deadline
-        th.font-poppins.font-bold(style="color:white; --tw-bg-opacity: 1; background-color: rgb(110 171 191 / var(--tw-bg-opacity));") Donation Goal
+        th.font-poppins.font-bold(style="color:white; --tw-bg-opacity: 1; background-color: #5aadc2;;") Donation Goal
         th.font-poppins.font-bold(style="width:15%; --tw-bg-opacity: 1; background-color: #5aadc2; color: white;")  {{ "Page Editor" }}
         th.font-poppins.font-bold(style="border-radius: 0px 60px 0px 0px; width:25%; --tw-bg-opacity: 1; background-color: #5aadc2;color: white;") {{ "Family Page" }}
         
@@ -235,6 +224,7 @@ await getDataPageList()
         td.font-poppins.text-gray-dark.font-bold(style="text-align: center;") {{ item.page_first_name + " " + item.page_last_name }}
         td.font-poppins.text-gray-dark.font-bold(style="text-align: center;") {{ item.User?.first_name + " " + item.User?.last_name }}
         td.font-poppins.text-gray-dark.font-bold(style="text-align: center;") {{ item.Family?.AdvocateResponsible.first_name + " " + item.Family?.AdvocateResponsible.last_name }}
+        td.font-poppins.text-gray-dark.font-bold(style="text-align: center;") {{ item.Family?.family_name }}
         td.font-poppins.text-gray-dark.font-bold(style="text-align: center;") {{ donationFormat(item.amount_raised) }}
         td.font-poppins.text-gray-dark.font-bold(style="text-align: center;") {{ dateFormat(item.start_date) }}
         td.font-poppins.text-gray-dark.font-bold(style="text-align: center;") {{ dateFormat(item.deadline) }}

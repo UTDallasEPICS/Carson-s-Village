@@ -59,6 +59,7 @@ const pageData = ref<Page>({
           email: '',
           middle_name: '',
           phone: '',
+          address: '',
           Pages: [],
           familyCuid: ''
       },
@@ -84,9 +85,8 @@ const donationData = ref<PageDonation>({
 });
 
 const feeRecovery = ref(false)
-//const feeRecoveryAmount = ref(0)
 const userCuid = ref("0")
-
+const DisplayDonationPopup = ref(false)
 const profileImageLink = ref("")
 const family_cuid = ref("0")
 const router = useRoute();
@@ -188,16 +188,34 @@ const prevImage = () => {
     }
 }
 
+// Recursively moves to the next image every 5 seconds
+const setImageAutoSlide = () => {
+  nextImage()
+  setTimeout(setImageAutoSlide, 5000)
+}
+
 // Recieves emitted reply from CVReplies System to update replies in real time
 const displayReply = async (reply: Reply) => {
     pageDataDB.value?.Reply.push(reply)
 }
 
+// Recieves the emit to stop displaying the donation popup from the button within the component donationEntryPoppup
+const exitPopup = async(exit: boolean) => {
+  DisplayDonationPopup.value = false
+}
+
 console.log(pageDataDB.value?.visitation_description)
 console.log(pageDataDB.value?.funeral_date)
+
+setImageAutoSlide()
 </script>
 
 <template lang="pug">
+// donation popup
+.div.flex(@click.self="DisplayDonationPopup=false" v-if="DisplayDonationPopup" style="z-index: 10; align-items: center; justify-content: center; position: fixed; top: 0; bottom: 0; left: 0; right: 0; background: rgba(0, 0, 0, 0.7);")
+  .mx-auto.flex.p-2(style="width:50%; background-color:#fff;")
+    DonationEntryPopup(@Exit="exitPopup" :amount_raised="pageDataDB.amount_raised" :donation_goal="pageDataDB.donation_goal" :donation_goal_provided="donation_goal_provided" :donated_percentage="donated_percentage" :isActive="isActive" :donationData="donationData" :pageCuid="pageCuid" :familyCuid="familyCuid")  
+
 // the header overlay with image and name
 .mt-2.min-h-24.text-white.uppercase.w-full(style="background-image: url('https://carsonsvillage.org/wp-content/uploads/2018/11/iStock-862083112-BW.jpg');") 
   .h-full.py-8.self-center.w-full.text-center.flex.flex-col(style="background-color: rgba(50, 119, 136, .8)") 
@@ -205,12 +223,12 @@ console.log(pageDataDB.value?.funeral_date)
 
 .flex.flex-col.gap-5.px-4.mx-auto.mt-8(class="w-3/4 sm:px-16")
   img.mx-auto(v-if="profileImage?.url" class="w-[122px] h-[122px] rounded-[8px]" :src="`${profileImage?.url}`")
-  .text-gray-dark.mx-auto.w-max.font-poppins.text-md {{ dateFormat(pageDataDB.day_of_birth, true) + ' - ' + dateFormat(pageDataDB.day_of_passing, true) }} 
+  .text-gray-dark.mx-auto.w-max.font-poppins.text-md {{ dateFormat(pageDataDB.day_of_birth, true) + ((pageDataDB.day_of_birth || pageDataDB.day_of_passing) ? ' - ' : '') + dateFormat(pageDataDB.day_of_passing, true) }} 
   .flex.flex-col-reverse.gap-5(class="sm:grid sm:grid-cols-2")
     .relative.w-96.p-1(v-if="imageData.length != 0" )
       button.absolute.left-4.top-64.bg-black.text-white(@click="prevImage" style="opacity:0.7; --tw-text-opacity: 1; width: 46px; height: 46px; border-radius:50%; align-items: center; justify-content: center; line-height: 2; text-align: center;color: white;") &#60;
       button.absolute.right-8.top-64.bg-black.text-white(@click="nextImage" style="opacity:0.7; --tw-text-opacity: 1; width: 46px; height: 46px; border-radius:50%; align-items: center; justify-content: center; line-height: 2; text-align: center;color: white;") &#62;
-      img.w-96(style="object-fit:cover" :src="imageData[currentImage].url")
+      img.w-96(style="z-index: -1; object-fit:cover;" :src="imageData[currentImage].url")
     // services list
     .py-4.flex.flex-col.gap-5(style="font-size: 18px")
       .text-gray-dark.font-poppins.text-2xl.text-left.font-bold(style="line-height: 36px; text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") Services
@@ -248,18 +266,10 @@ console.log(pageDataDB.value?.funeral_date)
 //.container(class="sm:overflow-hidden sm:w-3/4 sm:mt-4 sm:mx-auto sm:place-content-center sm:max-w-xl sm:p-6 sm:rounded-card sm:shadow-card")
 .grid(class="sm:grid-cols-2")
     .container.m-4.place-content-center.font-poppins(class="w-5/6 sm:m-auto sm:py-3")
-        .text-md.text-center.ml-4.my-3(v-if="donation_goal_provided" class="sm:text-xl sm:my-6" style="letter-spacing: 0.35px; font-weight: 600; color: #646464;") {{ donationFormat(pageDataDB.amount_raised)  + " raised of " +  donationFormat(pageDataDB.donation_goal) + " goal" }}
-        .py-4
-        .progress-bar.overflow-hidden.ml-4.h-5.rounded-full(v-if="donation_goal_provided" style="30px; background-color:#b5b5b5;")
-            //CVProgress(v-if="donated_percentage >= 100" modelBarWidth="100") {{ donated_percentage  + "%" }}
-            CVProgress(:modelBarWidth="donated_percentage") {{ donated_percentage  + "%" }}
-            //CVProgress(v-else style="text-align:center;" modelBarWidth="0")  {{ donated_percentage   + "%" }}
         .well.well-sm
-            h1.ml-4.pt-9.text-2xl.text-gray-dark(class="sm:text-3xl" style="font-weight: 600; letter-spacing: 0.35px;") Donor Information
-        DonationEntry(v-if="isActive" :isActive="isActive" :donationData="donationData" :pageCuid="pageCuid" :familyCuid="familyCuid")
-        img(v-else src="/InActiveDonationForm.png")
-        //input(type='checkbox' v-model='feeRecovery')
-        //CVLabel I'd like to help cover the transaction fees of ¢{{ isActive ? 0.035 * donationData.amount : 0}} for my donation. 
+            h1.ml-4.pt-9.text-2xl.text-gray-dark(class="sm:text-3xl" style="font-weight: 600; letter-spacing: 0.35px;") Donations
+        .col-md-8.ml-4.pt-6.pr-5.flex.items-center.justify-center
+          ActionButton.mx-auto.text-md(name='submit' @click="DisplayDonationPopup=true" class="transition duration-300 bg-orange-999 hover:bg-green-600" ) DONATE NOW
         .py-4.grid.gap-1(v-if="comments?.length" style="text-align: center")
             .div.py-4.grid(class="w-full" style="grid-template-columns: repeat(3, 1fr);")
                 .div(v-for="(comment, i) in comments" :key="i" class="comment-box")
@@ -274,19 +284,19 @@ console.log(pageDataDB.value?.funeral_date)
                 .reply-box(v-if="reply.reply.length > 0" style="padding: 1rem; text-align: left; border-bottom: 1px solid black") 
                     .reply-header(style="font-size: 1rem; font-weight: bold; margin-bottom: 2.5rem; margin-left: 1rem") {{reply.name}}
                     .reply-body(style="font-size: 1rem; color: #666; margin-bottom: 2.5rem;") {{reply.reply}}
-        div.flex(style="color:gray; font-weight: 700; justify-content:center; align-items: center; height: 100px;")
-          label SHARE THIS PAGE |&nbsp;
-          .col
-            button(@click="shareFacebook")
-              img(src="/facebook-fa.png" style="width:30px; height:33px;") 
-          .col
-            button(@click="shareXFormerlyKnownAsTwitter")
-                img(src="/twitter_fa.png" style="width:30px; height:29px;") 
-          .col
-            button(@click="shareMail")
-                img(src="/mail_fa.png" style="width:50px; height:29px;") 
-          .col
-            p {{ "" }}
+div.flex(style="color:gray; font-weight: 700; justify-content:center; align-items: center; height: 100px;")
+  label SHARE THIS PAGE |&nbsp;
+  .col
+    button(@click="shareFacebook")
+      img(src="/facebook-fa.png" style="width:30px; height:33px;") 
+  .col
+    button(@click="shareXFormerlyKnownAsTwitter")
+        img(src="/twitter_fa.png" style="width:30px; height:29px;") 
+  .col
+    button(@click="shareMail")
+        img(src="/mail_fa.png" style="width:50px; height:29px;") 
+  .col
+    p {{ "" }}
     .col-md-8.mx-9(class="sm:col-span-1 sm:mr-11")
         .div.px-8.py-4(style="color: #6E6E6E; font-weight: 500; font-size: 18px; line-height: 28px; letter-spacing: -0.078px; word-break: break-word;" id="obituary") {{ pageDataDB.obituary }}
 </template>

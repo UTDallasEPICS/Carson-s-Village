@@ -145,15 +145,12 @@ const { data: Families } = await useFetch<Family[]>('/api/families', {
   table.mt-5.table.table-striped(style="width:100%;")
       thead
           tr(style="color: white;")
-              th.px-8(style="--tw-bg-opacity: 1; background-color: #5aadc2;border-radius: 60px 0px 0px 0px; width:33.33%; overflow: hidden") Transaction id
-              th.font-poppins.font-bold(style="--tw-bg-opacity: 1; background-color: #5aadc2;") Page Name
-              th.px-8(style="width:33.33%; --tw-bg-opacity: 1; border-radius: 0px 60px 0px 0px; background-color: #5aadc2;") Amount
+              th.px-8(style="--tw-bg-opacity: 1; background-color: #5aadc2;border-radius: 60px 0px 0px 0px; width:50%; overflow: hidden") Page Name
+              th.px-8(style="width:50%; --tw-bg-opacity: 1; border-radius: 0px 60px 0px 0px; background-color: #5aadc2;") Amount
           tr(v-for="(item, i) in donations" 
               :key="i" 
               :class="{'bg-gray-200': (i+1) % 2}"
           )
-              td.font-poppins.text-gray-dark.font-bold(style="text-align: center")  {{ item.transaction_id }}
-              //td.font-poppins.text-gray-dark.font-bold(style="text-align: center")  {{ item.cuid }}
               td.font-poppins.text-gray-dark.font-bold(style="text-align: center")  {{ item.Page.page_first_name + " " + item.Page.page_last_name }}
               td.font-poppins.text-gray-dark.font-bold(style="text-align: center")  {{ donationFormat(item.amount) }}
 </template>

@@ -100,10 +100,12 @@ export type User = {
     last_name: string,
     user_role: string,
     email: string,
+    address: string,
     middle_name: string,
     phone: string,
     Pages: Page[],
-    familyCuid: String,     
+    familyCuid: string,
+    AdvocateFamily: User[]     
     //PageDonations: PageDonation[]
     //DonationPayouts: DonationPayout[]  
 }
