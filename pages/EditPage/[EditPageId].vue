@@ -13,7 +13,11 @@ import ImageUpload from '@/components/ImageUpload.vue'
 import CVInput from '@/components/CVInput.vue'
 import CVLabel from '@/components/CVLabel.vue'
 import CVDatepicker from '@/components/CVDatepicker.vue'
+import CVHelpButton from '@/components/CVHelpButton.vue'
+import CVReply from '@/components/CVReply.vue'
+
 import '@vuepic/vue-datepicker/dist/main.css';
+import CVSuspendButton from '@/components/CVSuspendButton.vue'
 import {
     Listbox,
     ListboxButton,
@@ -122,6 +126,8 @@ const data_family = ref<Family>({
 const isAdvocate = computed(() => cvuser.value?.user_role == "advocate" ||  cvuser.value?.user_role == "admin")
 const data_all_users = ref<Family[]>([])
 
+
+const replies = ref<Reply[]>([])
 const imageData = ref<Image[]>([])
 const profile_image = ref("")
 const left = ref(true)
@@ -204,8 +210,12 @@ const getData = async (cuid: string) => {
             data.value.amount_raised = donationFormat(data.value.amount_raised as unknown as number).replace("$", "");
             data.value.donation_goal = donationFormat(data.value.donation_goal as unknown as number).replace("$", "");
         }
+        replies.value = data.value?.Reply
     }
 }
+
+
+
 
 // Method that saves images to the frontend on image upload.
 const saveImage = async (theImage: Image) => {
@@ -216,6 +226,7 @@ const saveImage = async (theImage: Image) => {
         data.value.profileImageCuid = theImage.cuid;
     }
 };
+
 
 // Method to set an uploaded image as the profile image of a page
 // There is no network request because the profiile image cuid is saved with the rest of the form
@@ -248,6 +259,19 @@ if( isAdvocate.value ) {
         })
         data_all_users.value = Families.value as unknown as Family[]
 }
+
+const updateSuspendButton = (reply:Reply, suspend:boolean) => { // updates the front end of the suspend button
+    replies.value.filter((rep:Reply)=> { // ignore filter error for now
+        if (rep.cuid == reply.cuid) {
+            rep.suspended = suspend;
+        }
+    })
+
+
+    return;
+}
+
+
 
 await getData(useRoute().params.EditPageId as string)
 const profileImage = computed(() => data.value?.Images.find((i: Image) => i.cuid == data.value?.profileImageCuid))
@@ -362,6 +386,14 @@ description="Here, you select from photos you uploaded to show up first on the F
             CVLabel Deadline Date
             .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
                 CVDatepicker(v-model='data.deadline')
+        .information.rounded-md.mx-9.my-2.text-center(class="sm:text-start text-white bg-blue-999")
+            CVLegend Comment Moderation
+        .py-4.grid.flex-box.flex-row.item-centered.gap-1(v-if="replies?.length" style="line-height: 0px;")
+            div(class="flex")
+            .div(v-for="(reply,i) in replies" :key="i" class="reply-box")
+                CVReply(:r="reply")
+                CVSuspendButton(:suspend="reply.suspended" :rep="reply" @update:suspend="updateSuspendButton")
+            .div(v-for="(reply, i) in replies" :key="i")
         .ml-9.mb-9.py-7.flex.flex-wrap.gap-2
             .col-md-10.px-2.mt-2
                 ActionButton(class="sm:my-2 transition duration-300 bg-orange-999 hover:bg-green-600" @click="save") Save

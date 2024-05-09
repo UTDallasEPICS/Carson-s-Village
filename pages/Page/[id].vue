@@ -2,16 +2,19 @@
 
 /*
 * Namra Zubair
-*	ECS 2200
+*	EPCS 2200
 *	Carson's Village: Automated Family Page
 *	PageList.vue 
 *	Displays a family page and allows for donation processing
 *	Located under "/Page/"
 */
 
-import type { Page, PageDonation, Image, Reply, Family} from '@/types.d.ts'
-import { dateFormat, donationFormat } from '@/utils'
+
+import type { User, Page, PageDonation, Image, Reply, Family} from '@/types.d.ts'
+import {  dateFormat, donationFormat } from '@/utils'
 import CVReplySystem from '@/components/CVReplySystem.vue'
+import CVReply from '@/components/CVReply.vue'
+
 
 const pageData = ref<Page>({
     cuid: "",
@@ -22,6 +25,7 @@ const pageData = ref<Page>({
     day_of_birth: null,
     day_of_passing: null,
     visitation_date: null,
+
     visitation_location: "",
     visitation_description: "",
     funeral_date: "",
@@ -94,6 +98,8 @@ const id = computed(() => router.params.id);
 const pageCuid = id.value as string
 const cvuser = useCookie<Page>('cvuser')
 const stripeLink_ref = ref("")
+// const isAdvocateAdmin = computed(() => cvuser.value?.user_role == "admin" || cvuser.value?.user_role == "advocate")
+
 
 /* 
 *  This creates a stripe session and redirects the user to stripe.
@@ -217,6 +223,9 @@ setImageAutoSlide()
     DonationEntryPopup(@Exit="exitPopup" :amount_raised="pageDataDB.amount_raised" :donation_goal="pageDataDB.donation_goal" :donation_goal_provided="donation_goal_provided" :donated_percentage="donated_percentage" :isActive="isActive" :donationData="donationData" :pageCuid="pageCuid" :familyCuid="familyCuid")  
 
 // the header overlay with image and name
+
+.flex.gap-2.justify-center.cols-2.pl-6.pr-6
+    a.mr-2.mt-1.p-2.px-9.pt-3.pb-3.bg-orange-999(class="transition duration-300 bg-orange-999 hover:bg-green-600" style="border-radius: 100px; height: 50px; color: white; font-weight: 700;") Archive
 .mt-2.min-h-24.text-white.uppercase.w-full(style="background-image: url('https://carsonsvillage.org/wp-content/uploads/2018/11/iStock-862083112-BW.jpg');") 
   .h-full.py-8.self-center.w-full.text-center.flex.flex-col(style="background-color: rgba(50, 119, 136, .8)") 
     p.my-auto.font-bold.text-4xl {{ pageDataDB.page_first_name + " " + pageDataDB.page_last_name }}
