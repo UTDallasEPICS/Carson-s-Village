@@ -225,6 +225,7 @@ button(type="button" class="my-4 bg-orange-999 text-white px-4 py-2 rounded-full
         td.font-poppins.text-gray-dark.font-bold(style="text-align: center;") {{ item.page_first_name + " " + item.page_last_name }}
         td.font-poppins.text-gray-dark.font-bold(style="text-align: center;") {{ item.User?.first_name + " " + item.User?.last_name }}
         td.font-poppins.text-gray-dark.font-bold(style="text-align: center;") {{ item.Family?.AdvocateResponsible.first_name + " " + item.Family?.AdvocateResponsible.last_name }}
+        td.font-poppins.text-gray-dark.font-bold(style="text-align: center;") {{ item.Family?.family_name }}
         td.font-poppins.text-gray-dark.font-bold(style="text-align: center;") {{ donationFormat(item.amount_raised) }}
         td.font-poppins.text-gray-dark.font-bold(style="text-align: center;") {{ dateFormat(item.start_date) }}
         td.font-poppins.text-gray-dark.font-bold(style="text-align: center;") {{ dateFormat(item.deadline) }}
