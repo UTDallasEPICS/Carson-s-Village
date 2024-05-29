@@ -16,6 +16,7 @@ model User {
   middle_name    String   @default("")
   last_name      String   @default("")
   phone          String   @default("")
+  address        String   @default("")
   familyCuid     String?
   AdvocateFamily Family[] @relation("advocate_family")
   Pages          Page[]

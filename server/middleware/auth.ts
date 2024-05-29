@@ -55,19 +55,11 @@ export default defineEventHandler(async event => {
         setCookie(event, "cvuser", JSON.stringify(event.context.user))
         
         // check if the family has a stripe account and onboarding them with stripe if not
-        if(event.context.user?.Family?.stripe_account_id == undefined ) {
+        if (event.context.user?.user_role == "family") {
           try {
-            if (event.context.user?.user_role == "family") {
-                    // todo: change to custom accounts or potentially stick with express accounts
-                    // incomplete code for custom account is available in embedded UI pr and 
+            if(event.context.user?.Family?.stripe_account_id == undefined) {
                     // todo: fill with useable address type done
                     //todo: add support_address
-                          //todo: add the industry type
-                          //todo: add buissness website done
-                          /*
-                        
-product_description: "This is Carson's Village account used for donations on a family page" todo add back
-                          */
                          // we can prefil some customer stuff with salesforce one day
                     const newStripeAccount = await stripe.accounts.create({
                         business_profile: {
@@ -75,7 +67,7 @@ product_description: "This is Carson's Village account used for donations on a f
                           product_description: "This is Carson's Village account used for donations on a family page",
                           mcc: "8398",
                           support_email: "jason@carsonsvillage.org",
-                          support_phone: "(469)-323-8657",
+                          support_phone: "(877) 789-0722",
                           support_url: "carsonsvillage.org",
                           name: "Carson's Village",
                           url: 'https://pages.carsonsvillage.org/PageList/' + event.context.user?.familyCuid,
@@ -100,6 +92,8 @@ product_description: "This is Carson's Village account used for donations on a f
                         email: event.context.user.email
                     });
 
+                    // Adds the stripe_accounnt_id to the family, but the family is still suspended from creating pages and thus preventing stray donations.
+                    // Too extreme? Maybe we need to elaborate further to allow families to create pages that do not recieve donations.
                     const transaction = await event.context.client.$transaction([
                       event.context.client.family.update({
                         where: { cuid: event.context.user.familyCuid },
@@ -108,7 +102,7 @@ product_description: "This is Carson's Village account used for donations on a f
                       where: {
                           familyCuid : event.context.user.familyCuid as string
                       },
-                      data: { status: 'active'} 
+                      data: { status: 'Family Stripe Account needs onboarding'} 
                       })
                     ])
                     const stripeAccountId = newStripeAccount.id;
@@ -117,13 +111,28 @@ product_description: "This is Carson's Village account used for donations on a f
                     const accountLink = await stripe.accountLinks.create({
                         account: stripeAccountId,
                         refresh_url: `${runtime.BASEURL}`,
-                        return_url: `${runtime.BASEURL}`,
+                        return_url: `${runtime.BASEURL}/api/complete_onboarding/?stripe_account_id=${stripeAccountId}`,
                         type: 'account_onboarding',
                     });
                     
             return await sendRedirect(event, accountLink.url);
         }
-      } 
+      } else {
+        const id = event.context.user?.Family?.stripe_account_id
+        const stripeAccountFull = await stripe.accounts.retrieve(
+          id as string)
+        //console.log(stripeAccountFull)
+        // if the user backed out of the onboard, they will be redirected back to the onboard
+        if(!stripeAccountFull.details_submitted) {
+            const accountLink = await stripe.accountLinks.create({
+                account: id,
+                refresh_url: `${runtime.BASEURL}`,
+                return_url: `${runtime.BASEURL}/api/complete_onboarding/?stripe_account_id=${id}`,
+                type: 'account_onboarding',
+            });
+            return await sendRedirect(event, accountLink.url);
+        }
+      }
       } catch (e) {
         console.error(e) 
         setCookie(event,'cvtoken','')
@@ -131,15 +140,7 @@ product_description: "This is Carson's Village account used for donations on a f
     
         return await sendRedirect(event, loginRedirectUrl())
       }
-    } else {
-      const id = event.context.user?.Family?.stripe_account_id
-      const stripeAccountFull = await stripe.accounts.retrieve(
-        id as string)
-      //console.log(stripeAccountFull)
-      if(stripeAccountFull.charges_enabled) {
-        console.log("good")
-      }
-    }
+    } 
   } catch(e){
     console.error(e)
   }

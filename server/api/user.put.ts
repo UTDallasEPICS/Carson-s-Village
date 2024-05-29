@@ -14,6 +14,7 @@ if(event.context.user?.user_role == "advocate"  || event.context.user.user_role 
   // updates the user
   try { 
     //changing families that a user belongs to and or other details
+    // todo: change api to use a more standard format. Here we specify the fields of the body instead of using ...body because ...body breaks here
     if(body.user_role == 'family' && body.familyCuid !== '') {
       const queryRes = await prisma.user.update({
         where: {
@@ -26,6 +27,7 @@ if(event.context.user?.user_role == "advocate"  || event.context.user.user_role 
           user_role: 'family',
           familyCuid: body.familyCuid || null,
           phone: body.phone,
+          address: body.address
           //...body
   
         }  
@@ -40,7 +42,8 @@ if(event.context.user?.user_role == "advocate"  || event.context.user.user_role 
         middle_name: body.middle_name,
         last_name: body.last_name,
         user_role: body.user_role,
-        phone: body.phone
+        phone: body.phone,
+        address: body.address
         //...body
 
       }

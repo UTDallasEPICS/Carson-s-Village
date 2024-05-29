@@ -18,6 +18,7 @@ type User2 = {
     last_name: string;
     user_role: Object;
     email: string;
+    address: string;
     middle_name: string;
     phone: string;
     Pages: Page[];

@@ -80,6 +80,7 @@ const data = ref<Page>({
             email: '',
             middle_name: '',
             phone: '',
+            address: '',
             Pages: [],
             familyCuid: ''
         },

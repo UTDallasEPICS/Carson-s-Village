@@ -37,12 +37,13 @@ const sendEmail = async (to: string, template: string, subject: string, data: st
 
 const body = await readBody(event)
 const now = (new Date()).toISOString();
-
+console.log(body.AdvocateFamily)
 if(event.context.user?.user_role === "advocate" || event.context.user.user_role === "admin"){
   try{
     // creates a new user entry in the user model/table.
     if(body.user_role == "advocate" || (body.user_role == "admin" && event.context.user?.user_role === "admin")) {
-      delete body.Pages
+      delete body.pages
+      delete body.AdvocateFamily
       const queryRes = await prisma.user.create({
         data: {
           ...body, cuid: undefined, familyCuid: undefined
