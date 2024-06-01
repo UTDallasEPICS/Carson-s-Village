@@ -7,7 +7,7 @@ import emailTemplates from "email-templates"
 
 /*	/EditUser/0
 *	  function:	POST
-*	  submit user account details to database
+*	  submit family and first user account details to database
 */
 const runtime = useRuntimeConfig()
 export default defineEventHandler(async event => {
@@ -35,13 +35,13 @@ export default defineEventHandler(async event => {
   };
 
 const body = await readBody(event);
-const now = (new Date()).toString();
+//const now = (new Date()).toISOString();
   const { family_name,
     first_name,
     email,
     middle_name,
     last_name,
-    phone } = body
+    phone, address } = body
 if(event.context.user?.user_role == "advocate" || event.context.user.user_role === "admin") {
     try {
       await sendEmail(body.email, "invitation", "Invitation to Carson's village", ({...body, url: `${runtime.BASEURL}api/login`}))
@@ -51,8 +51,8 @@ if(event.context.user?.user_role == "advocate" || event.context.user.user_role =
           AdvocateResponsible: {
             connect: { cuid: event.context.user.cuid }
           },
-          created_at: now,
-          updated_at: "",
+          created_at: new Date(),
+          updated_at: null,
           cuid: undefined,
           FamilyMembers: {
             create: {
@@ -61,6 +61,7 @@ if(event.context.user?.user_role == "advocate" || event.context.user.user_role =
               middle_name,
               last_name,
               phone,
+              address,
             }
           }
         }

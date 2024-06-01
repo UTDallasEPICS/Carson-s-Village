@@ -9,7 +9,8 @@
   },
   "devDependencies": {
     "@types/email-templates": "^10.0.1",
-    "nuxt": "3.6.2"
+    "@vue/language-plugin-pug": "^2.0.7",
+    "nuxt": "^3.11.2"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.226.0",
@@ -27,8 +28,9 @@
     "jsonwebtoken": "^9.0.0",
     "nanoid": "^4.0.0",
     "nuxt-stripe-module": "^3.2.0",
+    "pnpm": "^8.15.6",
     "prisma": "^4.8.0",
-    "s3": "^4.4.0",
+    "s3": "^2.0.0",
     "stripe": "^12.4.0",
     "tailwindcss": "^3.2.4",
     "vite": "^4.1.4",

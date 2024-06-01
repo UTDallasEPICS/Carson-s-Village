@@ -1,4 +1,6 @@
 <script lang="ts" setup>
+import { dateFormat } from 'utils';
+
 const props2 = defineProps<{ headers: [] }>()
 const props = defineProps({
     headers: {
@@ -13,25 +15,36 @@ const props = defineProps({
 //              tr(v-for="(header in headers)" :key="i")
 //                  th.css  {{ header.name }}
 //              tr(v-for="(header in headers)" :key="j")
-//                  th.css {{ header.name }}
-//                  LinkButton(v-if="header.isLink")
+//                  LinkButton(v-if="${header.kind=="link"}" :to=header.property)
+//                  td.css(v-else-if="${header.kind=="money"}") {{ donationFormat(header.property) }}
+//                  td.css(v-else-if="${header.kind=="date"}")  {{ dateFormat(header.property) }}
 //                  td.css(v-else) {{ header.property }}
 //                
-const rows = [
-  {
-    name: "row 1",
-    amount_raised: "5"
-  }
-]
+
 const headers = [
   {
-    title: "Name",
+    name: "Name",
     property: "name"
   },
   {
-    title: "Amount Raised",
-    property: "amount_raised"
+    name: "Amount Raised",
+    property: 2000,
+    kind: "money"
+  },
+  {
+    name: "",
+    property: "/Page/12sdfgsfdscadasd",
     kind: "link"
+  },
+  {
+    name: "page name",
+    property: "Leorem Ipsum",
+    kind: "string"
+  }, 
+  {
+    name: "current date",
+    property: new Date().toISOString(),
+    kind: "date"
   }
 ]
 
@@ -71,13 +84,13 @@ tr(v-for="row in rows")
     table(style="table-layout: auto;")
         thead
             tr
-                th.font-poppins.font-bold.font-bold.p-2(style="--tw-bg-opacity: 1; background-color: rgb(110 171 191 / var(--tw-bg-opacity));border-radius: 60px 0px 0px 0px; width:33%; overflow: hidden") 
+                th.font-poppins.font-bold.font-bold.p-2(style="--tw-bg-opacity: 1; background-color: #5aadc2;border-radius: 60px 0px 0px 0px; width:33%; overflow: hidden") 
                     slot
-                th.font-poppins.font-bold(style="width:34%; --tw-bg-opacity: 1; background-color: rgb(110 171 191 / var(--tw-bg-opacity));") 
+                th.font-poppins.font-bold(style="width:34%; --tw-bg-opacity: 1; background-color: #5aadc2;") 
                     slot
-                th.font-poppins.font-bold(style="--tw-bg-opacity: 1; background-color: rgb(110 171 191 / var(--tw-bg-opacity));")
+                th.font-poppins.font-bold(style="--tw-bg-opacity: 1; background-color: #5aadc2;")
                     slot
-                th.font-poppins.font-bold(style="width:33%; --tw-bg-opacity: 1; border-radius: 0px 60px 0px 0px; background-color: rgb(110 171 191 / var(--tw-bg-opacity));")
+                th.font-poppins.font-bold(style="width:33%; --tw-bg-opacity: 1; border-radius: 0px 60px 0px 0px; background-color: #5aadc2;")
                     slot
             tr(v-for="(item, i) in itemList" 
                 :key="i" 
@@ -89,7 +102,7 @@ tr(v-for="row in rows")
                 td
                 LinkButton(class="sm:my-2" style="white-space: nowrap; display: flex; flex-direction: row; padding: 14px 24px; gap: 10px;" :to="") 
                     slot
-    .container.mx-auto(class="w-auto sm:w-[1000px]" style="--tw-bg-opacity: 1; background-color: rgb(110 171 191 / var(--tw-bg-opacity));height: 50px; border-radius: 0px 0px 60px 60px;")
+    .container.mx-auto(class="w-auto sm:w-[1000px]" style="--tw-bg-opacity: 1; background-color: #5aadc2;height: 50px; border-radius: 0px 0px 60px 60px;")
 </template>
 
 <style scoped></style>

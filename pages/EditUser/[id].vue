@@ -9,8 +9,8 @@
 *	Located under "/EditUser/"
 */
 
-import type { User } from '@/types.d.ts'
-import { Family } from '@prisma/client';
+import type { User, Family } from '@/types.d.ts'
+//import { Family } from '@prisma/client';
 import {
     Listbox,
     ListboxButton,
@@ -18,79 +18,102 @@ import {
     ListboxOption,
 } from '@headlessui/vue'
 
-const cvuser2 = useCookie<User>('cvuser')
+const cvuser = useCookie<User>('cvuser')
 const data_user = ref<User>({
     cuid: "",
     first_name: "",
     last_name: "",
     email: "",
     middle_name: "",
-    user_role: "{}",
+    user_role: "",
     phone: "",
+    address: "",
     Pages: [],
-    familyCuid: ""
+    familyCuid: "",
+    AdvocateFamily: []
     //PageDonations: [],
     //DonationPayouts: []
 })
 
 const familyCuid = ref("") 
 const data_family = ref<Family>({
-    cuid: "",
-    stripe_account_id: "",
-    created_at: "",
-    updated_at: Date.toString(),
-    family_name: "",
-    advocateCuid: cvuser2.value.cuid 
-
+cuid: "",
+stripe_account_id: "",
+created_at: "null",
+updated_at: new Date(),
+family_name: "",
+advocateCuid: cvuser.value.cuid,
+Pages: [],
+FamilyMembers: [],
+AdvocateResponsible: {
+cuid: '',
+first_name: '',
+last_name: '',
+user_role: '',
+email: '',
+middle_name: '',
+phone: '',
+Pages: [],
+familyCuid: '',
+address: '',
+AdvocateFamily: []
+},
+FamilyDonations: [],
+FamilyDonationPayouts: []
 })
 
 const data_all_families = ref<Family[]>([])
-
-const cvuser = useCookie('cvuser');
-
 const router = useRoute()
-const isAuthorized = computed(() => { cvuser2.value?.user_role as string == "advocate" || cvuser2.value?.user_role == "admin"})
+const isAuthorized = computed(() => { cvuser.value?.user_role as string == "advocate" || cvuser.value?.user_role == "admin"})
+const isAdmin = computed(() => cvuser.value?.user_role as string == "admin")
 const cuid = computed(() => router.params.id as string);
-const errorInPage = ref(false); 
+const errorInPage = ref(false);
+
 // Method that creates a new user on the database on the backend
 const save = async () => {
-    if(isAuthorized){
-        const { data: result } = await useFetch('/api/user', {
-        method: (cuid.value as string) !== "0" ? 'PUT' : 'POST',
-        body: ({ ...data_user.value, familyCuid: familyCuid.value, cuid: cuid.value as string })
+  if(isAuthorized){
+    const data = await $fetch('/api/user', {
+      method: (cuid.value as string) !== "0" ? 'PUT' : 'POST',
+      body: ({ ...data_user.value, familyCuid: familyCuid.value, cuid: cuid.value as string })
+
     })
-    if(result.value == true){
+    if(data == true){
         errorInPage.value = false;
         await navigateTo('/Users')
     } else {
         errorInPage.value = true;
     }
-}
+  }
 
 }
+
 const currentFamily = computed(() => data_all_families.value?.find(({ cuid }: Family) => cuid == familyCuid.value) || {});
+
 // Method to populate the form when editing a pre-existing user
 const getData = async (cuid: string) => {
-    const { data: userData } = await useFetch('/api/user', {
-        method: 'GET',
-        query: { cuid: cuid }
-    })
-    data_user.value = userData.value as unknown as User;
+  const { data: userData } = await useFetch('/api/user', {
+      method: 'GET',
+      query: { cuid: cuid }
+  })
+  data_user.value = userData.value as unknown as User;
+  familyCuid.value = data_user.value.familyCuid as unknown as string
 }
 
+// boolean indicating that we need the family selection listbox 
 const addingFamily = computed(() => data_user.value.user_role == "family")
 const getUsers = async () => {
-    const { data: FamilyData } = await useFetch('/api/families', {
-        method: 'GET',
-    })
-    data_all_families.value = FamilyData.value as unknown as Family[];
-    console.log(data_all_families.value);
+  const { data: FamilyData } = await useFetch('/api/families', {
+      method: 'GET',
+  })
+  data_all_families.value = FamilyData.value as unknown as Family[];
+  console.log(data_all_families.value);
 }
 if ((cuid.value as string) !== "0") {
-    await getData(cuid.value as string);
+  await getData(cuid.value as string);
 }
-    await getUsers()
-//add to template when family Backend done
+
+await getUsers()
+
 </script>
 
 <template lang="pug">
@@ -110,6 +133,7 @@ CVContainer
                 select.rounded-md.outline-0.border-box.w-full.p-2.bg-white(style="border: 1px solid #c4c4c4;" v-model='data_user.user_role') Select User Role
                     option family
                     option advocate
+                    option(v-if="isAdmin") admin
         .py-4.grid(class="sm:grid-cols-3" v-if="addingFamily")
             CVLabel Family
             .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
@@ -139,8 +163,12 @@ CVContainer
             CVLabel Phone
             .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
                 CVInput(v-model='data_user.phone' placeholder="(user defined, optional)")
+        .py-4.grid(class="sm:grid-cols-3")
+            CVLabel Address
+            .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
+                CVInput(v-model='data_user.address' placeholder="(user defined, optional)")
             .col-md-10.py-2
-                ActionButton(@click="save") Save    
+                ActionButton(@click="save" class="transition duration-300 bg-orange-999 hover:bg-green-600") Save    
         .py-4.grid(class="sm:grid-cols-3" Style="color:red" v-if="errorInPage")
             CVLabel Error in Creating User in the system.
 </template>

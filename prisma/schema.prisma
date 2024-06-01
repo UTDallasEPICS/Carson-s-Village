@@ -9,18 +9,18 @@ datasource db {
 }
 
 model User {
-  cuid        String @id @default(cuid())
-  email       String @unique
-  user_role   String @default("family") // advocate, admin
-  first_name  String @default("")
-  middle_name String @default("")
-  last_name   String @default("")
-  phone       String @default("")
-
-  AdvocateFamily Family[] @relation("advocate_family")
-  Family         Family?  @relation(name: "family_member", fields: [familyCuid], references: [cuid])
+  cuid           String   @id @default(cuid())
+  email          String   @unique
+  user_role      String   @default("family")
+  first_name     String   @default("")
+  middle_name    String   @default("")
+  last_name      String   @default("")
+  phone          String   @default("")
+  address        String   @default("")
   familyCuid     String?
+  AdvocateFamily Family[] @relation("advocate_family")
   Pages          Page[]
+  Family         Family?  @relation("family_member", fields: [familyCuid], references: [cuid])
 
   @@map("user_accounts")
 }
@@ -29,14 +29,14 @@ model Family {
   cuid                  String           @id @default(cuid())
   family_name           String
   stripe_account_id     String?
-  FamilyMembers         User[]           @relation("family_member")
-  created_at            String           @default("")
-  updated_at            String           @default("")
-  Pages                 Page[]
-  FamilyDonations       PageDonation[]
-  FamilyDonationPayouts DonationPayout[]
+  created_at            DateTime          
+  updated_at            DateTime?
   advocateCuid          String           @map("advocate_cuid")
-  AdvocateResponsible   User?            @relation("advocate_family", fields: [advocateCuid], references: [cuid])
+  FamilyDonationPayouts DonationPayout[]
+  AdvocateResponsible   User             @relation("advocate_family", fields: [advocateCuid], references: [cuid])
+  FamilyDonations       PageDonation[]
+  Pages                 Page[]
+  FamilyMembers         User[]           @relation("family_member")
 }
 
 model DonationPayout {
@@ -45,43 +45,43 @@ model DonationPayout {
   pageCuid         String @map("page_cuid")
   transaction_id   String @unique
   amount           Int    @default(0)
-  distributionDate String
-  Family           Family @relation(fields: [familyCuid], references: cuid)
-  Page             Page   @relation(fields: [pageCuid], references: cuid)
+  distributionDate DateTime
+  Family           Family @relation(fields: [familyCuid], references: [cuid])
+  Page             Page   @relation(fields: [pageCuid], references: [cuid])
 }
 
 model Page {
-  cuid                   String  @id @default(cuid())
-  page_name              String
-  day_of_birth           String?
-  day_of_passing         String?
-  visitation_date        String?
+  cuid                   String           @id @default(cuid())
+  day_of_birth           DateTime?
+  day_of_passing         DateTime?
+  visitation_date        DateTime?
   visitation_location    String
   visitation_description String
-
-  funeral_date        String?
-  funeral_location    String
-  funeral_description String
-
-  obituary           String
-  donation_goal      Int              @default(0)
-  amount_raised      Int              @default(0)
-  deadline           String
-  userCuid           String           @map("user_cuid")
-  PageDonations      PageDonation[]
-  DonationPayouts    DonationPayout[]
-  User               User             @relation(fields: [userCuid], references: cuid)
-  Images             Image[]
-  amount_distributed Int              @default(0)
-  profileImageCuid   String           @map("profile_image_cuid")
-  Family             Family?          @relation(fields: [familyCuid], references: cuid)
-  familyCuid         String?          @map("family_cuid")
-  status             String           @default("active")
-  donation_status    String           @default("in progress")
-  duration           String           @default("0 days")
-  start_date         String           @default("")
-  goal_met_date      String           @default("")
-  Reply              Reply[]
+  funeral_date           DateTime?
+  funeral_location       String
+  funeral_description    String
+  obituary               String
+  donation_goal          Int              @default(0)
+  amount_raised          Int              @default(0)
+  deadline               DateTime?
+  userCuid               String           @map("user_cuid")
+  amount_distributed     Int              @default(0)
+  profileImageCuid       String           @map("profile_image_cuid")
+  familyCuid             String?          @map("family_cuid")
+  status                 String           @default("active")
+  donation_status        String           @default("in progress")
+  duration               String           @default("0 days")
+  start_date             DateTime          
+  goal_met_date          DateTime?         
+  page_first_name        String           @default("")
+  page_last_name         String           @default("")
+  last_donation_date     DateTime?         @default(now())
+  DonationPayouts        DonationPayout[]
+  Reply                  Reply[]
+  Images                 Image[]
+  PageDonations          PageDonation[]
+  Family                 Family?          @relation(fields: [familyCuid], references: [cuid])
+  User                   User             @relation(fields: [userCuid], references: [cuid])
 
   @@map("pages")
 }
@@ -96,7 +96,8 @@ model PageDonation {
   isAnonymous    Boolean @default(false)
   success        Boolean @default(false)
   transaction_id String  @unique
-  amount         Int //In cents
+  donationDate   String  @default("") //todo: change to ""  
+  amount         Int     //In cents
   Family         Family  @relation(fields: [familyCuid], references: cuid)
   Page           Page    @relation(fields: [pageCuid], references: cuid)
 
@@ -110,6 +111,7 @@ model Reply {
   reply      String  @default("")
   name       String? @default("")
   Page       Page    @relation(fields: [pageCuid], references: cuid)
+  suspended  Boolean @default(false)
 }
 
 model Image {

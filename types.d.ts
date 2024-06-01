@@ -1,60 +1,82 @@
 /*import {
+  Family as PFamily,
   User as PUser,
   Page as PPage,
   Image as PImage,
-  PageDonation as PPageDonation
-  DonationPayout as PDonationPayout
-
-  UserToPage as PUserToPage
+  PageDonation as PPageDonation,
+  DonationPayout as PDonationPayout, 
+  DonationToPage as PDonationToPage, 
+  FamilyToPage as PFamilyToPage,
+  UserToFamily as PUserToFamily,
+  UserToPage as PUserToPage,
+  ImageToPage as PImage
 } from '@/prisma/client';
 import { DonationPayout } from '@prisma/client';
+
+export type Family = PFamily & {
+  Pages?: FamilyToPage;
+  FamilyMembers?: UserToFamily[];
+  PageDonations?: PageDonation[];
+  DonationPayout?: DonationPayout[];
+}
 
 export type User = PUser & {
   Pages?: UserToPage;
   PageDonations?: PageDonation[];
   DonationPayout?: DonationPayout[];
 };
+
 export type Page = PPage & {
   Pages?: UserToPage;
   PageDonations?: PageDonation[];
   DonationPayout?: DonationPayout[];
 };
-export type PageDonation = PPageDonation & {
-  Pages?: UserToPage;
-  PageDonations?: PageDonation[];
-  DonationPayout?: DonationPayout[];
-};*/
 
+export type Image = PImage & {
+  Pages?: ImageToPage;
+};
+
+export type PageDonation = PPageDonation & {
+  Pages?: DonationToPage;
+}
+
+export type DonationPayout = PDonationPayout & {
+  Pages?: PayoutToPage;
+};
+*/
 import { DonationPayout } from "@prisma/client"
 
 // TODO: import types from prisma, export them with relations added
 export type Page = {
-    page_name: string,
+    page_first_name: string,
+    page_last_name: string,
     cuid: string,
     userCuid: string,
     familyCuid: string,
-    day_of_birth: Date | string,
-    day_of_passing: Date | string,
-    visitation_date: Date | string,
+    day_of_birth: Date | string | null,
+    day_of_passing: Date | string | null,
+    visitation_date: Date | string | null,
     visitation_location: string,
     visitation_description: string,
-    funeral_date: Date | string,
+    funeral_date: Date | string | null,
     funeral_description: string,
     funeral_location: string,
     obituary: string,
-    deadline: Date | string,
+    deadline: Date | string | null,
     donation_goal: number | string
     amount_raised: number | string
     amount_distributed: number | string
     profileImageCuid: string
     Images: Image[],
+    Family: Family,
     familyCuid: string,
     status: string,
     donation_status: string,
     duration: string, 
-    start_date: string
-    goal_met_date: string
+    start_date: Date | string | null
+    goal_met_date: Date | string | null
     PageDonations: PageDonation[]
+    last_donation_date: Date | string | null
     Reply: Reply[]
   }
 
@@ -62,9 +84,8 @@ export type Family = {
   cuid: string;
   family_name: string;
   stripe_account_id: string | null;
-  //Stripe_Accont_cuid: string | null;
-  created_at: string;
-  updated_at: string;
+  created_at: Date | string | null;
+  updated_at: Date | string | null;
   advocateCuid: string;
   Pages: Page[];
   FamilyMembers: User[];
@@ -79,28 +100,30 @@ export type User = {
     last_name: string,
     user_role: string,
     email: string,
+    address: string,
     middle_name: string,
     phone: string,
     Pages: Page[],
-    familyCuid: String
+    familyCuid: string,
+    AdvocateFamily: User[]     
     //PageDonations: PageDonation[]
     //DonationPayouts: DonationPayout[]  
 }
-//Import user from prisma
 
 export type PageDonation = {
   cuid: string,  
   userCuid: string,
-  familyCuid: String  
-  pageCuid: string  
-  success: boolean 
-  transaction_id: string  
-  amount: number
-  donorFirstName: string
-  donorLastName: string
-  isAnonymous: boolean
-  comments: string
-  //Page: Page
+  familyCuid: String,  
+  pageCuid: string,  
+  success: boolean, 
+  transaction_id: string,  
+  amount: number,
+  donorFirstName: string,
+  donorLastName: string,
+  isAnonymous: boolean,
+  comments: string,
+  Page: Page,
+  donationDate: Date | string | null
   //User: User
 }
 
@@ -110,10 +133,9 @@ export type donation_payout = {
     transaction_id: string,
     userCuid: string
     amount_to_record: number,
-    transaction_recording_date: string,
-    familyCuid: string
-    //page: Page
-    //user: User
+    transaction_recording_date: Date | string | null,
+    familyCuid: string,
+    page: Page
 }
 
 export type Image = {
@@ -129,4 +151,5 @@ export type Reply = {
   familyCuid: string
   name: string
   reply: string
+  suspended: boolean
 }

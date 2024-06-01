@@ -13,7 +13,11 @@ import ImageUpload from '@/components/ImageUpload.vue'
 import CVInput from '@/components/CVInput.vue'
 import CVLabel from '@/components/CVLabel.vue'
 import CVDatepicker from '@/components/CVDatepicker.vue'
+import CVHelpButton from '@/components/CVHelpButton.vue'
+import CVReply from '@/components/CVReply.vue'
+
 import '@vuepic/vue-datepicker/dist/main.css';
+import CVSuspendButton from '@/components/CVSuspendButton.vue'
 import {
     Listbox,
     ListboxButton,
@@ -22,7 +26,7 @@ import {
 } from '@headlessui/vue'
 
 
-import type { Image, Page, User, PageDonation } from '@/types.d.ts'
+import type { Image, Page, User, PageDonation, Reply } from '@/types.d.ts'
 import { Family } from "@prisma/client"
 import { donationFormat, dateFormat } from '@/utils'
 
@@ -33,49 +37,88 @@ const cvuser2 = useCookie<User2>('cvuser')
 const data = ref<Page>({
     cuid: "",
     userCuid: "",
-    page_name: "",
-    day_of_birth: "",
-    day_of_passing:"",
-    visitation_date: "",
+    page_first_name: "",
+    page_last_name: "",
+    day_of_birth: null,
+    day_of_passing: null,
+    visitation_date: null,
     visitation_location: "",
     visitation_description: "",
-    funeral_date: "",
+    funeral_date: null,
     funeral_description: "",
     funeral_location: "",
     obituary: "",
-    deadline: "",
+    deadline: null,
     donation_goal: 0,
     amount_raised: 0,
     amount_distributed: 0,
     profileImageCuid: "",
-    Images: [],//ref<Image[]>([]).value, 
+    Images: [], 
     familyCuid: "",
     status: "active",
     donation_status: "in progress",
     duration: "0 days",
-    start_date: "",
-    goal_met_date: "",
-    PageDonations: ref<PageDonation[]>([]).value, 
-    Reply: [], 
+    start_date: null,
+    goal_met_date: null ,
+    last_donation_date: null,
+    PageDonations: [], 
+    Reply: [],
+    Family: {
+        cuid: "",
+        family_name: "",
+        stripe_account_id: "",
+        created_at: null,
+        updated_at: null,
+        FamilyMembers: [],
+        FamilyDonationPayouts: [],
+        Pages: [],
+        AdvocateResponsible: {
+            cuid: '',
+            first_name: '',
+            last_name: '',
+            user_role: '',
+            email: '',
+            middle_name: '',
+            phone: '',
+            address: '',
+            Pages: [],
+            familyCuid: ''
+        },
+        FamilyDonations: [],
+        advocateCuid: ""
+    } 
 })
 
 type User2 = {
     cuid: string
     first_name: string,
     last_name: string,
-    user_role: Object,
+    user_role: string,
     email: string,
     middle_name: string,
     phone: string,
-    Pages: Page[]
+    Pages: Page[],
+    Family: {
+        cuid: string,
+        family_name: string,
+        stripe_account_id: string,
+        created_at: string,
+        updated_at: string,
+        FamilyMembers: [],
+        FamilyDonationPayouts: [],
+        Pages: [],
+        AdvocateResponsible: User,
+        FamilyDonations: [],
+        advocateCuid: ""
+    }
     //PageDonations: PageDonation[]
     //DonationPayouts: DonationPayout[]  
 }
 const data_family = ref<Family>({
     cuid: "",
-    Stripe_Account_id: "",
-    created_at: "",
-    updated_at: Date.toString(),
+    stripe_account_id: "",
+    created_at: null,
+    updated_at: new Date(),
     family_name: "",
     advocateCuid: cvuser2.value.cuid 
 })
@@ -83,14 +126,15 @@ const data_family = ref<Family>({
 const isAdvocate = computed(() => cvuser.value?.user_role == "advocate" ||  cvuser.value?.user_role == "admin")
 const data_all_users = ref<Family[]>([])
 
+
+const replies = ref<Reply[]>([])
 const imageData = ref<Image[]>([])
 const profile_image = ref("")
-
+const left = ref(true)
 const familyCuid = ref("")
 const cuid_data = computed(() => router.params.EditPageId);
 const cuid = cuid_data.value as string
 const user_cuid_data = computed(() => cvuser.value?.cuid)
-console.log(cvuser.value);
 const user_cuid = user_cuid_data.value as string
 const pageCuid = computed(() => router.params.EditPageId)
 data.value.cuid = cuid;
@@ -107,38 +151,38 @@ const save = async () => {
     }
 
     if(router.params.EditPageId === "0") {
-        data.value.start_date = new Date().toString()
+        data.value.start_date = new Date()
     }
 
-    const { data: saveSuccess } = await useFetch('/api/page', {
+    // todo: change to $fetch
+    const saveSuccess  = await $fetch('/api/page', {
         // Checks if there is a pre-existing page to edit or if to create a new page    
         method: router.params.EditPageId !== "0" ? 'PUT' : 'POST',
         body: ({ ...data.value })
     }
     )
     try {
-    if (saveSuccess.value == true && isAdvocate.value) {
-        errorInPage.value = false;
-        await navigateTo('/PageList/' + data.value.userCuid + '?fromUsers=1')
-    } else if(saveSuccess.value == true && !isAdvocate.value){
-        await navigateTo('/PageList/' + data.value.familyCuid + '?fromUsers=0')
-    } else {
-        errorInPage.value = true;
-    }
+        if (saveSuccess && isAdvocate.value) {
+            errorInPage.value = false;
+            await navigateTo('/PageList/' + data.value.userCuid + '?fromUsers=1')
+        } else if(saveSuccess && !isAdvocate.value){
+            await navigateTo('/PageList/' + data.value.familyCuid + '?fromUsers=0')
+        } else {
+            errorInPage.value = true;
+        }
     } catch(e){
         console.log(e)
     }
 };
 const currentFamily = computed(() => data_all_users.value?.find(({ cuid }: Family) => cuid == familyCuid.value) || {});
-console.log(currentFamily)
 
 // Method to populate the form when editing a pre-existing page
 const getData = async (cuid: string) => {
-    const pageFound = cvuser.value.Pages.find((i: Page) => i.cuid == router.params.EditPageId) != undefined
-    
+    const pageFoundFromUser = cvuser.value.Pages.find((i: Page) => i.cuid == router.params.EditPageId) != undefined
+    const pageFoundFromFamily = cvuser2.value.Family?.Pages.find((i: Page) => i.cuid == router.params.EditPageId) != undefined
     console.log(data_all_users)
     // Allowing access to the user's EditPage only if user is an advocate or it is one of the family's family pages.
-    if (pageFound || cvuser.value.user_role == "advocate" || cvuser.value.user_role == "admin") {
+    if (pageFoundFromUser || pageFoundFromFamily || cvuser.value.user_role == "advocate" || cvuser.value.user_role == "admin") {
         const { data: pageData } = await useFetch('/api/page', {
             method: 'GET',
             query: { cuid: cuid }
@@ -166,8 +210,12 @@ const getData = async (cuid: string) => {
             data.value.amount_raised = donationFormat(data.value.amount_raised as unknown as number).replace("$", "");
             data.value.donation_goal = donationFormat(data.value.donation_goal as unknown as number).replace("$", "");
         }
+        replies.value = data.value?.Reply
     }
 }
+
+
+
 
 // Method that saves images to the frontend on image upload.
 const saveImage = async (theImage: Image) => {
@@ -178,6 +226,7 @@ const saveImage = async (theImage: Image) => {
         data.value.profileImageCuid = theImage.cuid;
     }
 };
+
 
 // Method to set an uploaded image as the profile image of a page
 // There is no network request because the profiile image cuid is saved with the rest of the form
@@ -211,7 +260,19 @@ if( isAdvocate.value ) {
         data_all_users.value = Families.value as unknown as Family[]
 }
 
-// Use watcher on for images to handle profile image on here to handle image remove edge cases.
+const updateSuspendButton = (reply:Reply, suspend:boolean) => { // updates the front end of the suspend button
+    replies.value.filter((rep:Reply)=> { // ignore filter error for now
+        if (rep.cuid == reply.cuid) {
+            rep.suspended = suspend;
+        }
+    })
+
+
+    return;
+}
+
+
+
 await getData(useRoute().params.EditPageId as string)
 const profileImage = computed(() => data.value?.Images.find((i: Image) => i.cuid == data.value?.profileImageCuid))
 </script>
@@ -225,13 +286,20 @@ CVContainer
         br
         .bar.mx-9(style="border-top: 0.5px solid #646464;")
     br
-    .div
-        .information.bg-gray-300.rounded-md.mx-9.my-2.text-center(class="sm:text-start")
+    div
+        .information.rounded-md.my-2.text-center(class="sm:text-start text-white bg-blue-999")
             CVLegend Personal Information
         .py-4.grid(class="sm:grid-cols-3") 
-            CVLabel Page Name
+            .flex
+                CVLabel First Name
+                CVHelpButton(class="inline-block" 
+    description="The first and last name of the recently deceased person this page should be dedicated to should be entered here")
             .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
-                CVInput(v-model='data.page_name' placeholder="required" required)
+                CVInput(v-model='data.page_first_name' placeholder="required" required)
+        .py-4.grid(class="sm:grid-cols-3") 
+            CVLabel Last Name
+            .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
+                CVInput(v-model='data.page_last_name' placeholder="required" required)
         .py-4.grid(class="sm:grid-cols-3" v-if="isAdvocate")
             CVLabel Family
             .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
@@ -245,16 +313,22 @@ CVContainer
                             ListboxOptions(as='div' class='w-full absolute z-10 mt-10 bg-white shadow-lg max-h-60 rounded-md px-2 py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm' )
                                 ListboxOption(as='div' v-for="family in data_all_users" :key="family.cuid" :value="family.cuid" class="px-2 border border-grey-500 py-1 my-1") {{ family.family_name }}
                     ListboxButton(class='text-left bg-white relative rounded-md pl-2 pr-10 py-2 sm:text-sm w-96') {{ familyCuid ? currentFamily.family_name : 'Select family to add the page to' }}
-        ImagePreview(v-model:images="imageData" :images="data.Images" :profileImage="profileImage" @profileImage="setProfileImage" @images="setImagesPreview")
-        .information.bg-gray-300.rounded-md.mx-9.my-2.text-center(class="sm:text-start")
+        ImagePreview(v-model:images="imageData" :images="data.Images" :profileImage="profileImage" :pageCuid="cuid_data" @profileImage="setProfileImage" @images="setImagesPreview")
+        .information.rounded-md.mx-9.my-2.text-center(class="sm:text-start text-white bg-blue-999")
             legend.ml-2(class="sm:py-1" style="font-weight: 700; text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") Profile Image Selection        
-        .py-4.grid(class="sm:grid-cols-3") 
-            CVLabel Profile Image
+        .py-4.flex.gap-72
+            .flex
+                CVLabel Profile Image
+                CVHelpButton(class="inline-block" 
+description="Here, you select from photos you uploaded to show up first on the Family Page") 
             .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
                 Listbox.rounded-md.outline-0.border-box.w-full.p-2.bg-white(style="width:350px; border: 1px solid #c4c4c4;" v-model="data.profileImageCuid" as="div") 
-                    ListboxButton(class='bg-white relative rounded-md pl-2 py-2 sm:text-sm')
-                        img.rounded-lg(style="padding: 10px;" :src="profileImage?.url")
-                    ListboxOptions(as='div' style="width:350px;" class='w-full absolute z-10 mt-10 bg-white shadow-lg max-h-60 rounded-md px-2 py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm' )
+                    ListboxButton(@click="left=!left" class='bg-white relative rounded-md pl-2 py-2 sm:text-sm')
+                        div.flex
+                            img.rounded-lg(class="w-50" style="padding: 10px;" :src="profileImage?.url")
+                            p.p-2(v-if="left" style="font-size: 20px") &lt
+                            p.p-2(v-else style="font-size: 20px") v
+                    ListboxOptions(as='div' style="width:350px;" class='absolute z-10 mt-10 bg-white shadow-lg max-h-60 rounded-md px-2 py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm' )
                         ListboxOption(v-for="(image,k) in imageData" :key="image.cuid" :value="image.cuid")
                             img.rounded-lg(style="padding: 10px;" :src="image.url")
                           
@@ -266,7 +340,7 @@ CVContainer
             CVLabel Day of Passing 
             .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
                 CVDatepicker(v-model='data.day_of_passing')
-        .information.bg-gray-300.rounded-md.mx-9.my-2.text-center(class="sm:text-start")
+        .information.rounded-md.mx-9.my-2.text-center(class="sm:text-start text-white bg-blue-999")
             CVLegend Visitation Information 
         .py-4.grid(class="sm:grid-cols-3") 
             CVLabel Date
@@ -281,7 +355,7 @@ CVContainer
             .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
                 CVTextArea(v-model='data.visitation_description' placeholder="optional")
 
-        .information.bg-gray-300.rounded-md.mx-9.my-2.text-center(class="sm:text-start")
+        .information.rounded-md.mx-9.my-2.text-center(class="sm:text-start text-white bg-blue-999")
             CVLegend Funeral Information       
         .py-4.grid(class="sm:grid-cols-3")
             CVLabel Date    
@@ -299,10 +373,12 @@ CVContainer
             CVLabel Obituary
             .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
                 CVTextArea(v-model='data.obituary' placeholder="optional")
-        .information.bg-gray-300.rounded-md.mx-9.my-2.text-center(class="sm:text-start")
+        .information.rounded-md.mx-9.my-2.text-center(class="sm:text-start text-white bg-blue-999")
             CVLegend Fundraising Information
         .py-4.grid(class="sm:grid-cols-3")
-            CVLabel Goal    
+            .flex
+                CVLabel Goal
+                CVHelpButton(class="inline-block" description="If the Donation Goal is 0, it is assumed that there are no donations required")  
             .col-md-8.flex.mx-9(class="sm:col-span-2 sm:mr-11")
                 span.rounded-l-md.bg-gray-200.text-lg.p-2(style="text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25); border: 1px solid #c4c4c4;") $
                 input.outline-0.rounded-r-md.border-box.w-full.p-2(style="border: 1px solid #c4c4c4;" v-model='data.donation_goal' placeholder="required" required)
@@ -310,15 +386,23 @@ CVContainer
             CVLabel Deadline Date
             .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
                 CVDatepicker(v-model='data.deadline')
+        .information.rounded-md.mx-9.my-2.text-center(class="sm:text-start text-white bg-blue-999")
+            CVLegend Comment Moderation
+        .py-4.grid.flex-box.flex-row.item-centered.gap-1(v-if="replies?.length" style="line-height: 0px;")
+            div(class="flex")
+            .div(v-for="(reply,i) in replies" :key="i" class="reply-box")
+                CVReply(:r="reply")
+                CVSuspendButton(:suspend="reply.suspended" :rep="reply" @update:suspend="updateSuspendButton")
+            .div(v-for="(reply, i) in replies" :key="i")
         .ml-9.mb-9.py-7.flex.flex-wrap.gap-2
             .col-md-10.px-2.mt-2
-                ActionButton(@click="save") Save
+                ActionButton(class="sm:my-2 transition duration-300 bg-orange-999 hover:bg-green-600" @click="save") Save
             .col-md-10.py-2.mt-2
-                LinkButton(v-if="pageCuid!=0" :to="`/Page/${cuid}`") View Page
+                LinkButton(class="sm:my-2 transition duration-300 bg-orange-999 hover:bg-green-600" v-if="pageCuid!=0" :to="`/Page/${cuid}`") View Page
             .col-md-10.p-2.pt-6.mt-2(class="sm:pt-2 sm:ml-auto sm:mr-6")
-                LinkButton(v-if="pageCuid!=0" to='#') Delete Page
+                LinkButton(class="sm:my-2 transition duration-300 bg-orange-999 hover:bg-green-600" v-if="pageCuid!=0" to='#') Delete Page
         .py-4.grid(class="sm:grid-cols-3" Style="color:red" v-if="errorInPage")
-            CVLabel Error in Creating page in the system.  
+            CVLabel Error in Creating/Editing page in the system.
 </template>
 
 <style scoped></style>

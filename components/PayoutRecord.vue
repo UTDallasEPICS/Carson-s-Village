@@ -17,7 +17,8 @@ const cvuser = useCookie<User>('cvuser')
 
 // Method that records donation payouts and increases the amount distributed for each page.
 const save = async () => {
-  const{data: result } = await useFetch('/api/family_transaction_payout', {
+  const result = await $fetch('/api/family_transaction_payout', {
+
     method: 'POST',
     body: {
       transaction_id: transaction_id.value,
@@ -27,11 +28,11 @@ const save = async () => {
       pageCuid: props.currentPage.cuid
     }
   })
-  if(result.value == true) {
+  if(result == true) {
     window.location.reload()
   } else {
-    console.log(result.value)
-    error.value = result.value as string
+    console.log(result)
+    error.value = result as string
   }
 };
 const setWholeAmountPage = function(){
@@ -57,9 +58,9 @@ p.text-center.mt-10 Record Payout
       input.outline-0.rounded-r-md.border-box.p-2(style="border: 1px solid #c4c4c4;" v-model='amount')
       max-w-min.mx-auto.flex.gap-2
   div.mx-auto.flex.gap-2.justify-between() 
-    button.p-3.px-6.pt-2.bg-orange-500.rounded-lg.text-white(@click="setWholeAmountFamily") Distribute All Remaining Family Funds
-    button.p-3.px-6.pt-2.bg-orange-500.rounded-lg.text-white(@click="setWholeAmountPage") Distribute All Remaining Page Funds
-  button.p-3.px-6.pt-2.bg-orange-500.rounded-lg.text-white(@click="save") Perform Distribution
+    button.p-3.px-6.pt-2.rounded-lg.text-white(@click="setWholeAmountFamily" class="transition duration-300 bg-orange-999 hover:bg-green-600") Distribute All Remaining Family Funds
+    button.p-3.px-6.pt-2.rounded-lg.text-white(@click="setWholeAmountPage" class="transition duration-300 bg-orange-999 hover:bg-green-600") Distribute All Remaining Page Funds
+  button.p-3.px-6.pt-2.rounded-lg.text-white(@click="save" class="transition duration-300 bg-orange-999 hover:bg-green-600") Perform Distribution
 p(v-if="error.length != 0" Style="color:red;") {{ error }}
 </template>
 

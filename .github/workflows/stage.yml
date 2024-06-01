@@ -25,12 +25,14 @@ jobs:
           source: ./.output
           target: ~/carsons-village-stage
           overwrite: true
+          tar_dereference: true
       - name: Execute
         uses: appleboy/ssh-action@v0.1.4
         with:
           script: |
             cd carsons-village-stage
             git checkout stage
+            git stash
             git pull
             npm install
             cp .env ./.output/server/.env

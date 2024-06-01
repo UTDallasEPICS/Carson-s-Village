@@ -10,48 +10,54 @@ const prisma = new PrismaClient()
 */
 
 export default defineEventHandler(async event => {
-  const { Images, ...data } = await readBody(event)
-  const userCuid = data.userCuid
-  delete data.userCuid;
+  const { Images, Reply, PageDonations, userCuid, familyCuid, Family, ...data } = await readBody(event)
+  //const userCuid = data.userCuid
+  //delete data.userCuid;
+  delete data.Family // Not sure why this is needed to fix an error
   
-  if(typeof data.donation_goal == 'string') {
-    console.log("test for money parsing issues ", parseInt(data.donation_goal))
-    data.donation_goal = Math.trunc(parseInt(data.donation_goal.replace(",","")) * 100);
-  }
-  if(typeof data.amount_raised == 'string') {
-    data.amount_raised = Math.trunc(parseInt(data.amount_raised.replace(",","")) * 100);
-  }
-
   if(event.context.user.user_role === "advocate" || event.context.user?.user_role == "admin" || event.context.user.cuid === userCuid ){
-  try {
-    // updates a pre-existing page
-    const queryRes = await prisma.page.update({
-      where: {
-        cuid: data.cuid
-      },
-      data: {
-        ...data
+    console.log(data.amount_raised)
+    console.log(data.donation_goal)
+    try {
+      // Removes comma parses the whole decimal number and converts it to cents to be stored in DB
+      if(typeof data.donation_goal == 'string') {
+        data.donation_goal = Math.trunc(parseFloat(data.donation_goal.replace(",","")) * 100);
       }
-    });
-      // Initially the images are not linked to a family page, so we add it here 
-      // Reason: the cuid for the family page is created in the above in the creation query
-      if(JSON.stringify(Images) === '{}') {
-        await Promise.all(
-        Images.map(async (image: Image) => 
-          await prisma.image.update({
-            where: {
-              cuid: image.cuid
-            },
-            data:{
-              pageCuid: data.cuid
-            }
-        })))
+      if(typeof data.amount_raised == 'string') {
+        data.amount_raised = Math.trunc(parseFloat(data.amount_raised.replace(",","")) * 100);
+        console.log("amount raised after removing formating ", data.amount_raised)
       }
-  } catch (e) {
-    console.error(e);
-    return false
+      // updates a pre-existing page
+      const queryRes = await prisma.page.update({
+        where: {
+          cuid: data.cuid
+        },
+        data: {
+          ...data
+        }
+      });
+
+        // Initially the images are not linked to a family page, so we add it here 
+        // Reason: the cuid for the family page is created in the above in the creation query
+        // For page edit, images without a pageCuid are processed
+        /*await Promise.all(
+        Images.forEach(async (image: Image) => {
+          if(image.pageCuid == null) {
+            await prisma.image.update({
+              where: {
+                cuid: image.cuid
+              },
+              data:{
+                pageCuid: data.cuid
+              }
+    })
   }
-  return true
+}))*/
+    } catch (e) {
+      console.error(e);
+      return false
+    }
+    return true
 } else{
   return await sendRedirect(event, loginRedirectUrl());
 }
