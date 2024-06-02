@@ -25,6 +25,7 @@ jobs:
           source: ./.output
           target: ~/carsons-village
           overwrite: true
+          tar_dereference: true
       - name: Execute
         uses: appleboy/ssh-action@v0.1.4
         with:
