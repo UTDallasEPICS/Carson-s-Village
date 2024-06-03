@@ -42,7 +42,7 @@ if(event.context.user?.user_role === "advocate" || event.context.user.user_role 
   try{
     // creates a new user entry in the user model/table.
     if(body.user_role == "advocate" || (body.user_role == "admin" && event.context.user?.user_role === "admin")) {
-      delete body.pages
+      delete body.Pages
       delete body.AdvocateFamily
       const queryRes = await prisma.user.create({
         data: {
@@ -51,7 +51,7 @@ if(event.context.user?.user_role === "advocate" || event.context.user.user_role 
         });
         await sendEmail(body.email, "invitation", "Invitation to Carson's village", ({...body, url: `${runtime.BASEURL}api/login`}))
       } else if(body.user_role == "family") {
-        const pages = body.pages
+        const pages = body.Pages
         delete body.Pages
         const userRes = await prisma.user.create({
           data: {
