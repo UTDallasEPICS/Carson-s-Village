@@ -5,7 +5,7 @@ const prisma = new PrismaClient()
 /*
 *	/PageList/cuid
 *	function:	POST
-*	retrive family pages details from database for user's cuid
+*	retrive family pages details from database for user's or family's cuid
 */
 
 export default defineEventHandler(async event => {
@@ -15,11 +15,71 @@ export default defineEventHandler(async event => {
     if((cuid as string) == "0"  || cuid == undefined){
         return []
     }
-    if(event.context.user.user_role === "advocate"  || event.context.user?.user_role === "admin" || event.context.user?.cuid == cuid ||  event.context.user?.familyCuid == cuid){
+
+    if(event.context.user?.user_role === "admin" && cuid === "") {
+      const [count, pagesResult] = await prisma.$transaction([
+        prisma.page.count(),
+        prisma.page.findMany({
+        skip: page_number as number * 12,
+        take: 12,
+        include: {
+          User: true, 
+          Family: {
+            include: {
+              AdvocateResponsible: true
+            }
+          }
+      }})
+      ])
+      console.log(pagesResult)
+      return {
+        Pagination: {
+        total:  count
+        }, 
+        data:  pagesResult
+      };
+    } else if(event.context.user?.user_role === "advocate" && cuid === "") {
+      const [count, pagesResult] = await prisma.$transaction([
+        prisma.page.count({
+          where: {
+            Family: {
+              AdvocateResponsible: {
+                cuid: event.context.user.cuid
+              }
+            },
+          } 
+        }),
+        prisma.page.findMany({
+        skip: page_number as number * 12,
+        take: 12,
+        where: {
+          Family: {
+            AdvocateResponsible: {
+              cuid: event.context.user.cuid
+            }
+          },
+        },
+        include: {
+          User: true, 
+          Family: {
+            include: {
+              AdvocateResponsible: true
+            }
+          }
+      }})
+      ])
+      console.log("here", pagesResult)
+      return {
+        Pagination: {
+        total:  count
+        }, 
+        data:  pagesResult
+      };
+    } else if(event.context.user?.user_role === "admin" && cuid !=="" || event.context.user?.user_role === "advocate" && cuid !==""  || event.context.user?.cuid == cuid ||  event.context.user?.familyCuid == cuid){
       const [count, pagesResult, pagesUnpaginated] = await prisma.$transaction([
         prisma.page.count({ where: {
           OR: [ { 
-            userCuid : cuid as string },
+            userCuid: cuid as string },
             {
             familyCuid: cuid as string
           } ]
@@ -27,7 +87,7 @@ export default defineEventHandler(async event => {
          prisma.page.findMany({
             where: {
               OR: [ {
-                userCuid : cuid as string,
+                userCuid: cuid as string,
               }, {
                 familyCuid: cuid as string 
               }
@@ -47,7 +107,7 @@ export default defineEventHandler(async event => {
         prisma.page.findMany({
           where: {
             OR: [ {  
-              userCuid : cuid as string },
+              userCuid: cuid as string },
             {
               familyCuid: cuid as string
             } ]

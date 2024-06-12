@@ -18,8 +18,7 @@ import {
     ListboxOption,
 } from '@headlessui/vue'
 
-const cvuser = useCookie('cvuser');
-const cvuser2 = useCookie<User>('cvuser')
+const cvuser = useCookie<User>('cvuser')
 
 const data_family = ref<Family>({
     cuid: "",
@@ -27,7 +26,7 @@ const data_family = ref<Family>({
     created_at: new Date(),
     updated_at: null,
     family_name: "",
-    advocateCuid: cvuser2.value.cuid 
+    advocateCuid: cvuser.value.cuid 
 })
 
 const data_user = ref<User>({
@@ -48,7 +47,7 @@ const data_user = ref<User>({
 const data_all_users = ref<Family[]>([])
 
 const router = useRoute()
-const isAuthorized = computed(() => { cvuser2.value?.user_role as string == "advocate" || cvuser2.value?.user_role == "admin"})
+const isAuthorized = computed(() => { cvuser.value?.user_role as string == "advocate" || cvuser.value?.user_role == "admin"})
 const errorInPage = ref(false);
 
 // Method that creates a new family on the backend and adds the first user

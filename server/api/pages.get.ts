@@ -72,18 +72,6 @@ if(event.context.user.cuid != undefined) { //if the user is not logged in, do no
     skip: page_number as number * 12,
     take: 12, 
   }),
-      prisma.page.findMany({
-    where: {
-      OR: [ { 
-        page_first_name: {
-        contains: searchQuery as string,
-      mode: 'insensitive',
-    } },
-      { page_last_name: {
-        contains: searchQuery as string,
-      mode: 'insensitive',
-      }}] 
-    }}),
     prisma.page.findMany({
   where: {
     OR: [ {
