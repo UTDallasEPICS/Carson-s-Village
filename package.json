@@ -16,7 +16,7 @@
     "@aws-sdk/client-s3": "^3.226.0",
     "@aws-sdk/client-ses": "^3.226.0",
     "@aws-sdk/s3-request-presigner": "^3.226.0",
-    "@headlessui/vue": "^1.7.13",
+    "@headlessui/vue": "^1.7.22",
     "@heroicons/vue": "^2.0.12",
     "@nuxt/ui-templates": "^1.2.0",
     "@nuxtjs/tailwindcss": "^6.1.3",

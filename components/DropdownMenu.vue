@@ -12,7 +12,7 @@
     >
       <span class="button-content">
         <slot />
-        <span class="caret" v-if="hasSubmenus">⌄</span>
+        <span class="caret" v-if="hasSubmenus">⌄</span> <!-- Main tab caret -->
       </span>
       <div
         class="dropdown-content"
@@ -39,7 +39,7 @@
             <div
               class="nested-dropdown-content"
               v-if="submenu.submenus && submenu.submenus.length > 0"
-              :style="{ minWidth: nestedDropdownMinWidth + 'px' }"
+              :style="{ minWidth: nestedDropdownMinWidth + 'px', left: '100%', top: '0' }"
               @mouseover="showNestedDropdown(index)"
               @mouseleave="hideNestedDropdown(index)"
             >
@@ -65,7 +65,7 @@
     >
       <span class="button-content">
         <slot />
-        <span class="caret" v-if="hasSubmenus">⌄</span>
+        <span class="caret" v-if="hasSubmenus">⌄</span> <!-- Main tab caret -->
       </span>
       <div
         class="dropdown-content"
@@ -92,7 +92,7 @@
             <div
               class="nested-dropdown-content"
               v-if="submenu.submenus && submenu.submenus.length > 0"
-              :style="{ minWidth: nestedDropdownMinWidth + 'px' }"
+              :style="{ minWidth: nestedDropdownMinWidth + 'px', left: '100%', top: '0' }"
               @mouseover="showNestedDropdown(index)"
               @mouseleave="hideNestedDropdown(index)"
             >
@@ -159,67 +159,36 @@ const hideNestedDropdown = (index) => {
 </script>
 
 <style scoped>
-.no-border {
-  border: none;
-}
+/* Scoped styles for component */
 
-.relative {
-  position: relative;
-}
-
-.button-content {
-  display: flex;
-  align-items: left;
-}
-
-.caret {
-  margin-left: 5px;
-  margin-top: -5px;
-}
-
-.dropdown-content {
-  display: none;
+.dropdown-content, .nested-dropdown-content {
   position: absolute;
   font-size: 12px;
   text-align: justify;
   background-color: #f1f1f1;
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
   z-index: 1;
-  left: 0;
-  top: 100%;
   border: 1px solid #ccc;
+  display: none; /* Hide initially */
 }
 
-.nested-dropdown-content {
-  display: none;
-  position: absolute;
-  font-size: 12px;
-  text-align: justify;
-  background-color: #f1f1f1;
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-  z-index: 1;
-  left: 100%;
-  top: 0;
-  border: 1px solid #ccc;
-}
-
-.dropdown-content > * {
+.dropdown-content > *, .nested-dropdown-content > * {
   padding: 12px 16px;
   cursor: pointer;
   display: block;
   transition: background-color 0.3s, color 0.3s;
 }
 
-.dropdown-content > *.submenu-item {
+.dropdown-content > *.submenu-item, .nested-dropdown-content > *.submenu-item {
   color: #333;
 }
 
-.dropdown-content > *.submenu-item:hover {
+.dropdown-content > *.submenu-item:hover, .nested-dropdown-content > *.submenu-item:hover {
   background-color: #d3d3d3;
   color: rgb(70, 184, 67);
 }
 
-.dropdown-content > *:not(:last-child) {
+.dropdown-content > *:not(:last-child), .nested-dropdown-content > *:not(:last-child) {
   border-bottom: 1px solid #ccc;
 }
 
@@ -227,8 +196,21 @@ const hideNestedDropdown = (index) => {
   display: block;
 }
 
+.submenu-item {
+  position: relative; /* Ensure submenu item is positioned relative */
+}
+
+.caret {
+  position: absolute;
+  top: 4px; 
+  right: -5px;
+}
+
 .submenu-item:hover .nested-dropdown-content {
   display: block;
+  position: absolute;
+  left: 100%; 
+  top: 0; 
 }
 
 .highlighted {
