@@ -288,11 +288,11 @@ setImageAutoSlide()
                         .div.comment-donation-amount(style="font-size: 0.75rem; color: #666;") Amount Donated: {{ donationFormat(comment.amount) }}
         CVReplySystem(:pageCuid="id" :familyCuid="familyCuid" :replies="replies" @displayReply="displayReply")
         .py-4.grid.flex-box.flex-row.item-centered.gap-1(v-if="replies?.length" style="line-height: 0px;text-align: center")
-            div(class="flex")
+            div(class="flex-container")
             .div(v-for="(reply,i) in replies" :key="i" class="reply-box")
-                .reply-box(v-if="reply.reply.length > 0" style="padding: 1rem; text-align: left; border-bottom: 1px solid black") 
-                    .reply-header(style="font-size: 1rem; font-weight: bold; margin-bottom: 2.5rem; margin-left: 1rem") {{reply.name}}
-                    .reply-body(style="font-size: 1rem; color: #666; margin-bottom: 2.5rem;") {{reply.reply}}
+                .reply-box(v-if="reply.reply.length > 0" style="padding: 1rem; text-align: left; background-color: #ffffff; border-radius: 10px; margin-bottom: 1rem; box-shadow: 0 0px 8px rgba(0, 0, 0, 0.1);") 
+                    .reply-header(style="font-size: 1rem; font-weight: bold; margin-top: 1rem; margin-bottom: 2.5rem; margin-left: 1rem") {{reply.name}}
+                    .reply-body(style="font-size: 1rem; margin-left: 1rem; border-left: 2px solid green; background-color: white; padding-left: 30px; padding-top: 10px; width: 200px; height: 40px;margin-bottom: 1.5rem;") {{reply.reply}}
 div.flex(style="color:gray; font-weight: 700; justify-content:center; align-items: center; height: 100px;")
   label SHARE THIS PAGE |&nbsp;
   .col
