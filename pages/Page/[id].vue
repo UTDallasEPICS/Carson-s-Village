@@ -272,28 +272,25 @@ setImageAutoSlide()
               .font-outfit {{ "Date:  TBD" }}
             .flex.gap-5
               .font-outfit {{ "Location:  TBD" }}
-//.container(class="sm:overflow-hidden sm:w-3/4 sm:mt-4 sm:mx-auto sm:place-content-center sm:max-w-xl sm:p-6 sm:rounded-card sm:shadow-card")
-.grid(class="sm:grid-cols-2")
-    .container.m-4.place-content-center.font-poppins(class="w-5/6 sm:m-auto sm:py-3")
+.grid.place-items0center.min-h-screen
+    .container.m-4.place-content-center.font-poppins(class="w-1/2 sm:m-auto sm:py-3")
         .well.well-sm
-            h1.ml-4.pt-9.text-2xl.text-gray-dark(class="sm:text-3xl" style="font-weight: 600; letter-spacing: 0.35px;") Donations
+            h1.ml-4.pt-9.text-2xl.text-gray-dark.text-center.text-2xl.font-semibold.tracking-wide Donations
         .col-md-8.ml-4.pt-6.pr-5.flex.items-center.justify-center
           ActionButton.mx-auto.text-md(name='submit' @click="DisplayDonationPopup=true" class="transition duration-300 bg-orange-999 hover:bg-green-600" ) DONATE NOW
-        .py-4.grid.gap-1(v-if="comments?.length" style="text-align: center")
-            .div.py-4.grid(class="w-full" style="grid-template-columns: repeat(3, 1fr);")
+        .py-4.grid.gap-1(v-if="comments?.length" style="text-align: left")
+            .div.py-4.grid(class="w-full justify-center" style="grid-template-columns: repeat(3, 12rem);")
                 .div(v-for="(comment, i) in comments" :key="i" class="comment-box")
-                    .comment-box(style="flex: calc(30% - 1rem); height: 10rem; width: 11rem; margin: 0.5rem; padding: 1rem; border-radius: 8px; background-color: #fff; border: 1px solid #ddd; box-shadow: 0 2px 4px rgba(0,0,0,0.05);")
-                        .div.comment-header(style="font-size: 0.75rem; font-weight: bold; margin-bottom: 1.5rem;") {{ comment.donorFirstName }} {{ comment.donorLastName }}
-                        p.comment-body(style="font-size: 0.75rem; width: fit-content; color: #666;") {{ comment.comments }}
-                        .div.comment-donation-amount(style="font-size: 0.75rem; color: #666;") Amount Donated: {{ donationFormat(comment.amount) }}
+                    .flex-auto.h-40.w-44.m-2.p-4.rounded-lg.bg-white.border-border-gray-300.shadow-md
+                        .text-xs.font-bold.mb-6 {{ comment.donorFirstName }} {{ comment.donorLastName }}
+                        .text-xs.w-fit.text-gray-600.border-l-2.border-green-500.pl-5 {{ comment.comments }}
+                        .text-xs.text-gray-600.pt-5 Amount Donated: {{ donationFormat(comment.amount) }}
         CVReplySystem(:pageCuid="id" :familyCuid="familyCuid" :replies="replies" @displayReply="displayReply")
-        .py-4.grid.flex-box.flex-row.item-centered.gap-1(v-if="replies?.length" style="line-height: 0px;text-align: center")
-            div(class="flex-container")
-            .div(v-for="(reply,i) in replies" :key="i" class="reply-box")
-                .reply-box(v-if="reply.reply.length > 0" style="padding: 1rem; text-align: left; background-color: #ffffff; border-radius: 10px; margin-bottom: 1rem; box-shadow: 0 0px 8px rgba(0, 0, 0, 0.1);") 
-                    .reply-header(style="font-size: 1rem; font-weight: bold; margin-top: 1rem; margin-bottom: 2.5rem; margin-left: 1rem") {{reply.name}}
-                    .reply-body(style="font-size: 1rem; margin-left: 1rem; border-left: 2px solid green; background-color: white; padding-left: 30px; padding-top: 10px; width: 200px; height: 40px;margin-bottom: 1.5rem;") {{reply.reply}}
-div.flex(style="color:gray; font-weight: 700; justify-content:center; align-items: center; height: 100px;")
+        .py-4.grid.row-span-3.gap-2(v-if="replies?.length")
+          .p-2.bg-white.rounded-lg.mb-2.shadow-md.pb-4(v-for="(reply,i) in replies" :key="i") 
+            .ml-1.pb-4.text-lg.font-bold {{reply.name}}
+            .ml-1.pt-3.pb-3.pl-5.border-l-2.border-green-500 {{reply.reply}}
+.flex(style="color:gray; font-weight: 700; justify-content:center; align-items: center; height: 100px;")
   label SHARE THIS PAGE |&nbsp;
   .col
     button(@click="shareFacebook")
@@ -307,5 +304,5 @@ div.flex(style="color:gray; font-weight: 700; justify-content:center; align-item
   .col
     p {{ "" }}
     .col-md-8.mx-9(class="sm:col-span-1 sm:mr-11")
-        .div.px-8.py-4(style="color: #6E6E6E; font-weight: 500; font-size: 18px; line-height: 28px; letter-spacing: -0.078px; word-break: break-word;" id="obituary") {{ pageDataDB.obituary }}
+        .px-8.py-4(style="color: #6E6E6E; font-weight: 500; font-size: 18px; line-height: 28px; letter-spacing: -0.078px; word-break: break-word;" id="obituary") {{ pageDataDB.obituary }}
 </template>
