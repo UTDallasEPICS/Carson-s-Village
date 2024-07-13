@@ -334,20 +334,28 @@ description="Here, you select from photos you uploaded to show up first on the F
                           
         .py-4.grid(class="sm:grid-cols-3") 
             CVLabel Day of Birth
+            CVHelpButton(class="inline-block" 
+         description="Here, the date of birth of the recently deceased person should be entered here")")
             .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
                 CVDatepicker(v-model='data.day_of_birth')
         .py-4.grid(class="sm:grid-cols-3") 
             CVLabel Day of Passing 
+            CVHelpButton(class="inline-block" 
+         description="Select from the family pre existing or create a new family in family tab")
             .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
                 CVDatepicker(v-model='data.day_of_passing')
         .information.rounded-md.mx-9.my-2.text-center(class="sm:text-start text-white bg-blue-999")
-            CVLegend Visitation Information 
+            CVLegend Visitation Information
+             CVHelpButton(class="inline-block" 
+         description="Here, the visitation information should be found at the Family Page")
         .py-4.grid(class="sm:grid-cols-3") 
             CVLabel Date
             .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
                 CVDatepicker(v-model='data.visitation_date')
         .py-4.grid(class="sm:grid-cols-3")
             CVLabel Location 
+            CVHelpButton(class="inline-block" 
+    description="Here, you select the location on the family page")
             .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
                 CVInput(v-model='data.visitation_location' placeholder="optional")
         .py-4.grid(class="sm:grid-cols-3")
@@ -356,13 +364,17 @@ description="Here, you select from photos you uploaded to show up first on the F
                 CVTextArea(v-model='data.visitation_description' placeholder="optional")
 
         .information.rounded-md.mx-9.my-2.text-center(class="sm:text-start text-white bg-blue-999")
-            CVLegend Funeral Information       
+            CVLegend Funeral Information  
+            CVHelpButton(class="inline-block" 
+    description="Here, you click the main menu on the Family Page and click on the section labeled Funeral Information") 
         .py-4.grid(class="sm:grid-cols-3")
             CVLabel Date    
             .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
                 CVDatepicker(v-model='data.funeral_date')
         .py-4.grid(class="sm:grid-cols-3")
             CVLabel Location 
+            CVHelpButton(class="inline-block" 
+         description="Here, the location of the recently deceased person should be entered here")
             .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
                 CVInput(v-model='data.funeral_location' placeholder="optional")
         .py-4.grid(class="sm:grid-cols-3")
@@ -371,10 +383,14 @@ description="Here, you select from photos you uploaded to show up first on the F
                 CVTextArea(v-model='data.funeral_description' placeholder="optional")
         .py-4.grid(class="sm:grid-cols-3")
             CVLabel Obituary
+            CVHelpButton(class="inline-block" 
+         description="Here, you visit the hompage which is locate at the top of the menu")
             .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
                 CVTextArea(v-model='data.obituary' placeholder="optional")
         .information.rounded-md.mx-9.my-2.text-center(class="sm:text-start text-white bg-blue-999")
             CVLegend Fundraising Information
+            CVHelpButton(class="inline-block" 
+         description="Here, you select from the donate heading which is found at the top pf the homepage")
         .py-4.grid(class="sm:grid-cols-3")
             .flex
                 CVLabel Goal
@@ -388,6 +404,8 @@ description="Here, you select from photos you uploaded to show up first on the F
                 CVDatepicker(v-model='data.deadline')
         .information.rounded-md.mx-9.my-2.text-center(class="sm:text-start text-white bg-blue-999")
             CVLegend Comment Moderation
+            CVHelpButton(class="inline-block" 
+    description="The comment section for posts should be entered here")
         .py-4.grid.flex-box.flex-row.item-centered.gap-1(v-if="replies?.length" style="line-height: 0px;")
             div(class="flex")
             .div(v-for="(reply,i) in replies" :key="i" class="reply-box")
