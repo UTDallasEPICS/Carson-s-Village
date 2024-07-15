@@ -11,7 +11,7 @@
 
 
 import type { User, Page, PageDonation, Image, Reply, Family} from '@/types.d.ts'
-import {  dateFormat, donationFormat } from '@/utils'
+import {  dateFormat, donationFormat, longDateFormat } from '@/utils'
 import CVReplySystem from '@/components/CVReplySystem.vue'
 import CVReply from '@/components/CVReply.vue'
 
@@ -27,10 +27,12 @@ const pageData = ref<Page>({
     visitation_date: null,
 
     visitation_location: "",
+    visitation_address: "",
     visitation_description: "",
     funeral_date: "",
     funeral_description: "",
     funeral_location: "",
+    funeral_address: "",
     obituary: "",
     deadline: "",
     donation_goal: 0,
@@ -239,46 +241,75 @@ setImageAutoSlide()
       button.absolute.right-8.top-64.bg-black.text-white(@click="nextImage" style="opacity:0.7; --tw-text-opacity: 1; width: 46px; height: 46px; border-radius:50%; align-items: center; justify-content: center; line-height: 2; text-align: center;color: white;") &#62;
       img.w-96(style="z-index: -1; object-fit:cover;" :src="imageData[currentImage].url")
     // services list
-    .py-4.flex.flex-col.gap-5(style="font-size: 18px")
-      .text-gray-dark.font-poppins.text-2xl.text-left.font-bold(style="line-height: 36px; text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") Services
-      .flex.flex-col.gap-5(class="lg:grid lg:grid-cols-2")
-        .flex.flex-col.gap-5(v-if="pageDataDB.visitation_date")
+    .py-4.flex.flex-col(class="lg:grid lg:grid-rows-6")
+        .flex.flex-col(v-if="pageDataDB.visitation_date")
           .text-gray-dark.font-poppins.text-2xl.text-left.font-bold(style="line-height: 36px; text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") Visitation
-          .flex.gap-5
-            .font-outfit {{ "Date:" }}
-            .font-outfit {{ dateFormat(pageDataDB.visitation_date, true) }}
-          .flex.gap-5
-            .font-outfit {{ "Location:" }}
+          .flex.row.gap-2
+            .font-outfit.flex-col.font-bold {{ "Date:" }}
+            .font-outfit {{ longDateFormat(pageDataDB.visitation_date) }}
+          .flex.row.gap-2
+            .font-outfit.font-bold {{ "Time:" }}
+            .font-outfit.gap-y-5 {{ longDateFormat(pageDataDB.visitation_date, true) }}
+          .flex.row.gap-2
+            .font-outfit.font-bold {{ "Location:" }}
             .font-outfit.whitespace-normal {{ pageDataDB.visitation_location ? pageDataDB.visitation_location : "TBD" }}
-          .font-outfit {{ pageDataDB.visitation_description }}
-        .flex.flex-col.gap-5(v-else)
+            //.font-outfit {{ pageDataDB.visitation_description }}
+          .flex.row.gap-2
+            .font-outfit.gap-y-5 {{ "400 Freeport Pkwy, Coppell, TX 75019" }}
+          .flex-row.gap-2
+        .flex.flex-col(v-else)
           .text-gray-dark.font-poppins.text-2xl.text-left.font-bold(style="line-height: 36px; text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") Visitation
-          .flex.gap-5
-            .font-outfit {{ "Date:  TBD"}}
-          .flex.gap-5
-            .font-outfit {{ "Location:  TBD" }}
-        .flex.flex-col.gap-5(v-if="pageDataDB.funeral_date")
-            .text-gray-dark.font-poppins.text-2xl.text-left.font-bold(style="line-height: 36px; text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") Funeral
-            .flex.gap-5
-              .font-outfit {{ "Date:" }}
-              .font-outfit {{ dateFormat(pageDataDB.funeral_date, true) }}
-            .flex.gap-5
-              .font-outfit {{ "Location:" }}
+          .flex.row.gap-2
+            .font-outfit.font-bold {{ "Date:" }}
+            .font-outfit.gap-y-5 {{ "TBD" }}
+          .flex.row.gap-2
+            .font-outfit.font-bold {{ "Time:" }}
+            .font-outfit.gap-y-5 {{ "TBD" }}
+          .flex.row.gap-2
+            .font-outfit.font-bold {{ "Location:" }}
+            .font-outfit.gap-y-5 {{ "TBD" }}
+          .flex.row.gap-2
+            .font-outfit.font-bold {{ "Address:" }}
+            .font-outfit.gap-y-5 {{ "TBD" }}
+          .flex-row.gap-2
+        .flex.flex-col(v-if="pageDataDB.funeral_date")
+            .text-gray-dark.font-poppins.text-2xl.text-left.font-bold(style="line-height: 36px; text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") Funeral Service
+            .flex.row.gap-2
+              .font-outfit.font-bold {{ "Date:" }}
+              .font-outfit.gap-2 {{ longDateFormat(pageDataDB.funeral_date) }}
+            .flex.row.gap-2
+              .font-outfit.font-bold {{ "Time:" }}
+              .font-outfit.gap-y-5 {{ longDateFormat(pageDataDB.funeral_date, true) }}
+            .flex.row.gap-2
+              .font-outfit.font-bold {{ "Location:" }}
               .font-outfit.whitespace-normal {{ pageDataDB.funeral_location }}
-            .font-outfit {{ pageDataDB.funeral_description }}
-        .flex.flex-col.gap-5(v-else)
-            .text-gray-dark.font-poppins.text-2xl.text-left.font-bold(style="line-height: 36px; text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") Funeral
-            .flex.gap-5
-              .font-outfit {{ "Date:  TBD" }}
-            .flex.gap-5
-              .font-outfit {{ "Location:  TBD" }}
+              //.font-outfit {{ pageDataDB.funeral_description }}
+            .flex.row.gap-2
+              .font-outfit.font-bold {{ "Address:" }}
+              .font-outfit.gap-y-5 {{ "TBD" }}
+            .flex-row
+        .flex.flex-col(v-else)
+            .text-gray-dark.font-poppins.text-2xl.text-left.font-bold(style="line-height: 36px; text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") Funeral Service
+            .flex.row.gap-2
+              .font-outfit.font-bold {{ "Date:" }}
+              .font-outfit.gap-y-5 {{ "TBD" }}
+            .flex.row.gap-2
+              .font-outfit.font-bold {{ "Time:" }}
+              .font-outfit.gap-y-5 {{ "TBD" }}
+            .flex.row.gap-2
+              .font-outfit.font-bold {{ "Location:" }}
+              .font-outfit.gap-y-5 {{ "TBD" }}
+            .flex.row.gap-2
+              .font-outfit.font-bold {{ "Address:" }}
+              .font-outfit.gap-y-5 {{ "TBD" }}
+        .container.m-4.place-content-center.font-poppins(class="w-5/6 sm:m-auto sm:py-3")
+            .well.well-sm
+                h1.ml-4.pt-9.text-2xl.text-gray-dark(class="sm:text-3xl" style="font-weight: 600; letter-spacing: 0.35px;") Donations
+                // add donation description
+            .col-md-8.ml-4.pt-6.pr-5.flex.items-center.justify-center
+              ActionButton.mx-auto.text-md(name='submit' @click="DisplayDonationPopup=true" class="transition duration-300 bg-orange-999 hover:bg-green-600" ) DONATE NOW
 //.container(class="sm:overflow-hidden sm:w-3/4 sm:mt-4 sm:mx-auto sm:place-content-center sm:max-w-xl sm:p-6 sm:rounded-card sm:shadow-card")
 .grid(class="sm:grid-cols-2")
-    .container.m-4.place-content-center.font-poppins(class="w-5/6 sm:m-auto sm:py-3")
-        .well.well-sm
-            h1.ml-4.pt-9.text-2xl.text-gray-dark(class="sm:text-3xl" style="font-weight: 600; letter-spacing: 0.35px;") Donations
-        .col-md-8.ml-4.pt-6.pr-5.flex.items-center.justify-center
-          ActionButton.mx-auto.text-md(name='submit' @click="DisplayDonationPopup=true" class="transition duration-300 bg-orange-999 hover:bg-green-600" ) DONATE NOW
         .py-4.grid.gap-1(v-if="comments?.length" style="text-align: center")
             .div.py-4.grid(class="w-full" style="grid-template-columns: repeat(3, 1fr);")
                 .div(v-for="(comment, i) in comments" :key="i" class="comment-box")
