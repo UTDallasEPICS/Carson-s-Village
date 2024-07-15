@@ -53,11 +53,14 @@ if(event.context.user?.user_role == "advocate"  || event.context.user.user_role 
       }
     })
   }
-      return true;
-    } catch(e) {
-      console.log(e)
-      return false
-    }
+    return { success: true, result: "success" }
+  } catch(e: any) {
+    console.error(e);
+    throw createError({
+      statusCode: 500,
+      message: e.message as unknown as string,
+    })
+  }
 } else {
   return await sendRedirect(event, loginRedirectUrl());
 }

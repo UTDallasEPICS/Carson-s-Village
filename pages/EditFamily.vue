@@ -49,7 +49,6 @@ const data_all_users = ref<Family[]>([])
 const router = useRoute()
 const isAuthorized = computed(() => { cvuser.value?.user_role as string == "advocate" || cvuser.value?.user_role == "admin"})
 const errorInPage = ref(false);
-
 // Method that creates a new family on the backend and adds the first user
 const createFamily = async () => {
   if(isAuthorized){
@@ -57,8 +56,8 @@ const createFamily = async () => {
       method: 'POST',
       body: ({family_name: data_family.value.family_name, ...data_user.value})
     })
-    data_family.value = result as unknown as Family
-    if( result ){
+
+    if(result){
         errorInPage.value = false;
         await navigateTo('/Users')
     } else {

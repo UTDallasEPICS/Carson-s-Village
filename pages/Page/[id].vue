@@ -294,6 +294,9 @@ setImageAutoSlide()
                     .reply-header(style="font-size: 1rem; font-weight: bold; margin-bottom: 2.5rem; margin-left: 1rem") {{reply.name}}
                     .reply-body(style="font-size: 1rem; color: #666; margin-bottom: 2.5rem;") {{reply.reply}}
 div.flex(style="color:gray; font-weight: 700; justify-content:center; align-items: center; height: 100px;")
+  .col-md-8.mx-9(class="sm:col-span-1 sm:mr-11")
+      .div.px-8.py-4(style="color: #6E6E6E; font-weight: 500; font-size: 18px; line-height: 28px; letter-spacing: -0.078px; word-break: break-word;" id="obituary") {{ pageDataDB.obituary }}
+div.flex(style="color:gray; font-weight: 700; justify-content:center; align-items: center; height: 100px;")
   label SHARE THIS PAGE |&nbsp;
   .col
     button(@click="shareFacebook")
@@ -304,8 +307,4 @@ div.flex(style="color:gray; font-weight: 700; justify-content:center; align-item
   .col
     button(@click="shareMail")
         img(src="/mail_fa.png" style="width:50px; height:29px;") 
-  .col
-    p {{ "" }}
-    .col-md-8.mx-9(class="sm:col-span-1 sm:mr-11")
-        .div.px-8.py-4(style="color: #6E6E6E; font-weight: 500; font-size: 18px; line-height: 28px; letter-spacing: -0.078px; word-break: break-word;" id="obituary") {{ pageDataDB.obituary }}
 </template>
