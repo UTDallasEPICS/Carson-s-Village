@@ -1,35 +1,30 @@
 
 const runtime = useRuntimeConfig()
-const getQuery = (event) => {
-    const urlParams = new URLSearchParams(window.location.search);
-    return urlParams
-  }
+
+const creds = runtime.CONSTANT_CONTACTS_CLIENTID + ':' + runtime.CONSTANT_CONTACTS_SECRET
+const encodedCreds = btoa(creds)
 
 export default defineEventHandler(async event => {
-    const query = getQuery(event)
-    const authCode = query.code
-  
-    if (authCode) {
-      console.log(authCode)
+    const { code } = getQuery(event)
+    
+    if (code) {
+      console.log(code)
     } else {
       console.log('Authorization code not found')
     }
 
-    const body = new URLSearchParams({
-        code: authCode,
-        redirect_uri: runtime.BASEURL,
-        grant_type: 'authorization_code'
-      })
+    
 
-    const headers = new Headers({
-        "Accept", "application/json"
-        "Content-Type", "application/x-www-form-urlencoded"
-    })
 
-    const response = await fetch(`https://authz.constantcontact.com/oauth2/default/v1/token`, {
+    const response = await fetch(`https://authz.constantcontact.com/oauth2/default/v1/token?code=${code as string}&redirect_uri=${encodeURIComponent(`${runtime.BASEURL}EmailList`)}&grant_type=authorization_code`, {
         method: 'POST',
-        body: body.toString(),
-        headers: headers
+        headers: {
+            "Accept": "application/json",
+            "Content-Type": "application/x-www-form-urlencoded",
+            "Authorization": `Basic ${encodedCreds}`
+        }
       })
+
+      console.log(response)
   })
   

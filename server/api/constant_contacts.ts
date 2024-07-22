@@ -5,7 +5,7 @@ const genState = () => { const s = nanoid(); state[s] = 1;  return s}
 const runtime = useRuntimeConfig()
 
 const nanoidString = nanoid()
-const redirectURI = `${runtime.BASEURL}/api/cc_callback`
+const redirectURI = `${runtime.BASEURL}api/cc_callback`
 
   export default defineEventHandler(async event => {
     if (event.context.user.user_role === "admin")  {
