@@ -55,9 +55,10 @@ const submitComment = async () => {
 .comment-system.flex.flex-col.items-center(class="sm:mx-4 sm:w-full sm:py-2")
 
       h2.text-center.mt-4.mb-6.font-bold Leave a Message
-      CVTextArea(name='reply' v-model="replyData.reply" placeholder='Replies' class="font-normal h-40 w-full")
-      .field-row.flex.mt-4.w-full
-          CVInput(name='name' v-model="replyData.name" placeholder='Name' class="font-normal w-full")     
+      .w-full.flex.justify-center
+        CVTextArea(name='reply' v-model="replyData.reply" placeholder='Replies' class="font-normal h-40 w-2/3")
+      .field-row.flex.justify-center.mt-4.w-full
+          CVInput(name='name' v-model="replyData.name" placeholder='Name' class="font-normal w-2/3" )     
       .col-md-8.ml-4.pt-6.pr-5.flex.items-center.justify-center.mt-6
           ActionButton.mx-auto.text-md(@click="submitComment" class="transition duration-300 bg-orange-999 hover:bg-green-600") Submit
       .div(v-if="successMessage" class="mt-4 text-green-500") {{ successMessage }}
