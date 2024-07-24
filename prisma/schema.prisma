@@ -107,6 +107,7 @@ model PageDonation {
 model CC_Token {
   cuid     String @id @default(cuid())
   token    String
+  refresh_token String
   date     DateTime  @default(now())
 }
 

@@ -13,10 +13,7 @@ export default defineEventHandler(async event => {
       console.log('Authorization code not found')
     }
 
-    
-
-
-    const response = await fetch(`https://authz.constantcontact.com/oauth2/default/v1/token?code=${code as string}&redirect_uri=${encodeURIComponent(`${runtime.BASEURL}EmailList`)}&grant_type=authorization_code`, {
+    const response = await fetch(`https://authz.constantcontact.com/oauth2/default/v1/token?code=${code as string}&redirect_uri=${encodeURIComponent(`${runtime.BASEURL}api/cc_callback`)}&grant_type=authorization_code`, {
         method: 'POST',
         headers: {
             "Accept": "application/json",
@@ -25,6 +22,10 @@ export default defineEventHandler(async event => {
         }
       })
 
-      console.log(response)
+      const accessToken = (await response.json()).access_token
+
+      
+
+      console.log(accessToken)
   })
   
