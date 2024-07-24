@@ -13,11 +13,11 @@ export default defineEventHandler(async event => {
   const { Images, Reply, PageDonations, userCuid, familyCuid, Family, ...data } = await readBody(event)
   //const userCuid = data.userCuid
   //delete data.userCuid;
-  delete data.Family // Not sure why this is needed to fix an error
   
-  if(event.context.user.user_role === "advocate" || event.context.user?.user_role == "admin" || event.context.user.cuid === userCuid ){
+  console.log('h',familyCuid, event.context.user)
+  if(event.context.user.user_role === "advocate" || event.context.user?.user_role == "admin" || event.context.user.cuid == userCuid || event.context.user.Family?.cuid == familyCuid ){
     console.log(data.amount_raised)
-    console.log(data.donation_goal)
+    delete data.Family // Not sure why this is needed to fix an error
     try {
       // Removes comma parses the whole decimal number and converts it to cents to be stored in DB
       if(typeof data.donation_goal == 'string') {
