@@ -24,6 +24,7 @@ const pageData = ref<Page>({
     page_last_name: "",
     day_of_birth: null,
     day_of_passing: null,
+    age: null,
     visitation_date: null,
 
     visitation_location: "",
@@ -233,6 +234,7 @@ setImageAutoSlide()
 .flex.flex-col.gap-5.px-4.mx-auto.mt-8(class="w-3/4 sm:px-16")
   img.mx-auto(v-if="profileImage?.url" class="w-[122px] h-[122px] rounded-[8px]" :src="`${profileImage?.url}`")
   .text-gray-dark.mx-auto.w-max.font-poppins.text-md {{ dateFormat(pageDataDB.day_of_birth, true) + ((pageDataDB.day_of_birth || pageDataDB.day_of_passing) ? ' - ' : '') + dateFormat(pageDataDB.day_of_passing, true) }} 
+  .text-gray-dark.mx-auto.w-max.font-poppins.text-md {{ "Age:" + pageDataDB.age}} 
   .flex.flex-col-reverse.gap-5(class="sm:grid sm:grid-cols-2")
     .relative.w-96.p-1(v-if="imageData.length != 0" )
       button.absolute.left-4.top-64.bg-black.text-white(@click="prevImage" style="opacity:0.7; --tw-text-opacity: 1; width: 46px; height: 46px; border-radius:50%; align-items: center; justify-content: center; line-height: 2; text-align: center;color: white;") &#60;

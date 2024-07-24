@@ -41,6 +41,7 @@ const data = ref<Page>({
     page_last_name: "",
     day_of_birth: null,
     day_of_passing: null,
+    age: null,
     visitation_date: null,
     visitation_location: "",
     visitation_description: "",
@@ -344,6 +345,13 @@ description="Here, you select from photos you uploaded to show up first on the F
          description="Select from the family pre existing or create a new family in family tab")
             .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
                 CVDatepicker(v-model='data.day_of_passing')
+        .py-4.grid(class="sm:grid-cols-3") 
+            CVLabel  Age 
+            CVHelpButton(class="inline-block"
+            description="Enter the age even if it's approximate this will display if the day or birth or day of passing isn't present")
+            .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
+                CVInput(type="number" v-model='data.age')
+        .py-4.grid(class="sm:grid-cols-3")
         .information.rounded-md.mx-9.my-2.text-center(class="sm:text-start text-white bg-blue-999")
             CVLegend Visitation Information
              CVHelpButton(class="inline-block" 

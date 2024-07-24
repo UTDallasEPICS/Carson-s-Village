@@ -50,6 +50,7 @@ import { DonationPayout } from "@prisma/client"
 export type Page = {
     page_first_name: string,
     page_last_name: string,
+    age: number,
     cuid: string,
     userCuid: string,
     familyCuid: string,
