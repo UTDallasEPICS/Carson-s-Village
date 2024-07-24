@@ -34,6 +34,7 @@ export default defineEventHandler(async event => {
               }
             }, Family: {
               select: {
+                cuid: true,
                 stripe_account_id: true,
                 Pages: { select: {
                   cuid: true,
