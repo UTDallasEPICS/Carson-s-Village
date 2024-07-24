@@ -1,18 +1,17 @@
 
+
 const runtime = useRuntimeConfig()
 const creds = runtime.CONSTANT_CONTACTS_CLIENTID + ':' + runtime.CONSTANT_CONTACTS_SECRET
 const encodedCreds = btoa(creds)
-
 export default defineEventHandler(async event => {
-    const { code } = getQuery(event)
     
-    if (code) {
-      console.log(code)
-    } else {
-      console.log('Authorization code not found')
-    }
+    const refreshToken = await event.context.client.CC_Token.findFirst({
+        where: {
+          cuid: "0"
+        }
+      })
 
-    const response = await fetch(`https://authz.constantcontact.com/oauth2/default/v1/token?code=${code as string}&redirect_uri=${encodeURIComponent(`${runtime.BASEURL}api/cc_callback`)}&grant_type=authorization_code`, {
+    const response = await fetch(`https://authz.constantcontact.com/oauth2/default/v1/token?refresh_token=${refreshToken.refresh_token as string}&grant_type=refresh_token`, {
         method: 'POST',
         headers: {
             "Accept": "application/json",
