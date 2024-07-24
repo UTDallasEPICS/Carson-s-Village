@@ -23,22 +23,26 @@ const onEnter = async() => {
   
 }
 
-
 </script>
 
 <template lang="pug">
 ClientOnly
-  .max-w-min.mx-auto.flex.gap-2.mt-7(style="text-align:center")
+  .max-w-min.mx-auto.pt-3.flex.gap-2.mt-7(style="text-align:center")
     div.max-w-min.mx-auto.flex.gap-2(v-if="isLoggedIn && toggle")
-      NavLinkButton(to='https://carsonsvillage.org' :class="{'!text-black border-green-999 bg-white': route.path == '/'}") 
-        p.uppercase.white.w-max &#128154
-      a.items-center.px-2.py-2.text-base.font-medium.rounded-md.text-blue-999.cursor-pointer(
+      a.w-20.items-center.px-2.py-2.text-sm.font-medium.rounded-md.text-blue-999.cursor-pointer(
+        class='hover:text-black bg-white'
+        target="blank"  
+        href="https://carsonsvillage.org"
+      )         
+        img.w-20.h-14(src="/CVLogo.png")
+
+      a.items-center.pt-5.px-2.py-2.text-sm.font-medium.rounded-md.text-blue-999.cursor-pointer(
       class='hover:text-black bg-white'  
       href="/api/logout"
       ) 
         p.uppercase.white.w-max.font-bold.text-orange-999 LOGOUT
       NavLinkButton(:class="{'!text-black border-green-999 bg-white': route.path == '/'}" @click="toggle = !toggle") 
-        p.uppercase.white.w-max Home
+        p.uppercase.white.w-max.text-blue-999 Main Menu
       NavLinkButton(:to="`/pageList/${cuid}/?fromUsers=0`" v-if="isAdvocateAdmin" :class="{'!text-black border-green-999 bg-white': route.path.includes('/page') || route.path.includes('/Page')}") 
         p.uppercase.white.w-max Pages
       NavLinkButton(:to="`/pageList/${familyCuid}/?fromUsers=0`" v-if="!isAdvocateAdmin" :class="{'!text-black border-green-999 bg-white': route.path.includes('/pageList')}")
@@ -59,24 +63,31 @@ ClientOnly
         p.uppercase.white.w-max Family Reports
 
     div.max-w-min.mx-auto.flex.gap-2(v-else-if="isLoggedIn && !toggle")
-      a.items-center.px-2.py-2.text-base.font-medium.rounded-md.text-blue-999.cursor-pointer(
+      a.w-20.items-center.px-2.py-2.text-sm.font-medium.rounded-md.text-blue-999.cursor-pointer(
+        class='hover:text-black bg-white'
+        target="blank"  
+        href="https://carsonsvillage.org"
+      )         
+        img.w-20.h-14(src="/CVLogo.png")
+
+      a.items-center.pt-5.px-2.py-2.text-sm.font-medium.rounded-md.text-blue-999.cursor-pointer(
         class='hover:text-black bg-white'  
         href="/api/logout"
       ) 
         p.uppercase.white.w-max.font-bold.text-orange-999 LOGOUT
       NavLinkButton(:class="{'!text-black border-green-999 bg-white': route.path == '/'}" @click="toggle = !toggle") 
-        p.uppercase.white.w-max Dashboard
+        p.uppercase.white.w-max.text-blue-999 Dashboard
       DropdownMenu(:has-submenus="true" :num-submenus="4"
         :submenus="[{ title: 'Timeline of Important Events', to: 'https://carsonsvillage.org/timeline-of-events/' }, { title: 'Resource Library', to: 'http://carsonsvillage.org/resource-library' }, { title: 'Group Support', to: 'https://carsonsvillage.org/grief-group-support/' }, { title: 'Find Support', to: 'https://carsonsvillage.org/support/' }]" :dropdownMinWidth="200")
         | RESOURCES
       NavLinkButton(to='https://carsonsvillage.org/get-involved/' target="_blank")
-        p.uppercase.white.w-max GET INVOLVED
+        p.uppercase.white.w-max.text-black-999 GET INVOLVED
       DropdownMenu(:has-submenus="true" :num-submenus="6"
         :submenus="[{ title: 'Our Story', to: 'https://carsonsvillage.org/about-us/our-family/' }, { title: 'Our Testimonies', to: 'https://carsonsvillage.org/our-testimonials/' }, { title: 'In The News', to: 'https://carsonsvillage.org/about-us/in-the-news/' }, { title: 'Newsletter Archive', to: 'https://carsonsvillage.org/about-us/newsletter-archive/' }, { title: 'Our Team >', submenus: [{ title: 'Advocates', to: 'https://carsonsvillage.org/about-us/advocates/' }, { title: 'Clinical Consultants', to: 'https://carsonsvillage.org/about-us/clinical-consultants/' }, { title: 'Support Team', to: 'https://carsonsvillage.org/about-us/meet-our-team/' }]}, { title: 'Board of Directors', to: 'https://carsonsvillage.org/about-us/board-of-directors/' }]" :dropdownMinWidth="150" :nestedDropdownMinWidth="150")
         | ABOUT&nbsp;US
 
-    div.max-w-min.mx-auto.flex.gap-2(v-else)
-      a.items-center.px-2.py-2.text-base.font-medium.rounded-md.text-gray-999.cursor-pointer(
+    div.max-w-min.mx-auto.flex.gap-2.pt-3(v-else)
+      a.items-center.px-2.py-2.text-sm.font-medium.rounded-md.text-gray-999.cursor-pointer(
       class='hover:!text-black bg-white'  
       href="/api/login"
       ) 
@@ -85,16 +96,16 @@ ClientOnly
       NavLinkButton(to='https://carsonsvillage.org/' target="_blank") 
         p.uppercase.white.w-max HOME
       DropdownMenu(:has-submenus="true" :num-submenus="4"
-        :submenus="[{ title: 'Timeline of Important Events', to: 'https://carsonsvillage.org/timeline-of-events/' }, { title: 'Resource Library', to: 'http://carsonsvillage.org/resource-library' }, { title: 'Group Support', to: 'https://carsonsvillage.org/grief-group-support/' }, { title: 'Find Support', to: 'https://carsonsvillage.org/support/' }]" :dropdownMinWidth="200")
+        :submenus="[{ title: 'Timeline of Important Events', to: 'https://carsonsvillage.org/timeline-of-events/' }, { title: 'Resource Library', to: 'http://carsonsvillage.org/resource-library' }, { title: 'Group Support', to: 'https://carsonsvillage.org/grief-group-support/' }, { title: 'Find Support', to: 'https://carsonsvillage.org/support/' }]" :dropdownMinWidth="225")
         | RESOURCES
       NavLinkButton(to='https://carsonsvillage.org/get-involved/' target="_blank")
         p.uppercase.white.w-max GET INVOLVED
       DropdownMenu(:has-submenus="true" :num-submenus="6"
-        :submenus="[{ title: 'Our Story', to: 'https://carsonsvillage.org/about-us/our-family/' }, { title: 'Our Testimonies', to: 'https://carsonsvillage.org/our-testimonials/' }, { title: 'In The News', to: 'https://carsonsvillage.org/about-us/in-the-news/' }, { title: 'Newsletter Archive', to: 'https://carsonsvillage.org/about-us/newsletter-archive/' }, { title: 'Our Team >', submenus: [{ title: 'Advocates', to: 'https://carsonsvillage.org/about-us/advocates/' }, { title: 'Clinical Consultants', to: 'https://carsonsvillage.org/about-us/clinical-consultants/' }, { title: 'Support Team', to: 'https://carsonsvillage.org/about-us/meet-our-team/' }]}, { title: 'Board of Directors', to: 'https://carsonsvillage.org/about-us/board-of-directors/' }]" :dropdownMinWidth="150" :nestedDropdownMinWidth="150")
+        :submenus="[{ title: 'Our Story', to: 'https://carsonsvillage.org/about-us/our-family/' }, { title: 'Our Testimonies', to: 'https://carsonsvillage.org/our-testimonials/' }, { title: 'In The News', to: 'https://carsonsvillage.org/about-us/in-the-news/' }, { title: 'Newsletter Archive', to: 'https://carsonsvillage.org/about-us/newsletter-archive/' }, { title: 'Our Team >', submenus: [{ title: 'Advocates', to: 'https://carsonsvillage.org/about-us/advocates/' }, { title: 'Clinical Consultants', to: 'https://carsonsvillage.org/about-us/clinical-consultants/' }, { title: 'Support Team', to: 'https://carsonsvillage.org/about-us/meet-our-team/' }]}, { title: 'Board of Directors', to: 'https://carsonsvillage.org/about-us/board-of-directors/' }]" :dropdownMinWidth="160" :nestedDropdownMinWidth="165")
         | ABOUT&nbsp;US
     
     //&& isLoggedIn")
-    .flex.w-max.px-2(v-if="isNotSearch")
+    .flex.w-max.px-2.pt-2(v-if="isNotSearch")
       input(class="border border-gray-300 py-2 px-4 rounded-lg focus:outline-none focus:border-black-500" 
       type="search" placeholder=" " v-model="searchQuery" v-on:keyup.enter="onEnter" style="height: 40px")
       NuxtLink.inline(:to="`/Search/?search=${searchQuery}&isPageList=0`")
