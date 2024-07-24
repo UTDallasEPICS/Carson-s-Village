@@ -104,6 +104,12 @@ model PageDonation {
   @@map("page_donations")
 }
 
+model CC_Token {
+  cuid     String @id @default(cuid())
+  token    String
+  date     DateTime  @default(now())
+}
+
 model Reply {
   cuid       String  @id @default(cuid())
   pageCuid   String  @map("page_cuid")
