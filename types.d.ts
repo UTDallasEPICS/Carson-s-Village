@@ -155,4 +155,5 @@ export type Reply = {
   name: string
   reply: string
   suspended: boolean
+  date: Date
 }
