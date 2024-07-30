@@ -13,15 +13,12 @@ const refreshToken = () => {
 
 const submit =  async () => {
     try {
-            const response = await fetch('/api/email', {
+            const response = await $fetch('/api/email', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(data)
-            });
+                body: {...data.value }
+    });
 
-            if (response.ok) {
+            if (response) {
                 successMessage.value = true;
             } else {
                 console.error('Failed to submit data:', await response.text());
@@ -39,11 +36,19 @@ const checkSuccessParam = () => {
     }
 }
 
-const data = {
+
+type EmailListUser = {
+    email: string;
+    first_name: string;
+    last_name: string;
+}
+
+const data = ref<EmailListUser>({
     email: '',
     first_name: '',
     last_name: ''
-};
+});
+
 
 onMounted(() => {
     checkSuccessParam();
