@@ -35,6 +35,7 @@ export default defineEventHandler(async event => {
             }, Family: {
               select: {
                 stripe_account_id: true,
+                stripe_account_onboarded: true,
                 Pages: { select: {
                   cuid: true,
                   status: true
@@ -123,14 +124,15 @@ export default defineEventHandler(async event => {
           id as string)
         //console.log(stripeAccountFull)
         // if the user backed out of the onboard, they will be redirected back to the onboard
-        if(!stripeAccountFull.details_submitted) {
-            const accountLink = await stripe.accountLinks.create({
+        if(stripeAccountFull.details_submitted) {
+            const 
+            /*const accountLink = await stripe.accountLinks.create({
                 account: id,
                 refresh_url: `${runtime.BASEURL}`,
                 return_url: `${runtime.BASEURL}/api/complete_onboarding/?stripe_account_id=${id}`,
                 type: 'account_onboarding',
             });
-            return await sendRedirect(event, accountLink.url);
+            return await sendRedirect(event, accountLink.url); */
         }
       }
       } catch (e) {

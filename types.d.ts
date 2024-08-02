@@ -62,6 +62,7 @@ export type Page = {
     funeral_description: string,
     funeral_location: string,
     obituary: string,
+    wantsDisplayDonation: boolean,
     deadline: Date | string | null,
     donation_goal: number | string
     amount_raised: number | string
@@ -84,6 +85,7 @@ export type Family = {
   cuid: string;
   family_name: string;
   stripe_account_id: string | null;
+  stripe_account_onboarded: boolean;
   created_at: Date | string | null;
   updated_at: Date | string | null;
   advocateCuid: string;
@@ -152,4 +154,5 @@ export type Reply = {
   name: string
   reply: string
   suspended: boolean
+  date: Date
 }

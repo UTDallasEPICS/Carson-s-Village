@@ -239,6 +239,7 @@ div
       cuid: '',
       family_name: '',
       stripe_account_id: null,
+      stripe_account_onboarded: false,
       created_at: '',
       updated_at: '',
       advocateCuid: '',

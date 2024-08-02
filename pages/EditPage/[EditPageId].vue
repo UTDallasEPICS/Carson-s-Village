@@ -33,6 +33,9 @@ import { donationFormat, dateFormat } from '@/utils'
 const router = useRoute()
 const cvuser = useCookie<User>('cvuser');
 const cvuser2 = useCookie<User2>('cvuser')
+const wantDonation = ref(true)
+const wantDonationProgress = ref(true)
+const isOnboarded = ref(true)
 
 const data = ref<Page>({
     cuid: "",
@@ -48,6 +51,7 @@ const data = ref<Page>({
     funeral_description: "",
     funeral_location: "",
     obituary: "",
+    wantsDisplayDonation: true,
     deadline: null,
     donation_goal: 0,
     amount_raised: 0,
@@ -117,6 +121,7 @@ type User2 = {
 const data_family = ref<Family>({
     cuid: "",
     stripe_account_id: "",
+    stripe_account_onboarded: false,
     created_at: null,
     updated_at: new Date(),
     family_name: "",
@@ -287,7 +292,7 @@ CVContainer
         .bar.mx-9(style="border-top: 0.5px solid #646464;")
     br
     div
-        .information.rounded-md.my-2.text-center(class="sm:text-start text-white bg-blue-999")
+        .information.rounded-md.my-2.px-2.text-center(class="sm:text-start text-white bg-blue-999")
             CVLegend Personal Information
         .py-4.grid(class="sm:grid-cols-3") 
             .flex
@@ -314,7 +319,7 @@ CVContainer
                                 ListboxOption(as='div' v-for="family in data_all_users" :key="family.cuid" :value="family.cuid" class="px-2 border border-grey-500 py-1 my-1") {{ family.family_name }}
                     ListboxButton(class='text-left bg-white relative rounded-md pl-2 pr-10 py-2 sm:text-sm w-96') {{ familyCuid ? currentFamily.family_name : 'Select family to add the page to' }}
         ImagePreview(v-model:images="imageData" :images="data.Images" :profileImage="profileImage" :pageCuid="cuid_data" @profileImage="setProfileImage" @images="setImagesPreview")
-        .information.rounded-md.mx-9.my-2.text-center(class="sm:text-start text-white bg-blue-999")
+        .information.rounded-md.mx-9.my-2.px-2.text-center(class="sm:text-start text-white bg-blue-999")
             legend.ml-2(class="sm:py-1" style="font-weight: 700; text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") Profile Image Selection        
         .py-4.flex.gap-72
             .flex
@@ -340,7 +345,7 @@ description="Here, you select from photos you uploaded to show up first on the F
             CVLabel Day of Passing 
             .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
                 CVDatepicker(v-model='data.day_of_passing')
-        .information.rounded-md.mx-9.my-2.text-center(class="sm:text-start text-white bg-blue-999")
+        .information.rounded-md.mx-9.my-2.px-2.text-center(class="sm:text-start text-white bg-blue-999")
             CVLegend Visitation Information 
         .py-4.grid(class="sm:grid-cols-3") 
             CVLabel Date
@@ -355,7 +360,7 @@ description="Here, you select from photos you uploaded to show up first on the F
             .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
                 CVTextArea(v-model='data.visitation_description' placeholder="optional")
 
-        .information.rounded-md.mx-9.my-2.text-center(class="sm:text-start text-white bg-blue-999")
+        .information.rounded-md.mx-9.my-2.px-2.text-center(class="sm:text-start text-white bg-blue-999")
             CVLegend Funeral Information       
         .py-4.grid(class="sm:grid-cols-3")
             CVLabel Date    
@@ -373,20 +378,35 @@ description="Here, you select from photos you uploaded to show up first on the F
             CVLabel Obituary
             .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
                 CVTextArea(v-model='data.obituary' placeholder="optional")
-        .information.rounded-md.mx-9.my-2.text-center(class="sm:text-start text-white bg-blue-999")
+        .information.rounded-md.mx-9.my-2.px-2.text-center(class="sm:text-start text-white bg-blue-999")
             CVLegend Fundraising Information
-        .py-4.grid(class="sm:grid-cols-3")
+        .py-4.px-8.grid(class="sm:grid-cols-3")
+            label.mt-4.ml-4.text-md(for='anonymous' class="sm:mt-0" style="letter-spacing: 0.35px;")  Do you want to receive donations?
+            input#anonymous(type='checkbox' class="sm:ml-1" v-model="wantDonation")
+        .py-4.grid(v-if="wantDonation" class="sm:grid-cols-3")
             .flex
                 CVLabel Goal
                 CVHelpButton(class="inline-block" description="If the Donation Goal is 0, it is assumed that there are no donations required")  
             .col-md-8.flex.mx-9(class="sm:col-span-2 sm:mr-11")
                 span.rounded-l-md.bg-gray-200.text-lg.p-2(style="text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25); border: 1px solid #c4c4c4;") $
                 input.outline-0.rounded-r-md.border-box.w-full.p-2(style="border: 1px solid #c4c4c4;" v-model='data.donation_goal' placeholder="required" required)
-        .py-4.grid(class="sm:grid-cols-3")
+        .py-4.grid(v-if="wantDonation" class="sm:grid-cols-3")
             CVLabel Deadline Date
             .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
                 CVDatepicker(v-model='data.deadline')
-        .information.rounded-md.mx-9.my-2.text-center(class="sm:text-start text-white bg-blue-999")
+        .py-4.px-8.grid(v-if="wantDonation" class="sm:grid-cols-3")
+            label.mt-4.ml-4.text-md(for='anonymous' class="sm:mt-0" style="letter-spacing: 0.35px;")  Do you want to display donation goal?
+            input#anonymous(type='checkbox' class="sm:ml-1" v-model="wantDonationProgress")
+        .py-4.px-8.grid(v-if="wantDonation" class="sm:grid-cols-3")
+            label.mt-4.ml-4.text-md(for='anonymous' class="sm:mt-0" style="letter-spacing: 0.35px;")  Are you onboarded on Stripe?
+            input#anonymous(type='checkbox' class="sm:ml-1" v-model="isOnboarded")
+        .py-4.px-12.grid(v-if="!isOnboarded" class="sm:grid-cols-3")
+            label.mt-4.ml-4.text-md(for='anonymous' class="sm:mt-0" style="letter-spacing: 0.35px;")  Please onboard on Stripe if needed.
+            
+
+
+    
+        .information.rounded-md.mx-9.my-2.px-2.text-center(class="sm:text-start text-white bg-blue-999")
             CVLegend Comment Moderation
         .py-4.grid.flex-box.flex-row.item-centered.gap-1(v-if="replies?.length" style="line-height: 0px;")
             div(class="flex")

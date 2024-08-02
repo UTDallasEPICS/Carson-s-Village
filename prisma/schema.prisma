@@ -26,17 +26,18 @@ model User {
 }
 
 model Family {
-  cuid                  String           @id @default(cuid())
-  family_name           String
-  stripe_account_id     String?
-  created_at            DateTime          
-  updated_at            DateTime?
-  advocateCuid          String           @map("advocate_cuid")
-  FamilyDonationPayouts DonationPayout[]
-  AdvocateResponsible   User             @relation("advocate_family", fields: [advocateCuid], references: [cuid])
-  FamilyDonations       PageDonation[]
-  Pages                 Page[]
-  FamilyMembers         User[]           @relation("family_member")
+  cuid                     String           @id @default(cuid())
+  family_name              String
+  stripe_account_id        String?
+  stripe_account_onboarded Boolean          @default(false)
+  created_at               DateTime          
+  updated_at               DateTime?
+  advocateCuid             String           @map("advocate_cuid")
+  FamilyDonationPayouts    DonationPayout[]
+  AdvocateResponsible      User             @relation("advocate_family", fields: [advocateCuid], references: [cuid])
+  FamilyDonations          PageDonation[]
+  Pages                    Page[]
+  FamilyMembers            User[]           @relation("family_member")
 }
 
 model DonationPayout {
@@ -61,6 +62,7 @@ model Page {
   funeral_location       String
   funeral_description    String
   obituary               String
+  wantsDisplayGoal       Boolean          @default(true)
   donation_goal          Int              @default(0)
   amount_raised          Int              @default(0)
   deadline               DateTime?
@@ -112,6 +114,7 @@ model Reply {
   name       String? @default("")
   Page       Page    @relation(fields: [pageCuid], references: cuid)
   suspended  Boolean @default(false)
+  date       DateTime 
 }
 
 model Image {

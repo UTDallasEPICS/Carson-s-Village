@@ -24,6 +24,7 @@ const cvuser2 = useCookie<User>('cvuser')
 const data_family = ref<Family>({
     cuid: "",
     stripe_account_id: "",
+    stripe_account_onboarded: false,
     created_at: new Date(),
     updated_at: null,
     family_name: "",

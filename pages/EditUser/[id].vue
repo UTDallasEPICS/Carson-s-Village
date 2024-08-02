@@ -39,6 +39,7 @@ const familyCuid = ref("")
 const data_family = ref<Family>({
 cuid: "",
 stripe_account_id: "",
+stripe_account_onboarded: false,
 created_at: "null",
 updated_at: new Date(),
 family_name: "",
@@ -77,9 +78,12 @@ const save = async () => {
       body: ({ ...data_user.value, familyCuid: familyCuid.value, cuid: cuid.value as string })
 
     })
-    if(data == true){
+    if(data == true && !wantsOnboarding) {
         errorInPage.value = false;
         await navigateTo('/Users')
+    } else if(data == true && wantsOnboarding) {
+        
+
     } else {
         errorInPage.value = true;
     }

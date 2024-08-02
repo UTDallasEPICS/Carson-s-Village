@@ -18,6 +18,7 @@ const replyData = ref<Partial<Reply>>({
     reply:"",
     pageCuid: props.pageCuid,
     familyCuid: props.familyCuid,
+    date: undefined
 })
 
 const clearSuccessMessage = () => {
@@ -28,6 +29,7 @@ const clearSuccessMessage = () => {
 
 const successMessage = ref("");
 const submitComment = async () => {
+    replyData.value.date = new Date()
     const response = await $fetch('/api/replies', {  // look at nuxt documentation for $fetch
       method: 'POST',
       body: {
