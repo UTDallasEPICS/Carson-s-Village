@@ -336,7 +336,7 @@ description="Here, you select from photos you uploaded to show up first on the F
         .py-4.grid(class="sm:grid-cols-3") 
             CVLabel Day of Birth
             CVHelpButton(class="inline-block" 
-         description="Here, the date of birth of the recently deceased person should be entered here")")
+         description="Here, the date of birth of the recently deceased person should be entered here")
             .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
                 CVDatepicker(v-model='data.day_of_birth')
         .py-4.grid(class="sm:grid-cols-3") 

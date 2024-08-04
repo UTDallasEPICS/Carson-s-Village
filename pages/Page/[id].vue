@@ -239,7 +239,37 @@ setImageAutoSlide()
     .relative.w-96.p-1(v-if="imageData.length != 0" )
       button.absolute.left-4.top-64.bg-black.text-white(@click="prevImage" style="opacity:0.7; --tw-text-opacity: 1; width: 46px; height: 46px; border-radius:50%; align-items: center; justify-content: center; line-height: 2; text-align: center;color: white;") &#60;
       button.absolute.right-8.top-64.bg-black.text-white(@click="nextImage" style="opacity:0.7; --tw-text-opacity: 1; width: 46px; height: 46px; border-radius:50%; align-items: center; justify-content: center; line-height: 2; text-align: center;color: white;") &#62;
-      img.w-96(style="z-index: -1; object-fit:cover;" :src="imageData[currentImage].url")
+      .text-md.text-center.ml-4.my-3(v-if="isImageGalleryOpen" = true class="popup" @click.self=isImageGalleryOpen = true;
+    class ImageGallery {
+  constructor(images = []) {
+    this.images = images;
+    this.index = 0;
+    this.isImageGalleryOpen = false;
+  }
+
+  openGallery() {
+    this.isImageGalleryOpen = true;
+    this.showImage();
+  }
+
+  nextImage() {
+    if (this.images.length === 0) return; 
+    this.index = (this.index + 1) % this.images.length; 
+    this.showImage();
+  }
+
+  previousImage() {
+    if (this.images.length === 0) return; 
+    this.index = (this.index - 1 + this.images.length) % this.images.length; 
+    this.showImage();
+  }
+
+  showImage() {
+    if (this.images.length === 0) return;
+    console.log('Displaying image:', this.images[this.index]);
+  }
+}
+      img.w-96(@click= "IsImageGalleryOpen=true" style="z-index: -1; object-fit:cover;" :src="imageData[currentImage].url")
     // services list
     .py-4.flex.flex-col.gap-5(style="font-size: 18px")
       .text-gray-dark.font-poppins.text-2xl.text-left.font-bold(style="line-height: 36px; text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") Services
