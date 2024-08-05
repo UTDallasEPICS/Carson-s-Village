@@ -308,9 +308,6 @@ setImageAutoSlide()
           .p-2.bg-white.rounded-lg.mb-2.shadow-md.pb-4(v-for="(reply,i) in replies" :key="i") 
             .ml-1.pb-4.text-lg.font-bold {{reply.name}}
             .ml-1.pt-3.pb-3.pl-5.border-l-2.border-green-500 {{reply.reply}}
-.flex(style="color:gray; font-weight: 700; justify-content:center; align-items: center; height: 100px;")
-  .col-md-8.mx-9(class="sm:col-span-1 sm:mr-11")
-      .div.px-8.py-4(style="color: #6E6E6E; font-weight: 500; font-size: 18px; line-height: 28px; letter-spacing: -0.078px; word-break: break-word;" id="obituary") {{ pageDataDB.obituary }}
 div.flex(style="color:gray; font-weight: 700; justify-content:center; align-items: center; height: 100px;")
   label SHARE THIS PAGE |&nbsp;
   .col
