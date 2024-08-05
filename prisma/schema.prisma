@@ -92,6 +92,7 @@ model PageDonation {
   pageCuid       String  @map("page_cuid")
   donorFirstName String  @default("")
   donorLastName  String  @default("")
+  donorEmail     String  @default("")
   comments       String  @default("")
   isAnonymous    Boolean @default(false)
   success        Boolean @default(false)

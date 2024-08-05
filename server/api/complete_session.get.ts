@@ -37,6 +37,16 @@ export default defineEventHandler(async event => {
         }
       })
 
+      if(query.subscribed == '1'){
+        const subscribing = await $fetch(`/api/email_list`, {
+          method: 'POST',
+          body: ({
+            email: transaction?.donorEmail,
+            first_name: transaction?.donorFirstName,
+            last_name: transaction?.donorLastName
+          })
+      })
+    }
       // rejects if the transactionid has already been completed
       // update success flag in transaction
       const checkTransaction = await prisma.pageDonation.findFirst({

@@ -120,6 +120,7 @@ export type PageDonation = {
   amount: number,
   donorFirstName: string,
   donorLastName: string,
+  donorEmail: string,
   isAnonymous: boolean,
   comments: string,
   Page: Page,

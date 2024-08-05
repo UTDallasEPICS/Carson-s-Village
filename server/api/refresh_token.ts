@@ -4,7 +4,7 @@ const runtime = useRuntimeConfig()
 const creds = runtime.CONSTANT_CONTACTS_CLIENTID + ':' + runtime.CONSTANT_CONTACTS_SECRET
 const encodedCreds = btoa(creds)
 export default defineEventHandler(async event => {
-    
+  if (event.context.user.user_role === "admin")  {
     const refreshToken = await event.context.client.CC_Token.findFirst({
         where: {
           cuid: "0"
@@ -41,5 +41,6 @@ export default defineEventHandler(async event => {
       })
 
       await sendRedirect(event, `/EmailList?success=2`)
+    }
   })
   

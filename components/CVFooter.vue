@@ -43,7 +43,7 @@ div
         img(src='/footer.png')
         img(src='/join_email_list.png' style="position: absolute; top: 20%; left: 50%; transform: translate(-50%, -50%); width: 800px; height: auto; z-index: 2;")
         div.absolute(style="position: absolute; margin-left: auto; margin-right: auto; left: 0; right: 0; top: 30%; text-align: center; width: 100%;")
-            if isSubmitted
+            div(v-if="!isSubmitted")
                 div(style="display: flex; justify-content: space-between; width: 98%;")
                     .col-md-8.mx-9(style="flex: 1; margin-right: 10px;")
                         CVInput(v-model='data.first_name' placeholder="First Name*" required)
@@ -52,7 +52,7 @@ div
                 .col-md-8.mx-9(style="width: 46.1%; margin-top: 10px;")
                     CVInput(v-model='data.email' placeholder="Email*" required)
                 button.type-button.my-4.bg-orange-999.text-white.px-4.py-2.rounded-full.w-32.grow-0(type="button" @click="submit") Submit
-            else
+            div(v-else)
                 div.absolute(style="top: 20%; left: 50%; transform: translate(-50%, -50%); text-align: center;")
                     div.text-xl.text-black.mt-4 Thank you for signing up!
         

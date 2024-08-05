@@ -55,7 +55,7 @@ export default defineEventHandler(async event => {
 			target_page_cuid: page?.cuid as string,
       comments: donorComments,
 		},
-		success_url: `${runtime.BASEURL}api/complete_session?transaction=${transaction_id}`,
+		success_url: `${runtime.BASEURL}api/complete_session?transaction=${transaction_id}&subscribing=${body._value.subscribed ? '1' : '0'}`,
 		cancel_url: `${runtime.BASEURL}page/${page_cuid}`,
 	});
 
@@ -67,6 +67,7 @@ export default defineEventHandler(async event => {
         amount: Math.trunc(parseFloat(body._value.amount as unknown as string) * 100) as number,
         donorFirstName: body._value.donorFirstName,
         donorLastName: body._value.donorLastName,
+        donorEmail: body._value.donorEmail,
         comments: donorComments, 
         donationDate: new Date().toISOString(),
         Family: {
