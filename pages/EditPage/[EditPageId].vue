@@ -290,7 +290,7 @@ CVContainer
         .bar.mx-9(style="border-top: 0.5px solid #646464;")
     br
     div
-        .information.rounded-md.my-2.text-center(class="sm:text-start text-white bg-blue-999")
+        .information.rounded-md.mx-9.my-2.text-center(class="sm:text-start text-white bg-blue-999")
             CVLegend Personal Information
         .py-4.grid(class="sm:grid-cols-3") 
             .flex
@@ -401,7 +401,7 @@ description="Here, you select from photos you uploaded to show up first on the F
             CVLabel Description
             .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
                 CVTextArea(v-model='data.donation_description' placeholder="optional")
-        .information.rounded-md.mx-9.my-2.text-center(class="sm:text-start text-white bg-blue-999")
+        .information.rounded-md.mx-9.my-2.text-center(class="sm:text-start text-white bg-blue-999" v-if="replies?.length")
             CVLegend Comment Moderation
         .py-4.grid.flex-box.flex-row.item-centered.gap-1(v-if="replies?.length" style="line-height: 0px;")
             div(class="flex")
