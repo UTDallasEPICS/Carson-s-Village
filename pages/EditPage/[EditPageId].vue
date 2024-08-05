@@ -43,13 +43,16 @@ const data = ref<Page>({
     day_of_passing: null,
     visitation_date: null,
     visitation_location: "",
+    visitation_address: "",
     visitation_description: "",
     funeral_date: null,
     funeral_description: "",
     funeral_location: "",
+    funeral_address: "",
     obituary: "",
     deadline: null,
     donation_goal: 0,
+    donation_description: "",
     amount_raised: 0,
     amount_distributed: 0,
     profileImageCuid: "",
@@ -351,6 +354,10 @@ description="Here, you select from photos you uploaded to show up first on the F
             .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
                 CVInput(v-model='data.visitation_location' placeholder="optional")
         .py-4.grid(class="sm:grid-cols-3")
+            CVLabel Address  
+            .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
+                CVInput(v-model='data.visitation_address' placeholder="optional")
+        .py-4.grid(class="sm:grid-cols-3")
             CVLabel Description
             .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
                 CVTextArea(v-model='data.visitation_description' placeholder="optional")
@@ -365,6 +372,10 @@ description="Here, you select from photos you uploaded to show up first on the F
             CVLabel Location 
             .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
                 CVInput(v-model='data.funeral_location' placeholder="optional")
+        .py-4.grid(class="sm:grid-cols-3")
+            CVLabel Address 
+            .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
+                CVInput(v-model='data.funeral_address' placeholder="optional")
         .py-4.grid(class="sm:grid-cols-3")
             CVLabel Description
             .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
@@ -386,6 +397,10 @@ description="Here, you select from photos you uploaded to show up first on the F
             CVLabel Deadline Date
             .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
                 CVDatepicker(v-model='data.deadline')
+        .py-4.grid(class="sm:grid-cols-3")
+            CVLabel Description
+            .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
+                CVTextArea(v-model='data.donation_description' placeholder="optional")
         .information.rounded-md.mx-9.my-2.text-center(class="sm:text-start text-white bg-blue-999")
             CVLegend Comment Moderation
         .py-4.grid.flex-box.flex-row.item-centered.gap-1(v-if="replies?.length" style="line-height: 0px;")

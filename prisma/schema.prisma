@@ -56,12 +56,15 @@ model Page {
   day_of_passing         DateTime?
   visitation_date        DateTime?
   visitation_location    String
+  visitation_address     String           @default("")
   visitation_description String
   funeral_date           DateTime?
   funeral_location       String
   funeral_description    String
+  funeral_address        String           @default("")
   obituary               String
   donation_goal          Int              @default(0)
+  donation_description   String           @default("")
   amount_raised          Int              @default(0)
   deadline               DateTime?
   userCuid               String           @map("user_cuid")
