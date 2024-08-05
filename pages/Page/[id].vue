@@ -299,17 +299,18 @@ setImageAutoSlide()
         .py-4.grid.gap-1(v-if="comments?.length" style="text-align: center")
             .div.py-4.grid(class="w-full" style="grid-template-columns: repeat(3, 1fr);")
                 .div(v-for="(comment, i) in comments" :key="i" class="comment-box")
-                    .comment-box(style="flex: calc(30% - 1rem); height: 10rem; width: 11rem; margin: 0.5rem; padding: 1rem; border-radius: 8px; background-color: #fff; border: 1px solid #ddd; box-shadow: 0 2px 4px rgba(0,0,0,0.05);")
-                        .div.comment-header(style="font-size: 0.75rem; font-weight: bold; margin-bottom: 1.5rem;") {{ comment.donorFirstName }} {{ comment.donorLastName }}
-                        p.comment-body(style="font-size: 0.75rem; width: fit-content; color: #666;") {{ comment.comments }}
-                        .div.comment-donation-amount(style="font-size: 0.75rem; color: #666;") Amount Donated: {{ donationFormat(comment.amount) }}
+                    .flex-auto.h-40.w-44.m-2.p-4.rounded-lg.bg-white.border-border-gray-300.shadow-md
+                        .text-xs.font-bold.mb-6 {{ comment.donorFirstName }} {{ comment.donorLastName }}
+                        .text-xs.w-fit.text-gray-600.border-l-2.border-green-500.pl-5 {{ comment.comments }}
+                        .text-xs.text-gray-600.pt-5 Amount Donated: {{ donationFormat(comment.amount) }}
         CVReplySystem(:pageCuid="id" :familyCuid="familyCuid" :replies="replies" @displayReply="displayReply")
-        .py-4.grid.flex-box.flex-row.gap-1(v-if="replies?.length" style="line-height: 0px;text-align: center")
-            div(class="flex")
-            .div(v-for="(reply,i) in replies" :key="i" class="reply-box" )
-                .px-10.reply-box(v-if="reply.reply.length > 0" style="padding: 1rem; text-align: left; border-bottom: 1px solid black") 
-                    .reply-header(style="font-size: 1rem; font-weight: bold; margin-bottom: 2.5rem; margin-left: 1rem") {{reply.name}}
-                    .reply-body(style="font-size: 1rem; color: #666; margin-bottom: 2.5rem;") {{reply.reply}}
+        .py-4.grid.row-span-3.gap-2(v-if="replies?.length")
+          .p-2.bg-white.rounded-lg.mb-2.shadow-md.pb-4(v-for="(reply,i) in replies" :key="i") 
+            .ml-1.pb-4.text-lg.font-bold {{reply.name}}
+            .ml-1.pt-3.pb-3.pl-5.border-l-2.border-green-500 {{reply.reply}}
+.flex(style="color:gray; font-weight: 700; justify-content:center; align-items: center; height: 100px;")
+  .col-md-8.mx-9(class="sm:col-span-1 sm:mr-11")
+      .div.px-8.py-4(style="color: #6E6E6E; font-weight: 500; font-size: 18px; line-height: 28px; letter-spacing: -0.078px; word-break: break-word;" id="obituary") {{ pageDataDB.obituary }}
 div.flex(style="color:gray; font-weight: 700; justify-content:center; align-items: center; height: 100px;")
   label SHARE THIS PAGE |&nbsp;
   .col
@@ -321,4 +322,8 @@ div.flex(style="color:gray; font-weight: 700; justify-content:center; align-item
   .col
     button(@click="shareMail")
         img(src="/mail_fa.png" style="width:50px; height:29px;") 
+  .col
+    p {{ "" }}
+    .col-md-8.mx-9(class="sm:col-span-1 sm:mr-11")
+        .px-8.py-4(style="color: #6E6E6E; font-weight: 500; font-size: 18px; line-height: 28px; letter-spacing: -0.078px; word-break: break-word;" id="obituary") {{ pageDataDB.obituary }}
 </template>
