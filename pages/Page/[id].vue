@@ -249,7 +249,7 @@ setImageAutoSlide()
       button.absolute.right-8.top-64.bg-black.text-white(@click="nextImage" style="opacity:0.7; --tw-text-opacity: 1; width: 46px; height: 46px; border-radius:50%; align-items: center; justify-content: center; line-height: 2; text-align: center;color: white;") &#62;
       .text-md.text-center.ml-4.my-3(v-if="isImageGalleryOpen = true" class="popup" @click.self="isImageGalleryOpen = true;")
       img.w-96(style="z-index: -1; object-fit:cover;" :src="imageData[currentImage].url")
-      div class="image-container"
+      div(class="image-container")
             img(v-for="(image, index) in imageData" :src="image.url"
           @click= "showPreview(image)")
 
@@ -329,8 +329,8 @@ div.flex(style="color:gray; font-weight: 700; justify-content:center; align-item
     p {{ "" }}
     .col-md-8.mx-9(class="sm:col-span-1 sm:mr-11")
         .div.px-8.py-4(style="color: #6E6E6E; font-weight: 500; font-size: 18px; line-height: 28px; letter-spacing: -0.078px; word-break: break-word;" id="obituary") {{ pageDataDB.obituary }}
-
-  <style>
+</template>
+<style scoped>
   .image-container {
       display: flex;
       flex-wrap: wrap;
