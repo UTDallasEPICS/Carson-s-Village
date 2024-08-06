@@ -14,7 +14,7 @@ const data = ref<EmailListUser>({
 });
 
 const isSubmitted = ref(false);
-console.log(isSubmitted.value)
+//console.log(isSubmitted.value)
 
 const submit = async () => {
     const response = await $fetch<{ success: boolean }>('/api/email_list', {
@@ -27,13 +27,13 @@ const submit = async () => {
     if (response?.success) {
         isSubmitted.value = true;
         console.log('Data submitted successfully.');
-        console.log("Submit?", isSubmitted.value)
+        //console.log("Submit?", isSubmitted.value)
     } else {
         console.error('Error submitting data.');
     }
 }
 
-console.log("Submitted?", isSubmitted.value)
+//console.log("Submitted?", isSubmitted.value)
 
 </script>
 

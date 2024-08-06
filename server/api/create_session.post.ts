@@ -59,7 +59,7 @@ export default defineEventHandler(async event => {
 		cancel_url: `${runtime.BASEURL}page/${page_cuid}`,
 	});
 
-	console.log(body._value)
+	//console.log(body._value)
 
     const queryRes = await prisma.pageDonation.create({
       data: {

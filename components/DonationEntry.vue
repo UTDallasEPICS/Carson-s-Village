@@ -43,7 +43,7 @@ const donationData = ref<PageDonation>({
 
 const stripeLink_ref = ref("")
 const create_checkout_session = async () => {
-    console.log(feeRecovery.value)
+    //console.log(feeRecovery.value)
     if(feeRecovery.value) {
       donationData.value.amount = donationData.value.amount * 100 // converting to cents for better accuracy 
       donationData.value.amount = 1.029 * donationData.value.amount + 0.30
@@ -53,7 +53,7 @@ const create_checkout_session = async () => {
         donationData.value.donorFirstName = "anonymous"
         donationData.value.donorLastName = ""
     }
-    console.log(anonymous.value)
+    //console.log(anonymous.value)
     // todo: depreciate
     const donorData = {
         first_name: donationData.value.donorFirstName,
