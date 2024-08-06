@@ -55,11 +55,11 @@ export default defineEventHandler(async event => {
 			target_page_cuid: page?.cuid as string,
       comments: donorComments,
 		},
-		success_url: `${runtime.BASEURL}api/complete_session?transaction=${transaction_id}&subscribing=${body._value.subscribed ? '1' : '0'}`,
+		success_url: `${runtime.BASEURL}api/complete_session?transaction=${transaction_id}&subscribing=${body.subscribed ? '1' : '0'}`,
 		cancel_url: `${runtime.BASEURL}page/${page_cuid}`,
 	});
 
-	//console.log(body._value)
+	console.log(body.subscribed)
 
     const queryRes = await prisma.pageDonation.create({
       data: {

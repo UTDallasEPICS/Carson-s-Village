@@ -37,7 +37,9 @@ export default defineEventHandler(async event => {
         }
       })
 
-      if(query.subscribed == '1'){
+      console.log(query.subscribing as string)
+
+      if(query.subscribing as string == '1'){
         const subscribing = await $fetch<{ success: boolean }>(`/api/email_list`, {
           method: 'POST',
           body: ({
