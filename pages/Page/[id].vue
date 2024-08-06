@@ -195,6 +195,14 @@ const prevImage = () => {
     }
 }
 
+const previewImage = ref("")
+const showPreview = (image: Image) => {
+  previewImage.value = image.url
+}
+
+const closePreview = () => {
+  previewImage.value = ''
+}
 // Recursively moves to the next image every 5 seconds
 const setImageAutoSlide = () => {
   nextImage()
@@ -239,37 +247,18 @@ setImageAutoSlide()
     .relative.w-96.p-1(v-if="imageData.length != 0" )
       button.absolute.left-4.top-64.bg-black.text-white(@click="prevImage" style="opacity:0.7; --tw-text-opacity: 1; width: 46px; height: 46px; border-radius:50%; align-items: center; justify-content: center; line-height: 2; text-align: center;color: white;") &#60;
       button.absolute.right-8.top-64.bg-black.text-white(@click="nextImage" style="opacity:0.7; --tw-text-opacity: 1; width: 46px; height: 46px; border-radius:50%; align-items: center; justify-content: center; line-height: 2; text-align: center;color: white;") &#62;
-      .text-md.text-center.ml-4.my-3(v-if="isImageGalleryOpen" = true class="popup" @click.self=isImageGalleryOpen = true;
-    class ImageGallery {
-  constructor(images = []) {
-    this.images = images;
-    this.index = 0;
-    this.isImageGalleryOpen = false;
-  }
+      .text-md.text-center.ml-4.my-3(v-if="isImageGalleryOpen = true" class="popup" @click.self="isImageGalleryOpen = true;")
+      img.w-96(style="z-index: -1; object-fit:cover;" :src="imageData[currentImage].url")
+      div class="image-container"
+            img(v-for="(image, index) in imageData" 
+          @click= "showPreview(image)")
 
-  openGallery() {
-    this.isImageGalleryOpen = true;
-    this.showImage();
-  }
+      div(class="modal" v-if="previewImage")
+          span(class="close"
+          @click="closePreview"
+          ) &times;
+          img(:src="previewImage" alt="Preview")
 
-  nextImage() {
-    if (this.images.length === 0) return; 
-    this.index = (this.index + 1) % this.images.length; 
-    this.showImage();
-  }
-
-  previousImage() {
-    if (this.images.length === 0) return; 
-    this.index = (this.index - 1 + this.images.length) % this.images.length; 
-    this.showImage();
-  }
-
-  showImage() {
-    if (this.images.length === 0) return;
-    console.log('Displaying image:', this.images[this.index]);
-  }
-}
-      img.w-96(@click= "IsImageGalleryOpen=true" style="z-index: -1; object-fit:cover;" :src="imageData[currentImage].url")
     // services list
     .py-4.flex.flex-col.gap-5(style="font-size: 18px")
       .text-gray-dark.font-poppins.text-2xl.text-left.font-bold(style="line-height: 36px; text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") Services
@@ -340,4 +329,53 @@ div.flex(style="color:gray; font-weight: 700; justify-content:center; align-item
     p {{ "" }}
     .col-md-8.mx-9(class="sm:col-span-1 sm:mr-11")
         .div.px-8.py-4(style="color: #6E6E6E; font-weight: 500; font-size: 18px; line-height: 28px; letter-spacing: -0.078px; word-break: break-word;" id="obituary") {{ pageDataDB.obituary }}
-</template>
+
+  <style>
+  .image-container {
+      display: flex;
+      flex-wrap: wrap;
+  }
+
+  .image-container img {
+      width: 200px;
+      height: 200px;
+      margin: 10px;
+      cursor: pointer;
+  }
+
+  .modal {
+      display: block;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0, 0, 0, 0.8);
+  }
+
+  .modal img {
+      margin: auto;
+      display: block;
+      max-width: 80%;
+      max-height: 80%;
+  }
+
+  .close {
+      color: #fff;
+      position: absolute;
+      top: 15px;
+      right: 35px;
+      font-size: 30px;
+      cursor: pointer;
+  }
+
+  .close:hover,
+  .close:focus {
+      color: #ccc;
+      text-decoration: none;
+      cursor: pointer;
+  }
+</style>
+
