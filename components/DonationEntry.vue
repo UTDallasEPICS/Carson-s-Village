@@ -22,6 +22,7 @@ const props = defineProps({
 
 const feeRecovery = ref(false)
 const anonymous = ref(false)
+const subscribing = ref(true)
 
 const donationData = ref<PageDonation>({
     amount: 5,
@@ -32,6 +33,7 @@ const donationData = ref<PageDonation>({
     transaction_id: "",
     donorFirstName: "",
     donorLastName: "",
+    donorEmail: "",
     comments: "",
     donationDate: null,
     Page: ref<Page[]>([]).value[0],
@@ -41,7 +43,7 @@ const donationData = ref<PageDonation>({
 
 const stripeLink_ref = ref("")
 const create_checkout_session = async () => {
-    console.log(feeRecovery.value)
+    //console.log(feeRecovery.value)
     if(feeRecovery.value) {
       donationData.value.amount = donationData.value.amount * 100 // converting to cents for better accuracy 
       donationData.value.amount = 1.029 * donationData.value.amount + 0.30
@@ -51,7 +53,7 @@ const create_checkout_session = async () => {
         donationData.value.donorFirstName = "anonymous"
         donationData.value.donorLastName = ""
     }
-    console.log(anonymous.value)
+    //console.log(anonymous.value)
     // todo: depreciate
     const donorData = {
         first_name: donationData.value.donorFirstName,
@@ -62,12 +64,12 @@ const create_checkout_session = async () => {
     const sessionInfo = await $fetch('/api/create_session', {
 
         method: 'POST',
-        body: { ...donationData, cuid: props.pageCuid, family_cuid: props.familyCuid, amount_raised: Math.trunc(parseFloat(donationData.value.amount as unknown as string) * 100) as number}
+        body: { ...donationData, cuid: props.pageCuid, family_cuid: props.familyCuid, amount_raised: Math.trunc(parseFloat(donationData.value.amount as unknown as string) * 100) as number, subscribed: subscribing.value}
     });
+
     stripeLink_ref.value = sessionInfo as string
     await navigateTo(stripeLink_ref.value as string,  { external: true } )
 };
-
 
 </script>
 
@@ -76,6 +78,11 @@ const create_checkout_session = async () => {
     CVInput(name='first_name' type='text' v-model="donationData.donorFirstName" placeholder='First Name' required)
 .col-md-8.ml-4.pt-1.pr-5(class="sm:mx-4 sm:w-full sm:py-2")
     CVInput(name='last_name' type='text' v-model="donationData.donorLastName" placeholder='Last Name' required)
+.col-md-8.ml-4.pt-1.pr-5(class="sm:mx-4 sm:w-full sm:py-2")
+    CVInput(name='email' type='text' v-model="donationData.donorEmail" placeholder='Email' required)
+.col-md-8.ml-4.pt-4.pr-5.flex
+    input#subscribing(type='checkbox' class="sm:ml-1" name='subscribing' v-model="subscribing")
+    label.mt-4.ml-4.text-md(for='subscribing' class="sm:mt-0" style="letter-spacing: 0.35px;")  Subscribe to our email list
 .col-md-8.ml-4.pt-4.pr-5.flex
     input#anonymous(type='checkbox' class="sm:ml-1" name='anonymous' v-model="anonymous")
     label.mt-4.ml-4.text-md(for='anonymous' class="sm:mt-0" style="letter-spacing: 0.35px;")  Make this an anonymous donation

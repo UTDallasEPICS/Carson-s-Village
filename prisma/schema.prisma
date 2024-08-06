@@ -95,6 +95,7 @@ model PageDonation {
   pageCuid       String  @map("page_cuid")
   donorFirstName String  @default("")
   donorLastName  String  @default("")
+  donorEmail     String  @default("")
   comments       String  @default("")
   isAnonymous    Boolean @default(false)
   success        Boolean @default(false)
@@ -105,6 +106,13 @@ model PageDonation {
   Page           Page    @relation(fields: [pageCuid], references: cuid)
 
   @@map("page_donations")
+}
+
+model CC_Token {
+  cuid     String @id @default("0")
+  token    String
+  refresh_token String
+  date     DateTime  @default(now())
 }
 
 model Reply {

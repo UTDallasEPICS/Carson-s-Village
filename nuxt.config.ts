@@ -3,6 +3,8 @@ export default defineNuxtConfig({
   runtimeConfig: {
     AUTH0_CLIENTID: '',
     AUTH0_SECRET: '',
+    CONSTANT_CONTACTS_CLIENTID: '',
+    CONSTANT_CONTACTS_SECRET: '',
     BASEURL: 'asd',
     ISSUER: '',
     STRIPE_PUBLIC: '',
