@@ -85,7 +85,7 @@ CVContainer
         .py-4.grid(class="sm:grid-cols-3")
             CVLabel Email
             CVHelpButton(class="inline-block" 
-    description=
+    description="")
             .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
                 CVInput(v-model='data_user.email' type="email" placeholder="(user defined)" required)
         .py-4.grid(class="sm:grid-cols-3")
@@ -103,7 +103,7 @@ CVContainer
         .py-4.grid(class="sm:grid-cols-3")
             CVLabel Phone
             CVHelpButton(class="inline-block" 
-    description=
+    description="")
             .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
                 CVInput(v-model='data_user.phone' placeholder="(user defined, optional)")
         .py-4.grid(class="sm:grid-cols-3")
