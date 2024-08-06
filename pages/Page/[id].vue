@@ -250,7 +250,7 @@ setImageAutoSlide()
       .text-md.text-center.ml-4.my-3(v-if="isImageGalleryOpen = true" class="popup" @click.self="isImageGalleryOpen = true;")
       img.w-96(style="z-index: -1; object-fit:cover;" :src="imageData[currentImage].url")
       div class="image-container"
-            img(v-for="(image, index) in imageData" 
+            img(v-for="(image, index) in imageData" :src="image.url"
           @click= "showPreview(image)")
 
       div(class="modal" v-if="previewImage")
