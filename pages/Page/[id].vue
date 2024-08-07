@@ -302,11 +302,11 @@ setImageAutoSlide()
             .text-xs.font-bold.mb-6 {{ comment.donorFirstName }} {{ comment.donorLastName }}
             .text-xs.w-fit.text-gray-600.border-l-2.border-green-500.pl-5 {{ comment.comments }}
             .text-xs.text-gray-600.pt-5 Amount Donated: {{ donationFormat(comment.amount) }}
-CVReplySystem(:pageCuid="id" :familyCuid="familyCuid" :replies="replies" @displayReply="displayReply")
+  CVReplySystem(:pageCuid="id" :familyCuid="familyCuid" :replies="replies" @displayReply="displayReply")
   .py-4.grid.row-span-3.gap-2(v-if="replies?.length")
-    .p-2.bg-white.rounded-lg.mb-2.shadow-md.pb-4(v-for="(reply,i) in replies" :key="i") 
-      .ml-1.pb-4.text-lg.font-bold {{reply.name}}
-      .ml-1.pt-3.pb-3.pl-5.border-l-2.border-green-500 {{reply.reply}}
+      .p-2.bg-white.rounded-lg.mb-2.shadow-md.pb-4(v-for="(reply,i) in replies" :key="i") 
+        .ml-1.pb-4.text-lg.font-bold {{reply.name}}
+        .ml-1.pt-3.pb-3.pl-5.border-l-2.border-green-500 {{reply.reply}}
 div.flex(style="color:gray; font-weight: 700; justify-content:center; align-items: center; height: 100px;")
   label SHARE THIS PAGE |&nbsp;
   .col

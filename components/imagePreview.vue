@@ -75,7 +75,7 @@ const saveImage = async (theImage: Image) => {
     div(v-if="images.length !=0" style='position: relative;') 
         img.cursor-pointer.object-cover.align-middle.rounded-lg(class="w-40 sm:w-64" :src = "previewImage?.url")
         .absolute(style='top: 10px; right: 150px')
-            button.bg-red-500(class='w-40 sm:64' style="align-items: center;justify-content: center; line-height: 1;text-align: center; color: white; font-weight: 450; positon: absolute; top:0px; left: 0px; width: 30px; height: 2rem; border-radius: 50%; padding-bottom: 4px;" @click = "removeImage(previewCuid, true)") x
+            button.bg-red-500(class='w-40 sm:64' style="align-items: center;justify-content: center; line-height: 1;text-align: center; color: white; font-weight: 450; positon: absolute; top:0px; left: 0px; width: 30px; height: 2rem; border-radius: 50%; padding-bottom: 4px; background-color: red;" @click = "removeImage(previewCuid, true)") x
     a.ml-10.pt-1(style="text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") Image Upload
         ImageUpload(@imageUploaded="saveImage" :pageCuid="props.pageCuid")
 .py-4.grid.flex-box.flex-row.item-centered.gap-1(v-if="images.length!= 0" class="sm:grid-cols-3" style="line-height: 0px;text-align: center")
@@ -84,7 +84,7 @@ const saveImage = async (theImage: Image) => {
             .div(v-for="(image,i) in images" :key="i" style="flex-shrink: 0; position: relative;") 
                 img.object-cover.align-middle.rounded-lg.cursor-pointer(class="w-40 sm:w-64" style="margin-right:5px" :src = "image.url" @click="previewCuid = image.cuid")
                 .form-horizontal(style='position: absolute; top: 10px; right: 10px')
-                    button.bg-red-500(style="align-items: center;justify-content: center;line-height: 2;text-align: center ; color: white; font-weight: 300; positon: absolute; top:0px; left: 0px; width: 30px; height: 2rem; border-radius: 50%; padding-bottom: 4px;" @click = "removeImage(image.cuid, false)") x
+                    button.bg-red-500(style="align-items: center;justify-content: center;line-height: 2;text-align: center ; color: white; font-weight: 300; positon: absolute; top:0px; left: 0px; width: 30px; height: 2rem; border-radius: 50%; padding-bottom: 4px; background-color:red;" @click = "removeImage(image.cuid, false)") x
 </template>
 
 <style scoped></style>
