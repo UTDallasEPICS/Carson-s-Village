@@ -116,13 +116,14 @@ model CC_Token {
 }
 
 model Reply {
-  cuid       String  @id @default(cuid())
-  pageCuid   String  @map("page_cuid")
-  familyCuid String  @map("family_cuid")
-  reply      String  @default("")
-  name       String? @default("")
-  Page       Page    @relation(fields: [pageCuid], references: cuid)
-  suspended  Boolean @default(false)
+  cuid       String   @id @default(cuid())
+  pageCuid   String   @map("page_cuid")
+  familyCuid String   @map("family_cuid")
+  reply      String   @default("")
+  name       String?  @default("")
+  Page       Page     @relation(fields: [pageCuid], references: cuid)
+  suspended  Boolean  @default(false)
+  date       DateTime 
 }
 
 model Image {
