@@ -295,8 +295,8 @@ setImageAutoSlide()
         .div.px-10.py-4(style="color: #6E6E6E; font-weight: 500; font-size: 18px; line-height: 28px; letter-spacing: -0.078px; word-break: break-word;" id="obituary") {{ pageDataDB.obituary }}
 
 //.container(class="sm:overflow-hidden sm:w-3/4 sm:mt-4 sm:mx-auto sm:place-content-center sm:max-w-xl sm:p-6 sm:rounded-card sm:shadow-card")
-.py-4.grid.gap-1(v-if="comments?.length" style="text-align: left")
-  .div.py-4.grid(class="w-full justify-center" style="grid-template-columns: repeat(3, 12rem);")
+.py-4.grid.gap-1(style="text-align: left")
+  .div.py-4.grid(v-if="comments?.length" class="w-full justify-center" style="grid-template-columns: repeat(3, 12rem);")
     .div(v-for="(comment, i) in comments" :key="i" class="comment-box")
         .flex-auto.h-40.w-44.m-2.p-4.rounded-lg.bg-white.border-border-gray-300.shadow-md
             .text-xs.font-bold.mb-6 {{ comment.donorFirstName }} {{ comment.donorLastName }}
