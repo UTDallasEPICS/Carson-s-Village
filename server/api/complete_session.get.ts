@@ -37,6 +37,26 @@ export default defineEventHandler(async event => {
         }
       })
 
+      console.log(query.subscribing as string)
+
+      if(query.subscribing as string == '1'){
+        const subscribing = await $fetch<{ success: boolean }>(`/api/email_list`, {
+          method: 'POST',
+          body: ({
+            email: transaction?.donorEmail,
+            first_name: transaction?.donorFirstName,
+            last_name: transaction?.donorLastName
+          })
+        }).catch((error) => {
+          console.error('Error submitting data:', error);
+        });
+
+        if (subscribing?.success) {
+          console.log('Data submitted successfully.');
+      } else {
+          console.error('Error submitting data.');
+      }
+      }
       // rejects if the transactionid has already been completed
       // update success flag in transaction
       const checkTransaction = await prisma.pageDonation.findFirst({
@@ -67,7 +87,7 @@ export default defineEventHandler(async event => {
           if(transaction.Page.donation_status == "Successful") {
             duration = transaction.Page.duration
           }
-          console.log(duration)
+          //console.log(duration)
           
         await prisma.$transaction([
           prisma.pageDonation.update({

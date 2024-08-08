@@ -25,7 +25,7 @@ const data_user = ref<User>({
     last_name: "",
     email: "",
     middle_name: "",
-    user_role: "",
+    user_role: "family",
     phone: "",
     address: "",
     Pages: [],
@@ -68,6 +68,7 @@ const isAuthorized = computed(() => { cvuser.value?.user_role as string == "advo
 const isAdmin = computed(() => cvuser.value?.user_role as string == "admin")
 const cuid = computed(() => router.params.id as string);
 const errorInPage = ref(false);
+const errorToUser = ref("")
 
 // Method that creates a new user on the database on the backend
 const save = async () => {
@@ -76,12 +77,16 @@ const save = async () => {
       method: (cuid.value as string) !== "0" ? 'PUT' : 'POST',
       body: ({ ...data_user.value, familyCuid: familyCuid.value, cuid: cuid.value as string })
 
-    })
-    if(data == true){
+    }).catch((error) => {
+        errorInPage.value = true 
+        console.log(error.data.message);
+        errorToUser.value = error.data.message
+    });
+    console.log(data)
+    if(data?.success){
         errorInPage.value = false;
+        errorToUser.value = ""
         await navigateTo('/Users')
-    } else {
-        errorInPage.value = true;
     }
   }
 
@@ -169,8 +174,10 @@ CVContainer
                 CVInput(v-model='data_user.address' placeholder="(user defined, optional)")
             .col-md-10.py-2
                 ActionButton(@click="save" class="transition duration-300 bg-orange-999 hover:bg-green-600") Save    
-        .py-4.grid(class="sm:grid-cols-3" Style="color:red" v-if="errorInPage")
-            CVLabel Error in Creating User in the system.
+        .div.text-red-500( v-if="errorInPage")    
+            CVLabel Error in Creating User in the system. 
+            br
+            CVLabel {{ errorToUser }}
 </template>
 
 <style scoped></style>

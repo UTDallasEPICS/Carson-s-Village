@@ -29,3 +29,24 @@ export function donationFormat(amount = 0){
     currency: "usd"
   })
 }
+
+export function longDateFormat(date: string, justTime = false) {
+  if(date === "") {
+    return ""
+  }
+  if(date == null) {
+    return ""
+  }
+  
+  const options: Intl.DateTimeFormatOptions = {    
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  }; 
+  
+  const dateObj = new Date(date);
+  if(justTime) return dateObj.toLocaleTimeString()
+  return dateObj.toLocaleDateString(undefined, options);
+}
+
