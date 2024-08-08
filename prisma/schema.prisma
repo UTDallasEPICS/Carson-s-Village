@@ -123,6 +123,7 @@ model Reply {
   name       String?  @default("")
   Page       Page     @relation(fields: [pageCuid], references: cuid)
   suspended  Boolean  @default(false)
+  date       DateTime @default(now())
 }
 
 model Image {

@@ -112,7 +112,7 @@ export default defineEventHandler(async event => {
                     const accountLink = await stripe.accountLinks.create({
                         account: stripeAccountId,
                         refresh_url: `${runtime.BASEURL}`,
-                        return_url: `${runtime.BASEURL}/api/complete_onboarding/?stripe_account_id=${stripeAccountId}`,
+                        return_url: `${runtime.BASEURL}api/complete_onboarding?stripe_account_id=${stripeAccountId}`,
                         type: 'account_onboarding',
                     });
                     
@@ -128,7 +128,7 @@ export default defineEventHandler(async event => {
             const accountLink = await stripe.accountLinks.create({
                 account: id,
                 refresh_url: `${runtime.BASEURL}`,
-                return_url: `${runtime.BASEURL}/api/complete_onboarding/?stripe_account_id=${id}`,
+                return_url: `${runtime.BASEURL}api/complete_onboarding?stripe_account_id=${id}`,
                 type: 'account_onboarding',
             });
             return await sendRedirect(event, accountLink.url);
