@@ -192,6 +192,12 @@ This system is focused around advocates, families, and pages. Advocates invite f
 
 # Functional Requirements
 
+## Email List
+  - Authorize token button which initiates initial integration
+  - Refresh token button which adds new token to database if expired
+  - Shows success message when either operation is completed
+  - Constant Contacts is used to connect to Carson's Village email list database
+
 ## Edit Page
  - Logged in users can create pages with the following properties filled in:
   - Name
