@@ -54,7 +54,6 @@ model Page {
   cuid                   String           @id @default(cuid())
   day_of_birth           DateTime?
   day_of_passing         DateTime?
-  age                    Int?
   visitation_date        DateTime?
   visitation_location    String
   visitation_address     String           @default("")
