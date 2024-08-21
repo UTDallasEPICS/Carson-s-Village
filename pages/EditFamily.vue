@@ -76,14 +76,10 @@ CVContainer
         br
         .py-4.grid(class="sm:grid-cols-3")
             CVLabel Family Name
-            CVHelpButton(class="inline-block" 
-    description="The family name of the recently decreased person should be enter here")
             .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
                 CVInput(v-model='data_family.family_name' placeholder="(user defined)" required)
         .py-4.grid(class="sm:grid-cols-3")
             CVLabel Email
-            CVHelpButton(class="inline-block" 
-    description=
             .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
                 CVInput(v-model='data_user.email' type="email" placeholder="(user defined)" required)
         .py-4.grid(class="sm:grid-cols-3")
@@ -100,8 +96,6 @@ CVContainer
                 CVInput(v-model='data_user.last_name' placeholder="(user-defined)" required)
         .py-4.grid(class="sm:grid-cols-3")
             CVLabel Phone
-            CVHelpButton(class="inline-block" 
-    description=
             .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
                 CVInput(v-model='data_user.phone' placeholder="(user defined, optional)")
         .py-4.grid(class="sm:grid-cols-3")
