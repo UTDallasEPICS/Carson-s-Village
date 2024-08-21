@@ -340,16 +340,3 @@ div.flex(style="color:gray; font-weight: 700; justify-content:center; align-item
   .col
     p {{ "" }}
 </template>
-
-<style scoped>
-
-    .close {
-    }
-
-    .close:hover,
-    .close:focus {
-        color: rgb(204, 204, 204);
-        text-decoration: none;
-        cursor: pointer;
-    }
-</style> 
