@@ -24,7 +24,6 @@ const pageData = ref<Page>({
     page_last_name: "",
     day_of_birth: null,
     day_of_passing: null,
-    age: null,
     visitation_date: null,
 
     visitation_location: "",
@@ -228,7 +227,7 @@ setImageAutoSlide()
 <template lang="pug">
 // donation popup
 .div.flex(@click.self="DisplayDonationPopup=false" v-if="DisplayDonationPopup" style="z-index: 10; align-items: center; justify-content: center; position: fixed; top: 0; bottom: 0; left: 0; right: 0; background: rgba(0, 0, 0, 0.7);")
-  .mx-auto.flex.p-2(style="width:50%; background-color:#fff;")
+  .mx-auto.flex.p-2.bg-white(class="w-1/2")
     DonationEntryPopup(@Exit="exitPopup" :amount_raised="pageDataDB.amount_raised" :donation_goal="pageDataDB.donation_goal" :donation_goal_provided="donation_goal_provided" :donated_percentage="donated_percentage" :isActive="isActive" :donationData="donationData" :pageCuid="pageCuid" :familyCuid="familyCuid")  
 
 // the header overlay with image and name
@@ -242,34 +241,29 @@ setImageAutoSlide()
 .flex.flex-col.gap-5.px-4.mx-auto.mt-8(class="w-3/4 sm:px-16")
   img.mx-auto(v-if="profileImage?.url" class="w-[122px] h-[122px] rounded-[8px]" :src="`${profileImage?.url}`")
   .text-gray-dark.mx-auto.w-max.font-poppins.text-md {{ dateFormat(pageDataDB.day_of_birth, true) + ((pageDataDB.day_of_birth || pageDataDB.day_of_passing) ? ' - ' : '') + dateFormat(pageDataDB.day_of_passing, true) }} 
-  .text-gray-dark.mx-auto.w-max.font-poppins.text-md {{ "Age:" + pageDataDB.age}} 
   .flex.flex-col-reverse.gap-5(class="sm:grid sm:grid-cols-2")
     .relative.w-96.p-1(v-if="imageData.length != 0" )
       button.absolute.left-4.top-64.bg-black.text-white(@click="prevImage" style="opacity:0.7; --tw-text-opacity: 1; width: 46px; height: 46px; border-radius:50%; align-items: center; justify-content: center; line-height: 2; text-align: center;color: white;") &#60;
       button.absolute.right-8.top-64.bg-black.text-white(@click="nextImage" style="opacity:0.7; --tw-text-opacity: 1; width: 46px; height: 46px; border-radius:50%; align-items: center; justify-content: center; line-height: 2; text-align: center;color: white;") &#62;
-      .text-md.text-center.ml-4.my-3(v-if="isImageGalleryOpen = true" class="popup" @click.self="isImageGalleryOpen = true;")
-      img.w-96(style="z-index: -1; object-fit:cover;" :src="imageData[currentImage].url")
-      div class="image-container"
-            img(v-for="(image, index) in imageData" :src="image.url"
-          @click= "showPreview(image)")
-
-      div(class="modal" v-if="previewImage")
-          span(class="close"
+      img.w-96.cursor-pointer(style="z-index: -1; object-fit: cover;" @click="showPreview(profileImage)" :src="imageData[currentImage].url")     
+      div(class="w-full h-full overflow-auto block fixed left-0 top-0" style="z-index: 1000; background-color: rgba(0, 0, 0, 0.8);" v-if="previewImage" @click.self="closePreview")
+        img.py-2(v-for="(image, index) in imageData" class="block max-w-[80%] max-h-[80%] m-auto"
+              :key="index" :src="image.url")
+        span.absolute.cursor-pointer(class="top-[15px] right-[35px] text-[30px] transition duration-300 text-gray-400 hover:text-white cursor-pointer focus:text-white cursor-pointer"  
           @click="closePreview"
           ) &times;
-          img(:src="previewImage" alt="Preview")
-
-    // services list
-    .py-4.flex.flex-col.gap-5(style="font-size: 18px")
-      .text-gray-dark.font-poppins.text-2xl.text-left.font-bold(style="line-height: 36px; text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") Services
-      .flex.flex-col.gap-5(class="lg:grid lg:grid-cols-2")
-        .flex.flex-col.gap-5(v-if="pageDataDB.visitation_date")
-          .text-gray-dark.font-poppins.text-2xl.text-left.font-bold(style="line-height: 36px; text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") Visitation
-          .flex.gap-5
-            .font-outfit {{ "Date:" }}
-            .font-outfit {{ dateFormat(pageDataDB.visitation_date, true) }}
-          .flex.gap-5
-            .font-outfit {{ "Location:" }}
+  // services list
+  .col-span-1(class="sm:grid-cols-2").pt-5.pl-5.pr-15
+        .flex.flex-col(v-if="pageDataDB.visitation_date").pb-5.pr-15
+          .text-gray-dark.font-poppins.text-3xl.text-left.font-bold(style="line-height: 10px; justify-content: start; text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") Visitation
+          .flex.row.gap-2.pt-2
+            .font-outfit.flex-col.font-bold {{ "Date:" }}
+            .font-outfit {{ longDateFormat(pageDataDB.visitation_date) }}
+          .flex.row.gap-2
+            .font-outfit.font-bold {{ "Time:" }}
+            .font-outfit.gap-y-5 {{ longDateFormat(pageDataDB.visitation_date, true) }}
+          .flex.row.gap-2
+            .font-outfit.font-bold {{ "Location:" }}
             .font-outfit.whitespace-normal {{ pageDataDB.visitation_location ? pageDataDB.visitation_location : "TBD" }}
           .font-outfit {{ pageDataDB.visitation_description }}
         .flex.flex-col.gap-5(v-else)
@@ -327,55 +321,17 @@ div.flex(style="color:gray; font-weight: 700; justify-content:center; align-item
         img(src="/mail_fa.png" style="width:50px; height:29px;") 
   .col
     p {{ "" }}
-    .col-md-8.mx-9(class="sm:col-span-1 sm:mr-11")
-        .div.px-8.py-4(style="color: #6E6E6E; font-weight: 500; font-size: 18px; line-height: 28px; letter-spacing: -0.078px; word-break: break-word;" id="obituary") {{ pageDataDB.obituary }}
+</template>
 
-  <style>
-  .image-container {
-      display: flex;
-      flex-wrap: wrap;
-  }
+<style scoped>
 
-  .image-container img {
-      width: 200px;
-      height: 200px;
-      margin: 10px;
-      cursor: pointer;
-  }
+    .close {
+    }
 
-  .modal {
-      display: block;
-      position: fixed;
-      z-index: 1000;
-      left: 0;
-      top: 0;
-      width: 100%;
-      height: 100%;
-      overflow: auto;
-      background-color: rgba(0, 0, 0, 0.8);
-  }
-
-  .modal img {
-      margin: auto;
-      display: block;
-      max-width: 80%;
-      max-height: 80%;
-  }
-
-  .close {
-      color: #fff;
-      position: absolute;
-      top: 15px;
-      right: 35px;
-      font-size: 30px;
-      cursor: pointer;
-  }
-
-  .close:hover,
-  .close:focus {
-      color: #ccc;
-      text-decoration: none;
-      cursor: pointer;
-  }
-</style>
-
+    .close:hover,
+    .close:focus {
+        color: rgb(204, 204, 204);
+        text-decoration: none;
+        cursor: pointer;
+    }
+</style> 
