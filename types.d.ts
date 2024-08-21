@@ -58,13 +58,16 @@ export type Page = {
     day_of_passing: Date | string | null,
     visitation_date: Date | string | null,
     visitation_location: string,
+    visitation_address: string,
     visitation_description: string,
     funeral_date: Date | string | null,
     funeral_description: string,
     funeral_location: string,
+    funeral_address: string,
     obituary: string,
     deadline: Date | string | null,
     donation_goal: number | string
+    donation_description: string,
     amount_raised: number | string
     amount_distributed: number | string
     profileImageCuid: string
@@ -121,6 +124,7 @@ export type PageDonation = {
   amount: number,
   donorFirstName: string,
   donorLastName: string,
+  donorEmail: string,
   isAnonymous: boolean,
   comments: string,
   Page: Page,

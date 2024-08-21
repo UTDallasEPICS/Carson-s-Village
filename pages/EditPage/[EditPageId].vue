@@ -44,13 +44,16 @@ const data = ref<Page>({
     age: null,
     visitation_date: null,
     visitation_location: "",
+    visitation_address: "",
     visitation_description: "",
     funeral_date: null,
     funeral_description: "",
     funeral_location: "",
+    funeral_address: "",
     obituary: "",
     deadline: null,
     donation_goal: 0,
+    donation_description: "",
     amount_raised: 0,
     amount_distributed: 0,
     profileImageCuid: "",
@@ -288,7 +291,7 @@ CVContainer
         .bar.mx-9(style="border-top: 0.5px solid #646464;")
     br
     div
-        .information.rounded-md.my-2.text-center(class="sm:text-start text-white bg-blue-999")
+        .information.rounded-md.mx-9.my-2.text-center(class="sm:text-start text-white bg-blue-999")
             CVLegend Personal Information
         .py-4.grid(class="sm:grid-cols-3") 
             .flex
@@ -367,6 +370,10 @@ description="Here, you select from photos you uploaded to show up first on the F
             .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
                 CVInput(v-model='data.visitation_location' placeholder="optional")
         .py-4.grid(class="sm:grid-cols-3")
+            CVLabel Address  
+            .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
+                CVInput(v-model='data.visitation_address' placeholder="optional")
+        .py-4.grid(class="sm:grid-cols-3")
             CVLabel Description
             .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
                 CVTextArea(v-model='data.visitation_description' placeholder="optional")
@@ -385,6 +392,10 @@ description="Here, you select from photos you uploaded to show up first on the F
          description="Here, the location of the recently deceased person should be entered here")
             .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
                 CVInput(v-model='data.funeral_location' placeholder="optional")
+        .py-4.grid(class="sm:grid-cols-3")
+            CVLabel Address 
+            .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
+                CVInput(v-model='data.funeral_address' placeholder="optional")
         .py-4.grid(class="sm:grid-cols-3")
             CVLabel Description
             .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
@@ -410,7 +421,11 @@ description="Here, you select from photos you uploaded to show up first on the F
             CVLabel Deadline Date
             .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
                 CVDatepicker(v-model='data.deadline')
-        .information.rounded-md.mx-9.my-2.text-center(class="sm:text-start text-white bg-blue-999")
+        .py-4.grid(class="sm:grid-cols-3")
+            CVLabel Description
+            .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
+                CVTextArea(v-model='data.donation_description' placeholder="optional")
+        .information.rounded-md.mx-9.my-2.text-center(class="sm:text-start text-white bg-blue-999" v-if="replies?.length")
             CVLegend Comment Moderation
             CVHelpButton(class="inline-block" 
     description="The comment section for posts should be entered here")

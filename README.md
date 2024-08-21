@@ -6,8 +6,9 @@ Carson's Village, inspired by Jason Dyke's personal tragedy, emerged to address 
 Our project at UTD EPICS aims to enhance Carson's Village services by developing an Automated Family Page, streamlining the process of creating tribute pages for deceased family members. By automating this aspect, the project seeks to alleviate the burden on both Advocates and grieving families during an already stressful period. The primary objectives include updating the page based on user feedback, integrating a reporting tool for increased functionality, and implementing iterative UI/UX improvements to enhance user experience.
 
 Admin:
- - Primarily 
  - Collaborate with project team to ensure the efficacy of the Automated Family
+ - Distribute donations
+ - Manage email list access token and refresh token
 Page
 
 Advocates: 
@@ -192,6 +193,12 @@ This system is focused around advocates, families, and pages. Advocates invite f
 
 # Functional Requirements
 
+## Email List
+  - Authorize token button which initiates initial integration
+  - Refresh token button which adds new token to database if expired
+  - Shows success message when either operation is completed
+  - Constant Contacts is used to connect to Carson's Village email list database
+
 ## Edit Page
  - Logged in users can create pages with the following properties filled in:
   - Name
@@ -352,6 +359,7 @@ None
 - Stripe for payments and donation payouts
 - Auth0 for authentication
 - AWS SES for emails
+- Constant Contacts for email list
 
 ## Deployment
 

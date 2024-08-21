@@ -57,12 +57,15 @@ model Page {
   age                    Int?
   visitation_date        DateTime?
   visitation_location    String
+  visitation_address     String           @default("")
   visitation_description String
   funeral_date           DateTime?
   funeral_location       String
   funeral_description    String
+  funeral_address        String           @default("")
   obituary               String
   donation_goal          Int              @default(0)
+  donation_description   String           @default("")
   amount_raised          Int              @default(0)
   deadline               DateTime?
   userCuid               String           @map("user_cuid")
@@ -93,6 +96,7 @@ model PageDonation {
   pageCuid       String  @map("page_cuid")
   donorFirstName String  @default("")
   donorLastName  String  @default("")
+  donorEmail     String  @default("")
   comments       String  @default("")
   isAnonymous    Boolean @default(false)
   success        Boolean @default(false)
@@ -105,14 +109,22 @@ model PageDonation {
   @@map("page_donations")
 }
 
+model CC_Token {
+  cuid     String @id @default("0")
+  token    String
+  refresh_token String
+  date     DateTime  @default(now())
+}
+
 model Reply {
-  cuid       String  @id @default(cuid())
-  pageCuid   String  @map("page_cuid")
-  familyCuid String  @map("family_cuid")
-  reply      String  @default("")
-  name       String? @default("")
-  Page       Page    @relation(fields: [pageCuid], references: cuid)
-  suspended  Boolean @default(false)
+  cuid       String   @id @default(cuid())
+  pageCuid   String   @map("page_cuid")
+  familyCuid String   @map("family_cuid")
+  reply      String   @default("")
+  name       String?  @default("")
+  Page       Page     @relation(fields: [pageCuid], references: cuid)
+  suspended  Boolean  @default(false)
+  date       DateTime @default(now())
 }
 
 model Image {

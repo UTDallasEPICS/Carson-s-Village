@@ -11,7 +11,7 @@
 
 
 import type { User, Page, PageDonation, Image, Reply, Family} from '@/types.d.ts'
-import {  dateFormat, donationFormat } from '@/utils'
+import {  dateFormat, donationFormat, longDateFormat } from '@/utils'
 import CVReplySystem from '@/components/CVReplySystem.vue'
 import CVReply from '@/components/CVReply.vue'
 
@@ -27,10 +27,12 @@ const pageData = ref<Page>({
     visitation_date: null,
 
     visitation_location: "",
+    visitation_address: "",
     visitation_description: "",
     funeral_date: "",
     funeral_description: "",
     funeral_location: "",
+    funeral_address: "",
     obituary: "",
     deadline: "",
     donation_goal: 0,
@@ -231,17 +233,18 @@ setImageAutoSlide()
     DonationEntryPopup(@Exit="exitPopup" :amount_raised="pageDataDB.amount_raised" :donation_goal="pageDataDB.donation_goal" :donation_goal_provided="donation_goal_provided" :donated_percentage="donated_percentage" :isActive="isActive" :donationData="donationData" :pageCuid="pageCuid" :familyCuid="familyCuid")  
 
 // the header overlay with image and name
-
 .flex.gap-2.justify-center.cols-2.pl-6.pr-6
     a.mr-2.mt-1.p-2.px-9.pt-3.pb-3.bg-orange-999(class="transition duration-300 bg-orange-999 hover:bg-green-600" style="border-radius: 100px; height: 50px; color: white; font-weight: 700;") Archive
 .mt-2.min-h-24.text-white.uppercase.w-full(style="background-image: url('https://carsonsvillage.org/wp-content/uploads/2018/11/iStock-862083112-BW.jpg');") 
   .h-full.py-8.self-center.w-full.text-center.flex.flex-col(style="background-color: rgba(50, 119, 136, .8)") 
-    p.my-auto.font-bold.text-4xl {{ pageDataDB.page_first_name + " " + pageDataDB.page_last_name }}
+    p.my-auto.font-bold.text-5xl {{ pageDataDB.page_first_name + " " + pageDataDB.page_last_name }}
 
-.flex.flex-col.gap-5.px-4.mx-auto.mt-8(class="w-3/4 sm:px-16")
-  img.mx-auto(v-if="profileImage?.url" class="w-[122px] h-[122px] rounded-[8px]" :src="`${profileImage?.url}`")
-  .text-gray-dark.mx-auto.w-max.font-poppins.text-md {{ dateFormat(pageDataDB.day_of_birth, true) + ((pageDataDB.day_of_birth || pageDataDB.day_of_passing) ? ' - ' : '') + dateFormat(pageDataDB.day_of_passing, true) }} 
-  .flex.flex-col-reverse.gap-5(class="sm:grid sm:grid-cols-2")
+.grid.grid-cols-1(class="sm:grid-cols-2").justify-center.px-2
+  .col-span-2
+    .flex.flex-col.gap-5.px-4.mx-auto.mt-8(class="w-3/4 sm:px-16")
+      img.mx-auto(v-if="profileImage?.url" class="w-[122px] h-[122px] rounded-[8px]" :src="`${profileImage?.url}`")
+      .text-gray-dark.mx-auto.w-max.font-poppins.text-md {{ dateFormat(pageDataDB.day_of_birth, true) + ((pageDataDB.day_of_birth || pageDataDB.day_of_passing) ? ' - ' : '') + dateFormat(pageDataDB.day_of_passing, true) }} 
+  .col-span-1.justify-self-end.pr-5.pt-5
     .relative.w-96.p-1(v-if="imageData.length != 0" )
       button.absolute.left-4.top-64.bg-black.text-white(@click="prevImage" style="opacity:0.7; --tw-text-opacity: 1; width: 46px; height: 46px; border-radius:50%; align-items: center; justify-content: center; line-height: 2; text-align: center;color: white;") &#60;
       button.absolute.right-8.top-64.bg-black.text-white(@click="nextImage" style="opacity:0.7; --tw-text-opacity: 1; width: 46px; height: 46px; border-radius:50%; align-items: center; justify-content: center; line-height: 2; text-align: center;color: white;") &#62;
@@ -265,49 +268,64 @@ setImageAutoSlide()
           .flex.row.gap-2
             .font-outfit.font-bold {{ "Location:" }}
             .font-outfit.whitespace-normal {{ pageDataDB.visitation_location ? pageDataDB.visitation_location : "TBD" }}
-          .font-outfit {{ pageDataDB.visitation_description }}
-        .flex.flex-col.gap-5(v-else)
-          .text-gray-dark.font-poppins.text-2xl.text-left.font-bold(style="line-height: 36px; text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") Visitation
-          .flex.gap-5
-            .font-outfit {{ "Date:  TBD"}}
-          .flex.gap-5
-            .font-outfit {{ "Location:  TBD" }}
-        .flex.flex-col.gap-5(v-if="pageDataDB.funeral_date")
-            .text-gray-dark.font-poppins.text-2xl.text-left.font-bold(style="line-height: 36px; text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") Funeral
-            .flex.gap-5
-              .font-outfit {{ "Date:" }}
-              .font-outfit {{ dateFormat(pageDataDB.funeral_date, true) }}
-            .flex.gap-5
-              .font-outfit {{ "Location:" }}
+            //.font-outfit {{ pageDataDB.visitation_description }}
+          .flex.row.gap-2
+            .font-outfit.gap-y-5 {{ pageDataDB.visitation_address }}
+          .flex.row.gap-2.pr-10 
+            .font-outfit.font-bold {{ "Description:" }}
+            .font-outfit.whitespace-normal {{ pageDataDB.visitation_description }}
+            
+        .flex.flex-col(v-else).pb-5.pr-15
+          .text-gray-dark.font-poppins.text-3xl.text-left.font-bold(style="line-height: 36px; text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") Visitation
+          .flex.row.gap-2
+            .font-outfit {{ "There is no visitation information available at this time." }}
+        .flex.flex-col(v-if="pageDataDB.funeral_date").pb-5.pr-15
+            .text-gray-dark.font-poppins.text-3xl.text-left.font-bold(style="line-height: 36px; text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") Funeral Service
+            .flex.row.gap-2
+              .font-outfit.font-bold {{ "Date:" }}
+              .font-outfit.gap-2 {{ longDateFormat(pageDataDB.funeral_date) }}
+            .flex.row.gap-2
+              .font-outfit.font-bold {{ "Time:" }}
+              .font-outfit.gap-y-5 {{ longDateFormat(pageDataDB.funeral_date, true) }}
+            .flex.row.gap-2
+              .font-outfit.font-bold {{ "Location:" }}
               .font-outfit.whitespace-normal {{ pageDataDB.funeral_location }}
-            .font-outfit {{ pageDataDB.funeral_description }}
-        .flex.flex-col.gap-5(v-else)
-            .text-gray-dark.font-poppins.text-2xl.text-left.font-bold(style="line-height: 36px; text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") Funeral
-            .flex.gap-5
-              .font-outfit {{ "Date:  TBD" }}
-            .flex.gap-5
-              .font-outfit {{ "Location:  TBD" }}
+            .flex.row.gap-2
+              .font-outfit.whitespace-normal {{ pageDataDB.funeral_address }}
+            .flex.row.gap-2.pr-10 
+              .font-outfit.font-bold {{ "Description:" }}
+              .font-outfit {{ pageDataDB.funeral_description }}
+
+        .flex.flex-col(v-else).pb-5
+            .text-gray-dark.font-poppins.text-3xl.text-left.font-bold(style="line-height: 36px; text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") Funeral Service
+            .flex.row.gap-2
+              .font-outfit.gap-y-5 {{ "There is no funeral information avilable at this time" }}
+        .flex.flex-col.pb-5
+          .text-gray-dark.font-poppins.text-3xl.text-left.font-bold(style="line-height: 36px; text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") Donations
+          .text-gray-dark.font-poppins.text-1xl.text-left.font-bold(style="line-height: 36px; text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") 
+            .col-md-1.ml-1.pt-9.pr-5.flex.items-center.justify-center
+              ActionButton.mx-auto.text-md(name='submit' @click="DisplayDonationPopup=true" class="transition duration-300 bg-orange-999 hover:bg-green-600" ) DONATE NOW
+  .col-span-2
+    .col-md-8.mx-9(class="sm:col-span-1 sm:mr-11")
+        .div.px-10.py-4(style="color: #6E6E6E; font-weight: 500; font-size: 18px; line-height: 28px; letter-spacing: -0.078px; word-break: break-word;" id="obituary") {{ pageDataDB.obituary }}
+
 //.container(class="sm:overflow-hidden sm:w-3/4 sm:mt-4 sm:mx-auto sm:place-content-center sm:max-w-xl sm:p-6 sm:rounded-card sm:shadow-card")
-.grid(class="sm:grid-cols-2")
-    .container.m-4.place-content-center.font-poppins(class="w-5/6 sm:m-auto sm:py-3")
-        .well.well-sm
-            h1.ml-4.pt-9.text-2xl.text-gray-dark(class="sm:text-3xl" style="font-weight: 600; letter-spacing: 0.35px;") Donations
-        .col-md-8.ml-4.pt-6.pr-5.flex.items-center.justify-center
-          ActionButton.mx-auto.text-md(name='submit' @click="DisplayDonationPopup=true" class="transition duration-300 bg-orange-999 hover:bg-green-600" ) DONATE NOW
-        .py-4.grid.gap-1(v-if="comments?.length" style="text-align: center")
-            .div.py-4.grid(class="w-full" style="grid-template-columns: repeat(3, 1fr);")
-                .div(v-for="(comment, i) in comments" :key="i" class="comment-box")
-                    .comment-box(style="flex: calc(30% - 1rem); height: 10rem; width: 11rem; margin: 0.5rem; padding: 1rem; border-radius: 8px; background-color: #fff; border: 1px solid #ddd; box-shadow: 0 2px 4px rgba(0,0,0,0.05);")
-                        .div.comment-header(style="font-size: 0.75rem; font-weight: bold; margin-bottom: 1.5rem;") {{ comment.donorFirstName }} {{ comment.donorLastName }}
-                        p.comment-body(style="font-size: 0.75rem; width: fit-content; color: #666;") {{ comment.comments }}
-                        .div.comment-donation-amount(style="font-size: 0.75rem; color: #666;") Amount Donated: {{ donationFormat(comment.amount) }}
-        CVReplySystem(:pageCuid="id" :familyCuid="familyCuid" :replies="replies" @displayReply="displayReply")
-        .py-4.grid.flex-box.flex-row.item-centered.gap-1(v-if="replies?.length" style="line-height: 0px;text-align: center")
-            div(class="flex")
-            .div(v-for="(reply,i) in replies" :key="i" class="reply-box")
-                .reply-box(v-if="reply.reply.length > 0" style="padding: 1rem; text-align: left; border-bottom: 1px solid black") 
-                    .reply-header(style="font-size: 1rem; font-weight: bold; margin-bottom: 2.5rem; margin-left: 1rem") {{reply.name}}
-                    .reply-body(style="font-size: 1rem; color: #666; margin-bottom: 2.5rem;") {{reply.reply}}
+.py-4.grid.gap-1(style="text-align: left")
+  .div.py-4.grid(v-if="comments?.length" class="w-full justify-center" style="grid-template-columns: repeat(3, 12rem);")
+    .div(v-for="(comment, i) in comments" :key="i" class="comment-box")
+        .flex-auto.h-40.w-44.m-2.p-4.rounded-lg.bg-white.border-border-gray-300.shadow-md
+          .flex.justify-between.gap-5.pd-4
+            .text-xs.font-bold.mb-6 {{ comment.donorFirstName }} {{ comment.donorLastName }}
+            .text-xs.font-bold.mb-6 {{ dateFormat(comment.donationDate, true) }}
+          .text-xs.w-fit.text-gray-600.border-l-2.border-green-500.pl-5 {{ comment.comments }}
+          .text-xs.text-gray-600.pt-5 Amount Donated: {{ donationFormat(comment.amount) }}
+  CVReplySystem(:pageCuid="id" :familyCuid="familyCuid" :replies="replies" @displayReply="displayReply")
+  .py-4.grid.row-span-3.gap-2(v-if="replies?.length")
+    .p-2.bg-white.rounded-lg.mb-2.shadow-md.pb-4(v-for="(reply,i) in replies" :key="i") 
+      .flex.justify-between.gap-5.pd-4
+        .ml-1.text-lg.font-bold {{reply.name}}
+        .ml-1.text-lg {{dateFormat(reply.date)}}
+      .ml-1.pt-3.pb-3.pl-5.border-l-2.border-green-500 {{reply.reply}}
 div.flex(style="color:gray; font-weight: 700; justify-content:center; align-items: center; height: 100px;")
   label SHARE THIS PAGE |&nbsp;
   .col

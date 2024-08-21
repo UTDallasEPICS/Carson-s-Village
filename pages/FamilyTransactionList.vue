@@ -21,7 +21,6 @@ import { ChevronUpIcon, ChevronDownIcon, ChevronUpDownIcon } from '@heroicons/vu
 import { donationFormat, dateFormat } from "@/utils"
 //import { Family } from "@prisma/client"
 const currentFamilyPageNumber = ref(0)
-//const familyPagesLength = ref(0)
 const cvuser = useCookie<User>('cvuser');
 const isAdmin = computed(() => cvuser.value?.user_role == "admin")
 const isAdvocate = computed(() => cvuser.value?.user_role == "advocate")
@@ -62,6 +61,9 @@ const { data: Families } = await useFetch<Family[]>('/api/families', {
     },
   });
   
+  watch(currentFamilyCuid, () => {
+    currentFamilyPageNumber.value = 0
+  })
   const nextPage = () => { 
   console.log(familyPagesLength.value / 12)
     if(currentFamilyPageNumber.value < ((familyPagesLength.value / 12) - 1)){
