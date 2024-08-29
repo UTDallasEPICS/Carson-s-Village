@@ -74,25 +74,23 @@ Clone repsitory
 
 Copy .env into root or fill out new keys from .env.example
 
-Need Private keys for 
+Need Private keys/info for 
  - Stripe
  - AWS
  - Auth0
  - Constant Contacts
- Need 
  - email source for AWS SES
  - S3 bucket URL
  - Auth0 Issuer URL
 
 Install the dependencies:
 
-Ideally use npm
+(npm is easier, but pnpm is better)
 ```bash
 # npm
-npm install 
-
-# yarn
-yarn install 
+npm install
+or
+npm i
 
 # pnpm
 pnpm install --shamefully-hoist
@@ -112,6 +110,7 @@ docker-compose up
 Initialize Postgres DB via
 ```bash
 npx prisma generate
+npx prisma migrate dev
 ```
 Add first user with prisma studio with valid email that you can use
 ```bash
