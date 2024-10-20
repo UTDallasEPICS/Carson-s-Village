@@ -52,7 +52,7 @@ const { data: Families } = await useFetch<Family[]>('/api/families', {
   const currentPage = computed(() => familyData.value?.raw_data.find(({ cuid }: Page) => cuid == currentPageCuid.value) || {});
   watchEffect(() => currentPageCuid.value = familyData.value.raw_data![0]?.cuid || "");  
 
-  const { data: donations } = await useFetch<PageDonation[]>('/api/family_donation', {
+  const { data: donations } = await useFetch<PageDonation[]>('/api/family_donations', {
     method: 'GET',
     query: { family_cuid: currentFamilyCuid },
     watch: [currentFamilyCuid],

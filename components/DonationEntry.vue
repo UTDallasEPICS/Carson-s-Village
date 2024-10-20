@@ -61,8 +61,7 @@ const create_checkout_session = async () => {
         isAnonymous: donationData.value.isAnonymous,
         comments: donationData.value.comments
     };
-    const sessionInfo = await $fetch('/api/create_session', {
-
+    const sessionInfo = await $fetch('/api/integrations/stripe/create_session', {
         method: 'POST',
         body: { ...donationData, cuid: props.pageCuid, family_cuid: props.familyCuid, amount_raised: Math.trunc(parseFloat(donationData.value.amount as unknown as string) * 100) as number, subscribed: subscribing.value}
     });

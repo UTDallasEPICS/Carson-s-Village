@@ -10,7 +10,7 @@ export default defineEventHandler(async event => {
       const stripe = new Stripe(stripeSecretKey as string, { apiVersion:"2022-11-15"} )
         const body = await readBody(event)
         const familyCuid = body.familyCuid
-          if(event.context.user?.user_role == "admin"){ 
+        if(event.context.user?.user_role == "admin") { 
           // update success flag in transaction
           
           const family = await prisma.family.findFirst({

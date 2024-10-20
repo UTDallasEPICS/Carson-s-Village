@@ -6,6 +6,7 @@ const runtime = useRuntimeConfig()
 
 const stripeSecretKey = runtime.STRIPE_SECRET;
 import { PrismaClient } from "@prisma/client"
+import type { User, Family} from "@/types.d.ts"
 const client = new PrismaClient()
 export default defineEventHandler(async event => {
   const stripe = new Stripe(runtime.STRIPE_SECRET, { apiVersion:"2022-11-15"}) // todo: upgrade to "2023-10-16" version
@@ -23,7 +24,7 @@ export default defineEventHandler(async event => {
           fs.readFileSync(process.cwd()+"/cert-dev.pem")
         )
         event.context.claims = claims
-        event.context.user = await event.context.client.user.findFirst(
+        event.context.user = await event.context.client?.user.findFirst(
           {
             where: { email: claims.email }
           ,
@@ -44,7 +45,7 @@ export default defineEventHandler(async event => {
             }
             }
           }
-          })
+          }) as unknown as Partial<User> & { Family: Partial<Family>}
         if(!event.context.user) {
           console.error(`${claims.email} not found`) 
           setCookie(event,'cvtoken','')
@@ -90,18 +91,18 @@ export default defineEventHandler(async event => {
                           }
                         },
                         type: 'standard',
-                        email: event.context.user.email
+                        email: event.context.user?.email
                     });
 
                     // Adds the stripe_accounnt_id to the family, but the family is still suspended from creating pages and thus preventing stray donations.
                     // Too extreme? Maybe we need to elaborate further to allow families to create pages that do not recieve donations.
-                    const transaction = await event.context.client.$transaction([
-                      event.context.client.family.update({
-                        where: { cuid: event.context.user.familyCuid },
+                    const transaction = await event.context.client?.$transaction([
+                      event.context.client?.family.update({
+                        where: { cuid: event.context.user?.familyCuid },
                         data: { stripe_account_id: newStripeAccount.id }
-                    }), event.context.client.page.updateMany({
+                    }), event.context.client?.page.updateMany({
                       where: {
-                          familyCuid : event.context.user.familyCuid as string
+                          familyCuid : event.context.user?.familyCuid as string
                       },
                       data: { status: 'Family Stripe Account needs onboarding'} 
                       })

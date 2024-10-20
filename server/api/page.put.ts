@@ -14,8 +14,7 @@ export default defineEventHandler(async event => {
   //const userCuid = data.userCuid
   //delete data.userCuid;
   
-  console.log('h',familyCuid, event.context.user)
-  if(event.context.user.user_role === "advocate" || event.context.user?.user_role == "admin" || event.context.user.cuid == userCuid || event.context.user.Family?.cuid == familyCuid ){
+  if(event.context.user?.user_role === "advocate" || event.context.user?.user_role == "admin" || event.context.user?.cuid == userCuid || event.context.user?.Family?.cuid == familyCuid ) {
     console.log(data.amount_raised)
     delete data.Family // Not sure why this is needed to fix an error
     try {

@@ -27,7 +27,7 @@ import {
 
 
 import type { Image, Page, User, PageDonation, Reply } from '@/types.d.ts'
-import { Family } from "@prisma/client"
+import type { Family } from "@prisma/client"
 import { donationFormat, dateFormat } from '@/utils'
 
 const router = useRoute()
@@ -85,7 +85,8 @@ const data = ref<Page>({
             phone: '',
             address: '',
             Pages: [],
-            familyCuid: ''
+            familyCuid: '',
+            AdvocateFamily: []
         },
         FamilyDonations: [],
         advocateCuid: ""

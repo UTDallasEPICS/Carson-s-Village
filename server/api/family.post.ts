@@ -42,13 +42,13 @@ const body = await readBody(event);
     middle_name,
     last_name,
     phone, address } = body
-if(event.context.user?.user_role === "advocate" || event.context.user.user_role === "admin") {
+if(event.context.user?.user_role === "advocate" || event.context.user?.user_role === "admin") {
     try {
-      const queryRes = await event.context.client.family.create({
+      const queryRes = await event.context.client?.family.create({
         data: {
           family_name: family_name,
           AdvocateResponsible: {
-            connect: { cuid: event.context.user.cuid }
+            connect: { cuid: event.context.user?.cuid }
           },
           created_at: new Date(),
           updated_at: null,
@@ -68,6 +68,7 @@ if(event.context.user?.user_role === "advocate" || event.context.user.user_role 
    )
    await sendEmail(body.email, "invitation", "Invitation to Carson's village", ({...body, url: `${runtime.BASEURL}api/login`}))
       return queryRes
+      
     } catch (e) {
       console.log(e)
     }

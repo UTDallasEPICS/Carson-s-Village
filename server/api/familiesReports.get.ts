@@ -15,8 +15,8 @@ export default defineEventHandler(async event => {
   const start_date_date = start_date as Date
   const end_date_date = end_date as Date
   console.log(typeof end_date)
-  if(event.context.user.user_role === "advocate"  || event.context.user.user_role === "admin"){
-    const [ count, count_date_ranged, all_families, paginated_pages, date_ranged_pages  ] = await prisma.$transaction([
+  if(event.context.user?.user_role === "advocate"  || event.context.user?.user_role === "admin") {
+    const [ count, count_date_ranged, all_families, paginated_pages, date_ranged_pages ] = await prisma.$transaction([
       prisma.page.count(),
       prisma.page.count({ where: {
         [date_field as string]: {

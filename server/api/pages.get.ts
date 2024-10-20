@@ -11,9 +11,9 @@ const prisma = new PrismaClient()
 export default defineEventHandler(async event => {
 const runtime = useRuntimeConfig()
 
-if(event.context.user.cuid != undefined) { //if the user is not logged in, do not let them see all the pages
+if(event.context.user?.cuid != undefined) { //if the user is not logged in, do not let them see all the pages
   const { searchQuery, page_number, isPageList, order, sortedColumn } = getQuery(event);
-  if((searchQuery as string) == "" && event.context.user.user_role == "admin" && (isPageList == 1) as boolean) { 
+  if((searchQuery as string) == "" && event.context.user?.user_role == "admin" && (isPageList == 1) as boolean) { 
     const [count, pagesResult] = await prisma.$transaction([
       prisma.page.count(),
       prisma.page.findMany({

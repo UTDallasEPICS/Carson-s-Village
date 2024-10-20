@@ -11,7 +11,7 @@ const prisma = new PrismaClient()
 export default defineEventHandler(async event => {
   const { page_number, order, sortedColumn } = getQuery(event);
   
-  if(event.context.user.user_role === "advocate" || event.context.user.user_role === "admin"){
+  if(event.context.user?.user_role === "advocate" || event.context.user?.user_role === "admin"){
     // Pagination via taking the absolute table page number with 12 records per page
     let orderBy = {};
     if (sortedColumn === 'family_name') {

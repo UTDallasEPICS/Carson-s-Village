@@ -17,7 +17,7 @@ export default defineEventHandler(async (event) => {
     const body = await readBody(event)
     //const url = body._value.url
 
-  if(event.context.user.cuid != ""){
+  if(event.context.user?.cuid != "") {
   //try{
   // Creates a new entry in the database in the image model
     const image = await prisma.image.create({

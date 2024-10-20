@@ -14,10 +14,10 @@ export default defineEventHandler(async event => {
   // extracting family id to connect the page to the authenticated user
   const {Images, Reply, PageDonations, userCuid, familyCuid, ...data} = await readBody(event)
 
-  if(event.context.user?.user_role === "advocate" || event.context.user?.user_role == 'admin'|| event.context.user.cuid === userCuid ){
+  if(event.context.user?.user_role === "advocate" || event.context.user?.user_role == 'admin'|| event.context.user?.cuid === userCuid ) {
     data.donation_goal = Math.trunc(data.donation_goal * 100);
     data.amount_raised = Math.trunc(data.amount_raised * 100);
-    try{
+    try {
       const family = await prisma.family.findFirst({
         where: { cuid: familyCuid as string }
       })

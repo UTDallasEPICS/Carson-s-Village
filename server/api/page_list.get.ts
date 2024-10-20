@@ -44,7 +44,7 @@ export default defineEventHandler(async event => {
           where: {
             Family: {
               AdvocateResponsible: {
-                cuid: event.context.user.cuid
+                cuid: event.context.user?.cuid
               }
             },
           } 
@@ -55,7 +55,7 @@ export default defineEventHandler(async event => {
         where: {
           Family: {
             AdvocateResponsible: {
-              cuid: event.context.user.cuid
+              cuid: event.context.user?.cuid
             }
           },
         },
