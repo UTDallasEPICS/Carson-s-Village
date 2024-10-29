@@ -17,7 +17,6 @@ export default defineEventHandler(async event => {
   const stripe = new Stripe(stripeSecretKey as string, { apiVersion:"2022-11-15"} )
   const transaction_id = getRouterParam(event, 'id')
 
-  console.log(transaction_id as string)  
   const { subscribing } = getQuery(event)
     try {
       // get amount donated from transaction
@@ -40,7 +39,6 @@ export default defineEventHandler(async event => {
         }
       })
 
-      console.log(subscribing as string)
       if(subscribing as string == '1'){
         const subscribing = await $fetch<{ success: boolean }>(`/api/email_list`, {
           method: 'POST',
