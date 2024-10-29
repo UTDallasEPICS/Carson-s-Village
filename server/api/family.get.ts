@@ -10,7 +10,7 @@ const prisma = new PrismaClient()
 
 export default defineEventHandler(async event => {
   const { family_cuid } = getQuery(event)
-  if( event.context.user.user_role == "advocate" || event.context.user.user_role == "admin" || event.context.user.familyCuid === family_cuid as string){
+  if( event.context.user?.user_role == "advocate" || event.context.user?.user_role == "admin" || event.context.user?.familyCuid === family_cuid as string){
     const queryRes = await prisma.family.findFirst({
         where: { cuid: family_cuid as string },
       include: {

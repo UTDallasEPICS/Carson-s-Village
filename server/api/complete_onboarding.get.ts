@@ -21,7 +21,7 @@ export default defineEventHandler(async event => {
   if(stripeAccountFull.details_submitted) {  
 const queryRes = await prisma.page.updateMany({
     where: {
-        familyCuid : event.context.user.familyCuid as string
+        familyCuid : event.context.user?.familyCuid as string
     },
     data: { status: 'active'} 
 })

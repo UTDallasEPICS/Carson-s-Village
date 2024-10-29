@@ -9,25 +9,23 @@ import {loginRedirectUrl} from "../api/auth0"
 */
 
 export default defineEventHandler(async event => {
-    const { page_cuid } = getQuery(event);
-    
-    if((page_cuid as string) == "0" || page_cuid == undefined) {
-        return ""
+    const { family_cuid } = getQuery(event);
+    if((family_cuid as string) == "0" || family_cuid == undefined) {
+        return []
     }
-    console.log(page_cuid)
     if(event.context.user?.user_role === "admin") {
-      const queryRes = prisma.pageDonation.aggregate({
-          _max: {
-              donationDate: true
-          },
+      console.log(family_cuid)
+      const queryRes = await prisma.pageDonation.findMany({
           where: {
-            pageCuid: page_cuid as string,
+            familyCuid: family_cuid as string,
             success: true
+          },
+          include: {
+            Page: true
           }
-      })
-
+    });
     return queryRes;
-    } else {
-      return await sendRedirect(event, loginRedirectUrl());
-    }
+  } else {
+    return await sendRedirect(event, loginRedirectUrl());
+  }
 })
