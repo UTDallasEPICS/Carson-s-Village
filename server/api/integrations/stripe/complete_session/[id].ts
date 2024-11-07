@@ -1,6 +1,4 @@
-import { PrismaClient } from "@prisma/client"
 import { nanoid } from "nanoid"
-const prisma = new PrismaClient()
 import Stripe from "stripe"
 const runtime = useRuntimeConfig()
 //require('dotenv').config()
@@ -17,11 +15,10 @@ export default defineEventHandler(async event => {
   const stripe = new Stripe(stripeSecretKey as string, { apiVersion:"2022-11-15"} )
   const transaction_id = getRouterParam(event, 'id')
 
-  console.log(transaction_id as string)  
   const { subscribing } = getQuery(event)
     try {
       // get amount donated from transaction
-      const transaction = await prisma.pageDonation.findFirst({
+      const transaction = await event.context.client.pageDonation.findFirst({
         where: { transaction_id: transaction_id as string},
         include: {
           Page: {
@@ -40,7 +37,6 @@ export default defineEventHandler(async event => {
         }
       })
 
-      console.log(subscribing as string)
       if(subscribing as string == '1'){
         const subscribing = await $fetch<{ success: boolean }>(`/api/email_list`, {
           method: 'POST',
@@ -61,7 +57,7 @@ export default defineEventHandler(async event => {
       }
       // rejects if the transactionid has already been completed
       // update success flag in transaction
-      const checkTransaction = await prisma.pageDonation.findFirst({
+      const checkTransaction = await event.context.client.pageDonation.findFirst({
         where: { transaction_id: transaction_id as string}
       })
 
@@ -91,12 +87,12 @@ export default defineEventHandler(async event => {
           }
           //console.log(duration)
           
-        await prisma.$transaction([
-          prisma.pageDonation.update({
+        await event.context.client.$transaction([
+          event.context.client.pageDonation.update({
             where: { transaction_id: transaction_id as string},
             data: { success: true }
           }),
-           prisma.page.update({
+           event.context.client.page.update({
             where: { cuid: transaction?.pageCuid },
             data: {
               last_donation_date: new Date(),

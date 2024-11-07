@@ -1,6 +1,4 @@
-import { PrismaClient } from "@prisma/client"
 import { SESClient, SendEmailCommand } from "@aws-sdk/client-ses"
-const prisma = new PrismaClient()
 const sesClient = new SESClient({ region: "us-east-1" });
 import { loginRedirectUrl } from "../api/auth0"
 import emailTemplates from "email-templates"
@@ -44,7 +42,7 @@ if(event.context.user?.user_role === "advocate" || event.context.user?.user_role
     if(body.user_role == "advocate" || (body.user_role == "admin" && event.context.user?.user_role === "admin")) {
       delete body.Pages
       delete body.AdvocateFamily
-      const queryRes = await prisma.user.create({
+      const queryRes = await event.context.client.user.create({
         data: {
           ...body, cuid: undefined, familyCuid: undefined
           }
@@ -54,11 +52,11 @@ if(event.context.user?.user_role === "advocate" || event.context.user?.user_role
       } else if(body.user_role == "family") {
         delete body.Pages
         delete body.AdvocateFamily
-        const userRes = await prisma.user.create({
+        const userRes = await event.context.client.user.create({
           data: {
             ...body, cuid: undefined,
         }})
-        const queryRes = await prisma.family.update({
+        const queryRes = await event.context.client.family.update({
           where: { cuid: body.familyCuid },
           data: {
             updated_at: now,
