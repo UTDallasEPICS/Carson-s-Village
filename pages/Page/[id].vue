@@ -11,10 +11,6 @@
 
 
 import type { User, Page, PageDonation, Image, Reply, Family} from '@/types.d.ts'
-import {  dateFormat, donationFormat, longDateFormat } from '@/utils'
-import CVReplySystem from '@/components/CVReplySystem.vue'
-import CVReply from '@/components/CVReply.vue'
-
 
 const pageData = ref<Page>({
     cuid: "",
@@ -84,6 +80,7 @@ const donationData = ref<PageDonation>({
     transaction_id : "",
     donorFirstName: "",
     donorLastName: "",
+    donorEmail: "",
     comments: "", 
     isAnonymous : false,
     donationDate: "",
@@ -216,7 +213,7 @@ const displayReply = async (reply: Reply) => {
 }
 
 // Recieves the emit to stop displaying the donation popup from the button within the component donationEntryPoppup
-const exitPopup = async(exit: boolean) => {
+const exitPopup = () => {
   DisplayDonationPopup.value = false
 }
 

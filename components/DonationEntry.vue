@@ -45,9 +45,7 @@ const stripeLink_ref = ref("")
 const create_checkout_session = async () => {
     //console.log(feeRecovery.value)
     if(feeRecovery.value) {
-      donationData.value.amount = donationData.value.amount * 100 // converting to cents for better accuracy 
-      donationData.value.amount = 1.029 * donationData.value.amount + 0.30
-      donationData.value.amount = donationData.value.amount / 100 
+      donationData.value.amount = Math.round((1.029 * donationData.value.amount + 0.30) * 100 ) / 100
     } 
     if(anonymous.value) {
         donationData.value.donorFirstName = "anonymous"
