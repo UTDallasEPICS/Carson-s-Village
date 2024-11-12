@@ -30,12 +30,7 @@ export default defineEventHandler(async event => {
           cuid: data.cuid
         },
         data: {
-          ...data,
-          Family: {
-            connect: {
-              cuid: familyCuid
-            }
-          }
+          ...data
         }
       });
       
