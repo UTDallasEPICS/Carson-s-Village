@@ -1,8 +1,5 @@
-import { PrismaClient } from "@prisma/client"
 import {loginRedirectUrl} from "./auth0"
-import type { User } from "@/types.d.ts"
-import type { Family, Page } from "@/types.d.ts"
-const prisma = new PrismaClient()
+import type { User, Family, Page } from "@/types.d.ts"
 
 /*
 *	/Users
@@ -16,21 +13,21 @@ export default defineEventHandler(async event => {
   const end_date_date = end_date as Date
   console.log(typeof end_date)
   if(event.context.user?.user_role === "advocate"  || event.context.user?.user_role === "admin") {
-    const [ count, count_date_ranged, all_families, paginated_pages, date_ranged_pages ] = await prisma.$transaction([
-      prisma.page.count(),
-      prisma.page.count({ where: {
+    const [ count, count_date_ranged, all_families, paginated_pages, date_ranged_pages ] = await event.context.client.$transaction([
+      event.context.client.page.count(),
+      event.context.client.page.count({ where: {
         [date_field as string]: {
           gte: new Date(start_date as string),
           lte: new Date(end_date as string)
         } 
       }}),
-      prisma.family.findMany({
+      event.context.client.family.findMany({
         include: {
           Pages: true,
           FamilyMembers: true,
           AdvocateResponsible: true
         }}),
-        prisma.page.findMany({
+        event.context.client.page.findMany({
           include: {
             Family: {
               include: {
@@ -41,7 +38,7 @@ export default defineEventHandler(async event => {
         skip: (parseInt(dimensions as string) as number) * (page_number as number),
         take: (parseInt(dimensions as string) as number)
       }),
-      prisma.page.findMany({
+      event.context.client.page.findMany({
         include: {
           Family: {
             include: {

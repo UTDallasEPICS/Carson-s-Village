@@ -1,6 +1,4 @@
-import { PrismaClient } from "@prisma/client"
 import { SESClient, SendEmailCommand } from "@aws-sdk/client-ses"
-const prisma = new PrismaClient()
 const sesClient = new SESClient({ region: "us-east-1" });
 import {loginRedirectUrl} from "../api/auth0"
 import emailTemplates from "email-templates"
@@ -44,7 +42,7 @@ const body = await readBody(event);
     phone, address } = body
 if(event.context.user?.user_role === "advocate" || event.context.user?.user_role === "admin") {
     try {
-      const queryRes = await event.context.client?.family.create({
+      const queryRes = await event.context.client.family.create({
         data: {
           family_name: family_name,
           AdvocateResponsible: {

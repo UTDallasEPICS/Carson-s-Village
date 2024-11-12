@@ -1,5 +1,3 @@
-import { PrismaClient } from "@prisma/client"
-const prisma = new PrismaClient()
 import {loginRedirectUrl} from "../api/auth0"
 
 /*
@@ -15,7 +13,7 @@ export default defineEventHandler(async event => {
     }
     if(event.context.user?.user_role === "admin") {
       console.log(family_cuid)
-      const queryRes = await prisma.pageDonation.findMany({
+      const queryRes = await event.context.client.pageDonation.findMany({
           where: {
             familyCuid: family_cuid as string,
             success: true

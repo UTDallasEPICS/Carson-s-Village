@@ -1,12 +1,8 @@
-import { PrismaClient } from "@prisma/client";
-
-const prisma = new PrismaClient();
-
 export default defineEventHandler(async (event) => {
   //try {
     const {pageCuid, familyCuid,replyData} = await readBody(event)
     console.log(replyData._value)
-    const newReply = await prisma.reply.create({
+    const newReply = await event.context.client.reply.create({
       data: { ...replyData._value}
     });
 
