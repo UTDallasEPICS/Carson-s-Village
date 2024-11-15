@@ -1,6 +1,4 @@
-import { PrismaClient } from "@prisma/client"
 import {loginRedirectUrl} from "../api/auth0"
-const prisma = new PrismaClient()
 
 /*
 *	/EditUser/cuid
@@ -15,7 +13,7 @@ export default defineEventHandler(async event => {
   }
   // retrieves a single user
   if(event.context.user?.user_role === "advocate" || event.context.user?.user_role === "admin") {
-    const queryRes = await prisma.user.findFirst({
+    const queryRes = await event.context.client.user.findFirst({
       where: { cuid: (cuid as string) },
       include: {
         AdvocateFamily: true
