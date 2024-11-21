@@ -318,7 +318,7 @@ setImageAutoSlide()
           .text-xs.text-gray-600.pt-5 Amount Donated: {{ donationFormat(comment.amount) }}
   CVReplySystem(:pageCuid="id" :familyCuid="familyCuid" :replies="replies" @displayReply="displayReply")
   .py-4.grid.row-span-3.gap-2(v-if="replies?.length")
-    .p-2.bg-white.rounded-lg.mb-2.shadow-md.pb-4(v-for="(reply,i) in replies" :key="i") 
+    .p-2.bg-white.rounded-lg.mb-2.shadow-md.pb-4(v-for="(reply,i) in replies.filter(item => !item.suspended)" :key="i") 
       .flex.justify-between.gap-5.pd-4
         .ml-1.text-lg.font-bold {{reply.name}}
         .ml-1.text-lg {{dateFormat(reply.date)}}
