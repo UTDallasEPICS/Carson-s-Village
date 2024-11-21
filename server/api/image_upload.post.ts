@@ -2,44 +2,40 @@
 
 import { nanoid } from "nanoid"
 import { getSignedFileUrl } from "./integrations/aws"
-import { PrismaClient } from "@prisma/client"
-const prisma = new PrismaClient()
 const runtime = useRuntimeConfig()
 export default defineEventHandler(async (event) => {
-    // Read the request body
-    const data = await readBody(event)
-    console.log(data)
+    const body = await readBody(event) 
     // key used to retrieve image later on
     const key = nanoid()
     // gets presigned URL from aws.ts and returns it to the call from vue
-    const uploadUrl =  await getSignedFileUrl(data.contentLength, data.contentType, key);
+    const uploadUrl =  await getSignedFileUrl(body.contentLength, body.contentType, key);
     const contentUrl =  "https://" + runtime.AWS_S3_BUCKET_NAME + "/" + key;
-    const body = await readBody(event)
-    //const url = body._value.url
-
+    
+  
+  // only signed in users may upload
   if(event.context.user?.cuid != "") {
   //try{
   // Creates a new entry in the database in the image model
-    const image = await prisma.image.create({
+    const image = await event.context.client.image.create({
       data: {
         url: contentUrl
         }
       });
 
     if(body.pageCuid != "0") {
-      const queryRes = await prisma.image.update({
+      const queryRes = await event.context.client.image.update({
         where: {
           cuid: image.cuid
         },
         data: {
-          pageCuid: data.pageCuid
+          pageCuid: body.pageCuid
           }
         });
     }
     return  {
-      uploadUrl: await getSignedFileUrl(data.contentLength, data.contentType, key),
+      uploadUrl: uploadUrl,
       image
-    }
+    } 
     }
   //}
   /*} catch(e){

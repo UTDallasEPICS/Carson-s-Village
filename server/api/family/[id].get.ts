@@ -1,6 +1,4 @@
-import { PrismaClient } from "@prisma/client"
-import {loginRedirectUrl} from "./auth0"
-const prisma = new PrismaClient()
+import {loginRedirectUrl} from "../auth0"
 
 /*
 *	/Family
@@ -9,9 +7,9 @@ const prisma = new PrismaClient()
 */
 
 export default defineEventHandler(async event => {
-  const { family_cuid } = getQuery(event)
+  const family_cuid = getRouterParam(event, 'id')
   if( event.context.user?.user_role == "advocate" || event.context.user?.user_role == "admin" || event.context.user?.familyCuid === family_cuid as string){
-    const queryRes = await prisma.family.findFirst({
+    const queryRes = await event.context.client.family.findFirst({
         where: { cuid: family_cuid as string },
       include: {
         Pages: true,

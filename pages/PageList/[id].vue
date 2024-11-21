@@ -1,8 +1,7 @@
 <script lang = "ts" setup>
 import type { Page, User, Image, PageDonation, Reply } from '@/types.d.ts'
 import { ref } from "vue";
-import { dateFormat, donationFormat} from '@/utils'
-import { Family } from '@prisma/client'
+import type { Family } from '@prisma/client'
 import {
     Listbox,
     ListboxButton,
@@ -96,7 +95,7 @@ const entityCuid = computed(() => fromUser.value ? user_cuid : familyCuid.value)
 // Method to populate the page list with data based on the cuid of the user in the url
 const getDataAdminAdvocate = async () => {
   if(cvuser.value.user_role == "admin") {
-    const { data: all_families } = await useFetch('/api/families', {
+    const { data: all_families } = await useFetch('/api/family', {
       method: 'GET',
       default() {
         return [] as any
@@ -179,7 +178,7 @@ await getDataAdminAdvocate()
 
 <template lang ="pug">
   
-button(type="button" class="ml-4 my-4 bg-orange-999 text-white px-4 py-2 rounded-full w-32 transition duration-300 bg-orange-999 hover:bg-green-600" @click="tableToggle = !tableToggle") Archive
+button(type="button" class="ml-4 my-4 text-white px-4 py-2 rounded-full w-32 transition duration-300 bg-orange-999 hover:bg-green-600" @click="tableToggle = !tableToggle") {{ tableToggle ? "all pages" : "archive"}}
 .py-4.grid(class="sm:grid-cols-3" v-if="(isAdmin || isAdvocate) && !fromUser")
     CVLabel Current Family
     .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
@@ -209,8 +208,7 @@ button(type="button" class="ml-4 my-4 bg-orange-999 text-white px-4 py-2 rounded
         th.font-poppins.font-bold.bg-blue-999.text-white(style="border-radius: 0px 60px 0px 0px; width:25%;") {{ "Family Page" }}
 
     tbody 
-      tr(v-if="tableToggle" v-for="(item, i) in pages.data.filter(item => item.status === 'active')" :class="{'bg-gray-200': (i + 1) % 2}")
-      tr(v-else-if="!tableToggle" v-for="(item, i) in pages.data" :class="{'bg-gray-200': (i + 1) % 2}")
+      tr(v-for="(item, i) in ( tableToggle ? pages.data.filter(item => item.status == 'active') : pages.data)" :class="{'bg-gray-200': (i + 1) % 2}")
         td.font-poppins.text-gray-dark.font-bold.text-center {{ item.page_first_name + " " + item.page_last_name }}
         td.font-poppins.text-gray-dark.font-bold.text-center {{ item.User?.first_name + " " + item.User?.last_name }}
         td.font-poppins.text-gray-dark.font-bold.text-center {{ item.Family?.AdvocateResponsible.first_name + " " + item.Family?.AdvocateResponsible.last_name }}
