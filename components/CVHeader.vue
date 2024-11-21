@@ -1,8 +1,6 @@
 <script lang="ts" setup>
 import type { User, Page } from "@/types.d.ts"
-import { donationFormat, dateFormat } from '@/utils'
-//import searchOnEnter from '@/Search.vue'
-//import pageSearch from '@Search.vue'
+
 const cvuser = useCookie<User>('cvuser');
 const cvtoken = useCookie('cvtoken');
 const isAdvocateAdmin = computed(() => cvuser.value?.user_role == "admin" || cvuser.value?.user_role == "advocate")
