@@ -24,7 +24,7 @@ export default defineEventHandler(async event => {
           fs.readFileSync(process.cwd()+"/cert-dev.pem")
         )
         event.context.claims = claims
-        event.context.user = await event.context.client?.user.findFirst(
+        event.context.user = await event.context.client.user.findFirst(
           {
             where: { email: claims.email }
           ,
@@ -51,7 +51,6 @@ export default defineEventHandler(async event => {
           setCookie(event,'cvtoken','')
           setCookie(event,'cvuser','')
           return await sendRedirect(event, logoutRedirectUrl(cvtoken)) // todo: add error message after failed log in attempt
-          return await sendRedirect(event, loginRedirectUrl());
         }
         // include pages ids to check if that's the family's page. 
         setCookie(event, "cvuser", JSON.stringify(event.context.user))
@@ -145,6 +144,11 @@ export default defineEventHandler(async event => {
     } 
   } catch(e){
     console.error(e)
+    if((e.message as unknown as string).includes('jwt expired')) {
+      setCookie(event,'cvtoken','')
+      setCookie(event,'cvuser','')
+      return await sendRedirect(event, logoutRedirectUrl(cvtoken))
+    }
   }
 }
 }

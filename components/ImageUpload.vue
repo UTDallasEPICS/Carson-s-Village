@@ -25,7 +25,6 @@ const onFile = async (event: Event) => {
     const imageDataObj = {
       contentLength: file.size, 
       contentType: file.type, 
-      file,
       pageCuid: props.pageCuid
     }
     const imageData = await $fetch('/api/image_upload', {
