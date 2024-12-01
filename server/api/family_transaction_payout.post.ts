@@ -1,5 +1,3 @@
-import { PrismaClient } from "@prisma/client"
-const prisma = new PrismaClient()
 import {loginRedirectUrl} from "../api/auth0"
 import { nanoid } from "nanoid"
 import Stripe from "stripe"
@@ -13,7 +11,7 @@ export default defineEventHandler(async event => {
         if(event.context.user?.user_role == "admin") { 
           // update success flag in transaction
           
-          const family = await prisma.family.findFirst({
+          const family = await event.context.client.family.findFirst({
               where: {
                   cuid: familyCuid
               }
@@ -45,8 +43,8 @@ export default defineEventHandler(async event => {
             transfer.balance_transaction as string,
           );
           console.log(transferBalanceTransaction.fee_details)
-            await prisma.$transaction([
-              prisma.donationPayout.create({
+            await event.context.client.$transaction([
+              event.context.client.donationPayout.create({
                 data: {
                   transaction_id: transfer.id,
                   amount: body.amount, 
@@ -62,7 +60,7 @@ export default defineEventHandler(async event => {
                     }
                   }
               }}),
-              prisma.page.update({
+              event.context.client.page.update({
                 where: {
                   cuid: body.pageCuid as string
                 },

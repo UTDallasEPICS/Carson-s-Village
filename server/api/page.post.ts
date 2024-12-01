@@ -1,8 +1,5 @@
-import { PrismaClient } from "@prisma/client"
-import { donationFormat } from "@/utils"
 import type { Image } from "@/types.d.ts"
 import {loginRedirectUrl} from "../api/auth0"
-const prisma = new PrismaClient()
 
 /*
 *	/EditPage/0
@@ -18,13 +15,13 @@ export default defineEventHandler(async event => {
     data.donation_goal = Math.trunc(data.donation_goal * 100);
     data.amount_raised = Math.trunc(data.amount_raised * 100);
     try {
-      const family = await prisma.family.findFirst({
+      const family = await event.context.client.family.findFirst({
         where: { cuid: familyCuid as string }
       })
 
       data.status = family?.stripe_account_id ? 'active' : 'no family stripe account'
       // Creates a new entry in the database in the page model to a specfic user
-      const queryRes = await prisma.page.create({
+      const queryRes = await event.context.client.page.create({
         data: {
           ...data, cuid: undefined,
           User: {
@@ -44,7 +41,7 @@ export default defineEventHandler(async event => {
         // Reason: the cuid for the family page is created in the above in the creation query
         await Promise.all(
           Images.map(async (image: Image) => 
-            await prisma.image.update({
+            await event.context.client.image.update({
               where: {
                 cuid: image.cuid
               },
