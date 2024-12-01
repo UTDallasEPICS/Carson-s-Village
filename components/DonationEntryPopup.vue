@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import type { Page, PageDonation } from '@/types.d.ts'
-import { dateFormat, donationFormat } from '@/utils'
+
 const emit = defineEmits(["Exit"])
 const props = defineProps({
     pageCuid: {
