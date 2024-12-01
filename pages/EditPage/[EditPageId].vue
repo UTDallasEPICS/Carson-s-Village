@@ -9,15 +9,8 @@
 *	Located under "/EditPage/"
 */
 
-import ImageUpload from '@/components/ImageUpload.vue'
-import CVInput from '@/components/CVInput.vue'
-import CVLabel from '@/components/CVLabel.vue'
-import CVDatepicker from '@/components/CVDatepicker.vue'
-import CVHelpButton from '@/components/CVHelpButton.vue'
-import CVReply from '@/components/CVReply.vue'
 
 import '@vuepic/vue-datepicker/dist/main.css';
-import CVSuspendButton from '@/components/CVSuspendButton.vue'
 import {
     Listbox,
     ListboxButton,
@@ -25,10 +18,10 @@ import {
     ListboxOption,
 } from '@headlessui/vue'
 
-
+import { ChevronDownIcon, ChevronLeftIcon } from '@heroicons/vue/24/solid'
+import { vElementSize } from '@vueuse/components'
 import type { Image, Page, User, PageDonation, Reply } from '@/types.d.ts'
 import type { Family } from "@prisma/client"
-import { donationFormat, dateFormat } from '@/utils'
 
 const router = useRoute()
 const cvuser = useCookie<User>('cvuser');
@@ -134,7 +127,7 @@ const data_all_users = ref<Family[]>([])
 const replies = ref<Reply[]>([])
 const imageData = ref<Image[]>([])
 const profile_image = ref("")
-const left = ref(true)
+const toggleFiddlyBit = ref(true)
 const familyCuid = ref("")
 const cuid_data = computed(() => router.params.EditPageId);
 const cuid = cuid_data.value as string
@@ -258,7 +251,7 @@ watch(data, async () => {
 }, { deep: true })
 
 if( isAdvocate.value ) {
-        const { data: Families } = await useFetch('/api/families', {
+        const { data: Families } = await useFetch('/api/family', {
             method: 'GET'
         })
         data_all_users.value = Families.value as unknown as Family[]
@@ -275,10 +268,17 @@ const updateSuspendButton = (reply:Reply, suspend:boolean) => { // updates the f
     return;
 }
 
-
-
 await getData(useRoute().params.EditPageId as string)
 const profileImage = computed(() => data.value?.Images.find((i: Image) => i.cuid == data.value?.profileImageCuid))
+const profileImgHeight = ref(40)
+// moves the listbox options (dropdown) down based on the current button image's rendered height
+const onResize = ({ width, height }: { width: number, height: number }) => {
+    if(height != 0) {
+        profileImgHeight.value = height + 45
+    } else {
+        profileImgHeight.value = 40
+    }
+}
 </script>
 
 <template lang="pug">
@@ -310,7 +310,7 @@ CVContainer
                 Listbox.shadow-sm.border.border-1.rounded-lg(as='div' v-model="familyCuid")
                     .relative
                         Transition(
-                    leave-active-class='transition ease-in duration-100'
+                    leave-active-class='transition ease-in duration-300'
                     leave-from-class='opacity-100'
                     leave-to-class='opacity-0'
                 )
@@ -319,22 +319,33 @@ CVContainer
                     ListboxButton(class='text-left bg-white relative rounded-md pl-2 pr-10 py-2 sm:text-sm w-96') {{ familyCuid ? currentFamily.family_name : 'Select family to add the page to' }}
         ImagePreview(v-model:images="imageData" :images="data.Images" :profileImage="profileImage" :pageCuid="cuid_data" @profileImage="setProfileImage" @images="setImagesPreview")
         .information.rounded-md.mx-9.my-2.text-center(class="sm:text-start text-white bg-blue-999")
-            legend.ml-2(class="sm:py-1" style="font-weight: 700; text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") Profile Image Selection        
-        .py-4.flex.gap-72
+            legend.ml-4(class="sm:py-1" style="font-weight: 700; text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") Profile Image Selection        
+        .py-4.grid(class="sm:grid-cols-3")
             .flex
                 CVLabel Profile Image
-                CVHelpButton(class="inline-block" 
-description="Here, you select from photos you uploaded to show up first on the Family Page") 
+                CVHelpButton(class="inline-block z-20" 
+description="Here, you select from photos you uploaded to show up at the top of the family page") 
             .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
-                Listbox.rounded-md.outline-0.border-box.w-full.p-2.bg-white(style="width:350px; border: 1px solid #c4c4c4;" v-model="data.profileImageCuid" as="div") 
-                    ListboxButton(@click="left=!left" class='bg-white relative rounded-md pl-2 py-2 sm:text-sm')
-                        div.flex
-                            img.rounded-lg(class="w-50" style="padding: 10px;" :src="profileImage?.url")
-                            p.p-2(v-if="left" style="font-size: 20px") &lt
-                            p.p-2(v-else style="font-size: 20px") v
-                    ListboxOptions(as='div' style="width:350px;" class='absolute z-10 mt-10 bg-white shadow-lg max-h-60 rounded-md px-2 py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm' )
-                        ListboxOption(v-for="(image,k) in imageData" :key="image.cuid" :value="image.cuid")
-                            img.rounded-lg(style="padding: 10px;" :src="image.url")
+                Listbox.rounded-lg.outline-0.w-full.bg-white.p-2(v-model="data.profileImageCuid" as="div") 
+                    .relative
+                        Transition(
+                            leave-active-class='transition ease-in duration-300'
+                            leave-from-class='opacity-100'
+                            leave-to-class='opacity-0'
+                            @leave="toggleFiddlyBit=!toggleFiddlyBit"
+                            @enter="toggleFiddlyBit=!toggleFiddlyBit"
+                            
+                        )
+                            ListboxOptions(as='div' class='w-full absolute z-10 bg-white shadow-lg shrink-0 max-h-60 max-w-96 mt-8 px-2 py-2 text-base ring-1 ring-black ring-opacity-5 rounded-md overflow-auto focus:outline-none sm:text-sm' :style="{ 'margin-top': profileImgHeight + 'px' }")
+                                    ListboxOption(v-for="(image,k) in imageData" :key="image.cuid" :value="image.cuid")
+                                        img.rounded-lg(class="py-4" :src="image.url" v-if="imageData.length") 
+                    ListboxButton(class='relative rounded-md pl-2 py-4 pr-6 max-w-96 sm:text-sm' style="border: 1px solid #c4c4c4" v-element-size="onResize")
+                        .flex
+                            img.rounded-lg(:src="profileImage?.url" v-if="profileImage")
+                            div.rounded-md.w-96(v-else)
+                            CVChevronLeft.h-4.text-grey-500.z-3(class="inline-block size-4 h-2 max-w-8" v-if="toggleFiddlyBit")
+                            CVChevronDown.h-4.text-gray-500.z-3(v-else class="inline-block size-4 h-2 max-w-8")
+                            
                           
         .py-4.grid(class="sm:grid-cols-3") 
             CVLabel Day of Birth
@@ -390,7 +401,7 @@ description="Here, you select from photos you uploaded to show up first on the F
         .py-4.grid(class="sm:grid-cols-3")
             .flex
                 CVLabel Goal
-                CVHelpButton(class="inline-block" description="If the Donation Goal is 0, it is assumed that there are no donations required")  
+                CVHelpButton(class="inline-block" description="If the Donation Goal is 0, it will be assumed that you do not wish to display your donation progress bar and current amount raised.")  
             .col-md-8.flex.mx-9(class="sm:col-span-2 sm:mr-11")
                 span.rounded-l-md.bg-gray-200.text-lg.p-2(style="text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25); border: 1px solid #c4c4c4;") $
                 input.outline-0.rounded-r-md.border-box.w-full.p-2(style="border: 1px solid #c4c4c4;" v-model='data.donation_goal' placeholder="required" required)

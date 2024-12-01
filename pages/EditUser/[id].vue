@@ -107,7 +107,7 @@ const getData = async (cuid: string) => {
 // boolean indicating that we need the family selection listbox 
 const addingFamily = computed(() => data_user.value.user_role == "family")
 const getUsers = async () => {
-  const { data: FamilyData } = await useFetch('/api/families', {
+  const { data: FamilyData } = await useFetch('/api/family', {
       method: 'GET',
   })
   data_all_families.value = FamilyData.value as unknown as Family[];
