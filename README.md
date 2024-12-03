@@ -349,7 +349,7 @@ This system is focused around advocates, families, and pages. Advocates invite f
 
 ## Stack
 Nuxt, postgres, prisma
-
+Check Github status
 ## Research Questions
 None
 
