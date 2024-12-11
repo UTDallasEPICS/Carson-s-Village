@@ -1,5 +1,5 @@
 <template lang="pug">
-Datepicker.rounded-md.p-2(type="Date" v-model="value")
+Datepicker.rounded-md.p-2(type="Date" v-model="value" auto-apply)
     slot
 </template>
         

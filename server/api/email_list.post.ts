@@ -17,7 +17,7 @@ export default defineEventHandler(async event => {
             "first_name": first_name,
             "last_name": last_name,
             "list_memberships": [
-                '5992e572-a870-11ec-ba34-fa163e00700e'
+                `${runtime.CONSTANT_CONTACTS_LIST_MEMBERSHIP}`
             ]
         }),
         headers: {

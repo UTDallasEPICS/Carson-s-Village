@@ -15,7 +15,6 @@ const searchQuery = ref('');
 const route = useRoute()
 const isNotSearch = computed(() => route.path !== "/Search/")
 const toggle = ref(true);
-console.log(route.path)
 
 const onEnter = async() => {
   // For now, simply navigate to the search page with the entered query

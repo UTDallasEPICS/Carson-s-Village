@@ -10,6 +10,10 @@ export default defineEventHandler(async event => {
           cuid: "0"
         }
       })
+    if(!refreshToken) {
+      console.log("Error: no access token created")
+      await sendRedirect(event, `/EmailList?fail=1`)
+    }
 
     const response = await fetch(`https://authz.constantcontact.com/oauth2/default/v1/token?refresh_token=${refreshToken.refresh_token as string}&grant_type=refresh_token`, {
         method: 'POST',
@@ -39,7 +43,7 @@ export default defineEventHandler(async event => {
           
         }
       })
-
+      
       await sendRedirect(event, `/EmailList?success=2`)
     }
   })
