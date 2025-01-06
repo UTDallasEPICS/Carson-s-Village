@@ -11,8 +11,11 @@ export default defineEventHandler(async event => {
         }
       })
     if(!refreshToken) {
-      console.log("Error: no access token created")
-      await sendRedirect(event, `/EmailList?fail=1`)
+      console.log("Error: no access token present")
+      createError({
+        status: 400,
+        statusMessage: "Error: no access token present"
+      })
     }
 
     const response = await fetch(`https://authz.constantcontact.com/oauth2/default/v1/token?refresh_token=${refreshToken.refresh_token as string}&grant_type=refresh_token`, {
@@ -25,6 +28,15 @@ export default defineEventHandler(async event => {
       })
 
       const respBody = await response.json()
+
+      if(!response.ok) {
+        console.log(response.statusText)
+        throw createError({
+          statusCode: 500,
+          message: "Failed to refresh token / Internal Server Error" 
+      })
+        //return { error: "Failed to refresh token / Internal Server Error", statusCode: 500}
+      }
 
       const addToken = await event.context.client?.CC_Token.upsert({
         where: {
@@ -44,7 +56,7 @@ export default defineEventHandler(async event => {
         }
       })
       
-      await sendRedirect(event, `/EmailList?success=2`)
+     return { statusMessage: "successfully refreshed token", statusCode: 200} 
     }
   })
   

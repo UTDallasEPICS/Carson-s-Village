@@ -18,7 +18,10 @@ export default defineTask({
       
       if(!refreshToken) {
         console.log("Error: no access token created")
-        return { result: "Error: no access token created"}
+        throw createError({
+          statusCode: 500,
+          statusMessage: "Error: no access token created"
+        })
       }
 
       const response = await fetch(`https://authz.constantcontact.com/oauth2/default/v1/token?refresh_token=${refreshToken.refresh_token as string}&grant_type=refresh_token`, {

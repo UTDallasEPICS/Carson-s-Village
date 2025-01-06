@@ -1,9 +1,7 @@
 <script lang="ts" setup>
-import { ref, onMounted } from 'vue';
-
 const router = useRoute()
 const success = computed(() => router.query.success)
-const fail = computed(() => router.query.fail)
+//const fail = computed(() => router.query.fail)
 
 const successMessage = ref<string | null>(null);
 const failMessage = ref<string | null>(null);
@@ -12,38 +10,34 @@ const getAuthRequestUrl = () => {
     window.location.href = '/api/constant_contacts';
 }
 
-const refreshToken = () => {
-    window.location.href = '/api/refresh_token';
-}
-
-const checkSuccessParam = () => {
-    const successParam = success.value as string
-    if (successParam === '1') {
-        successMessage.value = 'Success! Auth token was created!';
-    } else if (successParam === '2') {
-        successMessage.value = 'Success! Token was refreshed!';
-    } else if (successParam === '3') {
-        successMessage.value = 'Success! You have been added to the email list!';
-    }
-    else {
-        successMessage.value = null;
+const refreshToken = async() => {
+   const responce = await $fetch('/api/refresh_token', {
+        method: "PUT"
+    })
+    if(responce?.statusCode === 200) {
+        successMessage.value = 'Success! Constant Contacts Auth token was refreshed!';
+    } else {
+        failMessage.value = 'No access token present'
     }
 }
 
-const checkFailParam = () => {
-    const failParam = fail.value as string
+const checkAccessToken = async() => {
+    const tokenExists = await $fetch('/api/cc_access_token', {
+            method: "GET"
+    })
     
-    if (failParam === '1') {
-        failMessage.value = 'No access token'
-    }  else {
-        failMessage.value = null;
+    if(tokenExists) {
+        successMessage.value = 'Success! Constant Contacts Auth token was created'
+    } else {
+        successMessage.value = ''
     }
 }
 
 onMounted(() => {
-    checkSuccessParam();
-    checkFailParam()
+    checkAccessToken();
 });
+
+
 
 
 </script>

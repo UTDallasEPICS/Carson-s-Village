@@ -164,5 +164,6 @@ export type Reply = {
   familyCuid: string
   name: string
   reply: string
+  date: Date | string | null | undefined
   suspended: boolean
 }

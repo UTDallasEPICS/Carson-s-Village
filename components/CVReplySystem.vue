@@ -1,7 +1,4 @@
 <script lang="ts" setup>
-import CVTextArea from './CVTextArea.vue';
-import CVInput from './CVInput.vue';
-import ActionButton from './ActionButton.vue';
 import type {Reply} from '@/types.d.ts'
 
 const emit = defineEmits(["displayReply"]);
@@ -16,11 +13,13 @@ console.log(props.familyCuid)
 const replyData = ref<Partial<Reply>>({
     name: "",
     reply:"",
+    date: undefined,
     pageCuid: props.pageCuid,
     familyCuid: props.familyCuid,
 })
 
 const clearSuccessMessage = () => {
+    replyData.value.date = undefined
     successMessage.value = '';
     replyData.value.name = ""; // Clear name field
     replyData.value.reply = ""; // Clear reply field
@@ -40,6 +39,7 @@ const submitComment = async () => {
     if (response) {
         replyData.value.pageCuid = props.pageCuid;
         replyData.value.familyCuid = props.familyCuid;
+        replyData.value.date = response.date
         emit('displayReply', {...replyData.value });
         
         //successMessage.value = "Comment submitted successfully!"; // Set success message
