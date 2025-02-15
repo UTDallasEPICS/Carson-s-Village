@@ -41,6 +41,6 @@ export default defineEventHandler(async event => {
           }
         })
       }
-      await sendRedirect(event, `/EmailList?success=1`)
+      await sendRedirect(event, `/EmailList`)
   })
   

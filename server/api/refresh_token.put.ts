@@ -18,7 +18,7 @@ export default defineEventHandler(async event => {
       })
     }
 
-    const response = await fetch(`https://authz.constantcontact.com/oauth2/default/v1/token?refresh_token=${refreshToken.refresh_token as string}&grant_type=refresh_token`, {
+    const response = await fetch(`https://authz.constantcontact.com/oauth2/default/v1/token?refresh_token=${refreshToken?.refresh_token as string}&grant_type=refresh_token`, {
         method: 'POST',
         headers: {
             "Accept": "application/json",

@@ -27,9 +27,8 @@ export default defineEventHandler(async event => {
     })
 
     const respBody = await response.json()
-    console.log("RESPONSE", respBody)
 
     return { 
-        success:true 
+        success: true 
     }
 })

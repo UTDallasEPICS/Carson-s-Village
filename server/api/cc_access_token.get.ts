@@ -1,16 +1,15 @@
-export default defineEventHandler(async event => {
-    if(event.context.user?.user_role === "admin") {
-        const accessToken = await event.context.client?.CC_Token.findFirst({
-            where: {
-                cuid: "0"
-            }
-        })
-        return true    
-    }
+import {authRequestUrl} from './constant_contacts' 
 
-    createError({
-        statusCode: 403, 
-        statusMessage: "Unauthorized"
-    }) 
+export default defineEventHandler(async event => {
+    if (event.context.user?.user_role === "admin")  {
+        const removeToken = await event.context.client.CC_Token.deleteMany()
+    
+        await sendRedirect(event, authRequestUrl())
+   }
+   
+   createError({
+    statusCode: 401, 
+    statusMessage: "Unauthorized"
+}) 
 })
-  
+      

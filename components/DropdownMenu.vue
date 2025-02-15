@@ -80,7 +80,6 @@ div.dropdown(@mouseleave="hideDropdown" @mouseover="showDropdown")
 </template>
 
 <script setup>
-import { defineProps, ref } from 'vue';
 
 const props = defineProps({
   to: String,
