@@ -3,9 +3,6 @@ import Stripe from "stripe"
 const runtime = useRuntimeConfig()
 
 const stripeSecretKey = runtime.STRIPE_SECRET;
-import { PrismaClient } from "@prisma/client"
-const prisma = new PrismaClient()
-
 // This api endpoint happens after a family member onboards to Stripe Connect.
 // After the family has submitted all of their details to Stripe, their Carson's Village pages will be active.
 
@@ -19,9 +16,9 @@ export default defineEventHandler(async event => {
   console.log(stripeAccountFull)
   // if the user backed out of the onboard, they will be redirected back to the onboard
   if(stripeAccountFull.details_submitted) {  
-const queryRes = await prisma.page.updateMany({
+const queryRes = await event.context.client.page.updateMany({
     where: {
-        familyCuid : event.context.user.familyCuid as string
+        familyCuid : event.context.user?.familyCuid as string
     },
     data: { status: 'active'} 
 })

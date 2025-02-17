@@ -1,5 +1,6 @@
 import { PrismaClient } from "@prisma/client"
 const prisma = new PrismaClient()
+import {loginRedirectUrl} from "../api/auth0"
 
 /*
 *	/FamilyTransactionList
@@ -14,15 +15,19 @@ export default defineEventHandler(async event => {
         return ""
     }
     console.log(page_cuid)
-    const queryRes = prisma.pageDonation.aggregate({
-        _max: {
-            donationDate: true
-        },
-        where: {
-          pageCuid: page_cuid as string,
-          success: true
-        }
-    })
+    if(event.context.user?.user_role === "admin") {
+      const queryRes = prisma.pageDonation.aggregate({
+          _max: {
+              donationDate: true
+          },
+          where: {
+            pageCuid: page_cuid as string,
+            success: true
+          }
+      })
 
-  return queryRes;
+    return queryRes;
+    } else {
+      return await sendRedirect(event, loginRedirectUrl());
+    }
 })

@@ -1,6 +1,4 @@
-import { PrismaClient } from "@prisma/client"
 import { nanoid } from "nanoid"
-const prisma = new PrismaClient()
 import Stripe from "stripe"
 const runtime = useRuntimeConfig()
 //require('dotenv').config()
@@ -15,11 +13,13 @@ const stripeSecretKey = runtime.STRIPE_SECRET;
 
 export default defineEventHandler(async event => {
   const stripe = new Stripe(stripeSecretKey as string, { apiVersion:"2022-11-15"} )
-    const query = getQuery(event)
-    try{
+  const transaction_id = getRouterParam(event, 'id')
+
+  const { subscribing } = getQuery(event)
+    try {
       // get amount donated from transaction
-      const transaction = await prisma.pageDonation.findFirst({
-        where: { transaction_id: query.transaction as string},
+      const transaction = await event.context.client.pageDonation.findFirst({
+        where: { transaction_id: transaction_id as string},
         include: {
           Page: {
             select: {
@@ -37,9 +37,7 @@ export default defineEventHandler(async event => {
         }
       })
 
-      console.log(query.subscribing as string)
-
-      if(query.subscribing as string == '1'){
+      if(subscribing as string == '1'){
         const subscribing = await $fetch<{ success: boolean }>(`/api/email_list`, {
           method: 'POST',
           body: ({
@@ -59,8 +57,8 @@ export default defineEventHandler(async event => {
       }
       // rejects if the transactionid has already been completed
       // update success flag in transaction
-      const checkTransaction = await prisma.pageDonation.findFirst({
-        where: { transaction_id: query.transaction as string}
+      const checkTransaction = await event.context.client.pageDonation.findFirst({
+        where: { transaction_id: transaction_id as string}
       })
 
       if(checkTransaction?.success!= true){
@@ -89,12 +87,12 @@ export default defineEventHandler(async event => {
           }
           //console.log(duration)
           
-        await prisma.$transaction([
-          prisma.pageDonation.update({
-            where: { transaction_id: query.transaction as string},
+        await event.context.client.$transaction([
+          event.context.client.pageDonation.update({
+            where: { transaction_id: transaction_id as string},
             data: { success: true }
           }),
-           prisma.page.update({
+           event.context.client.page.update({
             where: { cuid: transaction?.pageCuid },
             data: {
               last_donation_date: new Date(),

@@ -9,7 +9,7 @@
 */
 
 import type { User, Page } from "@/types.d.ts"
-import { Family } from "@prisma/client" 
+import type { Family } from "@prisma/client" 
 import { ChevronUpIcon, ChevronDownIcon, ChevronUpDownIcon } from '@heroicons/vue/24/solid'
 
 type User2 = {

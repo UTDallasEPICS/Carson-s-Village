@@ -1,7 +1,5 @@
-import { PrismaClient } from "@prisma/client"
-import {loginRedirectUrl} from "../api/auth0"
+import {loginRedirectUrl} from "./auth0"
 import type { Image } from "@/types.d.ts"
-const prisma = new PrismaClient()
 
 /*
 *	/EditPage/cuid
@@ -14,8 +12,7 @@ export default defineEventHandler(async event => {
   //const userCuid = data.userCuid
   //delete data.userCuid;
   
-  console.log('h',familyCuid, event.context.user)
-  if(event.context.user.user_role === "advocate" || event.context.user?.user_role == "admin" || event.context.user.cuid == userCuid || event.context.user.Family?.cuid == familyCuid ){
+  if(event.context.user?.user_role === "advocate" || event.context.user?.user_role == "admin" || event.context.user?.cuid == userCuid || event.context.user?.Family?.cuid == familyCuid ) {
     console.log(data.amount_raised)
     delete data.Family // Not sure why this is needed to fix an error
     try {
@@ -28,7 +25,7 @@ export default defineEventHandler(async event => {
         console.log("amount raised after removing formating ", data.amount_raised)
       }
       // updates a pre-existing page
-      const queryRes = await prisma.page.update({
+      const queryRes = await event.context.client.page.update({
         where: {
           cuid: data.cuid
         },
@@ -36,14 +33,17 @@ export default defineEventHandler(async event => {
           ...data
         }
       });
-
+      
         // Initially the images are not linked to a family page, so we add it here 
         // Reason: the cuid for the family page is created in the above in the creation query
         // For page edit, images without a pageCuid are processed
+        // Changed the logic to work for puts a while ago.
+        // Image attaches to page on upload for existing page.
+        // Remove below?
         /*await Promise.all(
         Images.forEach(async (image: Image) => {
           if(image.pageCuid == null) {
-            await prisma.image.update({
+            await event.context.prisma.image.update({
               where: {
                 cuid: image.cuid
               },

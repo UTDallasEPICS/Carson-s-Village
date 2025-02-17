@@ -1,6 +1,4 @@
-import { PrismaClient } from "@prisma/client"
 import {loginRedirectUrl} from "../api/auth0"
-const prisma = new PrismaClient()
 
 /*
 *	/PageList/cuid
@@ -14,12 +12,12 @@ export default defineEventHandler(async event => {
         return []
     }
 
-    if(event.context.user.user_role === "advocate"  || event.context.user?.user_role == "admin" || event.context.user.familyCuid == family_cuid as string){
-      const [count, pagesResult, pagesUnpaginated] = await prisma.$transaction([
-        prisma.page.count( { where: {
+    if(event.context.user?.user_role === "advocate"  || event.context.user?.user_role == "admin" || event.context.user?.familyCuid == family_cuid as string) {
+      const [count, pagesResult, pagesUnpaginated] = await event.context.client.$transaction([
+        event.context.client.page.count( { where: {
           familyCuid : family_cuid as string
        }}),
-       prisma.page.findMany({
+       event.context.client.page.findMany({
             where: {
                 familyCuid : family_cuid as string
             },
@@ -39,7 +37,7 @@ export default defineEventHandler(async event => {
             }
           }
     }), 
-    prisma.page.findMany({
+    event.context.client.page.findMany({
       where: {
           familyCuid : family_cuid as string
       },

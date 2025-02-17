@@ -1,6 +1,4 @@
-import { PrismaClient } from "@prisma/client"
 import {loginRedirectUrl} from "../api/auth0"
-const prisma = new PrismaClient()
 
 /*
 *	/Users
@@ -11,7 +9,7 @@ const prisma = new PrismaClient()
 export default defineEventHandler(async event => {
   const { page_number, order, sortedColumn } = getQuery(event);
   
-  if(event.context.user.user_role === "advocate" || event.context.user.user_role === "admin"){
+  if(event.context.user?.user_role === "advocate" || event.context.user?.user_role === "admin"){
     // Pagination via taking the absolute table page number with 12 records per page
     let orderBy = {};
     if (sortedColumn === 'family_name') {
@@ -19,9 +17,9 @@ export default defineEventHandler(async event => {
     } else {
       orderBy = { [(sortedColumn as string) || 'last_name']: order || 'asc' };
     }
-    const [ count, userData, unsortedUsers ] = await prisma.$transaction([
-      prisma.user.count(),
-      prisma.user.findMany({
+    const [ count, userData, unsortedUsers ] = await event.context.client.$transaction([
+      event.context.client.user.count(),
+      event.context.client.user.findMany({
     orderBy: orderBy,
       skip: page_number as number * 12,
       take: 12,
@@ -30,7 +28,7 @@ export default defineEventHandler(async event => {
         Family: true
       }
       }),
-      prisma.user.findMany({
+      event.context.client.user.findMany({
       skip: page_number as number * 12,
       take: 12,
       include: {

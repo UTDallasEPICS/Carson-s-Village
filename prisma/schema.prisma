@@ -109,10 +109,10 @@ model PageDonation {
 }
 
 model CC_Token {
-  cuid     String @id @default("0")
-  token    String
+  cuid          String @id @default("0")
+  token         String
   refresh_token String
-  date     DateTime  @default(now())
+  date          DateTime  @default(now())
 }
 
 model Reply {

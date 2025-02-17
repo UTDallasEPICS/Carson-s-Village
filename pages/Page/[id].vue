@@ -11,10 +11,6 @@
 
 
 import type { User, Page, PageDonation, Image, Reply, Family} from '@/types.d.ts'
-import {  dateFormat, donationFormat, longDateFormat } from '@/utils'
-import CVReplySystem from '@/components/CVReplySystem.vue'
-import CVReply from '@/components/CVReply.vue'
-
 
 const pageData = ref<Page>({
     cuid: "",
@@ -84,6 +80,7 @@ const donationData = ref<PageDonation>({
     transaction_id : "",
     donorFirstName: "",
     donorLastName: "",
+    donorEmail: "",
     comments: "", 
     isAnonymous : false,
     donationDate: "",
@@ -196,6 +193,14 @@ const prevImage = () => {
     }
 }
 
+const previewImage = ref("")
+const showPreview = (image: Image) => {
+  previewImage.value = image.url
+}
+
+const closePreview = () => {
+  previewImage.value = ''
+}
 // Recursively moves to the next image every 5 seconds
 const setImageAutoSlide = () => {
   nextImage()
@@ -208,7 +213,7 @@ const displayReply = async (reply: Reply) => {
 }
 
 // Recieves the emit to stop displaying the donation popup from the button within the component donationEntryPoppup
-const exitPopup = async(exit: boolean) => {
+const exitPopup = () => {
   DisplayDonationPopup.value = false
 }
 
@@ -220,10 +225,11 @@ setImageAutoSlide()
 
 <template lang="pug">
 // donation popup
-.flex.flex-col
-  .div.flex(@click.self="DisplayDonationPopup=false" v-if="DisplayDonationPopup" style="z-index: 10; align-items: center; justify-content: center; position: fixed; top: 0; bottom: 0; left: 0; right: 0; background: rgba(0, 0, 0, 0.7);")
-    .mx-auto.flex.p-2(style="width:50%; background-color:#fff;")
-      DonationEntryPopup(@Exit="exitPopup" :amount_raised="pageDataDB.amount_raised" :donation_goal="pageDataDB.donation_goal" :donation_goal_provided="donation_goal_provided" :donated_percentage="donated_percentage" :isActive="isActive" :donationData="donationData" :pageCuid="pageCuid" :familyCuid="familyCuid")  
+.div.flex(@click.self="DisplayDonationPopup=false" v-if="DisplayDonationPopup" style="z-index: 10; align-items: center; justify-content: center; position: fixed; top: 0; bottom: 0; left: 0; right: 0; background: rgba(0, 0, 0, 0.7);")
+  .mx-auto.flex.p-2.bg-white(class="w-1/2")
+    DonationEntryPopup(@Exit="exitPopup" :amount_raised="pageDataDB.amount_raised" :donation_goal="pageDataDB.donation_goal" :donation_goal_provided="donation_goal_provided" :donated_percentage="donated_percentage" :isActive="isActive" :donationData="donationData" :pageCuid="pageCuid" :familyCuid="familyCuid")  
+
+// the header overlay with image and name
 .flex.gap-2.justify-center.cols-2.pl-6.pr-6
     a.mr-2.mt-1.p-2.px-9.pt-3.pb-3.bg-orange-999(class="transition duration-300 bg-orange-999 hover:bg-green-600" style="border-radius: 100px; height: 50px; color: white; font-weight: 700;") Archive
 .mt-2.min-h-24.text-white.uppercase.w-full(style="background-image: url('https://carsonsvillage.org/wp-content/uploads/2018/11/iStock-862083112-BW.jpg');") 
@@ -239,7 +245,13 @@ setImageAutoSlide()
     .relative.w-96.p-1(v-if="imageData.length != 0" )
       button.absolute.left-4.top-64.bg-black.text-white(@click="prevImage" style="opacity:0.7; --tw-text-opacity: 1; width: 46px; height: 46px; border-radius:50%; align-items: center; justify-content: center; line-height: 2; text-align: center;color: white;") &#60;
       button.absolute.right-8.top-64.bg-black.text-white(@click="nextImage" style="opacity:0.7; --tw-text-opacity: 1; width: 46px; height: 46px; border-radius:50%; align-items: center; justify-content: center; line-height: 2; text-align: center;color: white;") &#62;
-      img.w-96(style="z-index: -1; object-fit:cover;" :src="imageData[currentImage].url")
+      img.w-96.cursor-pointer(style="z-index: -1; object-fit: cover;" @click="showPreview(profileImage)" :src="imageData[currentImage].url")     
+      div(class="w-full h-full overflow-auto block fixed left-0 top-0" style="z-index: 1000; background-color: rgba(0, 0, 0, 0.8);" v-if="previewImage" @click.self="closePreview")
+        img.py-2(v-for="(image, index) in imageData" class="block max-w-[80%] max-h-[80%] m-auto"
+              :key="index" :src="image.url")
+        span.absolute.cursor-pointer(class="top-[15px] right-[35px] text-[30px] transition duration-300 text-gray-400 hover:text-white cursor-pointer focus:text-white cursor-pointer"  
+          @click="closePreview"
+          ) &times;
   // services list
   .col-span-1(class="sm:grid-cols-2").pt-5.pl-5.pr-15
         .flex.flex-col(v-if="pageDataDB.visitation_date").pb-5.pr-15
@@ -306,7 +318,7 @@ setImageAutoSlide()
           .text-xs.text-gray-600.pt-5 Amount Donated: {{ donationFormat(comment.amount) }}
   CVReplySystem(:pageCuid="id" :familyCuid="familyCuid" :replies="replies" @displayReply="displayReply")
   .py-4.grid.row-span-3.gap-2(v-if="replies?.length")
-    .p-2.bg-white.rounded-lg.mb-2.shadow-md.pb-4(v-for="(reply,i) in replies" :key="i") 
+    .p-2.bg-white.rounded-lg.mb-2.shadow-md.pb-4(v-for="(reply,i) in replies.filter(item => !item.suspended)" :key="i") 
       .flex.justify-between.gap-5.pd-4
         .ml-1.text-lg.font-bold {{reply.name}}
         .ml-1.text-lg {{dateFormat(reply.date)}}

@@ -1,19 +1,25 @@
-import { PrismaClient } from "@prisma/client";
-
-const prisma = new PrismaClient();
+import type { Reply } from "~/types.d.ts"
 
 export default defineEventHandler(async (event) => {
-  //try {
-    const {pageCuid, familyCuid,replyData} = await readBody(event)
+    const {pageCuid, familyCuid, replyData} = await readBody(event)
     console.log(replyData._value)
-    const newReply = await prisma.reply.create({
-      data: { ...replyData._value}
-    });
+    let newReply: Reply = {
+      cuid: "",
+      pageCuid: "",
+      familyCuid: "",
+      name: "",
+      reply: "",
+      date: undefined,
+      suspended: false
+    }
+    
+    try {
+      newReply = await event.context.client.reply.create({
+        data: { ...replyData._value}
+      }) as unknown as Reply
+    } catch(error) {
+      console.error(error)
+    }
 
     return newReply;
-  /*} catch (error) {
-    console.error(error);
-  } finally {
-    await prisma.$disconnect();
-  }*/
 });

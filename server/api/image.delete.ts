@@ -1,7 +1,5 @@
-import { PrismaClient } from "@prisma/client"
-import type { Image, Page, User } from '@/types.d.ts'
 import {loginRedirectUrl} from "../api/auth0"
-const prisma = new PrismaClient()
+import type { Page } from "@/types.d.ts"
 
 /*
 *	/EditPage/cuid
@@ -13,10 +11,11 @@ const prisma = new PrismaClient()
 export default defineEventHandler(async event => {
   const body = await readBody(event);
 
+  const pageFound = event.context.user?.Family?.Pages?.find((page:Page) => page.cuid == body.pageCuid) || undefined
 try {
-  if(event.context.user.user_role === "advocate" || event.context.user.user_role == "admin" || body.pageCuid === event.context.user.cuid) {
+  if(event.context.user?.user_role === "advocate" || event.context.user?.user_role == "admin"  || event.context.user?.user_role == 'family' && body.pageCuid == null || pageFound) {
     // Deletes an image from the database.
-    const queryRes = await prisma.image.delete({
+    const queryRes = await event.context.client.image.delete({
       where: {
           cuid: body.cuid as string
         }
@@ -28,7 +27,7 @@ try {
     return await sendRedirect(event, loginRedirectUrl());
   }
   } catch(e){
-  console.log(e)
+    console.log(e)
   return false;
   } 
 });

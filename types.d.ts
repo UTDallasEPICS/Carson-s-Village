@@ -44,7 +44,17 @@ export type DonationPayout = PDonationPayout & {
   Pages?: PayoutToPage;
 };
 */
-import { DonationPayout } from "@prisma/client"
+import { PrismaClient, DonationPayout } from "@prisma/client"
+
+declare module 'h3' {
+  interface H3EventContext {
+    user?: Partial<User> & { Family: Partial<Family>}; 
+    client: PrismaClient;
+    claims?: {
+      email: string
+    }
+  }
+}
 
 // TODO: import types from prisma, export them with relations added
 export type Page = {
@@ -52,7 +62,6 @@ export type Page = {
     page_last_name: string,
     cuid: string,
     userCuid: string,
-    familyCuid: string,
     day_of_birth: Date | string | null,
     day_of_passing: Date | string | null,
     visitation_date: Date | string | null,
@@ -155,5 +164,6 @@ export type Reply = {
   familyCuid: string
   name: string
   reply: string
+  date: Date | string | null | undefined
   suspended: boolean
 }

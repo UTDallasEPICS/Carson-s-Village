@@ -6,8 +6,9 @@ Carson's Village, inspired by Jason Dyke's personal tragedy, emerged to address 
 Our project at UTD EPICS aims to enhance Carson's Village services by developing an Automated Family Page, streamlining the process of creating tribute pages for deceased family members. By automating this aspect, the project seeks to alleviate the burden on both Advocates and grieving families during an already stressful period. The primary objectives include updating the page based on user feedback, integrating a reporting tool for increased functionality, and implementing iterative UI/UX improvements to enhance user experience.
 
 Admin:
- - Primarily 
  - Collaborate with project team to ensure the efficacy of the Automated Family
+ - Distribute donations
+ - Manage email list access token and refresh token
 Page
 
 Advocates: 
@@ -73,25 +74,23 @@ Clone repsitory
 
 Copy .env into root or fill out new keys from .env.example
 
-Need Private keys for 
+Need Private keys/info for 
  - Stripe
  - AWS
  - Auth0
  - Constant Contacts
- Need 
  - email source for AWS SES
  - S3 bucket URL
  - Auth0 Issuer URL
 
 Install the dependencies:
 
-Ideally use npm
+(npm is easier, but pnpm is better)
 ```bash
 # npm
-npm install 
-
-# yarn
-yarn install 
+npm install
+or
+npm i
 
 # pnpm
 pnpm install --shamefully-hoist
@@ -111,6 +110,7 @@ docker-compose up
 Initialize Postgres DB via
 ```bash
 npx prisma generate
+npx prisma migrate dev
 ```
 Add first user with prisma studio with valid email that you can use
 ```bash
@@ -191,6 +191,12 @@ on future Carson's Village's usage of this project.
 This system is focused around advocates, families, and pages. Advocates invite families and guide them through the process of creating a memorial page. These pages contain obituaries, times, and locations. These pages are publicly viewable and searchable. Pages can receive donations, have donation goals, and have deadlines for fundraising. Family users can only access the system after being invited by an advocate. Family users have profiles. Admin distributes donations to families.
 
 # Functional Requirements
+
+## Email List
+  - Authorize token button which initiates initial integration
+  - Refresh token button which adds new token to database if expired
+  - Shows success message when either operation is completed
+  - Constant Contacts is used to connect to Carson's Village email list database
 
 ## Edit Page
  - Logged in users can create pages with the following properties filled in:
@@ -352,6 +358,8 @@ None
 - Stripe for payments and donation payouts
 - Auth0 for authentication
 - AWS SES for emails
+- AWS S3 for image upload and storage
+- Constant Contacts for email list
 
 ## Deployment
 

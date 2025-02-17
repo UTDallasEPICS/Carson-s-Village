@@ -1,6 +1,4 @@
-import { PrismaClient } from "@prisma/client"
 import {loginRedirectUrl} from "../api/auth0"
-const prisma = new PrismaClient()
 
 /*  /EditUser/cuid
 *	  function:	PUT
@@ -10,7 +8,7 @@ const prisma = new PrismaClient()
 export default defineEventHandler(async event => {
 const body = await readBody(event);
 //delete body.pages
-if(event.context.user?.user_role == "advocate"  || event.context.user.user_role === "admin"){
+if(event.context.user?.user_role == "advocate"  || event.context.user?.user_role === "admin"){
   // updates the user
   try { 
     //changing families that a user belongs to and or other details
@@ -18,7 +16,7 @@ if(event.context.user?.user_role == "advocate"  || event.context.user.user_role 
     // todo: add security so that admins can change any user, advocates can change those that they are responsible for, and users should not be able to change their own email (or stuff breaks obviously).
     // todo: change api to use a more standard format. Here we specify the fields of the body instead of using ...body because ...body breaks here
     if(body.user_role == 'family' && body.familyCuid !== '') {
-      const queryRes = await prisma.user.update({
+      const queryRes = await event.context.client.user.update({
         where: {
           cuid: body.cuid
         },
@@ -36,7 +34,7 @@ if(event.context.user?.user_role == "advocate"  || event.context.user.user_role 
         }  
           });
     } else {
-    const queryRes = await prisma.user.update({
+    const queryRes = await event.context.client.user.update({
       where: {
         cuid: body.cuid
       },

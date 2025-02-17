@@ -1,41 +1,56 @@
 <script lang="ts" setup>
-import { ref, onMounted } from 'vue';
+const router = useRoute()
+const success = computed(() => router.query.success)
+//const fail = computed(() => router.query.fail)
 
 const successMessage = ref<string | null>(null);
+const failMessage = ref<string | null>(null);
 
 const getAuthRequestUrl = () => {
-    window.location.href = '/api/constant_contacts';
+    window.location.href = '/api/cc_access_token';
 }
 
-const refreshToken = () => {
-    window.location.href = '/api/refresh_token';
-}
+const refreshToken = async() => {
+   const responce = await $fetch('/api/refresh_token', {
+        method: "PUT"
+    }).catch(error => {
+        console.log(error)
+        successMessage.value = ''
+        failMessage.value = 'No access token present'
+    })
 
-const checkSuccessParam = () => {
-    const params = new URLSearchParams(window.location.search);
-    const successParam = params.get('success');
-
-    if (successParam === '1') {
-        successMessage.value = 'Success! Auth token was created!';
-    } else if (successParam === '2') {
-        successMessage.value = 'Success! Token was refreshed!';
-    } else if (successParam === '3') {
-        successMessage.value = 'Success! You have been added to the email list!';
+    if(responce?.statusCode === 200) {
+        successMessage.value = 'Success! Constant Contacts Auth token was refreshed!';
+    } else {
+        failMessage.value = 'Cannot refresh token, no access token present'
+        successMessage.value = ''
     }
-    else {
-        successMessage.value = null;
+
+}
+
+const checkAccessToken = async() => {
+    // using $fetch instead of useFetch because we do not want to cache if the token exists or not
+    const tokenExists = await $fetch('/api/cc_access_token_exists', {
+            method: "GET"
+    })
+
+    if(tokenExists) {
+        successMessage.value = 'Success! Constant Contacts Auth token was created or is already present'
+    } else {
+        failMessage.value = 'No access token present'
+        successMessage.value = ''
     }
 }
 
-
-
-onMounted(() => {
-    checkSuccessParam();
-});
+await checkAccessToken();
 </script>
 
 <template lang="pug">
-div(v-if="successMessage") {{ successMessage }}
-button.type-button.my-4.bg-orange-999.text-white.px-4.py-2.rounded-full.w-32.grow-0(type="button" @click="getAuthRequestUrl") Authorize
-button.type-button.my-4.bg-orange-999.text-white.px-4.py-2.rounded-full.w-32.grow-0(type="button" @click="refreshToken") Refresh
+.flex.justify-center.align-center
+    .ml-4(v-if="successMessage") {{ successMessage }}
+    .ml-4(v-if="failMessage") {{ failMessage }}
+.flex.justify-center.align-center
+    button.type-button.ml-4.my-4.bg-orange-999.text-white.px-4.py-2.rounded-full.w-32.grow-0(type="button" @click="getAuthRequestUrl" class="transition duration-300 bg-orange-999 hover:bg-green-600") Authorize
+    button.type-button.ml-4.my-4.bg-orange-999.text-white.px-4.py-2.rounded-full.w-32.grow-0(type="button" @click="refreshToken" class="transition duration-300 bg-orange-999 hover:bg-green-600") Refresh Token
+
 </template>

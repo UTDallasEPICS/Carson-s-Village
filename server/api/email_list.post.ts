@@ -1,8 +1,10 @@
+const runtime = useRuntimeConfig()
+
 export default defineEventHandler(async event => {
     const body = await readBody(event);
     const { email, first_name, last_name } = body;
 
-    const token = await event.context.client.CC_Token.findUnique({
+    const token = await event.context.client?.CC_Token.findUnique({
         where: {
             cuid: "0"
         }
@@ -15,7 +17,7 @@ export default defineEventHandler(async event => {
             "first_name": first_name,
             "last_name": last_name,
             "list_memberships": [
-                "5992e572-a870-11ec-ba34-fa163e00700e"
+                `${runtime.CONSTANT_CONTACTS_LIST_MEMBERSHIP}`
             ]
         }),
         headers: {
@@ -25,9 +27,8 @@ export default defineEventHandler(async event => {
     })
 
     const respBody = await response.json()
-    console.log("RESPONSE", respBody)
 
     return { 
-        success:true 
+        success: true 
     }
 })

@@ -10,7 +10,7 @@
 */
 
 import type { User } from '@/types.d.ts'
-import { Family } from '@prisma/client';
+import type { Family } from '@prisma/client';
 import {
     Listbox,
     ListboxButton,

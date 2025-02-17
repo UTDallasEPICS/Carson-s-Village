@@ -18,13 +18,13 @@ import {
 } from '@headlessui/vue'
 import type { User, Page, PageDonation, donation_payout, Family } from "@/types.d.ts"
 import { ChevronUpIcon, ChevronDownIcon, ChevronUpDownIcon } from '@heroicons/vue/24/solid'
-import { donationFormat, dateFormat } from "@/utils"
 //import { Family } from "@prisma/client"
+
 const currentFamilyPageNumber = ref(0)
 const cvuser = useCookie<User>('cvuser');
 const isAdmin = computed(() => cvuser.value?.user_role == "admin")
 const isAdvocate = computed(() => cvuser.value?.user_role == "advocate")
-const { data: Families } = await useFetch<Family[]>('/api/families', {
+const { data: Families } = await useFetch<Family[]>('/api/family', {
     method: 'GET',
     default() {
       return [] as any
@@ -52,7 +52,7 @@ const { data: Families } = await useFetch<Family[]>('/api/families', {
   const currentPage = computed(() => familyData.value?.raw_data.find(({ cuid }: Page) => cuid == currentPageCuid.value) || {});
   watchEffect(() => currentPageCuid.value = familyData.value.raw_data![0]?.cuid || "");  
 
-  const { data: donations } = await useFetch<PageDonation[]>('/api/family_donation', {
+  const { data: donations } = await useFetch<PageDonation[]>('/api/family_donations', {
     method: 'GET',
     query: { family_cuid: currentFamilyCuid },
     watch: [currentFamilyCuid],
@@ -117,7 +117,7 @@ const { data: Families } = await useFetch<Family[]>('/api/families', {
     div(class="basis-1/3")
       PayoutRecord(:currentPage="currentPage" :currentFamily="currentFamily")
 
-  CVLegend.mt-10 Family Pages
+  CVLegend.mt-10.ml-2 Family Pages
   table.mt-5.table.table-striped.w-full
       thead
           tr(style="color: white;")
@@ -144,7 +144,7 @@ const { data: Families } = await useFetch<Family[]>('/api/families', {
         p {{  currentFamilyPageNumber + 1}}
     .col-md-10.px-2.mt-2
         button(@click="nextPage") >
-  CVLegend.mt-10 Family Donations
+  CVLegend.mt-10.ml-2 Family Donations
   table.mt-5.table.table-striped(style="width:100%;")
       thead
           tr(style="color: white;")

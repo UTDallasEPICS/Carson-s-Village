@@ -1,6 +1,4 @@
-import { PrismaClient } from "@prisma/client"
 import  { nanoid } from "nanoid"
-const prisma = new PrismaClient()
 // Stripe API tokens
 //import { loadStripe } from '@stripe/stripe-js'
 import Stripe from "stripe"
@@ -25,7 +23,7 @@ export default defineEventHandler(async event => {
     const userCuid = body._value.userCuid
     const familyCuid = body._value.familyCuid 
     try {
-      const page = await prisma.page.findFirst({
+      const page = await event.context.client.page.findFirst({
         where: {
           cuid: page_cuid
         }
@@ -55,13 +53,13 @@ export default defineEventHandler(async event => {
 			target_page_cuid: page?.cuid as string,
       comments: donorComments,
 		},
-		success_url: `${runtime.BASEURL}api/complete_session?transaction=${transaction_id}&subscribing=${body.subscribed ? '1' : '0'}`,
+		success_url: `${runtime.BASEURL}api/integrations/stripe/complete_session/${transaction_id}?subscribing=${body.subscribed ? '1' : '0'}`,
 		cancel_url: `${runtime.BASEURL}page/${page_cuid}`,
 	});
 
 	console.log(body.subscribed)
 
-    const queryRes = await prisma.pageDonation.create({
+    const queryRes = await event.context.client.pageDonation.create({
       data: {
         transaction_id: transaction_id,
         amount: Math.trunc(parseFloat(body._value.amount as unknown as string) * 100) as number,

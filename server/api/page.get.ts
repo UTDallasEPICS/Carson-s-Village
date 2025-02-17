@@ -1,5 +1,3 @@
-import { PrismaClient } from "@prisma/client"
-const prisma = new PrismaClient()
 
 /*
 *	/EditPage/cuid or /Page/cuid
@@ -13,7 +11,7 @@ export default defineEventHandler(async event => {
 		if( (cuid as string) == "0" || cuid == undefined){
 			return false
 		}
-		const queryRes = await prisma.page.findFirst({
+		const queryRes = await event.context.client.page.findFirst({
       where: {
 			  cuid : cuid as string
 		  },

@@ -26,7 +26,7 @@ export default defineEventHandler(async (event) => {
   if (!family || !family.stripe_account_id) {
     const newStripeAccount = await stripe.accounts.create({
       type: 'standard',
-      email: event.context.user.email, // Ensure the user's email is available in the context
+      email: event.context.user?.email, // Ensure the user's email is available in the context
     });
 
     await prisma.family.update({

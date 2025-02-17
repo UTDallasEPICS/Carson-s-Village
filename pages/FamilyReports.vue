@@ -13,42 +13,42 @@ div
     .flex.gap-5(style="align-items: center; justify-content: center;" v-if="date_ranged")
       CVLabel Date Range
       CVDatepicker(v-model='date' @update:model-value="currentPage=0; loadReports();" range)
-    h2.mt-4.ml-4.border-1.border-black.underline(style="font-size: 23px") Table Dimensions
+    h2.mt-4.ml-10.border-1.border-black.underline(style="font-size: 23px") Table Dimensions
       .div.flex.flex-box.flex-wrap.gap-10(style="width: 450px") 
         h1.ml-1(style="font-size: 18px") Number of Table Rows
           CVInputNumerical(v-model="dimensions")
-    h2.mt-4.ml-5.underline(style="font-size: 18px") Fields to Show
+    h2.mt-4.ml-10.underline(style="font-size: 18px") Fields to Show
     .div.flex.flex-box.flex-wrap.gap-10.stretch.grid.ml-2(class="sm:grid-cols-3" style="width: 700px") 
-      label.mt-4.ml-4.text-md(class="sm:mt-0" style="letter-spacing: 0.35px;") Duration
+      label.mt-4.ml-10.text-md(class="sm:mt-0" style="letter-spacing: 0.35px;") Duration
         div(class="w-full")
           input.div(type='checkbox' v-model="display.duration")
-      label.mt-4.ml-4.text-md(class="sm:mt-0" style="letter-spacing: 0.35px;") Goal Met
+      label.mt-4.ml-10.text-md(class="sm:mt-0" style="letter-spacing: 0.35px;") Goal Met
         div
           input(type='checkbox' v-model="display.goal_met")
-      label.mt-4.ml-4.text-md(class="sm:mt-0" style="letter-spacing: 0.35px;") Goal Met Date
+      label.mt-4.ml-10.text-md(class="sm:mt-0" style="letter-spacing: 0.35px;") Goal Met Date
         div
           input(type='checkbox' v-model="display.goal_met_date")
-      label.mt-4.ml-4.text-md(class="sm:mt-0" style="letter-spacing: 0.35px;") Start Date
+      label.mt-4.ml-10.text-md(class="sm:mt-0" style="letter-spacing: 0.35px;") Start Date
         div
           input(type='checkbox' v-model="display.start_date")
-      label.mt-4.ml-4.text-md(class="sm:mt-0" style="letter-spacing: 0.35px;") Amount Owed
+      label.mt-4.ml-10.text-md(class="sm:mt-0" style="letter-spacing: 0.35px;") Amount Owed
         div
           input(type='checkbox' v-model="display.owed") 
-      label.mt-4.ml-4.text-md(class="sm:mt-0" style="letter-spacing: 0.35px;") Amount Paid Out
+      label.mt-4.ml-10.text-md(class="sm:mt-0" style="letter-spacing: 0.35px;") Amount Paid Out
         div
           input(type='checkbox' v-model="display.paid")
-      label.mt-4.ml-4.text-md(class="sm:mt-0" style="letter-spacing: 0.35px;") Goal Date
+      label.mt-4.ml-10.text-md(class="sm:mt-0" style="letter-spacing: 0.35px;") Goal Date
         div
           input(type='checkbox' v-model="display.goal_date")
-      label.mt-4.ml-4.text-md(class="sm:mt-0" style="letter-spacing: 0.35px;") Donation Goal
+      label.mt-4.ml-10.text-md(class="sm:mt-0" style="letter-spacing: 0.35px;") Donation Goal
         div
           input(type='checkbox' v-model="display.donation_goal")
     .flex.flex-col.gap-5.px-4.mx-auto.mt-8(class="w-3/4 sm:px-16")
-       
-    .flex.gap-2.justify-center.cols-2.pl-6.pr-6
-      a.mr-9.mt-1.p-6.px-6.pr-6.pt-3.pb-3.cursor-pointer.bg-orange-999(class="transition duration-300 bg-orange-999 hover:bg-green-600" style="border-radius: 125px; height: 75px; color: white; font-weight: 700;" @click="date_ranged=!date_ranged; currentPage=0; loadReports()") {{ "Display In Date Range" }}
+    br
+    .gap-2.justify-center.cols-2.pl-10.pr-6  
+      button.mr-9.mt-1.p-6.px-6.pr-6.pt-3.pb-3.cursor-pointer.bg-orange-999(class="transition duration-300 bg-orange-999 hover:bg-green-600" style="border-radius: 125px; height: 50px; color: white; font-weight: 700;" @click="date_ranged=!date_ranged; currentPage=0; loadReports()") {{ "Display In Date Range" }}
       a.mr-9.mt-1.p-6.px-6.pr-6.pt-3.pb-3.cursor-pointer.bg-orange-999(class="transition duration-300 bg-orange-999 hover:bg-green-600" style="border-radius: 100px; height: 50px; color: white; font-weight: 700;" :href="filedownloadlink" :download="downloadName" :dataset.downloadurl="dataset") Download
-      a.mr-2.mt-1.p-2.px-9.pt-3.pb-3.cursor-pointer.bg-orange-999(class="transition duration-300 bg-orange-999 hover:bg-green-600"  @click="tableToggle = !tableToggle" style="border-radius: 100px; height: 50px; color: white; font-weight: 700;") Archive
+      button.mr-2.mt-1.p-2.px-9.pt-3.pb-3.cursor-pointer.bg-orange-999(class="transition duration-300 bg-orange-999 hover:bg-green-600"  @click="tableToggle = !tableToggle" style="border-radius: 100px; height: 50px; color: white; font-weight: 700;") {{ !tableToggle ? "archive" : "all pages" }}
       table(style="margin-top: 1.25rem; width: 100%; border-spacing: 0; border-collapse: collapse;" v-if="isAdminAdvocate")
           thead(style="color: white;")
               tr
@@ -67,9 +67,7 @@ div
                   th(style="padding: 1rem; background-color: #6eabbf; border-radius: 0 60px 0 0; width: 9%;") Toggle Status
           tbody
               //only show active pages on toggle
-              tr(v-if="tableToggle" v-for="(page, i) in families.filter(page => page.status === 'active')" 
-              :class="{'bg-gray-200': (i+1) % 2}" :key="listOfTagsLen") 
-              tr(v-else v-for="(page, i) in families" 
+              tr(v-for="(page, i) in (!tableToggle ? families : families.filter(page => page.status === 'active'))" 
               :class="{'bg-gray-200': (i+1) % 2}" :key="listOfTagsLen") 
                   td(style="text-align: center;") {{ page.page_first_name + " " + page.page_last_name }}
                   td(style="text-align: center;") {{ page.Family?.AdvocateResponsible?.first_name  + " " + page.Family?.AdvocateResponsible?.last_name }}
@@ -100,9 +98,7 @@ div
     // todo: add number of family family pages an advocate is responsible, total amount raised by the families an advocate is responsible for
     //import { Family } from '@prisma/client'; 
     import type { Family, User } from '@/types.d.ts'
-    import { Page } from '@prisma/client'
-    import { donationFormat, dateFormat } from '@/utils';
-
+    import type { Page } from '@prisma/client'
     import { ref } from 'vue';
 
     import { ChevronUpIcon, ChevronDownIcon, ChevronUpDownIcon } from '@heroicons/vue/24/solid'

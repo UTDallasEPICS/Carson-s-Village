@@ -45,9 +45,7 @@ const stripeLink_ref = ref("")
 const create_checkout_session = async () => {
     //console.log(feeRecovery.value)
     if(feeRecovery.value) {
-      donationData.value.amount = donationData.value.amount * 100 // converting to cents for better accuracy 
-      donationData.value.amount = 1.029 * donationData.value.amount + 0.30
-      donationData.value.amount = donationData.value.amount / 100 
+      donationData.value.amount = Math.round((1.029 * donationData.value.amount + 0.30) * 100 ) / 100
     } 
     if(anonymous.value) {
         donationData.value.donorFirstName = "anonymous"
@@ -61,8 +59,7 @@ const create_checkout_session = async () => {
         isAnonymous: donationData.value.isAnonymous,
         comments: donationData.value.comments
     };
-    const sessionInfo = await $fetch('/api/create_session', {
-
+    const sessionInfo = await $fetch('/api/integrations/stripe/create_session', {
         method: 'POST',
         body: { ...donationData, cuid: props.pageCuid, family_cuid: props.familyCuid, amount_raised: Math.trunc(parseFloat(donationData.value.amount as unknown as string) * 100) as number, subscribed: subscribing.value}
     });
