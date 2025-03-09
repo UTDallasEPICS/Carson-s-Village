@@ -6,7 +6,7 @@ const S3ClientUE2 = new S3Client({
 })
 const runtime = useRuntimeConfig()
 
-export async function getSignedFileUrl( contentLength: number, contentType: string , image_key: string) { // specify the key of the file that will be uploaded to the S3 bucket
+export async function getSignedFileUrl( contentLength: number, contentType: string, image_key: string) { // specify the key of the file that will be uploaded to the S3 bucket
 
     const command = new PutObjectCommand({
       Bucket: runtime.AWS_S3_BUCKET_NAME,

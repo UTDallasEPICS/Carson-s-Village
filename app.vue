@@ -1,9 +1,12 @@
 
 <template lang="pug">
-.flex.flex-col.gap-5.min-h-screen
-  CVHeader
-  NuxtPage.grow
-  CVFooter
+.flex.gap-10.ml-4.mr-2
+  VirticalNav(v-if="cvCookie")
+  .flex.flex-col.gap-5.min-h-screen.grow
+    CVHeader
+    NuxtPage
+.mb-10
+CVFooter
 </template>
 
 <script setup lang="ts">
