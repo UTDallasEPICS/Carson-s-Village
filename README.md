@@ -358,6 +358,7 @@ None
 - Stripe for payments and donation payouts
 - Auth0 for authentication
 - AWS SES for emails
+- AWS S3 for image upload and storage
 - Constant Contacts for email list
 
 ## Deployment
