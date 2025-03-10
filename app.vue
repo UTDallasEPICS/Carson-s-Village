@@ -5,7 +5,6 @@
   .flex.flex-col.gap-5.min-h-screen.grow
     CVHeader
     NuxtPage
-.mb-10
 CVFooter
 </template>
 

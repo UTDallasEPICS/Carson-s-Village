@@ -26,8 +26,7 @@ const onEnter = async() => {
 </script>
 
 <template lang="pug">
-ClientOnly
-  .mt-48.text-center
+  .text-center.p-2.pt-32.pr-12.rounded-md.border-grey-600.border-r
     div.gap-2(v-if="isLoggedIn && toggle")
       NavLinkButtonVNav(:to="`/pageList/${cuid}/?fromUsers=0`" v-if="isAdvocateAdmin" :class="{'!text-black border-green-999 bg-white': route.path.includes('/page') || route.path.includes('/Page')}") 
         p.uppercase.white.mb-2.w-max Pages

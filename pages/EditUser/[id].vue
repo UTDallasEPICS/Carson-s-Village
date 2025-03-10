@@ -72,7 +72,7 @@ const {
   handleBlur,
   handleChange,
   meta,
-} = useField(attrs.name, undefined, {
+} = useField(attrs.name as string, undefined, {
   initialValue: attrs.value ? attrs.value : '',
   validateOnValueUpdate: true,
 });
@@ -94,7 +94,7 @@ const phone = ref<PhoneDATA>({
     dialCode: "",
     country: "",
     nationalNumber: "",
-    number: ""
+    number: "",
 })
 
 const isAuthorized = computed(() => { cvuser.value?.user_role as string == "advocate" || cvuser.value?.user_role == "admin"})

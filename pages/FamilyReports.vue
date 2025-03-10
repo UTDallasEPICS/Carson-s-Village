@@ -2,49 +2,48 @@
 //todo: add selection for families instead of all at once and toggle between all at once and all families by having the first option as displaying every page
 TitleComp.border-1.border-black Family Reports 
 br
-.flex.flex-wrap.w-full.justify-center
-    .inline
-      .py-4.grid(class="sm:grid-cols-4" v-if="date_ranged")
+.flex.flex-wrap.w-full
+    div(class='basis-1/2')
+      .py-4.grid(class="sm:grid-cols-3" v-if="date_ranged")
           CVLabel Date Field
-          .col-md-8.mx-9(class="sm:col-span-3 sm:mr-11")
+          .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
               select.rounded-md.outline-0.border-box.w-full.p-2.bg-white(style="border: 1px solid #c4c4c4;" v-model='date_field') Select User Role
                   option(value='deadline') deadline
                   option(value='start_date') start date
                   option(value='goal_met_date') goal met date
-      .py-4.grid(class="sm:grid-cols-4" v-if="date_ranged")
+      .py-4.grid(class="sm:grid-cols-3" v-if="date_ranged")
         CVLabel Date Range
-        .col-md-8.mx-9(class="sm:col-span-3 sm:mr-11")
+        .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
           CVDatepicker(v-model='date' @update:model-value="currentPage=0; loadReports();" range)
-      //h2.mt-4.ml-10.border-1.border-black.underline(style="font-size: 23px") Table Dimensions
-      .py-4.grid(class="sm:grid-cols-4")
+      .py-4.grid(class="sm:grid-cols-3")
           CVLabel Number of Table Rows
-          .col-md-8.mx-9(class="sm:col-span-3 sm:mr-11") 
+          .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11") 
             CVInputNumerical(v-model="dimensions")
-    .inline
-      h2.mt-4.ml-10.underline(style="font-size: 18px") Fields to Show
-      .div.flex.flex-box.flex-wrap.gap-10.stretch.grid.ml-2(class="sm:grid-cols-3" style="width: 300px") 
-        label.mt-4.ml-10.text-md(style="letter-spacing: 0.35px;") Duration
+    div(class='basis-1/2')
+      h2.mt-4.underline(style="font-size: 18px") Fields to Show
+      .div.flex.flex-wrap.gap-10.stretch.ml-2 
+        label.mt-4.text-md(style="letter-spacing: 0.35px;") Duration
           div(class="w-full")
             input.div(type='checkbox' v-model="display.duration")
-        label.mt-4.ml-10.text-md(style="letter-spacing: 0.35px;") Goal Met
+        label.mt-4.text-md(style="letter-spacing: 0.35px;") Goal Met
           div
             input(type='checkbox' v-model="display.goal_met")
-        label.mt-4.ml-10.text-md(style="letter-spacing: 0.35px;") Goal Met Date
+        label.mt-4.text-md(style="letter-spacing: 0.35px;") Goal Met Date
           div
             input(type='checkbox' v-model="display.goal_met_date")
-        label.mt-4.ml-10.text-md(style="letter-spacing: 0.35px;") Start Date
+        label.mt-4.text-md(style="letter-spacing: 0.35px;") Start Date
           div
             input(type='checkbox' v-model="display.start_date")
-        label.mt-4.ml-10.text-md(style="letter-spacing: 0.35px;") Amount Owed
+        label.mt-4.text-md(style="letter-spacing: 0.35px;") Amount Owed
           div
             input(type='checkbox' v-model="display.owed") 
-        label.mt-4.ml-10.text-md(style="letter-spacing: 0.35px;") Amount Paid Out
+        label.mt-4.text-md(style="letter-spacing: 0.35px;") Amount Paid Out
           div
             input(type='checkbox' v-model="display.paid")
-        label.mt-4.ml-10.text-md(style="letter-spacing: 0.35px;") Goal Date
+        label.mt-4.text-md(style="letter-spacing: 0.35px;") Goal Date
           div
             input(type='checkbox' v-model="display.goal_date")
-        label.mt-4.ml-10.text-md(style="letter-spacing: 0.35px;") Donation Goal
+        label.mt-4.text-md(style="letter-spacing: 0.35px;") Donation Goal
           div
             input(type='checkbox' v-model="display.donation_goal")
     .flex.flex-col.gap-5.px-4.mx-auto.mt-8(class="w-3/4 sm:px-16")
