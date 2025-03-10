@@ -5,12 +5,24 @@ const creds = runtime.CONSTANT_CONTACTS_CLIENTID + ':' + runtime.CONSTANT_CONTAC
 const encodedCreds = btoa(creds)
 export default defineEventHandler(async event => {
   if (event.context.user?.user_role === "admin") {
-    const refreshToken = await event.context.client?.CC_Token.findFirst({
+    let refreshToken = null
+    const refreshTokenCount = await event.context.client?.CC_Token.count()
+    if(refreshTokenCount !== 0) {
+      refreshToken = await event.context.client?.CC_Token.findFirst({
         where: {
           cuid: "0"
         }
       })
-    if(!refreshToken) {
+      
+      if(Date.now() - refreshToken?.date.getTime() >  24 * 60 * 60 * 1000) {
+        console.log("Error: access token expired")
+        createError({
+          status: 400,
+          statusMessage: "Error: access token expired"
+        })
+      }
+    }
+    if(refreshTokenCount == 0) {
       console.log("Error: no access token present")
       createError({
         status: 400,

@@ -10,13 +10,23 @@ export default defineTask({
     },
     async run({ payload, context }) {
       console.log("Running refresh task");
-      const refreshToken = await prisma.CC_Token.findFirst({
-        where: {
-          cuid: "0"
+      const refreshTokenCount = await prisma.CC_Token.count()
+      if(refreshTokenCount !== 0) {
+        const tokens = await prisma.CC_Token.findFirst({
+          where: {
+            cuid: "0"
+          }
+        })
+        
+        if(Date.now() - tokens?.date.getTime() >  24 * 60 * 60 * 1000) {
+          console.log("Error: access token expired")
+          createError({
+            status: 400,
+            statusMessage: "Error: access token expired"
+          })
         }
-      })
-      
-      if(!refreshToken) {
+      }
+      if(refreshTokenCount == 0) {
         console.log("Error: no access token created")
         throw createError({
           statusCode: 500,

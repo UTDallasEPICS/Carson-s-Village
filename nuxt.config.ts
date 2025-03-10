@@ -5,8 +5,10 @@ export default defineNuxtConfig({
       tasks: true
     },
       scheduledTasks: {
-        // Run `Refresh:token` task every 12th hour 
-        '0 0,12 * * *': ['token:refresh']
+        // Run `Refresh:token` task every at 10 am and 10 pm
+        '0 10,22 * * *': ['token:refresh'],
+        // Run `Generate:data` task every day at 9 pm
+        '0 21 * * *': ['family_reports:generate_data'],
       }
   },
   runtimeConfig: {
@@ -15,7 +17,7 @@ export default defineNuxtConfig({
     CONSTANT_CONTACTS_CLIENTID: '',
     CONSTANT_CONTACTS_SECRET: '',
     CONSTANT_CONTACTS_LIST_MEMBERSHIP: '',
-    BASEURL: 'asd',
+    BASEURL: '',
     ISSUER: '',
     STRIPE_PUBLIC: '',
     STRIPE_SECRET: '',
