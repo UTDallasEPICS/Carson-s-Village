@@ -1,7 +1,7 @@
 
 <template lang="pug">
 .flex.gap-10.ml-4.mr-2
-  VirticalNav(v-if="cvCookie")
+  VerticalNav(v-if="cvCookie")
   .flex.flex-col.gap-5.min-h-screen.grow
     CVHeader
     NuxtPage
