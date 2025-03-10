@@ -28,7 +28,7 @@ const { data: Families } = await useFetch<Family[]>('/api/family', {
     method: 'GET',
     default() {
       return [] as any
-    }, 
+    },
 });
 
   const currentFamilyCuid = ref<string>("")

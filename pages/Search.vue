@@ -52,10 +52,10 @@ function SortCV(pages:any, OrderFields:string){
 
 // Method to populate search results for pages
 const pageSearch = async(searchQuery: string) => { 
-    const { data: pageData } = await useFetch<paginated_results>('/api/pages', {
+    const { data: pageData } = await useFetch<paginated_results>('/api/search', {
     method: 'GET',
     query: {searchQuery: searchQuery, page_number: currentPage.value, isPageList: 0, sortedColumn:OrderField.value, order:order.value},
-    watch: [currentPage]
+    watch: [currentPage, OrderField, order]
 })
     // api/pages returns both the pages 12 at a time and the length for upper bounds checking
     if(OrderField.value) {

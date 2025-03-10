@@ -41,7 +41,7 @@ ClientOnly
         p.uppercase.white.mb-2.w-max Email List
       NavLinkButtonVNav( v-if="isAdvocateAdmin" to='/EditUser/0' :class="{'!text-black border-green-999 bg-white': route.path.includes('/EditUser')}") 
         p.uppercase.white.mb-2.w-max Invite user
-      NavLinkButtonVNav( v-if="isAdvocateAdmin" to='/EditFamily/0' :class="{'!text-black border-green-999 bg-white': route.path.includes('/EditFamily')}") 
+      NavLinkButtonVNav( v-if="isAdvocateAdmin" to='/EditFamily' :class="{'!text-black border-green-999 bg-white': route.path.includes('/EditFamily')}") 
         p.uppercase.white.mb-2.w-max Edit Family
       NavLinkButtonVNav(to="/" :class="{'!text-black border-green-999 bg-white': route.path == '/'}") 
         p.uppercase.white.mb-2.w-max Profile

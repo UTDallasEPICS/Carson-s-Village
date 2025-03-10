@@ -26,7 +26,10 @@ export default defineEventHandler(async event => {
         event.context.claims = claims
         event.context.user = await event.context.client?.user.findFirst(
           {
-            where: { email: claims.email }
+            where: { 
+              email: claims.email,
+              isActive: true
+                   }
           ,
           include: {
             Pages: {
@@ -135,16 +138,15 @@ export default defineEventHandler(async event => {
             return await sendRedirect(event, accountLink.url);
         }
       }
-      } catch (e) {
-        console.error(e) 
-        setCookie(event,'cvtoken','')
-        setCookie(event,'cvuser','')
-    
-        return await sendRedirect(event, loginRedirectUrl())
+      } catch (e: any) {
+        console.error(e)
       }
     } 
-  } catch(e){
-    console.error(e)
+  } catch(e: any){
+      console.error(e.message)
+      /*if(e.message.includes('jwt expired')) {
+        await sendRedirect(event, logoutRedirectUrl(cvtoken))
+      }*/
   }
 }
 }

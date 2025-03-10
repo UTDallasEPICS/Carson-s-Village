@@ -1,54 +1,58 @@
 <template lang="pug">
 //todo: add selection for families instead of all at once and toggle between all at once and all families by having the first option as displaying every page
-div
-    TitleComp.border-1.border-black Family Reports 
-    br
-    .py-4.grid(class="sm:grid-cols-3" v-if="date_ranged")
-        CVLabel Date Field
-        .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
-            select.rounded-md.outline-0.border-box.w-full.p-2.bg-white(style="border: 1px solid #c4c4c4;" v-model='date_field') Select User Role
-                option deadline
-                option start_date
-                option goal_met_date
-    .flex.gap-5(style="align-items: center; justify-content: center;" v-if="date_ranged")
-      CVLabel Date Range
-      CVDatepicker(v-model='date' @update:model-value="currentPage=0; loadReports();" range)
-    h2.mt-4.ml-10.border-1.border-black.underline(style="font-size: 23px") Table Dimensions
-      .div.flex.flex-box.flex-wrap.gap-10(style="width: 450px") 
-        h1.ml-1(style="font-size: 18px") Number of Table Rows
-          CVInputNumerical(v-model="dimensions")
-    h2.mt-4.ml-10.underline(style="font-size: 18px") Fields to Show
-    .div.flex.flex-box.flex-wrap.gap-10.stretch.grid.ml-2(class="sm:grid-cols-3" style="width: 700px") 
-      label.mt-4.ml-10.text-md(class="sm:mt-0" style="letter-spacing: 0.35px;") Duration
-        div(class="w-full")
-          input.div(type='checkbox' v-model="display.duration")
-      label.mt-4.ml-10.text-md(class="sm:mt-0" style="letter-spacing: 0.35px;") Goal Met
-        div
-          input(type='checkbox' v-model="display.goal_met")
-      label.mt-4.ml-10.text-md(class="sm:mt-0" style="letter-spacing: 0.35px;") Goal Met Date
-        div
-          input(type='checkbox' v-model="display.goal_met_date")
-      label.mt-4.ml-10.text-md(class="sm:mt-0" style="letter-spacing: 0.35px;") Start Date
-        div
-          input(type='checkbox' v-model="display.start_date")
-      label.mt-4.ml-10.text-md(class="sm:mt-0" style="letter-spacing: 0.35px;") Amount Owed
-        div
-          input(type='checkbox' v-model="display.owed") 
-      label.mt-4.ml-10.text-md(class="sm:mt-0" style="letter-spacing: 0.35px;") Amount Paid Out
-        div
-          input(type='checkbox' v-model="display.paid")
-      label.mt-4.ml-10.text-md(class="sm:mt-0" style="letter-spacing: 0.35px;") Goal Date
-        div
-          input(type='checkbox' v-model="display.goal_date")
-      label.mt-4.ml-10.text-md(class="sm:mt-0" style="letter-spacing: 0.35px;") Donation Goal
-        div
-          input(type='checkbox' v-model="display.donation_goal")
+TitleComp.border-1.border-black Family Reports 
+br
+.flex.flex-wrap.w-full.justify-center
+    .inline
+      .py-4.grid(class="sm:grid-cols-4" v-if="date_ranged")
+          CVLabel Date Field
+          .col-md-8.mx-9(class="sm:col-span-3 sm:mr-11")
+              select.rounded-md.outline-0.border-box.w-full.p-2.bg-white(style="border: 1px solid #c4c4c4;" v-model='date_field') Select User Role
+                  option(value='deadline') deadline
+                  option(value='start_date') start date
+                  option(value='goal_met_date') goal met date
+      .py-4.grid(class="sm:grid-cols-4" v-if="date_ranged")
+        CVLabel Date Range
+        .col-md-8.mx-9(class="sm:col-span-3 sm:mr-11")
+          CVDatepicker(v-model='date' @update:model-value="currentPage=0; loadReports();" range)
+      //h2.mt-4.ml-10.border-1.border-black.underline(style="font-size: 23px") Table Dimensions
+      .py-4.grid(class="sm:grid-cols-4")
+          CVLabel Number of Table Rows
+          .col-md-8.mx-9(class="sm:col-span-3 sm:mr-11") 
+            CVInputNumerical(v-model="dimensions")
+    .inline
+      h2.mt-4.ml-10.underline(style="font-size: 18px") Fields to Show
+      .div.flex.flex-box.flex-wrap.gap-10.stretch.grid.ml-2(class="sm:grid-cols-3" style="width: 300px") 
+        label.mt-4.ml-10.text-md(style="letter-spacing: 0.35px;") Duration
+          div(class="w-full")
+            input.div(type='checkbox' v-model="display.duration")
+        label.mt-4.ml-10.text-md(style="letter-spacing: 0.35px;") Goal Met
+          div
+            input(type='checkbox' v-model="display.goal_met")
+        label.mt-4.ml-10.text-md(style="letter-spacing: 0.35px;") Goal Met Date
+          div
+            input(type='checkbox' v-model="display.goal_met_date")
+        label.mt-4.ml-10.text-md(style="letter-spacing: 0.35px;") Start Date
+          div
+            input(type='checkbox' v-model="display.start_date")
+        label.mt-4.ml-10.text-md(style="letter-spacing: 0.35px;") Amount Owed
+          div
+            input(type='checkbox' v-model="display.owed") 
+        label.mt-4.ml-10.text-md(style="letter-spacing: 0.35px;") Amount Paid Out
+          div
+            input(type='checkbox' v-model="display.paid")
+        label.mt-4.ml-10.text-md(style="letter-spacing: 0.35px;") Goal Date
+          div
+            input(type='checkbox' v-model="display.goal_date")
+        label.mt-4.ml-10.text-md(style="letter-spacing: 0.35px;") Donation Goal
+          div
+            input(type='checkbox' v-model="display.donation_goal")
     .flex.flex-col.gap-5.px-4.mx-auto.mt-8(class="w-3/4 sm:px-16")
     br
     .gap-2.justify-center.cols-2.pl-10.pr-6  
       button.mr-9.mt-1.p-6.px-6.pr-6.pt-3.pb-3.cursor-pointer.bg-orange-999(class="transition duration-300 bg-orange-999 hover:bg-green-600" style="border-radius: 125px; height: 50px; color: white; font-weight: 700;" @click="date_ranged=!date_ranged; currentPage=0; loadReports()") {{ "Display In Date Range" }}
-      a.mr-9.mt-1.p-6.px-6.pr-6.pt-3.pb-3.cursor-pointer.bg-orange-999(class="transition duration-300 bg-orange-999 hover:bg-green-600" style="border-radius: 100px; height: 50px; color: white; font-weight: 700;" :href="filedownloadlink" :download="downloadName" :dataset.downloadurl="dataset") Download
-      button.mr-2.mt-1.p-2.px-9.pt-3.pb-3.cursor-pointer.bg-orange-999(class="transition duration-300 bg-orange-999 hover:bg-green-600"  @click="tableToggle = !tableToggle" style="border-radius: 100px; height: 50px; color: white; font-weight: 700;") {{ !tableToggle ? "archive" : "all pages" }}
+      a.inline-block.mr-9.mt-1.p-6.px-6.pr-6.pt-3.pb-3.cursor-pointer.bg-orange-999(class="transition duration-300 bg-orange-999 hover:bg-green-600" style="border-radius: 100px; height: 50px; color: white; font-weight: 700;" :href="filedownloadlink" :download="downloadName" :dataset.downloadurl="dataset") Download
+      button.mr-2.mt-1.p-2.px-9.pt-3.pb-3.cursor-pointer.bg-orange-999(class="transition duration-300 bg-orange-999 hover:bg-green-600"  @click="tableToggle = !tableToggle" style="border-radius: 100px; height: 50px; color: white; font-weight: 700;") {{ !tableToggle ? "Archive" : "All Pages" }}
       table(style="margin-top: 1.25rem; width: 100%; border-spacing: 0; border-collapse: collapse;" v-if="isAdminAdvocate")
           thead(style="color: white;")
               tr
@@ -69,20 +73,20 @@ div
               //only show active pages on toggle
               tr(v-for="(page, i) in (!tableToggle ? families : families.filter(page => page.status === 'active'))" 
               :class="{'bg-gray-200': (i+1) % 2}" :key="listOfTagsLen") 
-                  td(style="text-align: center;") {{ page.page_first_name + " " + page.page_last_name }}
-                  td(style="text-align: center;") {{ page.Family?.AdvocateResponsible?.first_name  + " " + page.Family?.AdvocateResponsible?.last_name }}
-                  td(style="text-align: center;" v-if="display.duration") {{ page.duration }} 
-                  td(style="text-align: center;" v-if="display.goal_met") {{  page.donation_status }}
-                  td(style="text-align: center;" v-if="display.goal_met_date") {{ (page.goal_met_date) ? dateFormat(page.goal_met_date, true) : "Goal Not Reached" }}
-                  td(style="text-align: center;" v-if="display.start_date") {{ dateFormat(page.start_date, true) }}
-                  td(style="text-align: center;" v-if="display.owed") {{ donationFormat((page.amount_raised - page.amount_distributed)) }}
+                  td.text-center {{ page.page_first_name + " " + page.page_last_name }}
+                  td.text-center {{ page.Family?.AdvocateResponsible ? page.Family?.AdvocateResponsible?.first_name + " " + page.Family?.AdvocateResponsible?.last_name : "Not assigned"}}
+                  td.text-center(v-if="display.duration") {{ page.duration }} 
+                  td.text-center(v-if="display.goal_met") {{  page.donation_status }}
+                  td.text-center(v-if="display.goal_met_date") {{ (page.goal_met_date) ? dateFormat(page.goal_met_date, true) : "Goal Not Reached" }}
+                  td.text-center(v-if="display.start_date") {{ dateFormat(page.start_date, true) }}
+                  td.text-center(v-if="display.owed") {{ donationFormat((page.amount_raised - page.amount_distributed)) }}
 
                   //td(style="text-align: center;") {{ (page.donation_goal) ? ((page.amount_raised - page.amount_distributed)/(page.donation_goal) * 100).toFixed(2) + "%" : "No donation goal"}}
-                  td(style="text-align: center;"  v-if="display.paid") {{ donationFormat(page.amount_distributed) }}
-                  td(style="text-align: center;" v-if="display.donation_goal" ) {{ donationFormat(page.donation_goal) }}
-                  td(style="text-align: center;" v-if="display.goal_date") {{ dateFormat(page.deadline)}}
-                  td(style="text-align: center;") {{ page.status }}
-                  td(style="text-align: center;")
+                  td.text-center(v-if="display.paid") {{ donationFormat(page.amount_distributed) }}
+                  td.text-center(v-if="display.donation_goal" ) {{ donationFormat(page.donation_goal) }}
+                  td.text-center(v-if="display.goal_date") {{ dateFormat(page.deadline)}}
+                  td.text-center {{ page.status }}
+                  td.text-center
                     ActionButton(style="color: white; background-color: red;" @click="togglePageStatus(page)") {{ "X" }}
 
 .mb-9.py-7.flex.flex-wrap.gap-2.place-content-center
@@ -117,17 +121,15 @@ div
     const downloadName = ref("")
     const totalLength = ref(0)
     const tableToggle = ref(false)
-    const start_date = ref(new Date("1/01/2023"))
-    const end_date = ref(new Date())
     const endDate = new Date();
-    const startDate = new Date(new Date().setDate(endDate.getDate() - 31));
+    const startDate = new Date(new Date().setDate(endDate.getDate() - 30 * 6));
     
     const listOfTags = ref(["donation_goal", "amount_raised", "deadline", "amount_distributed", "donation_status", "duration", "start_date", "goal_met_date", "page_first_name", "page_last_name", "first_name", "middle_name", "last_name", "owed"])
     // computed variable used as a key for each element of the table so that the striping of the table re-renders when the table is resized.
     const listOfTagsLen = computed(() => listOfTags.value?.length)
     // number of family pages in the family reports table per page with @default=12 pages
     const dimensions = ref(12)
-    const date_ranged = ref(false)
+    const date_ranged = ref(true)
     const date = ref([startDate, endDate])
     date.value = [startDate, endDate]
     const date_field = ref("start_date")
@@ -214,17 +216,19 @@ div
       Pages: [],
       FamilyMembers: [],
       AdvocateResponsible: {
-      cuid: '',
-      first_name: '',
-      last_name: '',
-      user_role: '',
-      email: '',
-      middle_name: '',
-      phone: '',
-      address: '',
-      Pages: [],
-      familyCuid: ''
-  },
+        cuid: '',
+        isActive: true,
+        first_name: '',
+        last_name: '',
+        user_role: '',
+        email: '',
+        Family: {},
+        middle_name: '',
+        phone: '',
+        Pages: [],
+        familyCuid: '',
+        AdvocateFamily: []
+      },
   FamilyDonations: [],
   FamilyDonationPayouts: []
   })
@@ -274,7 +278,7 @@ div
       const filename = "family_report_" + formatReportDate(dateFormat(new Date().toString(), true).replaceAll("/", "-")) + ".csv"
       console.log(filename)
       //if(typeof window !== undefined) {
-      filedownloadlink.value = window.URL.createObjectURL(csvFile);
+      filedownloadlink.value = URL.createObjectURL(csvFile);
       //}
       dataset.value = ["text/csv", filename, filedownloadlink.value].join(':');
       downloadName.value = filename
@@ -284,6 +288,8 @@ div
   // Additionally, if the user presses display date ranged, the UI table filters by a cirtain date range specified by start_date and end_date on the date_field
   const loadReports = async () => {
     if( isAdminAdvocate ) { 
+        console.log(typeof dimensions.value)
+        
         const { data: familiesData } = await useFetch('/api/familiesReports', {
         method: 'GET', 
         query: { page_number: currentPage, dimensions, start_date: date.value[0].toISOString(), end_date: date.value[1].toISOString(), date_field: date_field.value },
@@ -348,15 +354,7 @@ div
           } else if(!confirmReactivate){
           return ""
           }
-      } else if(page.status == "inactive" && !booleanChanged) {
-        const confirmReactivate = confirm('Are you sure you want to reactivate this page?')
-        if(confirmReactivate) {
-          page.status = "active"
-          booleanChanged = true
-        } else if(!confirmReactivate) {
-        return ""
-        }
-       }
+      } 
           booleanChanged = false          
           const toggledStatus = await $fetch('api/page', {
 
@@ -382,6 +380,8 @@ const prevPage = () => {
         loadReports()
     } 
   }
+
+
 // Invoke the initial data loading
 loadReports();
 </script>

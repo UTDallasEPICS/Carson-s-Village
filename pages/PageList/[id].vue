@@ -60,10 +60,8 @@ const family_cuid_data = computed(() => router.params.id)
 family_cuid.value = family_cuid_data.value as string;
 const user_cuid_data = computed(() => router.params.id)
 const user_cuid = user_cuid_data.value as string
-//const pages = ref<Page2[]>([])
-//const pages2 = ref<Page[]>([])
+
 const cvuser = useCookie<User>('cvuser')
-const user_cuid2 = cvuser.value.cuid
 const isAdmin = computed(() => cvuser.value?.user_role == "admin")
 const isAdvocate = computed(() => cvuser.value?.user_role == "advocate");
 const currentPage = ref(0)
@@ -71,15 +69,40 @@ const currentPage = ref(0)
 
 const data = ref<User>({
   cuid: "",
+  isActive: true,
   first_name: "",
   last_name: "",
   user_role: "",
   email: "",
   middle_name: "",
   phone: "",
-  address: "",
   Pages: [],
   familyCuid: "", 
+  Family: {
+    cuid: "",
+    family_name: "",
+    stripe_account_id: "",
+    created_at: "",
+    updated_at: "",
+    advocateCuid: "",
+    FamilyMembers: [],
+    FamilyDonationPayouts: [],
+    Pages: [],
+    AdvocateResponsible: {
+      cuid: "",
+      isActive: true,
+      first_name: "",
+      last_name: "",
+      Family: {},
+      user_role: '',
+      email: '',
+      middle_name: '',
+      phone: '',
+      Pages: [],
+      familyCuid: '',
+      AdvocateFamily: []
+    },
+  },
   AdvocateFamily: []
 })
 
@@ -92,11 +115,22 @@ const data_families = ref<Family[]>([])
 const fromUser = computed(() => router.query.fromUsers as string == '1')
 const entityCuid = computed(() => fromUser.value ? user_cuid : familyCuid.value)
 
-// Method to populate the page list with data based on the cuid of the user in the url
+// Please do not remove, used for selecting all families again
+const data_family = <Family>({
+      cuid: '',
+      family_name: 'None',
+      stripe_account_id: null,
+      created_at: new Date(),
+      updated_at: new Date(),
+      advocateCuid: '',
+  })
+
+// Method to all pages for admins and assigned families for advocates
 const getDataAdminAdvocate = async () => {
   if(cvuser.value.user_role == "admin") {
     const { data: all_families } = await useFetch('/api/family', {
       method: 'GET',
+      transform: (data: Family[]) => [{family_name: "None", cuid: ""}, ...data],
       default() {
         return [] as any
       }
@@ -104,9 +138,8 @@ const getDataAdminAdvocate = async () => {
     data_families.value = all_families.value as unknown as Family[]
   } else if(cvuser.value.user_role == "advocate"){
     // extracting the families that the advocate is responsible for
-    const { data: advocateFamilies } = await useFetch('/api/user', {
+    const { data: advocateFamilies } = await useFetch(`/api/user/${user_cuid}`, {
       method: 'GET',
-      query: { cuid: user_cuid },
       default() {
         return [] as any
       }
@@ -114,7 +147,11 @@ const getDataAdminAdvocate = async () => {
     data_families.value = advocateFamilies.value?.AdvocateFamily as unknown as Family[]
     
   }
+  if(data_families.value[0]?.family_name !== "None") {
+    data_families.value.unshift(data_family)
+  }
 }
+
 
 // handles changes of family selected for advocates or admins
 // handles retrieving all of a family's pages for families
@@ -128,47 +165,21 @@ const { data: pages } = await useFetch('/api/page_list', {
     }
   })
 const totalLength = computed(() => pages.value?.Pagination.total as unknown as number)
-
 watch(familyCuid, () => {
   currentPage.value = 0
 })
-/*if(cvuser.value?.user_role == 'family' || fromUser.value) {
-  pages.value = (family_pages.value.data) as unknown as Page2[]
-}
-watch(family_pages, () => {
-  console.log("here", entityCuid)
-  pages.value = (family_pages.value.data) as unknown as Page2[]
-  totalLength.value = totalLength2.value
-})*/
-  // Todo: Talk to Taz about this
-  /*
-    // For winter clean up
-    prisma.page.FindMany({
-      where: { 
-        Family: {
-          User: { cuid: body.cuid}
-        }
-      }
-    })
-  */
-//pages.value = family_pages.value as unknown as Page[]
-//watchEffect(() => familyCuid.value = data_families.value![0]?.cuid || "");
-//pages.value = familyData.value?.Pages as unknown as Page[]
-// one main endpoint for maintainability
+
+
 
 const nextPage = () => { 
     if(currentPage.value < Math.max(((totalLength.value / 12) - 1), 0)) {//, ((totalLength2.value / 12) - 1))){
         currentPage.value++
-        //if(fromUser.value || cvuser.value.user_role == "family" || isAdmin)
-        //getDataPageList()
     }
 }
 
 const prevPage = () => {
     if(currentPage.value != 0){
         currentPage.value--
-        //if(fromUser.value || cvuser.value.user_role == "family" || isAdmin)
-        //  getDataPageList()
     } 
 }
 const currentFamily = computed(() => data_families.value?.find(({ cuid }: Family) => cuid == familyCuid.value) || {});
@@ -177,21 +188,21 @@ await getDataAdminAdvocate()
 </script>
 
 <template lang ="pug">
-  
-button(type="button" class="ml-4 my-4 text-white px-4 py-2 rounded-full w-32 transition duration-300 bg-orange-999 hover:bg-green-600" @click="tableToggle = !tableToggle") {{ tableToggle ? "all pages" : "archive"}}
-.py-4.grid(class="sm:grid-cols-3" v-if="(isAdmin || isAdvocate) && !fromUser")
-    CVLabel Current Family
-    .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
-      Listbox.shadow-sm.border.border-1.rounded-lg(v-if="isAdmin || isAdvocate" as='div' v-model="familyCuid")
-        .relative
-          Transition(
-                    leave-active-class='transition ease-in duration-100'
-                    leave-from-class='opacity-100'
-                    leave-to-class='opacity-0'
-                    )
-            ListboxOptions(as='div' class='w-full absolute z-10 mt-10 bg-white shadow-lg max-h-60 rounded-md px-2 py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm' )
-                ListboxOption(as='div' v-for="family in data_families" :key="family.cuid" :value="family.cuid" class="px-2 border border-grey-500 py-1 my-1") {{ family.family_name }}
-          ListboxButton(class='text-left bg-white relative rounded-md pl-2 pr-10 py-2 sm:text-sm w-96') {{ familyCuid ? currentFamily.family_name : 'Select family to view pages from' }}      
+.flex.gap-5.w-full.justify-center  
+  button(type="button" class="ml-4 my-4 text-white px-4 py-2 rounded-full w-32 transition duration-300 bg-orange-999 hover:bg-green-600" @click="tableToggle = !tableToggle") {{ tableToggle ? "all pages" : "archive"}}
+  .py-4.grid(class="sm:grid-cols-3" v-if="(isAdmin || isAdvocate) && !fromUser")
+      CVLabel Current Family
+      .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
+        Listbox.shadow-sm.border.border-1.rounded-lg(v-if="isAdmin || isAdvocate" as='div' v-model="familyCuid")
+          .relative
+            Transition(
+                      leave-active-class='transition ease-in duration-100'
+                      leave-from-class='opacity-100'
+                      leave-to-class='opacity-0'
+                      )
+              ListboxOptions(as='div' class='w-full absolute z-10 mt-10 bg-white shadow-lg max-h-60 rounded-md px-2 py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm' )
+                  ListboxOption(as='div' v-for="family in data_families" :key="family.cuid" :value="family.cuid" class="px-2 border border-grey-500 py-1 my-1") {{ family.family_name }}
+            ListboxButton(class='text-left bg-white relative rounded-md pl-2 pr-10 py-2 sm:text-sm w-96') {{ familyCuid ? currentFamily.family_name : 'Select family to view pages from' }}      
 .mx-auto.mt-1(class="w-11/12 sm:w-[1200px]")
   table(style="table-layout: auto;")
     thead
@@ -209,14 +220,14 @@ button(type="button" class="ml-4 my-4 text-white px-4 py-2 rounded-full w-32 tra
 
     tbody 
       tr(v-for="(item, i) in ( tableToggle ? pages.data.filter(item => item.status == 'active') : pages.data)" :class="{'bg-gray-200': (i + 1) % 2}")
-        td.font-poppins.text-gray-dark.font-bold.text-center {{ item.page_first_name + " " + item.page_last_name }}
-        td.font-poppins.text-gray-dark.font-bold.text-center {{ item.User?.first_name + " " + item.User?.last_name }}
-        td.font-poppins.text-gray-dark.font-bold.text-center {{ item.Family?.AdvocateResponsible.first_name + " " + item.Family?.AdvocateResponsible.last_name }}
-        td.font-poppins.text-gray-dark.font-bold.text-center {{ item.Family?.family_name }}
-        td.font-poppins.text-gray-dark.font-bold.text-center {{ donationFormat(item.amount_raised) }}
-        td.font-poppins.text-gray-dark.font-bold.text-center {{ dateFormat(item.start_date) }}
-        td.font-poppins.text-gray-dark.font-bold.text-center {{ dateFormat(item.deadline) }}
-        td.font-poppins.text-gray-dark.font-bold.text-center {{ donationFormat(item.donation_goal) }}
+        td.font-poppins.text-gray-dark.font-bold.text-center {{ item?.page_first_name + " " + item?.page_last_name }}
+        td.font-poppins.text-gray-dark.font-bold.text-center {{ item?.User?.first_name + " " + item?.User?.last_name }}
+        td.font-poppins.text-gray-dark.font-bold.text-center {{ item?.Family?.AdvocateResponsible ? item?.Family?.AdvocateResponsible?.first_name + " " + item?.Family?.AdvocateResponsible?.last_name : "Not assigned"}}
+        td.font-poppins.text-gray-dark.font-bold.text-center {{ item?.Family?.family_name }}
+        td.font-poppins.text-gray-dark.font-bold.text-center {{ donationFormat(item?.amount_raised) }}
+        td.font-poppins.text-gray-dark.font-bold.text-center {{ dateFormat(item?.start_date) }}
+        td.font-poppins.text-gray-dark.font-bold.text-center {{ dateFormat(item?.deadline) }}
+        td.font-poppins.text-gray-dark.font-bold.text-center {{ donationFormat(item?.donation_goal) }}
         td
           LinkButton(class="sm:my-2 transition duration-300 bg-orange-999 hover:bg-green-600" style="white-space: nowrap; display: flex; flex-direction: row; padding: 14px 24px; gap: 10px;" :to="`/EditPage/${item.cuid}`") Edit
         td
