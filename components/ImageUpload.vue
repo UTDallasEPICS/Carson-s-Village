@@ -25,6 +25,7 @@ const onFile = async (event: Event) => {
     const imageDataObj = {
       contentLength: file.size, 
       contentType: file.type, 
+      filename: file.name,
       file,
       pageCuid: props.pageCuid
     }

@@ -3,30 +3,7 @@ import type { User, Page, Image } from '@/types.d.ts'
 const props = defineProps<{ images: Image[], profileImage: Image, pageCuid: string }>()
 const emit = defineEmits(["images","update:images","profileImage"])
 const previewCuid = ref("")
-type UserWithFamily = {
-    cuid: string
-    first_name: string,
-    last_name: string,
-    user_role: string,
-    email: string,
-    middle_name: string,
-    phone: string,
-    Pages: Page[],
-    Family: {
-        cuid: string,
-        family_name: string,
-        stripe_account_id: string,
-        created_at: string,
-        updated_at: string,
-        FamilyMembers: [],
-        FamilyDonationPayouts: [],
-        Pages: [],
-        AdvocateResponsible: User,
-        FamilyDonations: [],
-        advocateCuid: ""
-    }
-}
-const cvuser = useCookie<UserWithFamily>('cvuser')
+const cvuser = useCookie<User>('cvuser')
 
 onMounted(() => {
   previewCuid.value = props.images[0]?.cuid || ""
