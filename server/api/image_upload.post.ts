@@ -6,7 +6,7 @@ const runtime = useRuntimeConfig()
 export default defineEventHandler(async (event) => {
     const body = await readBody(event) 
     // key used to retrieve image later on
-    const key = nanoid()
+    const key = nanoid() + "-"  + body.filename
     // gets presigned URL from aws.ts and returns it to the call from vue
     const uploadUrl =  await getSignedFileUrl(body.contentLength, body.contentType, key);
     const contentUrl =  "https://" + runtime.AWS_S3_BUCKET_NAME + "/" + key;

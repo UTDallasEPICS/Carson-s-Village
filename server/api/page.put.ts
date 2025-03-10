@@ -33,26 +33,6 @@ export default defineEventHandler(async event => {
           ...data
         }
       });
-      
-        // Initially the images are not linked to a family page, so we add it here 
-        // Reason: the cuid for the family page is created in the above in the creation query
-        // For page edit, images without a pageCuid are processed
-        // Changed the logic to work for puts a while ago.
-        // Image attaches to page on upload for existing page.
-        // Remove below?
-        /*await Promise.all(
-        Images.forEach(async (image: Image) => {
-          if(image.pageCuid == null) {
-            await event.context.prisma.image.update({
-              where: {
-                cuid: image.cuid
-              },
-              data:{
-                pageCuid: data.cuid
-              }
-    })
-  }
-}))*/
     } catch (e) {
       console.error(e);
       return false
