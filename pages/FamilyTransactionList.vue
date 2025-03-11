@@ -156,6 +156,7 @@ const { data: Families } = await useFetch<Family[]>('/api/family', {
           )
               td.font-poppins.text-gray-dark.font-bold(style="text-align: center")  {{ item.Page.page_first_name + " " + item.Page.page_last_name }}
               td.font-poppins.text-gray-dark.font-bold(style="text-align: center")  {{ donationFormat(item.amount) }}
+.pb-10
 </template>
 
 <style scoped></style>
