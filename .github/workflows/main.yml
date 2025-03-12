@@ -1,43 +1,54 @@
+name: Build and Publish Docker Image
+
 on:
   push:
     branches:
       - main
-name: Update Prod
+
 jobs:
-  update:
-    name: Prod - SSH Login, Pull, Reload
+  build:
+    permissions:
+      id-token: write # This is required for requesting the JWT
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v2
-      - name: Setup Node
-        uses: actions/setup-node@v2.1.2
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
         with:
-          node-version: "19.x"
-      - run: npm install
-      - run: npx prisma generate
-      - run: npm run build
-      - name: copy file via ssh password
-        uses: appleboy/scp-action@v0.1.4
+          node-version: "20"
+
+      - name: Build Nuxt project
+        run: |
+          npm i
+          npx prisma generate
+          npm run build
+
+      - name: configure aws credentials
+        uses: aws-actions/configure-aws-credentials@v4
         with:
-          host: ec2-52-34-213-210.us-west-2.compute.amazonaws.com
-          username: ubuntu
-          key: ${{ secrets.CARSONS_AWS_API_PRIVATE_KEY }}
-          source: ./.output
-          target: ~/carsons-village
-          overwrite: true
-          tar_dereference: true
-      - name: Execute
-        uses: appleboy/ssh-action@v0.1.4
-        with:
-          script: |
-            cd carsons-village
-            git checkout main
-            git stash
-            git pull
-            npm install
-            cp .env ./.output/server/.env
-            npx prisma migrate deploy
-            pm2 restart all
-          host: pages.carsonsvillage.org
-          username: ubuntu
-          key: ${{ secrets.CARSONS_AWS_API_PRIVATE_KEY }}
+          role-to-assume: arn:aws:iam::654654236858:role/GithubActions
+          role-session-name: GitHub_to_AWS_via_FederatedOIDC
+          aws-region: us-east-2
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Build and Push Docker image
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry}}
+          REPOSITORY: carsons-village
+          IMAGE_TAG: ${{ github.sha}}
+        run: |
+          # Build a docker container and
+          # push it to ECR so that it can
+          # be deployed to ECS.
+          docker build -t $ECR_REGISTRY/$REPOSITORY:$IMAGE_TAG .
+          docker build -t $ECR_REGISTRY/$REPOSITORY:latest .
+          docker push $ECR_REGISTRY/$REPOSITORY:$IMAGE_TAG
+          docker push $ECR_REGISTRY/$REPOSITORY:latest
+          echo "image=$ECR_REGISTRY/$REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
+          echo "image=$ECR_REGISTRY/$REPOSITORY:latest" >> $GITHUB_OUTPUT
