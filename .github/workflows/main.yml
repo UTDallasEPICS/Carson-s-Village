@@ -52,4 +52,3 @@ jobs:
           docker push $ECR_REGISTRY/$REPOSITORY:latest
           echo "image=$ECR_REGISTRY/$REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
           echo "image=$ECR_REGISTRY/$REPOSITORY:latest" >> $GITHUB_OUTPUT
-          
