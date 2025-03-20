@@ -72,8 +72,8 @@ CVContainer
     .well.well-sm
         TitleComp Family Creation
         br
-        .bar.mx-9(style="border-top: 0.5px solid #646464;")
-        br
+        .information.rounded-md.mx-9.my-2.text-center(class="sm:text-start text-white bg-blue-999")
+            CVLegend Family Information
         .py-4.grid(class="sm:grid-cols-3")
             CVLabel Family Name
             .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
@@ -82,6 +82,8 @@ CVContainer
             CVLabel Email
             .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
                 CVInput(v-model='data_user.email' type="email" placeholder="(user defined)" required)
+        .information.rounded-md.mx-9.my-2.text-center(class="sm:text-start text-white bg-blue-999")
+                CVLegend First User Information
         .py-4.grid(class="sm:grid-cols-3")
             CVLabel First Name
             .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
@@ -98,10 +100,6 @@ CVContainer
             CVLabel Phone
             .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
                 CVInput(v-model='data_user.phone' placeholder="(user defined, optional)")
-        .py-4.grid(class="sm:grid-cols-3")
-            CVLabel Address
-            .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
-                CVInput(v-model='data_user.address' placeholder="(user defined, optional)")
             .col-md-10.py-2
                 ActionButton(@click="createFamily()" class="transition duration-300 bg-orange-999 hover:bg-green-600") Save    
         .py-4.grid(class="sm:grid-cols-3" Style="color:red" v-if="errorInPage")
