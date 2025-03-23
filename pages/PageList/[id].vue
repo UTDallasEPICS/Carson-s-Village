@@ -192,7 +192,7 @@ button(type="button" class="ml-4 my-4 text-white px-4 py-2 rounded-full w-32 tra
             ListboxOptions(as='div' class='w-full absolute z-10 mt-10 bg-white shadow-lg max-h-60 rounded-md px-2 py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm' )
                 ListboxOption(as='div' v-for="family in data_families" :key="family.cuid" :value="family.cuid" class="px-2 border border-grey-500 py-1 my-1") {{ family.family_name }}
           ListboxButton(class='text-left bg-white relative rounded-md pl-2 pr-10 py-2 sm:text-sm w-96') {{ familyCuid ? currentFamily.family_name : 'Select family to view pages from' }}      
-.mx-auto.mt-1(class="w-11/12 sm:w-[1200px]")
+.mx-auto.mt-1(class="sm:w-[1200px]")
   table(style="table-layout: auto;")
     thead
       tr
@@ -211,7 +211,7 @@ button(type="button" class="ml-4 my-4 text-white px-4 py-2 rounded-full w-32 tra
       tr(v-for="(item, i) in ( tableToggle ? pages.data.filter(item => item.status == 'active') : pages.data)" :class="{'bg-gray-200': (i + 1) % 2}")
         td.font-poppins.text-gray-dark.font-bold.text-center {{ item.page_first_name + " " + item.page_last_name }}
         td.font-poppins.text-gray-dark.font-bold.text-center {{ item.User?.first_name + " " + item.User?.last_name }}
-        td.font-poppins.text-gray-dark.font-bold.text-center {{ item.Family?.AdvocateResponsible.first_name + " " + item.Family?.AdvocateResponsible.last_name }}
+        td.font-poppins.text-gray-dark.font-bold.text-center {{ item.Family?.AdvocateResponsible ? (item.Family?.AdvocateResponsible?.first_name + " " + item.Family?.AdvocateResponsible?.last_name) : 'No Advocate assigned'}}
         td.font-poppins.text-gray-dark.font-bold.text-center {{ item.Family?.family_name }}
         td.font-poppins.text-gray-dark.font-bold.text-center {{ donationFormat(item.amount_raised) }}
         td.font-poppins.text-gray-dark.font-bold.text-center {{ dateFormat(item.start_date) }}
@@ -221,7 +221,7 @@ button(type="button" class="ml-4 my-4 text-white px-4 py-2 rounded-full w-32 tra
           LinkButton(class="sm:my-2 transition duration-300 bg-orange-999 hover:bg-green-600" style="white-space: nowrap; display: flex; flex-direction: row; padding: 14px 24px; gap: 10px;" :to="`/EditPage/${item.cuid}`") Edit
         td
           LinkButton(class="sm:my-2 transition duration-300 bg-orange-999 hover:bg-green-600" style="white-space: nowrap; display: flex; flex-direction: row; padding: 14px 24px; gap: 10px;" :to="`/Page/${item.cuid}`") View
-  .container.bg-blue-999.mx-auto(class="w-auto sm:w-[1200px]" style="height: 50px; border-radius: 0px 0px 60px 60px;")
+  .container.bg-blue-999(class="w-full max-w-[1200px]" style="height: 50px; border-radius: 0px 0px 60px 60px;")
 .mb-9.py-7.flex.flex-wrap.gap-2.place-content-center
   .col-md-10.px-2.mt-2
       button(@click="prevPage") &lt
