@@ -97,6 +97,8 @@ const id = computed(() => router.params.id);
 const pageCuid = id.value as string
 const cvuser = useCookie<Page>('cvuser')
 const stripeLink_ref = ref("")
+const commentModalOpen = ref(false)
+const currentComment = ref('')
 // const isAdvocateAdmin = computed(() => cvuser.value?.user_role == "admin" || cvuser.value?.user_role == "advocate")
 
 
@@ -217,6 +219,13 @@ const exitPopup = () => {
   DisplayDonationPopup.value = false
 }
 
+const exitCommentPopup = () => {
+  commentModalOpen.value = false
+}
+const openCommentPopup = (comment: string) => {
+  commentModalOpen.value = !commentModalOpen.value; 
+  currentComment.value = comment;
+}
 console.log(pageDataDB.value?.visitation_description)
 console.log(pageDataDB.value?.funeral_date)
 
@@ -225,10 +234,12 @@ setImageAutoSlide()
 
 <template lang="pug">
 // donation popup
-.div.flex(@click.self="DisplayDonationPopup=false" v-if="DisplayDonationPopup" style="z-index: 10; align-items: center; justify-content: center; position: fixed; top: 0; bottom: 0; left: 0; right: 0; background: rgba(0, 0, 0, 0.7);")
+.flex(@click.self="DisplayDonationPopup=false" v-if="DisplayDonationPopup" style="z-index: 10; align-items: center; justify-content: center; position: fixed; top: 0; bottom: 0; left: 0; right: 0; background: rgba(0, 0, 0, 0.7);")
   .mx-auto.flex.p-2.bg-white(class="w-1/2")
     DonationEntryPopup(@Exit="exitPopup" :amount_raised="pageDataDB.amount_raised" :donation_goal="pageDataDB.donation_goal" :donation_goal_provided="donation_goal_provided" :donated_percentage="donated_percentage" :isActive="isActive" :donationData="donationData" :pageCuid="pageCuid" :familyCuid="familyCuid")  
-
+.flex.align-center.justify-center(@click.self="commentModalOpen=false" v-if="commentModalOpen" style="z-index: 10; position: fixed; top: 0; bottom: 0; left: 0; right: 0; background: rgba(0, 0, 0, 0.7);")
+  .mx-auto.flex.p-2.bg-white(class="w-1/2 h-1/2")
+    CommentPopup(@ExitComment="exitCommentPopup" :comment="currentComment")  
 // the header overlay with image and name
 .flex.gap-2.justify-center.cols-2.pl-6.pr-6
     a.mr-2.mt-1.p-2.px-9.pt-3.pb-3.bg-orange-999(class="transition duration-300 bg-orange-999 hover:bg-green-600" style="border-radius: 100px; height: 50px; color: white; font-weight: 700;") Archive
@@ -243,13 +254,13 @@ setImageAutoSlide()
       .text-gray-dark.mx-auto.w-max.font-poppins.text-md {{ dateFormat(pageDataDB.day_of_birth, true) + ((pageDataDB.day_of_birth || pageDataDB.day_of_passing) ? ' - ' : '') + dateFormat(pageDataDB.day_of_passing, true) }} 
   .col-span-1.justify-self-end.pr-5.pt-5
     .relative.w-96.p-1(v-if="imageData.length != 0" )
-      button.absolute.left-4.top-64.bg-black.text-white(@click="prevImage" style="opacity:0.7; --tw-text-opacity: 1; width: 46px; height: 46px; border-radius:50%; align-items: center; justify-content: center; line-height: 2; text-align: center;color: white;") &#60;
-      button.absolute.right-8.top-64.bg-black.text-white(@click="nextImage" style="opacity:0.7; --tw-text-opacity: 1; width: 46px; height: 46px; border-radius:50%; align-items: center; justify-content: center; line-height: 2; text-align: center;color: white;") &#62;
+      button.absolute.left-4.top-64.bg-black.text-white(@click="prevImage" style="opacity:0.7; width: 46px; height: 46px; border-radius:50%; align-items: center; justify-content: center; line-height: 2; text-align: center;color: white;") &#60;
+      button.absolute.right-8.top-64.bg-black.text-white(@click="nextImage" style="opacity:0.7; width: 46px; height: 46px; border-radius:50%; align-items: center; justify-content: center; line-height: 2; text-align: center;color: white;") &#62;
       img.w-96.cursor-pointer(style="z-index: -1; object-fit: cover;" @click="showPreview(profileImage)" :src="imageData[currentImage].url")     
       div(class="w-full h-full overflow-auto block fixed left-0 top-0" style="z-index: 1000; background-color: rgba(0, 0, 0, 0.8);" v-if="previewImage" @click.self="closePreview")
         img.py-2(v-for="(image, index) in imageData" class="block max-w-[80%] max-h-[80%] m-auto"
               :key="index" :src="image.url")
-        span.absolute.cursor-pointer(class="top-[15px] right-[35px] text-[30px] transition duration-300 text-gray-400 hover:text-white cursor-pointer focus:text-white cursor-pointer"  
+        span.absolute.cursor-pointer(class="top-[15px] right-[35px] text-[30px] transition duration-300 text-gray-400 hover:text-white focus:text-white cursor-pointer"  
           @click="closePreview"
           ) &times;
   // services list
@@ -265,7 +276,6 @@ setImageAutoSlide()
           .flex.row.gap-2
             .font-outfit.font-bold {{ "Location:" }}
             .font-outfit.whitespace-normal {{ pageDataDB.visitation_location ? pageDataDB.visitation_location : "TBD" }}
-            //.font-outfit {{ pageDataDB.visitation_description }}
           .flex.row.gap-2
             .font-outfit.gap-y-5 {{ pageDataDB.visitation_address }}
           .flex.row.gap-2.pr-10 
@@ -304,26 +314,28 @@ setImageAutoSlide()
               ActionButton.mx-auto.text-md(name='submit' @click="DisplayDonationPopup=true" class="transition duration-300 bg-orange-999 hover:bg-green-600" ) DONATE NOW
   .col-span-2
     .col-md-8.mx-9(class="sm:col-span-1 sm:mr-11")
-        .div.px-10.py-4(style="color: #6E6E6E; font-weight: 500; font-size: 18px; line-height: 28px; letter-spacing: -0.078px; word-break: break-word;" id="obituary") {{ pageDataDB.obituary }}
+        .px-10.py-4(style="color: #6E6E6E; font-weight: 500; font-size: 18px; line-height: 28px; letter-spacing: -0.078px; word-break: break-word;" id="obituary") {{ pageDataDB.obituary }}
 
 //.container(class="sm:overflow-hidden sm:w-3/4 sm:mt-4 sm:mx-auto sm:place-content-center sm:max-w-xl sm:p-6 sm:rounded-card sm:shadow-card")
 .py-4.grid.gap-1(style="text-align: left")
-  .div.py-4.grid(v-if="comments?.length" class="w-full justify-center" style="grid-template-columns: repeat(3, 12rem);")
-    .div(v-for="(comment, i) in comments" :key="i" class="comment-box")
-        .flex-auto.h-40.w-44.m-2.p-4.rounded-lg.bg-white.border-border-gray-300.shadow-md
-          .flex.justify-between.gap-5.pd-4
-            .text-xs.font-bold.mb-6 {{ comment.donorFirstName }} {{ comment.donorLastName }}
-            .text-xs.font-bold.mb-6 {{ dateFormat(comment.donationDate, true) }}
-          .text-xs.w-fit.text-gray-600.border-l-2.border-green-500.pl-5 {{ comment.comments }}
-          .text-xs.text-gray-600.pt-5 Amount Donated: {{ donationFormat(comment.amount) }}
+  .py-4.grid.gap-4(v-if="comments?.length" class="w-full justify-center" style="grid-template-columns: repeat(3, 30rem); ")
+      .flex.flex-col.gap-4.h-full.min-w-44.p-4.rounded-lg.bg-white.border-border-gray-300.shadow-md(v-for="(comment, i) in comments" :key="i" class="py-4 transition duration-300 hover:shadow-xl")
+        .flex.justify-between.gap-5
+          .text-xl.font-bold {{ comment.donorFirstName }} {{ comment.donorLastName }}
+          .text-xl.font-bold {{ dateFormat(comment.donationDate, true) }}
+        .text-xl.grow.w-fit.text-gray-600(:class="{'border-l-2 border-green-500 pl-3': comment.comments.length}") {{ comment.comments.length > 200 ? (comment.comments.substring(0, 200) + " ...") :  comment.comments.substring(0, 200) }}
+          span.text-xl.w-fit.text-green-400.cursor-pointer(v-if="comment.comments.length > 200" @click="openCommentPopup(comment.comments)") {{ " Read More" }}
+        .flex.justify-between.gap-5
+          .text-xl.font-bold Amount Donated
+          .text-xl.font-bold.text-green-600 {{ donationFormat(comment.amount) }}
   CVReplySystem(:pageCuid="id" :familyCuid="familyCuid" :replies="replies" @displayReply="displayReply")
   .py-4.grid.row-span-3.gap-2(v-if="replies?.length")
     .p-2.bg-white.rounded-lg.mb-2.shadow-md.pb-4(v-for="(reply,i) in replies.filter(item => !item.suspended)" :key="i") 
       .flex.justify-between.gap-5.pd-4
         .ml-1.text-lg.font-bold {{reply.name}}
-        .ml-1.text-lg {{dateFormat(reply.date)}}
+        .ml-1.text-lg {{ dateFormat(reply.date) }}
       .ml-1.pt-3.pb-3.pl-5.border-l-2.border-green-500 {{reply.reply}}
-div.flex(style="color:gray; font-weight: 700; justify-content:center; align-items: center; height: 100px;")
+div.flex(style="color: gray; font-weight: 700; justify-content: center; align-items: center; height: 100px;")
   label SHARE THIS PAGE |&nbsp;
   .col
     button(@click="shareFacebook")

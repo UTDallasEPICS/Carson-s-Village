@@ -127,7 +127,7 @@ const { data: pages } = await useFetch('/api/page_list', {
       return [] as any
     }
   })
-const totalLength = computed(() => pages.value?.Pagination.total as unknown as number)
+const totalLength = computed(() => pages.value?.Pagination?.total as unknown as number)
 
 watch(familyCuid, () => {
   currentPage.value = 0
@@ -171,6 +171,15 @@ const prevPage = () => {
         //  getDataPageList()
     } 
 }
+
+const goToPage = (pageNum: number) => {
+  console.log(pageNum)
+  if(pageNum >= 0 &&  pageNum < ((totalLength.value / 12))) {
+        currentPage.value = pageNum 
+    } 
+
+}
+
 const currentFamily = computed(() => data_families.value?.find(({ cuid }: Family) => cuid == familyCuid.value) || {});
 
 await getDataAdminAdvocate()
@@ -224,11 +233,17 @@ button(type="button" class="ml-4 my-4 text-white px-4 py-2 rounded-full w-32 tra
   .container.bg-blue-999(class="w-full max-w-[1200px]" style="height: 50px; border-radius: 0px 0px 60px 60px;")
 .mb-9.py-7.flex.flex-wrap.gap-2.place-content-center
   .col-md-10.px-2.mt-2
-      button(@click="prevPage") &lt
+    CVChevronLeft.text-gray-200.size-4.h-2(:class="{'cursor-pointer size-4 h-2': currentPage !== 0 }" @click="prevPage" :isEnd="currentPage == 0")
   .col-md-10.px-2.mt-2
-      p {{  currentPage + 1 }}
+    .flex
+      p.cursor-pointer.text-gray-900(v-if="currentPage > 1" @click="goToPage(0)") {{  1 + "..." }} &nbsp;
+      p.cursor-pointer.text-gray-900(v-if="currentPage > 0" @click="goToPage(currentPage - 1)") {{  currentPage }} &nbsp;
+      p.cursor-pointer.text-gray-900.font-bold {{  currentPage + 1 }} &nbsp;
+      p.cursor-pointer.text-gray-900(v-if="(totalLength / 12 - currentPage) > 1" @click="goToPage(currentPage + 1 )") {{  currentPage + 2 }} &nbsp;
+      p.cursor-pointer.text-gray-900(v-if="(totalLength / 12 - currentPage) > 2" @click="goToPage(currentPage + 2)") {{  currentPage + 3 }} &nbsp;
+      p.cursor-pointer.text-gray-900(v-if="(totalLength / 12 - currentPage) > 3" @click="goToPage(Math.floor(totalLength / 12))") {{  "..." + Math.ceil(totalLength / 12) }}
   .col-md-10.px-2.mt-2
-      button(@click="nextPage") >
+      CVChevronRight.text-gray-900.size-4.h-2(:isEnd="currentPage == Math.floor(totalLength / 12)" :class="{'cursor-pointer': currentPage + 1 !== Math.ceil(totalLength / 12)}" @click="nextPage")
 </template>
 
 <style scoped></style>		

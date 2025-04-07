@@ -1,16 +1,49 @@
+import { subscribe } from "diagnostics_channel";
 import { nanoid } from "nanoid"
 import Stripe from "stripe"
 const runtime = useRuntimeConfig()
 // Stripe API tokens
 const stripeSecretKey = runtime.STRIPE_SECRET;
 
+const subscribeToEmailList = async(event: any, email: string, first_name: string, last_name: string) => {
+  const token = await event.context.client?.CC_Token.findUnique({
+    where: {
+        cuid: "0"
+    }
+  })
+
+  if(email && first_name && last_name) { 
+      const response = await fetch(`https://api.cc.email/v3/contacts/sign_up_form`, {
+        method: 'POST',
+        body: JSON.stringify({
+            "email_address": email,
+            "first_name": first_name,
+            "last_name": last_name,
+            "list_memberships": [
+                `${runtime.CONSTANT_CONTACTS_LIST_MEMBERSHIP}`
+            ]
+        }),
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token.token}`
+        },
+    })
+
+    const respBody = await response.json()
+    return response.status === 200 
+  }
+
+  return false
+}
+
 /*
 *	/Page/cuid
 *	function:	GET
 *	updates transactions to have success tag and increments the amount donated to families
 */
-
 export default defineEventHandler(async event => {
+
+  
   const stripe = new Stripe(stripeSecretKey as string, { apiVersion:"2022-11-15"} )
   const transaction_id = getRouterParam(event, 'id')
 
@@ -37,18 +70,13 @@ export default defineEventHandler(async event => {
       })
 
       if(subscribing as string == '1'){
-        const subscribing = await $fetch<{ success: boolean }>(`/api/email_list`, {
-          method: 'POST',
-          body: ({
-            email: transaction?.donorEmail,
-            first_name: transaction?.donorFirstName,
-            last_name: transaction?.donorLastName
-          })
-        }).catch((error) => {
-          console.error('Error submitting data:', error);
-        });
-
-        if (subscribing?.success) {
+        const subscribed = await subscribeToEmailList(
+            event,
+            transaction?.donorEmail || "",
+            transaction?.donorFirstName || "",
+            transaction?.donorLastName || ""
+        )
+        if (subscribed) {
           console.log('Data submitted successfully.');
       } else {
           console.error('Error submitting data.');
