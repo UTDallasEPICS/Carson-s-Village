@@ -14,14 +14,14 @@ div
       CVLabel Date Range
       CVDatepicker(v-model='date' @update:model-value="currentPage=0; loadReports();" range)
     h2.mt-4.ml-10.border-1.border-black.underline(style="font-size: 23px") Table Dimensions
-      .div.flex.flex-box.flex-wrap.gap-10(style="width: 450px") 
+      .flex.flex-box.flex-wrap.gap-10(style="width: 450px") 
         h1.ml-1(style="font-size: 18px") Number of Table Rows
           CVInputNumerical(v-model="dimensions")
     h2.mt-4.ml-10.underline(style="font-size: 18px") Fields to Show
-    .div.flex.flex-box.flex-wrap.gap-10.stretch.grid.ml-2(class="sm:grid-cols-3" style="width: 700px") 
+    .flex.flex-box.flex-wrap.gap-10.stretch.grid.ml-2(class="sm:grid-cols-3" style="width: 700px") 
       label.mt-4.ml-10.text-md(class="sm:mt-0" style="letter-spacing: 0.35px;") Duration
         div(class="w-full")
-          input.div(type='checkbox' v-model="display.duration")
+          input(type='checkbox' v-model="display.duration")
       label.mt-4.ml-10.text-md(class="sm:mt-0" style="letter-spacing: 0.35px;") Goal Met
         div
           input(type='checkbox' v-model="display.goal_met")
@@ -70,7 +70,7 @@ div
               tr(v-for="(page, i) in (!tableToggle ? families : families.filter(page => page.status === 'active'))" 
               :class="{'bg-gray-200': (i+1) % 2}" :key="listOfTagsLen") 
                   td(style="text-align: center;") {{ page.page_first_name + " " + page.page_last_name }}
-                  td(style="text-align: center;") {{ page.Family?.AdvocateResponsible?.first_name  + " " + page.Family?.AdvocateResponsible?.last_name }}
+                  td(style="text-align: center;") {{ page.Family.AdvocateResponsible ? (page.Family?.AdvocateResponsible?.first_name  + " " + page.Family?.AdvocateResponsible?.last_name) : "No Advocate Assigned"}}
                   td(style="text-align: center;" v-if="display.duration") {{ page.duration }} 
                   td(style="text-align: center;" v-if="display.goal_met") {{  page.donation_status }}
                   td(style="text-align: center;" v-if="display.goal_met_date") {{ (page.goal_met_date) ? dateFormat(page.goal_met_date, true) : "Goal Not Reached" }}
