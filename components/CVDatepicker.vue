@@ -1,5 +1,5 @@
 <template lang="pug">
-Datepicker.rounded-md.p-2(type="Date" v-model="value" auto-apply)
+Datepicker.rounded-md.p-2(:id="id" type="Date" v-model="value" auto-apply)
     slot
 </template>
         
@@ -7,7 +7,10 @@ Datepicker.rounded-md.p-2(type="Date" v-model="value" auto-apply)
 import Datepicker from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css';
 
-const props = defineProps<{modelValue: Date | string | null}>();
+const props = defineProps<{
+        modelValue: Date | string | null,
+        id: string,
+                        }>();
 
 const emit = defineEmits(["update:modelValue"])
 const value = computed({

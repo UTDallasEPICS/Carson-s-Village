@@ -91,8 +91,8 @@ const exitDonationPoppup = () => {
 
 <template lang="pug">
 .container.m-4.place-content-center.font-poppins(class="w-5/6 sm:m-auto sm:py-3")
-    .div.relative
-        .div(style='position: absolute; top: 10px; right: 10px;')
+    .relative
+        .absolute(style='top: 10px; right: 10px;')
             button(style="align-items: center;justify-content: center;line-height: 2;text-align: center ; color: rgba(0, 0, 0, 0.7) ; font-weight: 300;font-size: 24px; positon: absolute; top:0px; left: 0px; width: 60px; height: 60px; border-radius: 50%; padding-bottom: 4px;" @click = "exitDonationPoppup") x
     .text-md.text-center.ml-4.my-3(v-if="props.donation_goal_provided" class="sm:text-xl sm:my-6" style="letter-spacing: 0.35px; font-weight: 600; color: #646464;") {{ donationFormat(props.amount_raised)  + " raised of " +  donationFormat(props.donation_goal) + " goal" }}
     .py-4

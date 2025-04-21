@@ -134,6 +134,7 @@ const cuid = cuid_data.value as string
 const user_cuid_data = computed(() => cvuser.value?.cuid)
 const user_cuid = user_cuid_data.value as string
 const pageCuid = computed(() => router.params.EditPageId)
+const disableCriteria = computed(() => !data.value?.page_first_name || !data.value?.page_last_name || (!familyCuid.value && isAdvocate.value) )
 data.value.cuid = cuid;
 data.value.userCuid = user_cuid;
 console.log(data.value)
@@ -175,11 +176,7 @@ const currentFamily = computed(() => data_all_users.value?.find(({ cuid }: Famil
 
 // Method to populate the form when editing a pre-existing page
 const getData = async (cuid: string) => {
-    const pageFoundFromUser = cvuser.value.Pages.find((i: Page) => i.cuid == router.params.EditPageId) != undefined
-    const pageFoundFromFamily = cvuser2.value.Family?.Pages.find((i: Page) => i.cuid == router.params.EditPageId) != undefined
     console.log(data_all_users)
-    // Allowing access to the user's EditPage only if user is an advocate or it is one of the family's family pages.
-    if (pageFoundFromUser || pageFoundFromFamily || cvuser.value.user_role == "advocate" || cvuser.value.user_role == "admin") {
         const { data: pageData } = await useFetch('/api/page', {
             method: 'GET',
             query: { cuid: cuid }
@@ -209,7 +206,6 @@ const getData = async (cuid: string) => {
         }
         replies.value = data.value?.Reply
     }
-}
 
 
 
@@ -283,7 +279,7 @@ const onResize = ({ width, height }: { width: number, height: number }) => {
 
 <template lang="pug">
 CVContainer
-    .well.well-sm
+    form.well.well-sm
         //conditional rendering for page editing or page insert. This does not affect the function of Page editting.
         TitleComp(v-if="pageCuid!=0") Edit Family Page
         TitleComp(v-else) Insert New Family Page
@@ -295,19 +291,19 @@ CVContainer
             CVLegend Personal Information
         .py-4.grid(class="sm:grid-cols-3") 
             .flex
-                CVLabel First Name
+                CVLabel(for="first_name") First Name
                 CVHelpButton(class="inline-block" 
     description="The first and last name of the recently deceased person this page should be dedicated to should be entered here")
             .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
-                CVInput(v-model='data.page_first_name' placeholder="required" required)
+                CVInput(id="first_name" v-model='data.page_first_name' type="text" placeholder="required" required="required")
         .py-4.grid(class="sm:grid-cols-3") 
-            CVLabel Last Name
+            CVLabel(for="last_name") Last Name
             .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
-                CVInput(v-model='data.page_last_name' placeholder="required" required)
+                CVInput(id="last_name" v-model='data.page_last_name' text="text" placeholder="required" required="required")
         .py-4.grid(class="sm:grid-cols-3" v-if="isAdvocate")
-            CVLabel Family
+            CVLabel(for="family") Family
             .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
-                Listbox.shadow-sm.border.border-1.rounded-lg(as='div' v-model="familyCuid")
+                Listbox.shadow-sm.border.border-1.rounded-lg(id="family" as='div' v-model="familyCuid" required)
                     .relative
                         Transition(
                     leave-active-class='transition ease-in duration-300'
@@ -322,11 +318,11 @@ CVContainer
             legend.ml-4(class="sm:py-1" style="font-weight: 700; text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") Profile Image Selection        
         .py-4.grid(class="sm:grid-cols-3")
             .flex
-                CVLabel Profile Image
+                CVLabel(for="profile_image") Profile Image
                 CVHelpButton(class="inline-block z-20" 
 description="Here, you select from photos you uploaded to show up at the top of the family page") 
             .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
-                Listbox.rounded-lg.outline-0.w-full.bg-white.p-2(v-model="data.profileImageCuid" as="div") 
+                Listbox.rounded-lg.outline-0.w-full.bg-white.p-2(id="profile_image" v-model="data.profileImageCuid" as="div") 
                     .relative
                         Transition(
                             leave-active-class='transition ease-in duration-300'
@@ -348,54 +344,54 @@ description="Here, you select from photos you uploaded to show up at the top of 
                             
                           
         .py-4.grid(class="sm:grid-cols-3") 
-            CVLabel Day of Birth
+            CVLabel(for="day_of_birth") Day of Birth
             .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
-                CVDatepicker(v-model='data.day_of_birth')
+                CVDatepicker(id="day_of_birth" v-model='data.day_of_birth')
         .py-4.grid(class="sm:grid-cols-3") 
-            CVLabel Day of Passing 
+            CVLabel(for="day_of_passing") Day of Passing 
             .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
-                CVDatepicker(v-model='data.day_of_passing')
+                CVDatepicker(id="day_of_birth" v-model='data.day_of_passing')
         .information.rounded-md.mx-9.my-2.text-center(class="sm:text-start text-white bg-blue-999")
             CVLegend Visitation Information 
         .py-4.grid(class="sm:grid-cols-3") 
-            CVLabel Date
+            CVLabel(for="visitation_date") Date
             .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
-                CVDatepicker(v-model='data.visitation_date')
+                CVDatepicker(id="visitation_date" v-model='data.visitation_date')
         .py-4.grid(class="sm:grid-cols-3")
-            CVLabel Location 
+            CVLabel(for="visitation_location") Location 
             .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
-                CVInput(v-model='data.visitation_location' placeholder="optional")
+                CVInput(id="visitation_location" v-model='data.visitation_location' placeholder="optional")
         .py-4.grid(class="sm:grid-cols-3")
-            CVLabel Address  
+            CVLabel(for="visitation_address") Address  
             .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
-                CVInput(v-model='data.visitation_address' placeholder="optional")
+                CVInput(id="visitation_address" v-model='data.visitation_address' placeholder="optional")
         .py-4.grid(class="sm:grid-cols-3")
-            CVLabel Description
+            CVLabel(for="visitation_description") Description
             .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
-                CVTextArea(v-model='data.visitation_description' placeholder="optional")
+                CVTextArea(id="visitation_description" v-model='data.visitation_description' placeholder="optional")
 
         .information.rounded-md.mx-9.my-2.text-center(class="sm:text-start text-white bg-blue-999")
             CVLegend Funeral Information       
         .py-4.grid(class="sm:grid-cols-3")
-            CVLabel Date    
+            CVLabel(for="funeral_date") Date    
             .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
-                CVDatepicker(v-model='data.funeral_date')
+                CVDatepicker(id="funeral_date" v-model='data.funeral_date')
         .py-4.grid(class="sm:grid-cols-3")
-            CVLabel Location 
+            CVLabel(for="funeral_location") Location 
             .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
-                CVInput(v-model='data.funeral_location' placeholder="optional")
+                CVInput(id="funeral_location" v-model='data.funeral_location' placeholder="optional")
         .py-4.grid(class="sm:grid-cols-3")
-            CVLabel Address 
+            CVLabel(for="funeral_address") Address 
             .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
-                CVInput(v-model='data.funeral_address' placeholder="optional")
+                CVInput(id="funeral_address" v-model='data.funeral_address' placeholder="optional")
         .py-4.grid(class="sm:grid-cols-3")
-            CVLabel Description
+            CVLabel(for="funeral_description") Description
             .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
-                CVTextArea(v-model='data.funeral_description' placeholder="optional")
+                CVTextArea(id="funeral_description" v-model='data.funeral_description' placeholder="optional")
         .py-4.grid(class="sm:grid-cols-3")
-            CVLabel Obituary
+            CVLabel(for="obituary") Obituary
             .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
-                CVTextArea(v-model='data.obituary' placeholder="optional")
+                CVTextArea(id="obituary" v-model='data.obituary' placeholder="optional")
         .information.rounded-md.mx-9.my-2.text-center(class="sm:text-start text-white bg-blue-999")
             CVLegend Fundraising Information
         .py-4.grid(class="sm:grid-cols-3")
@@ -404,32 +400,31 @@ description="Here, you select from photos you uploaded to show up at the top of 
                 CVHelpButton(class="inline-block" description="If the Donation Goal is 0, it will be assumed that you do not wish to display your donation progress bar and current amount raised.")  
             .col-md-8.flex.mx-9(class="sm:col-span-2 sm:mr-11")
                 span.rounded-l-md.bg-gray-200.text-lg.p-2(style="text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25); border: 1px solid #c4c4c4;") $
-                input.outline-0.rounded-r-md.border-box.w-full.p-2(style="border: 1px solid #c4c4c4;" v-model='data.donation_goal' placeholder="required" required)
+                input.outline-0.rounded-r-md.border-box.w-full.p-2(style="border: 1px solid #c4c4c4;" v-model='data.donation_goal')
         .py-4.grid(class="sm:grid-cols-3")
-            CVLabel Deadline Date
+            CVLabel(for="deadline") Deadline Date
             .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
-                CVDatepicker(v-model='data.deadline')
+                CVDatepicker(id="deadline" v-model='data.deadline')
         .py-4.grid(class="sm:grid-cols-3")
-            CVLabel Description
+            CVLabel(for="donation_description") Description
             .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
-                CVTextArea(v-model='data.donation_description' placeholder="optional")
+                CVTextArea(id="donation_description" v-model='data.donation_description' placeholder="optional")
         .information.rounded-md.mx-9.my-2.text-center(class="sm:text-start text-white bg-blue-999" v-if="replies?.length")
             CVLegend Comment Moderation
         .py-4.grid.flex-box.flex-row.item-centered.gap-1(v-if="replies?.length" style="line-height: 0px;")
             div(class="flex")
-            .div(v-for="(reply,i) in replies" :key="i" class="reply-box")
+            div(v-for="(reply,i) in replies" :key="i" class="reply-box")
                 CVReply(:r="reply")
                 CVSuspendButton(:suspend="reply.suspended" :rep="reply" @update:suspend="updateSuspendButton")
-            .div(v-for="(reply, i) in replies" :key="i")
         .ml-9.mb-9.py-7.flex.flex-wrap.gap-2
             .col-md-10.px-2.mt-2
-                ActionButton(class="sm:my-2 transition duration-300 bg-orange-999 hover:bg-green-600" @click="save") Save
+                ActionButton(:disabled="disableCriteria" class="sm:my-2 transition duration-300 bg-orange-999 hover:bg-green-600 disabled:bg-orange-800 disabled:cursor-not-allowed" @click="save") Save
             .col-md-10.py-2.mt-2
                 LinkButton(class="sm:my-2 transition duration-300 bg-orange-999 hover:bg-green-600" v-if="pageCuid!=0" :to="`/Page/${cuid}`") View Page
             .col-md-10.p-2.pt-6.mt-2(class="sm:pt-2 sm:ml-auto sm:mr-6")
                 LinkButton(class="sm:my-2 transition duration-300 bg-orange-999 hover:bg-green-600" v-if="pageCuid!=0" to='#') Delete Page
         .py-4.grid(class="sm:grid-cols-3" Style="color:red" v-if="errorInPage")
-            CVLabel Error in Creating/Editing page in the system.
+            CVLabel(for="error") Error in Creating/Editing page in the system.
 </template>
 
 <style scoped></style>
