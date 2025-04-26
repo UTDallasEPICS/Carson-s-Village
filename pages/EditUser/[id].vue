@@ -67,6 +67,7 @@ const router = useRoute()
 const isAuthorized = computed(() => { cvuser.value?.user_role as string == "advocate" || cvuser.value?.user_role == "admin"})
 const isAdmin = computed(() => cvuser.value?.user_role as string == "admin")
 const cuid = computed(() => router.params.id as string);
+const disableCriteria = computed(() => !data_user.value?.email || !data_user.value?.first_name ||!data_user.value?.last_name)
 const errorInPage = ref(false);
 const errorToUser = ref("")
 
@@ -123,22 +124,22 @@ await getUsers()
 
 <template lang="pug">
 CVContainer
-    .well.well-sm
+    form.well.well-sm
         TitleComp User Account Entry 
         br
         .information.rounded-md.mx-9.my-2.text-center(class="sm:text-start text-white bg-blue-999")
             CVLegend Family Information
         .py-4.grid(class="sm:grid-cols-3")
-            CVLabel User Role
+            CVLabel(for="user_role") User Role
             .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
-                select.rounded-md.outline-0.border-box.w-full.p-2.bg-white(style="border: 1px solid #c4c4c4;" v-model='data_user.user_role') Select User Role
+                select.rounded-md.outline-0.border-box.w-full.p-2.bg-white(id="user_role" style="border: 1px solid #c4c4c4;" v-model='data_user.user_role') Select User Role
                     option family
                     option advocate
                     option(v-if="isAdmin") admin
         .py-4.grid(class="sm:grid-cols-3" v-if="addingFamily")
-            CVLabel Family
+            CVLabel(for="Family") Family
             .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
-                Listbox.shadow-sm.border.border-1.rounded-lg(as='div' v-model="familyCuid")
+                Listbox.shadow-sm.border.border-1.rounded-lg(id="Family" as='div' v-model="familyCuid")
                     .relative
                         Transition(
                     leave-active-class='transition ease-in duration-100'
@@ -153,30 +154,30 @@ CVContainer
         .py-4.grid(class="sm:grid-cols-3")
             CVLabel Email
             .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
-                CVInput(v-model='data_user.email' placeholder="(user defined)" required)
+                CVInput(id="email" v-model='data_user.email' placeholder="(user defined)" required)
         
         .py-4.grid(class="sm:grid-cols-3")
-            CVLabel First Name
+            CVLabel(for="first_name") First Name
             .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
-                CVInput(v-model='data_user.first_name' placeholder="(user-defined" required)
+                CVInput(id="first_name" type="text" v-model='data_user.first_name' placeholder="(user-defined" required="required")
         .py-4.grid(class="sm:grid-cols-3")
-            CVLabel Middle Name
+            CVLabel(for="middle_name") Middle Name
             .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
-                CVInput(v-model='data_user.middle_name' placeholder="(user defined, optional)")
+                CVInput(id="middle_name" type="text" v-model='data_user.middle_name' placeholder="(user defined, optional)")
         .py-4.grid(class="sm:grid-cols-3")
-            CVLabel Last Name
+            CVLabel(for="last_name") Last Name
             .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
-                CVInput(v-model='data_user.last_name' placeholder="(user-defined)" required)
+                CVInput(id="last_name" type="text" v-model='data_user.last_name' placeholder="(user-defined)" required="required")
         .py-4.grid(class="sm:grid-cols-3")
-            CVLabel Phone
+            CVLabel(for="phone") Phone
             .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
-                CVInput(v-model='data_user.phone' placeholder="(user defined, optional)")
+                CVInput(id="phone" type="tel" v-model='data_user.phone' placeholder="(user defined, optional)")
             .col-md-10.py-2
-                ActionButton(@click="save" class="transition duration-300 bg-orange-999 hover:bg-green-600") Save    
-        .div.text-red-500( v-if="errorInPage")    
-            CVLabel Error in Creating User in the system. 
+                ActionButton(@click="save" :disabled="disableCriteria" class="transition duration-300 bg-orange-999 hover:bg-green-600 disabled:bg-orange-800 disabled:cursor-not-allowed") Save    
+        .text-red-500(v-if="errorInPage")    
+            CVLabel(for="error_label") Error in Creating User in the system. 
             br
-            CVLabel {{ errorToUser }}
+            CVLabel(for="dynamic_error") {{ errorToUser }}
 </template>
 
 <style scoped></style>
