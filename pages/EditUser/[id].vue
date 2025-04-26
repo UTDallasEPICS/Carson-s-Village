@@ -127,12 +127,8 @@ CVContainer
     form.well.well-sm
         TitleComp User Account Entry 
         br
-        .bar.mx-9(style="border-top: 0.5px solid #646464;")
-        br
-        .py-4.grid(class="sm:grid-cols-3")
-            CVLabel(for="email") Email
-            .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
-                CVInput(id="email" type="email" v-model='data_user.email' placeholder="(user defined)" required)
+        .information.rounded-md.mx-9.my-2.text-center(class="sm:text-start text-white bg-blue-999")
+            CVLegend Family Information
         .py-4.grid(class="sm:grid-cols-3")
             CVLabel(for="user_role") User Role
             .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
@@ -153,6 +149,13 @@ CVContainer
                             ListboxOptions(as='div' class='w-full absolute z-10 mt-10 bg-white shadow-lg max-h-60 rounded-md px-2 py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm' )
                                 ListboxOption(as='div' v-for="family in data_all_families" :key="family.cuid" :value="family.cuid" class="px-2 border border-grey-500 py-1 my-1") {{ family.family_name }}
                     ListboxButton(class='text-left bg-white relative rounded-md pl-2 pr-10 py-2 sm:text-sm w-96') {{ familyCuid ? currentFamily.family_name : 'Select family to add the user to' }}
+        .information.rounded-md.mx-9.my-2.text-center(class="sm:text-start text-white bg-blue-999")
+            CVLegend User Information
+        .py-4.grid(class="sm:grid-cols-3")
+            CVLabel Email
+            .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
+                CVInput(id="email" v-model='data_user.email' placeholder="(user defined)" required)
+        
         .py-4.grid(class="sm:grid-cols-3")
             CVLabel(for="first_name") First Name
             .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
@@ -169,10 +172,6 @@ CVContainer
             CVLabel(for="phone") Phone
             .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
                 CVInput(id="phone" type="tel" v-model='data_user.phone' placeholder="(user defined, optional)")
-        .py-4.grid(class="sm:grid-cols-3")
-            CVLabel(for="address") Address
-            .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
-                CVInput(id="address" type="text" v-model='data_user.address' placeholder="(user defined, optional)")
             .col-md-10.py-2
                 ActionButton(@click="save" :disabled="disableCriteria" class="transition duration-300 bg-orange-999 hover:bg-green-600 disabled:bg-orange-800 disabled:cursor-not-allowed") Save    
         .text-red-500(v-if="errorInPage")    

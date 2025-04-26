@@ -28,7 +28,6 @@ if(event.context.user?.user_role == "advocate"  || event.context.user?.user_role
           user_role: 'family',
           familyCuid: body.familyCuid || null,
           phone: body.phone,
-          address: body.address
           //...body
   
         }  
@@ -45,7 +44,6 @@ if(event.context.user?.user_role == "advocate"  || event.context.user?.user_role
         last_name: body.last_name,
         user_role: body.user_role,
         phone: body.phone,
-        address: body.address
         //...body
 
       }
