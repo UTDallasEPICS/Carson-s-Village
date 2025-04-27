@@ -21,7 +21,7 @@ model User {
   AdvocateFamily Family[] @relation("advocate_family")
   Pages          Page[]
   Family         Family?  @relation("family_member", fields: [familyCuid], references: [cuid])
-
+  isActive       Boolean   @default(true)
   @@map("user_accounts")
 }
 
@@ -31,9 +31,9 @@ model Family {
   stripe_account_id     String?
   created_at            DateTime          
   updated_at            DateTime?
-  advocateCuid          String           @map("advocate_cuid")
+  advocateCuid          String?           @map("advocate_cuid")
   FamilyDonationPayouts DonationPayout[]
-  AdvocateResponsible   User             @relation("advocate_family", fields: [advocateCuid], references: [cuid])
+  AdvocateResponsible   User?             @relation("advocate_family", fields: [advocateCuid], references: [cuid])
   FamilyDonations       PageDonation[]
   Pages                 Page[]
   FamilyMembers         User[]           @relation("family_member")
@@ -55,11 +55,14 @@ model Page {
   day_of_birth           DateTime?
   day_of_passing         DateTime?
   visitation_date        DateTime?
+  age                    Int              @default(0)
   visitation_location    String
   visitation_address     String           @default("")
   visitation_description String
   funeral_date           DateTime?
   funeral_location       String
+  visitation_end_time    DateTime?
+  funeral_end_time       DateTime?
   funeral_description    String
   funeral_address        String           @default("")
   obituary               String
