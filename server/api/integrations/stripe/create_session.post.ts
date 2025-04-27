@@ -17,11 +17,12 @@ export default defineEventHandler(async event => {
     const transaction_id = nanoid();
     const stripe = new Stripe(runtime.STRIPE_SECRET, { apiVersion:"2022-11-15"})
     const body = await readBody(event)
-    const page_cuid = body._value.pageCuid
-    const donorComments = body._value.comments;
+    const page_cuid = body.pageCuid
+    const donorComments = body.comments;
     const state = {}; 
-    const userCuid = body._value.userCuid
-    const familyCuid = body._value.familyCuid 
+    const userCuid = body.userCuid
+    const familyCuid = body.familyCuid 
+
     try {
       const page = await event.context.client.page.findFirst({
         where: {
@@ -35,7 +36,7 @@ export default defineEventHandler(async event => {
 			{
 				price_data: {
 					currency: 'usd',
-					unit_amount: Math.trunc(parseFloat(body._value.amount as unknown as string) * 100) as number,
+					unit_amount: Math.trunc(parseFloat(body.amount as unknown as string) * 100) as number,
 					product_data: {
 						name: `Donation to ${page?.page_first_name} ${page?.page_last_name}`,
 					},
@@ -45,7 +46,7 @@ export default defineEventHandler(async event => {
 		],
 		metadata: {
 			transaction_id: transaction_id,
-			amount: Math.trunc(parseFloat(body._value.amount as unknown as string) * 100) as number,
+			amount: Math.trunc(parseFloat(body.amount as unknown as string) * 100) as number,
 			target_user_id: userCuid,
       target_family_id: familyCuid,
 			target_first_name: page?.page_first_name as string,
@@ -57,15 +58,15 @@ export default defineEventHandler(async event => {
 		cancel_url: `${runtime.BASEURL}page/${page_cuid}`,
 	});
 
-	console.log(body.subscribed)
+	  console.log(body.subscribed)
 
     const queryRes = await event.context.client.pageDonation.create({
       data: {
         transaction_id: transaction_id,
-        amount: Math.trunc(parseFloat(body._value.amount as unknown as string) * 100) as number,
-        donorFirstName: body._value.donorFirstName,
-        donorLastName: body._value.donorLastName,
-        donorEmail: body._value.donorEmail,
+        amount: Math.trunc(parseFloat(body.amount as unknown as string) * 100) as number,
+        donorFirstName: body.donorFirstName,
+        donorLastName: body.donorLastName,
+        donorEmail: body.donorEmail,
         comments: donorComments, 
         donationDate: new Date().toISOString(),
         Family: {

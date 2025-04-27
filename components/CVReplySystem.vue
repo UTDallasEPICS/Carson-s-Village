@@ -56,12 +56,12 @@ const submitComment = async () => {
 
       h2.text-center.mt-4.mb-6.font-bold Leave a Message
       .flex.justify-center(class="w-2/3")
-        CVTextArea(name='reply' v-model="replyData.reply" placeholder='Replies' class="font-normal h-40 w-full")
+        CVTextArea(id="reply" name='reply' v-model="replyData.reply" placeholder='Replies' class="font-normal h-40 w-full")
       .field-row.flex.justify-center.mt-4(class="w-2/3")
-          CVInput(name='name' v-model="replyData.name" placeholder='Name' class="font-normal w-2/3" )     
-      .col-md-8.ml-4.pt-6.pr-5.flex.items-center.justify-center.mt-6
+          CVInput(id="name" name='name' v-model="replyData.name" placeholder='Name' class="font-normal w-2/3" )     
+      .ml-4.pt-6.pr-5.flex.items-center.justify-center.mt-6
           ActionButton.mx-auto.text-md(@click="submitComment" class="transition duration-300 bg-orange-999 hover:bg-green-600") Submit
-      .div(v-if="successMessage" class="mt-4 text-green-500") {{ successMessage }}
+      div(v-if="successMessage" class="mt-4 text-green-500") {{ successMessage }}
 
 </template>
 
