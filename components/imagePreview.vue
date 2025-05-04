@@ -74,7 +74,7 @@ const removeImage = async (image: Image, isPreview: boolean) => {
         emit("profileImage", emptyImage)
         previewCuid.value = ""
     }
-    if(image?.url === props.profileImage.url &&  imagesTemp.length !=0){
+    if(image?.url === props.profileImage.url && imagesTemp.length !=0){
       emit("profileImage", imagesTemp[0])
     }
 }
