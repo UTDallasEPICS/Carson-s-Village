@@ -32,6 +32,7 @@ export default defineEventHandler(async event => {
     
 	const session = await stripe.checkout.sessions.create({
 		mode: 'payment',
+    customer_email: body.donorEmail ? body.donorEmail : undefined,
 		line_items: [
 			{
 				price_data: {
