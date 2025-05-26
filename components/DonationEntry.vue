@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import type { Page, PageDonation } from '@/types.d.ts'
+import type { Page, PageDonation, User } from '@/types.d.ts'
 
 const props = defineProps({
     pageCuid: {
@@ -20,6 +20,8 @@ const props = defineProps({
     }
 })
 
+const cvuser = useCookie<User>('cvuser');
+
 const feeRecovery = ref(false)
 const anonymous = ref(false)
 const subscribing = ref(true)
@@ -33,7 +35,7 @@ const donationData = ref<PageDonation>({
     transaction_id: "",
     donorFirstName: "",
     donorLastName: "",
-    donorEmail: "",
+    donorEmail: cvuser.value?.email ?? "",
     comments: "",
     donationDate: null,
     Page: ref<Page[]>([]).value[0],
