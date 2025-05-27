@@ -39,6 +39,7 @@
 </template>
     
 <script setup lang="ts">
+import { dateFormat, donationFormat } from '@/utils'
 const props = defineProps<{
   totalPageDonations: number,
   totalDistributed: number,

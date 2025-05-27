@@ -1,4 +1,5 @@
 <script lang = "ts" setup>
+import { dateFormat, donationFormat } from '@/utils'
 import type { Page, User, Image, PageDonation, Reply } from '@/types.d.ts'
 import { ref } from "vue";
 import type { Family } from '@prisma/client'
