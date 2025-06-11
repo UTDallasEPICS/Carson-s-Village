@@ -10,6 +10,7 @@ RUN npx prisma generate
 RUN pnpm run build
 
 FROM node:22-alpine AS deployment
+COPY --from=builder /emails /.output/server/emails
 COPY --from=builder /.output /
 EXPOSE 3000
 CMD ["node", "./server/index.mjs"]
