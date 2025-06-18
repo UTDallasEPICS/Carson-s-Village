@@ -1,11 +1,10 @@
 import  { nanoid } from "nanoid"
 // Stripe API tokens
-//import { loadStripe } from '@stripe/stripe-js'
+
 import Stripe from "stripe"
 import { isEmail } from 'class-validator';
 
 const runtime = useRuntimeConfig()
-
 
 /*
 *	/Page/cuid
