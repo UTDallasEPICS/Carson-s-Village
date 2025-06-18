@@ -42,6 +42,8 @@ const onEnter = async() => {
       p.uppercase.white.mb-2.w-max Invite user
     NavLinkButtonVNav( v-if="isAdvocateAdmin" to='/EditFamily/0' :class="{'!text-black border-green-999 bg-white': route.path.includes('/EditFamily')}") 
       p.uppercase.white.mb-2.w-max Edit Family
+    NavLinkButtonVNav(to="/Families" :class="{'!text-black border-green-999 bg-white': route.path == '/Families'}") 
+      p.uppercase.white.mb-2.w-max Families
     NavLinkButtonVNav(to="/" :class="{'!text-black border-green-999 bg-white': route.path == '/'}") 
       p.uppercase.white.mb-2.w-max Profile
     NavLinkButtonVNav(v-if="isAdmin" to='/FamilyTransactionList' :class="{'!text-black border-green-999 bg-white': route.path == '/FamilyTransactionList'}") 

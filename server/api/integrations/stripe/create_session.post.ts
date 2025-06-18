@@ -28,6 +28,7 @@ export default defineEventHandler(async event => {
           cuid: page_cuid
         }
     })
+      
     const session = await stripe.checkout.sessions.create({
       mode: 'payment',
       // Only use email if it's provided and valid

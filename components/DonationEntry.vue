@@ -20,7 +20,8 @@ const props = defineProps({
     }
 })
 
-const cvuser = useCookie<User>('cvuser')
+const cvuser = useCookie<User>('cvuser');
+
 const feeRecovery = ref(false)
 const anonymous = ref(false)
 const subscribing = ref(true)
@@ -34,7 +35,7 @@ const donationData = ref<PageDonation>({
     transaction_id: "",
     donorFirstName: "",
     donorLastName: "",
-    donorEmail: cvuser.value?.email as string || "",
+    donorEmail: cvuser.value?.email ?? "",
     comments: "",
     donationDate: null,
     Page: ref<Page[]>([]).value[0],
