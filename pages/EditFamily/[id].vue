@@ -20,16 +20,7 @@ import {
 import { vElementSize } from '@vueuse/components'
 
 const cvuser = useCookie<User>('cvuser')
-
-const data_family = ref<Family>({
-    cuid: "",
-    stripe_account_id: "",
-    created_at: new Date(),
-    updated_at: null,
-    family_name: "",
-    advocateCuid: cvuser.value.cuid 
-})
-
+const bottomHeight = ref(0)
 const data_user = ref<User>({
     cuid: "",
     first_name: "",
@@ -45,9 +36,11 @@ const data_user = ref<User>({
     //PageDonations: [],
     //DonationPayouts: []
 })
+const userCuid = ref("")
 
 const router = useRoute()
 const cuid = computed(() => router.params.id as string);
+const currentUser = computed(() => data_all_users.value.all_family_users.find((({ cuid }: User) => cuid === userCuid.value )) || {})
 const isAuthorized = computed(() => { cvuser.value?.user_role as string == "advocate" || cvuser.value?.user_role == "admin"})
 const errorInPage = ref(false);
 
@@ -56,6 +49,13 @@ const { data: data_all_users } = await useFetch('/api/users', {
       query: { page_number: 0, sortedColumn: "first_name", order: "asc", familyCuid: cuid.value }, 
       default() {
         return [] as any
+      }
+})
+
+const { data: data_family } = await useFetch(`/api/family/${cuid.value}`, {
+      method: 'GET',
+      default() {
+        return {} as any
       }
 })
 
@@ -75,6 +75,16 @@ const createFamily = async () => {
     }
   } 
 }
+
+//todo add the ui back for this
+/*const onResize = ({ height }: { height: number }) => {
+    console.log(height)
+    if(height != 0) {
+        bottomHeight.value = height + 150
+    } else {
+        bottomHeight.value = 20
+    }
+}*/
 </script>
 
 <template lang="pug">
@@ -88,12 +98,12 @@ CVContainer
             CVLabel(for="family_name") Family Name
             .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
                 CVInput(id="family_name" v-model='data_family.family_name' placeholder="(user defined)" required="required")
+        .information.rounded-md.mx-9.my-2.text-center(class="sm:text-start text-white bg-blue-999")
+             CVLegend First User Information
         .py-4.grid(class="sm:grid-cols-3")
             CVLabel(for="email") Email
             .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
                 CVInput(id="email" v-model='data_user.email' type="email" placeholder="(user defined)" required="required")
-        .information.rounded-md.mx-9.my-2.text-center(class="sm:text-start text-white bg-blue-999")
-             CVLegend First User Information
         .py-4.grid(class="sm:grid-cols-3")
             CVLabel(for="first_name") First Name
             .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
