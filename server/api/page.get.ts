@@ -19,9 +19,16 @@ export default defineEventHandler(async event => {
 		PageDonations: {
 			where: {
 				success: true
+			},
+			orderBy: {
+				donationDate: 'desc'
+			},
+		},
+		Reply: {
+			orderBy: {
+				date: 'desc'
 			}
-	},
-		Reply: true
+		}
 	}
 	});
 	  return queryRes;

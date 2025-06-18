@@ -17,6 +17,7 @@ import {
     ListboxOptions,
     ListboxOption,
 } from '@headlessui/vue'
+import { vElementSize } from '@vueuse/components'
 
 const cvuser = useCookie<User>('cvuser')
 
@@ -44,16 +45,25 @@ const data_user = ref<User>({
     //PageDonations: [],
     //DonationPayouts: []
 })
-const data_all_users = ref<Family[]>([])
 
 const router = useRoute()
+const cuid = computed(() => router.params.id as string);
 const isAuthorized = computed(() => { cvuser.value?.user_role as string == "advocate" || cvuser.value?.user_role == "admin"})
 const errorInPage = ref(false);
+
+const { data: data_all_users } = await useFetch('/api/users', {
+      method: 'GET',
+      query: { page_number: 0, sortedColumn: "first_name", order: "asc", familyCuid: cuid.value }, 
+      default() {
+        return [] as any
+      }
+})
+
 // Method that creates a new family on the backend and adds the first user
 const createFamily = async () => {
   if(isAuthorized){
     const result = await $fetch('/api/family', {
-      method: 'POST',
+      method: (cuid.value !== '0' ? 'PUT' : 'POST'),
       body: ({family_name: data_family.value.family_name, ...data_user.value})
     })
 
