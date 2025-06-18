@@ -30,7 +30,7 @@ export default defineEventHandler(async event => {
     })
     const session = await stripe.checkout.sessions.create({
       mode: 'payment',
-      // only use email if it's valid fix this
+      // Only use email if it's provided and valid
       customer_email: isEmail(body.donorEmail) ? body.donorEmail : undefined,
       line_items: [
         {
