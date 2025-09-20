@@ -10,6 +10,7 @@
 */
 
 
+import { dateFormat, donationFormat } from '@/utils'
 import '@vuepic/vue-datepicker/dist/main.css';
 import {
     Listbox,
@@ -259,7 +260,6 @@ CVContainer
         TitleComp(v-if="pageCuid!=0") Edit Family Page
         TitleComp(v-else) Insert New Family Page
         br
-        .bar.mx-9(style="border-top: 0.5px solid #646464;")
     br
     div
         .information.rounded-md.mx-9.my-2.text-center(class="sm:text-start text-white bg-blue-999")

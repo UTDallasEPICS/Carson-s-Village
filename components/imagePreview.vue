@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import { dateFormat, donationFormat } from '@/utils'
 import type { User, Page, Image } from '@/types.d.ts'
 const props = defineProps<{ images: Image[], profileImage: Image, pageCuid: string }>()
 const emit = defineEmits(["images","update:images","profileImage"])

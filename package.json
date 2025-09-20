@@ -26,6 +26,7 @@
     "@suadelabs/vue3-multiselect": "^1.0.2",
     "@tensorflow-models/toxicity": "^1.2.2",
     "@vuepic/vue-datepicker": "^5.4.0",
+    "@vueuse/components": "^13.1.0",
     "autoprefixer": "^10.4.19",
     "email-templates": "^10.0.1",
     "jsonwebtoken": "^9.0.0",
