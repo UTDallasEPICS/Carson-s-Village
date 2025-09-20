@@ -10,6 +10,7 @@ datasource db {
 
 model User {
   cuid           String   @id @default(cuid())
+  isActive       Boolean  @default(true)
   email          String   @unique
   user_role      String   @default("family")
   first_name     String   @default("")
@@ -21,7 +22,6 @@ model User {
   AdvocateFamily Family[] @relation("advocate_family")
   Pages          Page[]
   Family         Family?  @relation("family_member", fields: [familyCuid], references: [cuid])
-  isActive       Boolean   @default(true)
   @@map("user_accounts")
 }
 
@@ -54,15 +54,15 @@ model Page {
   cuid                   String           @id @default(cuid())
   day_of_birth           DateTime?
   day_of_passing         DateTime?
+  age                    Int?             @default(0)
   visitation_date        DateTime?
-  age                    Int              @default(0)
   visitation_location    String
   visitation_address     String           @default("")
   visitation_description String
-  funeral_date           DateTime?
-  funeral_location       String
   visitation_end_time    DateTime?
+  funeral_date           DateTime?
   funeral_end_time       DateTime?
+  funeral_location       String
   funeral_description    String
   funeral_address        String           @default("")
   obituary               String
@@ -75,7 +75,7 @@ model Page {
   profileImageCuid       String           @map("profile_image_cuid")
   familyCuid             String?          @map("family_cuid")
   status                 String           @default("active")
-  donation_status        String           @default("in progress")
+  donation_status        String           @default("In progress")
   duration               String           @default("0 days")
   start_date             DateTime          
   goal_met_date          DateTime?         

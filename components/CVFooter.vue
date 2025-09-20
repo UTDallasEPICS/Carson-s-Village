@@ -27,13 +27,10 @@ const submit = async () => {
     if (response?.success) {
         isSubmitted.value = true;
         console.log('Data submitted successfully.');
-        //console.log("Submit?", isSubmitted.value)
     } else {
         console.error('Error submitting data.');
     }
 }
-
-//console.log("Submitted?", isSubmitted.value)
 
 </script>
 
@@ -41,8 +38,7 @@ const submit = async () => {
 div
     div.relative
         img(src='/footer.png')
-        img(src='/join_email_list.png' style="position: absolute; top: 20%; left: 50%; transform: translate(-50%, -50%); width: 800px; height: auto; z-index: 2;")
-        div.absolute(style="position: absolute; margin-left: auto; margin-right: auto; left: 0; right: 0; top: 30%; text-align: center; width: 100%;")
+        div.absolute.w-full.text-center(style="margin-left: auto; margin-right: auto; left: 0; right: 0; top: 20%;")
             div(v-if="!isSubmitted")
                 form.flex(style="justify-content: space-between; width: 98%;")
                     .col-md-8.mx-9(style="flex: 1; margin-right: 10px;")
@@ -66,11 +62,4 @@ div
 </template>
 
 <style scoped>
-.absolute {
-    position: absolute;
-}
-
-.relative {
-    position: relative;
-}
 </style>
