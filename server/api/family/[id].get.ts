@@ -17,6 +17,17 @@ export default defineEventHandler(async event => {
         AdvocateResponsible: true
     }
   });
+  if (!queryRes) {
+    return {
+      family_name: "",
+      advocateCuid: "",
+      created_at: "",
+      updated_at: "",
+      familyCuid: "",
+      FamilyDonationPayouts: [],
+      FamilyDonations: [],
+    } as any
+  }
   return queryRes;
   } else {
     return await sendRedirect(event, loginRedirectUrl());

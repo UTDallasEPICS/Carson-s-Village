@@ -30,6 +30,9 @@ const data_family = ref<Family>({
     advocateCuid: cvuser.value.cuid 
 })
 
+
+const bottomHeight = ref(0)
+    
 const data_user = ref<User>({
     cuid: "",
     isActive: true,
@@ -51,7 +54,7 @@ const errorInPage = ref(false)
 const errorToUser = ref("")
 const useExistingUser = ref(false)
 const userCuid = ref("")
-const bottomHeight = ref(0)
+
 
 const router = useRoute()
 const cuid = computed(() => router.params.id as string);
@@ -83,9 +86,7 @@ const saveFamily = async () => {
     const result = await $fetch('/api/family', {
       method: (cuid.value as string) !== "0" ? 'PUT' : 'POST',
       body: ({family_name: data_family.value.family_name, ...firstUser, existingUser: useExistingUser.value, familyCuid: cuid.value})
-    })
-
-    if(result){
+     if(result){
         errorInPage.value = false;
         await navigateTo('/Users')
     } else {
@@ -94,6 +95,12 @@ const saveFamily = async () => {
   } 
 }
 
+})
+const userCuid = ref("")
+
+ 
+
+//todo add the ui back for this
 const onResize = ({ height }: { height: number }) => {
     console.log(height)
     if(height != 0) {

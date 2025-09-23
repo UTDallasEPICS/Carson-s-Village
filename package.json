@@ -28,6 +28,7 @@
     "@vuepic/vue-datepicker": "^5.4.0",
     "@vueuse/components": "^13.1.0",
     "autoprefixer": "^10.4.19",
+    "class-validator": "^0.14.2",
     "email-templates": "^10.0.1",
     "jsonwebtoken": "^9.0.0",
     "nanoid": "^4.0.0",

@@ -40,6 +40,7 @@ div
         img(src='/footer.png')
         div.absolute.w-full.text-center(style="margin-left: auto; margin-right: auto; left: 0; right: 0; top: 20%;")
             div(v-if="!isSubmitted")
+                .flex.justify-between(style="width: 98%;")
                 form.flex(style="justify-content: space-between; width: 98%;")
                     .col-md-8.mx-9(style="flex: 1; margin-right: 10px;")
                         CVInput(id="email_list_first_name" v-model='data.first_name' placeholder="First Name*" required="required")
@@ -47,7 +48,7 @@ div
                         CVInput(id="email_list_last_name" v-model='data.last_name' placeholder="Last Name*" required="required")
                 .col-md-8.mx-9(style="width: 46.1%; margin-top: 10px;")
                     CVInput(id="email_list_email" type="email" v-model='data.email' placeholder="Email*" required="required")
-                button.type-button.my-4.bg-orange-999.text-white.px-4.py-2.rounded-full.w-32.grow-0(type="button" @click="submit") Submit
+                button.type-button.my-4.bg-orange-999.text-white.px-4.py-2.rounded-full.w-32.grow-0(class="transition duration-300 bg-orange-999 hover:bg-green-600" type="button" @click="submit") Submit
             div(v-else)
                 div.absolute(style="top: 20%; left: 50%; transform: translate(-50%, -50%); text-align: center;")
                     div.text-xl.text-black.mt-4 Thank you for signing up!
