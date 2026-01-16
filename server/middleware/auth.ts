@@ -24,7 +24,6 @@ export default defineEventHandler(async event => {
           fs.readFileSync(process.cwd()+"/cert-dev.pem")
         )
         event.context.claims = claims
-        console.log(claims.email)
         event.context.user = await event.context.client.user.findFirst(
           {
             where: { email: claims.email }
@@ -48,7 +47,6 @@ export default defineEventHandler(async event => {
             }
           }
           }) as unknown as Partial<User> & { Family: Partial<Family>}
-          console.log(event.context.user)
         if(!event.context.user) {
           console.error(`${claims.email} not found`) 
           setCookie(event,'cvtoken','')
