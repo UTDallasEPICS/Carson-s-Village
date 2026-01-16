@@ -1,19 +1,17 @@
 
 <template lang="pug">
 .flex.gap-10.ml-4.mr-2
-  VerticalNav(v-if="cvCookie && width > 900")
+  VerticalNav(class="hidden lg:block" v-if="cvCookie")
   .flex.flex-col.gap-5.min-h-screen.grow
     div(class="flex flex-col justify-center items-center")
       form.well.well-sm
-        VerticalNavHamburger(v-if="cvCookie && width <= 900" :hamburgerOpen="hamburgerOpen")
+        VerticalNavHamburger(class="lg:hidden" v-if="cvCookie" :hamburgerOpen="hamburgerOpen")
     CVHeader(:hamburgerOpen="hamburgerOpen" @hamburger="hamburgerOpen = !hamburgerOpen")
     NuxtPage
 CVFooter
 </template>
 
 <script setup lang="ts">
-import { useWindowSize } from '@vueuse/core'
-const { width, height } = useWindowSize()
 const runtime = useRuntimeConfig()
 const router = useRouter()
 const routes = ref(router.getRoutes())
