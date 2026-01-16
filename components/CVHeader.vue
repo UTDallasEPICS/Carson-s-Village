@@ -1,8 +1,6 @@
 <script lang="ts" setup>
 import type { User, Page } from "@/types.d.ts"
 import { donationFormat, dateFormat } from '@/utils'
-import { useWindowSize } from '@vueuse/core'
-const { width, height } = useWindowSize()
 
 const props = defineProps<{ hamburgerOpen: boolean }>()
 const emit = defineEmits(["hamburger"])
@@ -34,7 +32,7 @@ const handleHamburgerClick = () => {
 <template lang="pug">
 ClientOnly
   .max-w-min.mx-auto.pt-3.flex.gap-2.mt-7.text-center
-    div.max-w-min.mx-auto.flex.gap-2(v-if="isLoggedIn")
+    div.max-w-min.mx-auto.flex.gap-2(v-if="!isLoggedIn")
       a.w-20.items-center.px-2.py-2.text-sm.font-medium.rounded-md.text-blue-999.cursor-pointer(
         class='hover:text-black bg-white'
         target="blank"  
@@ -56,9 +54,8 @@ ClientOnly
         :submenus="[{ title: 'Our Story', to: 'https://carsonsvillage.org/about-us/our-family/' }, { title: 'Our Testimonies', to: 'https://carsonsvillage.org/our-testimonials/' }, { title: 'In The News', to: 'https://carsonsvillage.org/about-us/in-the-news/' }, { title: 'Newsletter Archive', to: 'https://carsonsvillage.org/about-us/newsletter-archive/' }, { title: 'Our Team >', submenus: [{ title: 'Advocates', to: 'https://carsonsvillage.org/about-us/advocates/' }, { title: 'Clinical Consultants', to: 'https://carsonsvillage.org/about-us/clinical-consultants/' }, { title: 'Support Team', to: 'https://carsonsvillage.org/about-us/meet-our-team/' }]}, { title: 'Board of Directors', to: 'https://carsonsvillage.org/about-us/board-of-directors/' }]" :dropdownMinWidth="150" :nestedDropdownMinWidth="150")
         | ABOUT&nbsp;US
       button.items-center.px-2.py-2.text-sm.rounded-md.cursor-pointer(
-        class='hover:text-black bg-white'  
+        class='hover:text-black bg-white lg:hidden'  
         @click="handleHamburgerClick"
-        v-if="width <= 900"
       ) 
         p.uppercase.white.w-max.font-bold |||
     div.max-w-min.mx-auto.flex.gap-2(v-else)
@@ -84,7 +81,7 @@ ClientOnly
       DropdownMenu(:has-submenus="true" :num-submenus="6"
         :submenus="[{ title: 'Our Story', to: 'https://carsonsvillage.org/about-us/our-family/' }, { title: 'Our Testimonies', to: 'https://carsonsvillage.org/our-testimonials/' }, { title: 'In The News', to: 'https://carsonsvillage.org/about-us/in-the-news/' }, { title: 'Newsletter Archive', to: 'https://carsonsvillage.org/about-us/newsletter-archive/' }, { title: 'Our Team >', submenus: [{ title: 'Advocates', to: 'https://carsonsvillage.org/about-us/advocates/' }, { title: 'Clinical Consultants', to: 'https://carsonsvillage.org/about-us/clinical-consultants/' }, { title: 'Support Team', to: 'https://carsonsvillage.org/about-us/meet-our-team/' }]}, { title: 'Board of Directors', to: 'https://carsonsvillage.org/about-us/board-of-directors/' }]" :dropdownMinWidth="150" :nestedDropdownMinWidth="150")
         | ABOUT&nbsp;US
-      button(@click="handleHamburgerClick" v-if="width <= 900")
+      button(@click="handleHamburgerClick" class="lg:hidden")
         p.pl-2.uppercase.white.w-max.text-black-999 |||
     .flex.w-max.px-2.pt-2.gap-2(v-if="isNotSearch")
       input(id="search" class="border border-gray-300 py-2 px-4 rounded-lg focus:outline-none focus:border-black-500" 
