@@ -1,5 +1,6 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
+  devtools: { enabled: true },
   nitro: {
     experimental: {
       tasks: true
@@ -27,8 +28,8 @@ export default defineNuxtConfig({
   build: {
     transpile: ['@vuepic/vue-datepicker']
 },
-modules: 
-  ['@nuxtjs/tailwindcss',],
+  modules: 
+    ['@nuxtjs/tailwindcss',],
 
   vite: {
     resolve: {
