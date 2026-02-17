@@ -54,8 +54,7 @@ const onFile = async (event: Event) => {
 
 
 <template lang="pug">
-input#images.rounded-md.outline-0.border-box.p-2( 
-  style="border: 1px solid #c4c4c4;" 
+input#images(class="rounded-md outline-0 border-box p-2 border border-[#c4c4c4]"
   type="file"  
   @change="onFile"
   accept=".png,.jpeg,.jpg,.gif" multiple)

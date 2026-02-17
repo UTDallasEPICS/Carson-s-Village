@@ -83,14 +83,14 @@ const { data: Families } = await useFetch<Family[]>('/api/family', {
 </script>
 
 <template lang="pug">
-.px-10(v-if="isAdmin")   
-  TitleComp.border-1.border-black Family Transaction List
-  .flex.flex-wrap.w-full.justify-center.gap-5.mt-10
+div(v-if="isAdmin" class="px-10")   
+  TitleComp(class="border-black border") Family Transaction List
+  div(class="flex flex-wrap w-full justify-center gap-5 mt-10")
     // these two list boxes can be a distinct reusable component
-    .flex.gap-5
-      p.self-center Family
-      Listbox.shadow-sm.border.border-1.rounded-lg(as='div' v-model="currentFamilyCuid")
-        .relative
+    div(class="flex gap-5")
+      p(class="self-center") Family
+      Listbox(as='div' v-model="currentFamilyCuid" class="shadow-sm border border-1 rounded-lg")
+        div(class="relative")
           Transition(
             leave-active-class='transition ease-in duration-100'
             leave-from-class='opacity-100'
@@ -100,10 +100,10 @@ const { data: Families } = await useFetch<Family[]>('/api/family', {
               ListboxOption(as='div' v-for="Family in Families" :key="Family.cuid" :value="Family.cuid" class="px-2 border border-grey-500 py-1 my-1") {{ Family.family_name }}
         ListboxButton(class='text-left bg-white relative rounded-md pl-2 pr-10 py-2 sm:text-sm w-96') {{ currentFamilyCuid ? currentFamily.family_name : 'Select Family' }}
     
-    .flex.gap-5
-      p.self-center Page
-      Listbox.shadow-sm.border.border-1.rounded-lg(as='div' v-model="currentPageCuid")
-        .relative
+    div(class="flex gap-5")
+      p(class="self-center") Page
+      Listbox(as='div' v-model="currentPageCuid" class="shadow-sm border border-1 rounded-lg")
+        div(class="relative")
           Transition(
             leave-active-class='transition ease-in duration-100'
             leave-from-class='opacity-100'
@@ -113,51 +113,51 @@ const { data: Families } = await useFetch<Family[]>('/api/family', {
               ListboxOption(as='div' v-for="page in familyData.raw_data" :key="page.cuid" :value="page.cuid" class="px-2 border border-grey-500 py-1 my-1") {{ page.page_first_name + " "  + page.page_last_name }} | {{ donationFormat(page?.amount_raised - page?.amount_distributed) }}
         ListboxButton(class='text-left bg-white relative rounded-md pl-2 pr-10 py-2 sm:text-sm w-96') {{ currentPageCuid ? (currentPage.page_first_name || currentPage.page_last_name) : 'Select Page' }}
   
-  .flex.gap-5.justify-around
+  div(class="flex gap-5 justify-around")
     DonationManagementInformation(:lastDonationDate="currentPage?.last_donation_date" :donationStatus="currentPage?.donation_status" :startDate="currentPage?.start_date" :totalPageDonations="totalPageDonations" :totalDistributed="totalDistributed" :totalRemaining="totalRemaining" :amount_raised="currentPage?.amount_raised" :amount_distributed="currentPage?.amount_distributed")
     div(class="basis-1/3")
       PayoutRecord(:currentPage="currentPage" :currentFamily="currentFamily")
 
-  CVLegend.mt-10.ml-2 Family Pages
-  table.mt-5.table.table-striped.w-full
+  CVLegend(class="mt-10 ml-2") Family Pages
+  table(class="mt-5 w-full")
       thead
-          tr(style="color: white;")
-              th.px-8(style="background-color: #5aadc2;border-radius: 60px 0px 0px 0px; width:33.33%; overflow: hidden") Page Name
-              th.px-8(style="background-color: #5aadc2;") Start Date
-              th.px-8(style="background-color: #5aadc2;") Last Donation
-              th.px-8(style="background-color: #5aadc2;") Goal Met
-              th.px-8(style="background-color: #5aadc2;") Raised
-              th.font-poppins.font-bold(style="border-radius: 0px 60px 0px 0px; background-color: #5aadc2; width:33.33%") Remaining
+          tr(class="text-white")
+              th(class="px-8 bg-[#5aadc2] rounded-tl-3xl w-[33.33%] overflow-hidden") Page Name
+              th(class="px-8 bg-[#5aadc2]") Start Date
+              th(class="px-8 bg-[#5aadc2]") Last Donation
+              th(class="px-8 bg-[#5aadc2]") Goal Met
+              th(class="px-8 bg-[#5aadc2]") Raised
+              th(class="font-poppins font-bold rounded-tr-3xl bg-[#5aadc2] w-[33.33%]") Remaining
           tr(v-for="(item, i) in familyData.data" 
               :key="i" 
               :class="{'bg-gray-200': (i+1) % 2}"
           )
-              td.font-poppins.text-gray-dark.font-bold(style="text-align: center")  {{ item?.page_first_name + " " + item?.page_last_name }}
-              td.font-poppins.text-gray-dark.font-bold(style="text-align: center")  {{ dateFormat(item?.start_date) }}
-              td.font-poppins.text-gray-dark.font-bold(style="text-align: center")  {{ item.last_donation_date ? dateFormat(item?.last_donation_date) : "No Donations" }}
-              td.font-poppins.text-gray-dark.font-bold(style="text-align: center")  {{ item?.donation_status}}
-              td.font-poppins.text-gray-dark.font-bold(style="text-align: center")  {{ donationFormat(item.amount_raised) }}
-              td.font-poppins.text-gray-dark.font-bold(style="text-align: center")  {{ donationFormat(item.amount_raised - item.amount_distributed) }}
-  .mb-9.py-7.flex.flex-wrap.gap-2.place-content-center
-    .col-md-10.px-2.mt-2
+              td(class="font-poppins text-gray-dark font-bold text-center")  {{ item?.page_first_name + " " + item?.page_last_name }}
+              td(class="font-poppins text-gray-dark font-bold text-center")  {{ dateFormat(item?.start_date) }}
+              td(class="font-poppins text-gray-dark font-bold text-center")  {{ item.last_donation_date ? dateFormat(item?.last_donation_date) : "No Donations" }}
+              td(class="font-poppins text-gray-dark font-bold text-center")  {{ item?.donation_status}}
+              td(class="font-poppins text-gray-dark font-bold text-center")  {{ donationFormat(item.amount_raised) }}
+              td(class="font-poppins text-gray-dark font-bold text-center")  {{ donationFormat(item.amount_raised - item.amount_distributed) }}
+  div(class="mb-9 py-7 flex flex-wrap gap-2 place-content-center")
+    div(class="px-2 mt-2")
         button(@click="prevPage") &lt
-    .col-md-10.px-2.mt-2
+    div(class="px-2 mt-2")
         p {{  currentFamilyPageNumber + 1}}
-    .col-md-10.px-2.mt-2
+    div(class="px-2 mt-2")
         button(@click="nextPage") >
-  CVLegend.mt-10.ml-2 Family Donations
-  table.mt-5.table.table-striped(style="width:100%;")
+  CVLegend(class="mt-10 ml-2") Family Donations
+  table(class="mt-5 w-full")
       thead
-          tr(style="color: white;")
-              th.px-8(style="--tw-bg-opacity: 1; background-color: #5aadc2;border-radius: 60px 0px 0px 0px; width:50%; overflow: hidden") Page Name
-              th.px-8(style="width:50%; --tw-bg-opacity: 1; border-radius: 0px 60px 0px 0px; background-color: #5aadc2;") Amount
+          tr(class="text-white")
+              th(class="px-8 bg-[#5aadc2] rounded-tl-3xl w-1/2 overflow-hidden") Page Name
+              th(class="px-8 w-1/2 rounded-tr-3xl bg-[#5aadc2]") Amount
           tr(v-for="(item, i) in donations" 
               :key="i" 
               :class="{'bg-gray-200': (i+1) % 2}"
           )
-              td.font-poppins.text-gray-dark.font-bold(style="text-align: center")  {{ item.Page.page_first_name + " " + item.Page.page_last_name }}
-              td.font-poppins.text-gray-dark.font-bold(style="text-align: center")  {{ donationFormat(item.amount) }}
-.pb-10
+              td(class="font-poppins text-gray-dark font-bold text-center")  {{ item.Page.page_first_name + " " + item.Page.page_last_name }}
+              td(class="font-poppins text-gray-dark font-bold text-center")  {{ donationFormat(item.amount) }}
+div(class="pb-10")
 </template>
 
 <style scoped></style>

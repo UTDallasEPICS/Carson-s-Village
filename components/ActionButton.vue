@@ -1,5 +1,5 @@
 <template lang="pug">
-button.p-4.px-6.pt-2.bg-orange-400.rounded-full(type="button" style="color: white; font-weight: 700")
+button(class="p-4 px-6 pt-2 bg-orange-400 rounded-full text-white font-bold" type="button")
   slot
 </template>
 

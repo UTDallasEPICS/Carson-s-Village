@@ -5,12 +5,12 @@ export default defineNuxtConfig({
     experimental: {
       tasks: true
     },
-      scheduledTasks: {
-        // Run `Refresh:token` task every at 10 am and 10 pm
-        '0 10,22 * * *': ['token:refresh'],
-        // Run `Generate:data` task every day at 9 pm
-        '0 21 * * *': ['family_reports:generate_data'],
-      }
+    scheduledTasks: {
+      // Run `Refresh:token` task every at 10 am and 10 pm
+      '0 10,22 * * *': ['token:refresh'],
+      // Run `Generate:data` task every day at 9 pm
+      '0 21 * * *': ['family_reports:generate_data'],
+    }
   },
   runtimeConfig: {
     AUTH0_CLIENTID: '',

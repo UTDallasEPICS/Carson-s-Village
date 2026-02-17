@@ -17,11 +17,23 @@ const family_name_with_has_advocate = (family: Family) => {
 </script>
 
 <template lang="pug">
-multiselect.p-2(placeholder="Select Families" :multiple="true" open-direction="bottom" track-by="family_name" :custom-label="family_name_with_has_advocate" :close-on-select="false" :clear-on-select="false" :options="props.options" v-model="value")
+multiselect(
+  class="p-2" placeholder="Select Families" 
+  :multiple="true" 
+  open-direction="bottom" 
+  track-by="family_name" 
+  :custom-label="family_name_with_has_advocate" 
+  :close-on-select="false" 
+  :clear-on-select="false" 
+  :options="props.options" 
+  v-model="value"
+)
     template(#selection="{ values, search, isOpen }")
-        span(class="multiselect__single"
-              v-if="values.length"
-              v-show="!isOpen") {{ values.length }} Families
+        span(
+          class="multiselect__single"
+          v-if="values.length"
+          v-show="!isOpen"
+        ) {{ values.length }} Families
 </template>
 
 <style src="vue-multiselect/dist/vue-multiselect.min.css"></style> 

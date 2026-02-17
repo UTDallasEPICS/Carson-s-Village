@@ -98,68 +98,68 @@ const prevPage = () => {
 </script>
 
 <template lang = "pug">
-.container.bg-white.mx-auto.mt-1(class="w-11/12 sm:w-[1400px]" )
-    table(style="table-layout: auto;")
+div(class="container bg-white mx-auto mt-1 w-11/12 sm:w-[1400px]")
+    table(class="table-auto")
         thead
-            tr.text-white
-                th.font-poppins.font-bold.cursor-pointer.p-2(style="background-color: #5aadc2; border-radius: 80px 0px 0px 0px; width:25%; overflow: hidden;" @click="SortCV(all_families, 'family_name')")
+            tr(class="text-white")
+                th(@click="SortCV(all_families, 'family_name')" class="font-poppins font-bold cursor-pointer p-2 bg-[#5aadc2] rounded-tl-3xl w-1/4 overflow-hidden")
                     label Family Name &nbsp;
-                    //span(v-if="order === 'asc' && OrderField==='family_name'" style="padding-right:3px; padding-top: 3px;")
-                        ChevronUpIcon.h-6.inline-flex
-                    //span(v-else-if="order === 'desc' && OrderField==='family_name'" style="padding-right:3px; padding-top: 3px;")
-                        ChevronDownIcon.h-6.inline-flex
-                    //span(v-else style="padding-right:3px; padding-top: 3px;")
-                        ChevronUpDownIcon.h-6.inline-flex
-                th.font-poppins.font-bold.cursor-pointer(style="width: 27.5%; background-color: #5aadc2;" @click="SortCV(all_families, 'advocate_responsible')")
+                    //span(v-if="order === 'asc' && OrderField==='family_name'" class="pr-1 pt-1")
+                        ChevronUpIcon(class="h-6 inline-flex")
+                    //span(v-else-if="order === 'desc' && OrderField==='family_name'" class="pr-1 pt-1")
+                        ChevronDownIcon(class="h-6 inline-flex")
+                    //span(v-else class="pr-1 pt-1")
+                        ChevronUpDownIcon(class="h-6 inline-flex")
+                th(@click="SortCV(all_families, 'advocate_responsible')" class="font-poppins font-bold cursor-pointer w-[27.5%] bg-[#5aadc2]")
                     label Advocate Responsible &nbsp;
-                    //span(v-if="order === 'asc' && OrderField==='advocate_responsible'" style="padding-right:3px; padding-top: 3px;")
-                        ChevronUpIcon.h-6.inline-flex
-                    //span(v-else-if="order === 'desc' && OrderField==='advocate_responsible'" style="padding-right:3px; padding-top: 3px;")
-                        ChevronDownIcon.h-6.inline-flex
-                    //span(v-else style="padding-right:3px; padding-top: 3px;")
-                        ChevronUpDownIcon.h-6.inline-flex
-                th.font-poppins.font-bold.cursor-pointer(style="width: 15%; background-color: #5aadc2;" @click="SortCV(all_families, '_count_family_members')")
+                    //span(v-if="order === 'asc' && OrderField==='advocate_responsible'" class="pr-1 pt-1")
+                        ChevronUpIcon(class="h-6 inline-flex")
+                    //span(v-else-if="order === 'desc' && OrderField==='advocate_responsible'" class="pr-1 pt-1")
+                        ChevronDownIcon(class="h-6 inline-flex")
+                    //span(v-else class="pr-1 pt-1")
+                        ChevronUpDownIcon(class="h-6 inline-flex")
+                th(@click="SortCV(all_families, '_count_family_members')" class="font-poppins font-bold cursor-pointer w-[15%] bg-[#5aadc2]")
                     label Family Members &nbsp;
-                    //span(v-if="order === 'asc' && OrderField==='_count_family_members'" style="padding-right:3px; padding-top: 3px;")
-                        ChevronUpIcon.h-6.inline-flex
-                    //span(v-else-if="order === 'desc' && OrderField==='_count_family_members'" style="padding-right:3px; padding-top: 3px;")
-                        ChevronDownIcon.h-6.inline-flex
-                    //span(v-else style="padding-right:3px; padding-top: 3px;")
-                        ChevronUpDownIcon.h-6.inline-flex
-                th.font-poppins.font-bold.cursor-pointer(style="width: 15%; background-color: #5aadc2;" @click="SortCV(all_families, '_count_pages')")
+                    //span(v-if="order === 'asc' && OrderField==='_count_family_members'" class="pr-1 pt-1")
+                        ChevronUpIcon(class="h-6 inline-flex")
+                    //span(v-else-if="order === 'desc' && OrderField==='_count_family_members'" class="pr-1 pt-1")
+                        ChevronDownIcon(class="h-6 inline-flex")
+                    //span(v-else class="pr-1 pt-1")
+                        ChevronUpDownIcon(class="h-6 inline-flex")
+                th(@click="SortCV(all_families, '_count_pages')" class="font-poppins font-bold cursor-pointer w-[15%] bg-[#5aadc2]")
                     label Pages &nbsp;
-                    //span(v-if="order === 'asc' && OrderField==='_count_pages'" style="padding-right:3px; padding-top: 3px;")
-                        ChevronUpIcon.h-6.inline-flex
-                    //span(v-else-if="order === 'desc' && OrderField==='_count_pages'" style="padding-right:3px; padding-top: 3px;")
-                        ChevronDownIcon.h-6.inline-flex
-                    //span(v-else style="padding-right:3px; padding-top: 3px;")
-                        ChevronUpDownIcon.h-6.inline-flex
-                th.font-poppins.font-bold.cursor-pointer(style="width: 12%; background-color: #5aadc2;" @click="SortCV(all_families, 'stripe_account_id')")
+                    //span(v-if="order === 'asc' && OrderField==='_count_pages'" class="pr-1 pt-1")
+                        ChevronUpIcon(class="h-6 inline-flex")
+                    //span(v-else-if="order === 'desc' && OrderField==='_count_pages'" class="pr-1 pt-1")
+                        ChevronDownIcon(class="h-6 inline-flex")
+                    //span(v-else class="pr-1 pt-1")
+                        ChevronUpDownIcon(class="h-6 inline-flex")
+                th(@click="SortCV(all_families, 'stripe_account_id')" class="font-poppins font-bold cursor-pointer w-[12%] bg-[#5aadc2]")
                     label Onboarded &nbsp;
-                    //span(v-if="order === 'asc' && OrderField==='email'" style="padding-right:3px; padding-top: 3px;")
-                        ChevronUpIcon.h-6.inline-flex
-                    //span(v-else-if="order === 'desc' && OrderField==='email'" style="padding-right:3px; padding-top: 3px;")
-                        ChevronDownIcon.h-6.inline-flex
-                    //span(v-else style="padding-right:3px; padding-top: 3px;")
-                        ChevronUpDownIcon.h-6.inline-flex
-                th.font-poppins.font-bold(style="width:25%; background-color: #5aadc2; border-radius: 0px 80px 0px 0px;") {{  "Editor" }}
+                    //span(v-if="order === 'asc' && OrderField==='email'" class="pr-1 pt-1")
+                        ChevronUpIcon(class="h-6 inline-flex")
+                    //span(v-else-if="order === 'desc' && OrderField==='email'" class="pr-1 pt-1")
+                        ChevronDownIcon(class="h-6 inline-flex")
+                    //span(v-else class="pr-1 pt-1")
+                        ChevronUpDownIcon(class="h-6 inline-flex")
+                th(class="font-poppins font-bold w-1/4 bg-[#5aadc2] rounded-tr-3xl") {{  "Editor" }}
             tr(v-for="(item, i) in all_families" 
                 :key="i"
                 :class="{'bg-gray-200': (i+1) % 2}" 
             )
-                td.font-poppins.text-gray-dark.font-bold.text-center {{ item.family_name }}
-                td.font-poppins.text-gray-dark.font-bold.text-center {{ item?.AdvocateResponsible ? item?.AdvocateResponsible?.first_name + " " + item?.AdvocateResponsible?.last_name : "Not assigned"}}
-                td.font-poppins.text-gray-dark.font-bold.text-center {{ item.FamilyMembers.length }}
-                td.font-poppins.text-gray-dark.font-bold.text-center {{ item.Pages.length }}
-                td.font-poppins.text-gray-dark.font-bold.text-center {{ item.stripe_account_id ? 'Yes' : 'No' }}
+                td(class="font-poppins text-gray-dark font-bold text-center") {{ item.family_name }}
+                td(class="font-poppins text-gray-dark font-bold text-center") {{ item?.AdvocateResponsible ? item?.AdvocateResponsible?.first_name + " " + item?.AdvocateResponsible?.last_name : "Not assigned"}}
+                td(class="font-poppins text-gray-dark font-bold text-center") {{ item.FamilyMembers.length }}
+                td(class="font-poppins text-gray-dark font-bold text-center") {{ item.Pages.length }}
+                td(class="font-poppins text-gray-dark font-bold text-center") {{ item.stripe_account_id ? 'Yes' : 'No' }}
                 td
-                    LinkButton(class="sm:my-2 transition duration-300 bg-orange-999 hover:bg-green-600" style="white-space: nowrap; display: flex; flex-direction: row; padding: 14px 24px; gap: 10px;" :to="`/EditFamily/${item.cuid}`") Edit
-    .container.mx-auto(class="w-auto sm:w-[1400px]" style="background-color: #5aadc2; height: 50px; border-radius: 0px 0px 60px 60px;")
-.mb-9.py-7.flex.flex-wrap.gap-2.place-content-center
-    .col-md-10.px-2.mt-2
+                    LinkButton(class="sm:my-2 transition duration-300 bg-orange-999 hover:bg-green-600 whitespace-nowrap flex flex-row py-[14px] px-[24px] gap-[10px]" :to="`/EditFamily/${item.cuid}`") Edit
+    div(class="container mx-auto w-auto sm:w-[1400px] bg-[#5aadc2] h-[50px] rounded-b-3xl")
+div(class="mb-9 py-7 flex flex-wrap gap-2 place-content-center")
+    div(class="px-2 mt-2")
         button(@click="prevPage") &lt
-    .col-md-10.px-2.mt-2
+    div(class="px-2 mt-2")
         p {{  currentPage + 1 }}
-    .col-md-10.px-2.mt-2
+    div(class="px-2 mt-2")
         button(@click="nextPage") >
 </template>
