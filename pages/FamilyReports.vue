@@ -103,6 +103,9 @@ div
 
     import { ChevronUpIcon, ChevronDownIcon, ChevronUpDownIcon } from '@heroicons/vue/24/solid'
 
+    definePageMeta({
+      middleware: ["advocate-guard"]
+    })
     
     const cvuser = useCookie<User>('cvuser');
     const isAdminAdvocate = computed(() => cvuser.value?.user_role == "advocate" || cvuser.value?.user_role == "admin" )

@@ -19,6 +19,10 @@ import {
 } from '@headlessui/vue'
 import { vElementSize } from '@vueuse/components'
 
+definePageMeta({
+  middleware: ["advocate-guard"]
+})
+
 const cvuser = useCookie<User>('cvuser')
 const bottomHeight = ref(0)
 const data_user = ref<User>({

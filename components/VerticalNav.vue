@@ -42,7 +42,7 @@ div(class="text-center p-2 pt-32 pr-12 rounded-md border-grey-600 border-r")
       p(class="uppercase white mb-2 w-max") Invite user
     NavLinkButtonVNav( v-if="isAdvocateAdmin" to='/EditFamily/0' :class="{'!text-black border-green-999 bg-white': route.path.includes('/EditFamily')}") 
       p(class="uppercase white mb-2 w-max") Edit Family
-    NavLinkButtonVNav(to="/Families" :class="{'!text-black border-green-999 bg-white': route.path == '/Families'}") 
+    NavLinkButtonVNav( v-if="isAdvocateAdmin" to="/Families" :class="{'!text-black border-green-999 bg-white': route.path == '/Families'}") 
       p(class="uppercase white mb-2 w-max") Families
     NavLinkButtonVNav(to="/" :class="{'!text-black border-green-999 bg-white': route.path == '/'}") 
       p(class="uppercase white mb-2 w-max") Profile

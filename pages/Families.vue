@@ -16,6 +16,11 @@ import {
     ListboxOptions,
     ListboxOption,
 } from '@headlessui/vue'
+ 
+definePageMeta({
+  middleware: ["advocate-guard"]
+})
+
 const data_family = <Family>({
       cuid: '',
       family_name: '-',

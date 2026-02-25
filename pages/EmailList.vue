@@ -1,4 +1,8 @@
 <script lang="ts" setup>
+definePageMeta({
+  middleware: ["advocate-guard"]
+})
+
 const router = useRoute()
 const success = computed(() => router.query.success)
 //const fail = computed(() => router.query.fail)

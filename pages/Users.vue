@@ -12,6 +12,10 @@ import type { User, Page } from "@/types.d.ts"
 import type { Family } from "@prisma/client" 
 import { ChevronUpIcon, ChevronDownIcon, ChevronUpDownIcon } from '@heroicons/vue/24/solid'
 
+definePageMeta({
+  middleware: ["advocate-guard"]
+})
+
 type User2 = {
     cuid: string;
     first_name: string;

@@ -8,6 +8,10 @@
 *	Located under "/FamilyTransactionList/"
 */
 
+definePageMeta({
+  middleware: ["admin-guard"]
+})
+
 import { dateFormat, donationFormat } from '@/utils'
 import Datepicker from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css';

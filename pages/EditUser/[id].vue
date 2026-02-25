@@ -18,6 +18,10 @@ import {
     ListboxOption,
 } from '@headlessui/vue'
 
+definePageMeta({
+  middleware: ["advocate-guard"]
+})
+
 const cvuser = useCookie<User>('cvuser')
 const data_user = ref<User>({
     cuid: "",
