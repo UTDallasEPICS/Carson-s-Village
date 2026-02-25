@@ -1,5 +1,5 @@
 <template lang="pug">
-h1.text-center.pt-9.text-xl(class="sm:text-3xl" style="text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25); font-weight: 700;")
+h1(class="text-center pt-9 text-xl sm:text-3xl text-shadow-[3px_3px_4px_rgba(0,0,0,0.25)] font-bold")
     slot
 </template>
         

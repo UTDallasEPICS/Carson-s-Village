@@ -33,7 +33,6 @@
     "jsonwebtoken": "^9.0.0",
     "nanoid": "^4.0.0",
     "nuxt-stripe-module": "^3.2.0",
-    "pnpm": "^8.15.6",
     "postcss": "^8.4.39",
     "prisma": "^4.8.0",
     "s3": "^2.0.0",
@@ -44,5 +43,9 @@
     "vue": "^3.3.4",
     "vue-multiselect": "^3.1.0",
     "vue-router": "^4.1.6"
+  },
+  "engines": {
+    "node": ">=24.0.0",
+    "pnpm": ">=10.0.0"
   }
 }

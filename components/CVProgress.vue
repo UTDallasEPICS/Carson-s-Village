@@ -21,7 +21,7 @@ const style = computed(() =>
 </script>
 
 <template lang="pug">
-.rounded-full.text-white.flex.items-center.justify-center(:style="style")
+div(class="rounded-full text-white flex items-center justify-center" :style="style")
     slot(v-if="actualBarWidth")
 </template>
 

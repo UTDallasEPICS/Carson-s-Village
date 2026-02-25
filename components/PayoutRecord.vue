@@ -44,22 +44,22 @@ const setWholeAmountFamily = function(){
 </script>
 
 <template lang="pug">
-p.text-center.mt-10 Record Payout 
-.flex.flex-col.w-full.justify-center.gap-5.mt-5
-  .flex.gap-5.justify-between
-    p.self-center Date
+p(class="text-center mt-10") Record Payout 
+div(class="flex flex-col w-full justify-center gap-5 mt-5")
+  div(class="flex gap-5 justify-between")
+    p(class="self-center") Date
     CVDatepicker(v-model='distributionDate')
-  .flex.gap-5.justify-between
-    p.self-center Amount
-    span.whitespace-nowrap
-      span.rounded-l-md.bg-gray-200.text-lg.p-2(style="text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25); border: 1px solid #c4c4c4;") $
-      input.outline-0.rounded-r-md.border-box.p-2(style="border: 1px solid #c4c4c4;" v-model='amount')
-      max-w-min.mx-auto.flex.gap-2
-  div.mx-auto.flex.gap-2.justify-between() 
-    button.p-3.px-6.pt-2.rounded-lg.text-white(@click="setWholeAmountFamily" class="transition duration-300 bg-orange-999 hover:bg-green-600") Distribute All Remaining Family Funds
-    button.p-3.px-6.pt-2.rounded-lg.text-white(@click="setWholeAmountPage" class="transition duration-300 bg-orange-999 hover:bg-green-600") Distribute All Remaining Page Funds
-  button.p-3.px-6.pt-2.rounded-lg.text-white(@click="save" class="transition duration-300 bg-orange-999 hover:bg-green-600") Perform Distribution
-p(v-if="error.length != 0" Style="color:red;") {{ error }}
+  div(class="flex gap-5 justify-between")
+    p(class="self-center") Amount
+    span(class="whitespace-nowrap")
+      span(class="rounded-l-md bg-gray-200 text-lg p-2 drop-shadow-[3px_3px_4px_rgba(0,0,0,0.25)] border border-[#c4c4c4]") $
+      input(class="outline-0 rounded-r-md border-box p-2 border border-[#c4c4c4]" v-model='amount')
+      div(class="max-w-min mx-auto flex gap-2")
+  div(class="mx-auto flex gap-2 justify-between") 
+    button(class="p-3 px-6 pt-2 rounded-lg text-white transition duration-300 bg-orange-999 hover:bg-green-600" @click="setWholeAmountFamily") Distribute All Remaining Family Funds
+    button(class="p-3 px-6 pt-2 rounded-lg text-white transition duration-300 bg-orange-999 hover:bg-green-600" @click="setWholeAmountPage") Distribute All Remaining Page Funds
+  button(class="p-3 px-6 pt-2 rounded-lg text-white transition duration-300 bg-orange-999 hover:bg-green-600" @click="save") Perform Distribution
+p(v-if="error.length != 0" class="text-red-500") {{ error }}
 </template>
 
 <style scoped></style>

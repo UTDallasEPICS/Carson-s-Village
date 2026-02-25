@@ -1,6 +1,6 @@
 <template lang="pug">
-NuxtLink.items-center.text-sm.font-medium.rounded-md.cursor-pointer.no-border.relative(style="text-align: center; overflow: visible;" class='text-gray-999 hover:text-black transition duration-300' :to="to" active-class="active")
-  span.button-content
+NuxtLink(class='items-center text-sm font-medium rounded-md cursor-pointer no-border relative text-gray-999 hover:text-black transition duration-300 text-center overflow-visible' :to="to" active-class="active")
+  span(class="button-content")
     slot
 </template>
         

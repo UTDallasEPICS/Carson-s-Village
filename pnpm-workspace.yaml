@@ -1,0 +1,10 @@
+onlyBuiltDependencies:
+  - '@parcel/watcher'
+  - '@prisma/client'
+  - '@prisma/engines'
+  - aws-sdk
+  - esbuild
+  - prisma
+
+nodeVersion: 24.11.1
+engineStrict: true

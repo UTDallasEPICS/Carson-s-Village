@@ -189,11 +189,11 @@ await getDataAdminAdvocate()
 <template lang ="pug">
   
 button(type="button" class="ml-4 my-4 text-white px-4 py-2 rounded-full w-32 transition duration-300 bg-orange-999 hover:bg-green-600" @click="tableToggle = !tableToggle") {{ tableToggle ? "all pages" : "archive"}}
-.py-4.grid(class="sm:grid-cols-3" v-if="(isAdmin || isAdvocate) && !fromUser")
+div(v-if="(isAdmin || isAdvocate) && !fromUser" class="py-4 grid sm:grid-cols-3")
     CVLabel Current Family
-    .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
-      Listbox.shadow-sm.border.border-1.rounded-lg(v-if="isAdmin || isAdvocate" as='div' v-model="familyCuid")
-        .relative
+    div(class="mx-9 sm:col-span-2 sm:mr-11")
+      Listbox(v-if="isAdmin || isAdvocate" as='div' v-model="familyCuid" class="shadow-sm border border-1 rounded-lg")
+        div(class="relative")
           Transition(
                     leave-active-class='transition ease-in duration-100'
                     leave-from-class='opacity-100'
@@ -202,20 +202,20 @@ button(type="button" class="ml-4 my-4 text-white px-4 py-2 rounded-full w-32 tra
             ListboxOptions(as='div' class='w-full absolute z-10 mt-10 bg-white shadow-lg max-h-60 rounded-md px-2 py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm' )
                 ListboxOption(as='div' v-for="family in data_families" :key="family.cuid" :value="family.cuid" class="px-2 border border-grey-500 py-1 my-1") {{ family.family_name }}
           ListboxButton(class='text-left bg-white relative rounded-md pl-2 pr-10 py-2 sm:text-sm w-96') {{ familyCuid ? currentFamily.family_name : 'Select family to view pages from' }}      
-.mx-auto.mt-1(class="sm:w-[1200px]")
-  table(style="table-layout: auto;")
+div(class="mx-auto mt-1 sm:w-[1200px]")
+  table(class="table-auto")
     thead
       tr
-        th.font-poppins.font-bold.p-2.bg-blue-999.text-white.overflow-hidden(style="border-radius: 60px 0px 0px 0px; width:20%;")  Page Name
-        th.font-poppins.font-bold.bg-blue-999.text-white(style="width: 10%;") Creating User
-        th.font-poppins.font-bold.bg-blue-999.text-white(style="width: 10%;") Advocate 
-        th.font-poppins.font-bold.bg-blue-999.text-white(style="width: 10%;") Family 
-        th.font-poppins.font-bold.bg-blue-999.text-white(style="width: 10%;") Total Donated
-        th.font-poppins.font-bold.bg-blue-999.text-white(style="width: 20%;") Creation Date
-        th.font-poppins.font-bold.bg-blue-999.text-white(style="width: 20%;") Donation Deadline
-        th.font-poppins.font-bold.bg-blue-999.text-white(style="") Donation Goal
-        th.font-poppins.font-bold.bg-blue-999.text-white(style="width:15%;")  {{ "Page Editor" }}
-        th.font-poppins.font-bold.bg-blue-999.text-white(style="border-radius: 0px 60px 0px 0px; width:25%;") {{ "Family Page" }}
+        th(class="font-poppins font-bold p-2 bg-blue-999 text-white overflow-hidden rounded-tl-3xl w-[20%]")  Page Name
+        th(class="font-poppins font-bold bg-blue-999 text-white w-[10%]") Creating User
+        th(class="font-poppins font-bold bg-blue-999 text-white w-[10%]") Advocate 
+        th(class="font-poppins font-bold bg-blue-999 text-white w-[10%]") Family 
+        th(class="font-poppins font-bold bg-blue-999 text-white w-[10%]") Total Donated
+        th(class="font-poppins font-bold bg-blue-999 text-white w-[20%]") Creation Date
+        th(class="font-poppins font-bold bg-blue-999 text-white w-[20%]") Donation Deadline
+        th(class="font-poppins font-bold bg-blue-999 text-white") Donation Goal
+        th(class="font-poppins font-bold bg-blue-999 text-white w-[15%]")  {{ "Page Editor" }}
+        th(class="font-poppins font-bold bg-blue-999 text-white rounded-tr-3xl w-[25%]") {{ "Family Page" }}
 
     tbody 
       tr(v-for="(item, i) in ( tableToggle ? pages.data.filter(item => item.status == 'active') : pages.data)" :class="{'bg-gray-200': (i + 1) % 2}")
@@ -228,23 +228,23 @@ button(type="button" class="ml-4 my-4 text-white px-4 py-2 rounded-full w-32 tra
         td.font-poppins.text-gray-dark.font-bold.text-center {{ dateFormat(item.deadline) }}
         td.font-poppins.text-gray-dark.font-bold.text-center {{ donationFormat(item.donation_goal) }}
         td
-          LinkButton(class="sm:my-2 transition duration-300 bg-orange-999 hover:bg-green-600" style="white-space: nowrap; display: flex; flex-direction: row; padding: 14px 24px; gap: 10px;" :to="`/EditPage/${item.cuid}`") Edit
+          LinkButton(class="sm:my-2 transition duration-300 bg-orange-999 hover:bg-green-600 whitespace-nowrap flex flex-row py-[14px] px-[24px] gap-[10px]" :to="`/EditPage/${item.cuid}`") Edit
         td
-          LinkButton(class="sm:my-2 transition duration-300 bg-orange-999 hover:bg-green-600" style="white-space: nowrap; display: flex; flex-direction: row; padding: 14px 24px; gap: 10px;" :to="`/Page/${item.cuid}`") View
-  .container.bg-blue-999(class="w-full max-w-[1200px]" style="height: 50px; border-radius: 0px 0px 60px 60px;")
-.mb-9.py-7.flex.flex-wrap.gap-2.place-content-center
-  .col-md-10.px-2.mt-2
-    CVChevronLeft.text-gray-200.size-4.h-2(:class="{'cursor-pointer size-4 h-2': currentPage !== 0 }" @click="prevPage" :isEnd="currentPage == 0")
-  .col-md-10.px-2.mt-2
-    .flex
-      p.cursor-pointer.text-gray-900(v-if="currentPage > 1" @click="goToPage(0)") {{  1 + "..." }} &nbsp;
-      p.cursor-pointer.text-gray-900(v-if="currentPage > 0" @click="goToPage(currentPage - 1)") {{  currentPage }} &nbsp;
-      p.cursor-pointer.text-gray-900.font-bold {{  currentPage + 1 }} &nbsp;
-      p.cursor-pointer.text-gray-900(v-if="(totalLength / 12 - currentPage) > 1" @click="goToPage(currentPage + 1 )") {{  currentPage + 2 }} &nbsp;
-      p.cursor-pointer.text-gray-900(v-if="(totalLength / 12 - currentPage) > 2" @click="goToPage(currentPage + 2)") {{  currentPage + 3 }} &nbsp;
-      p.cursor-pointer.text-gray-900(v-if="(totalLength / 12 - currentPage) > 3" @click="goToPage(Math.floor(totalLength / 12))") {{  "..." + Math.ceil(totalLength / 12) }}
-  .col-md-10.px-2.mt-2
-      CVChevronRight.text-gray-900.size-4.h-2(:isEnd="currentPage == Math.floor(totalLength / 12)" :class="{'cursor-pointer': currentPage + 1 !== Math.ceil(totalLength / 12)}" @click="nextPage")
+          LinkButton(class="sm:my-2 transition duration-300 bg-orange-999 hover:bg-green-600 whitespace-nowrap flex flex-row py-[14px] px-[24px] gap-[10px]" :to="`/Page/${item.cuid}`") View
+  div(class="w-full max-w-[1200px] h-[50px] rounded-b-3xl bg-blue-999")
+div(class="mb-9 py-7 flex flex-wrap gap-2 place-content-center")
+  div(class="px-2 mt-2")
+    CVChevronLeft(class="text-gray-200 size-4 h-2" :class="{'cursor-pointer size-4 h-2': currentPage !== 0 }" @click="prevPage" :isEnd="currentPage == 0")
+  div(class="px-2 mt-2")
+    div(class="flex")
+      p(v-if="currentPage > 1" @click="goToPage(0)" class="cursor-pointer text-gray-900") {{  1 + "..." }} &nbsp;
+      p(v-if="currentPage > 0" @click="goToPage(currentPage - 1)" class="cursor-pointer text-gray-900") {{  currentPage }} &nbsp;
+      p(class="cursor-pointer text-gray-900 font-bold") {{  currentPage + 1 }} &nbsp;
+      p(v-if="(totalLength / 12 - currentPage) > 1" @click="goToPage(currentPage + 1 )" class="cursor-pointer text-gray-900") {{  currentPage + 2 }} &nbsp;
+      p(v-if="(totalLength / 12 - currentPage) > 2" @click="goToPage(currentPage + 2)" class="cursor-pointer text-gray-900") {{  currentPage + 3 }} &nbsp;
+      p(v-if="(totalLength / 12 - currentPage) > 3" @click="goToPage(Math.floor(totalLength / 12))" class="cursor-pointer text-gray-900") {{  "..." + Math.ceil(totalLength / 12) }}
+  div(class="px-2 mt-2")
+      CVChevronRight(:isEnd="currentPage == Math.floor(totalLength / 12)" :class="{'cursor-pointer': currentPage + 1 !== Math.ceil(totalLength / 12)}" @click="nextPage" class="text-gray-900 size-4 h-2")
 </template>
 
 <style scoped></style>		
