@@ -102,7 +102,7 @@ const searchOnEnter = () => {
 
 
 <template lang="pug">
-.container.mx-auto(v-if="isLoggedIn")
+div(v-if="isLoggedIn" class="container mx-auto")
   h1(class = 'text-2xl indent-8 mt-2') Memorial Page Search
   
   br
@@ -110,50 +110,50 @@ const searchOnEnter = () => {
   input(class="border border-gray-300 py-2 px-4 ml-8 rounded-lg focus:outline-none focus:border-black-500" 
   type="search" placeholder=" " v-model.trim="searchQueryInput" v-on:keyup.enter="searchOnEnter")
   button(class='text-m bg-gray-300 p-2 mt-1 mb-2' @click='currentPage=0; pageSearch(searchQueryInput)') SEARCH
-  .container
+  div(class="container")
   br
   b(class="ml-8 text-xl")     Search Results 
-  table.table.table-striped(style="width:100%;")
+  table(class="w-full")
       thead
-        tr.text-white
-          th.px-8(style="background-color: #5aadc2; border-radius: 60px 0px 0px 0px; align-items: center; justify-content: center; width: 33.33%")
+        tr(class="text-white")
+          th(class="px-8 bg-[#5aadc2] rounded-tl-3xl items-center justify-center w-1/3")
             button(@click="SortCV(pages, 'page_last_name')") Page &nbsp;
-            span(v-if="order === 'asc' && OrderField==='page_last_name'" style="padding-right:3px; padding-top: 3px;")
-              ChevronUpIcon.h-6.inline-flex
-            span(v-else-if="order === 'desc' && OrderField==='page_last_name'" style="padding-right:3px; padding-top: 3px;")
-              ChevronDownIcon.h-6.inline-flex
-            span(v-else style="padding-right:3px; padding-top: 3px;")
-              ChevronUpDownIcon.h-6.inline-flex
-          th.px-8(style="background-color: #5aadc2; justify-content: center; width: 33.33%")
+            span(v-if="order === 'asc' && OrderField==='page_last_name'" class="pr-1 pt-1")
+              ChevronUpIcon(class="h-6 inline-flex")
+            span(v-else-if="order === 'desc' && OrderField==='page_last_name'" class="pr-1 pt-1")
+              ChevronDownIcon(class="h-6 inline-flex")
+            span(v-else class="pr-1 pt-1")
+              ChevronUpDownIcon(class="h-6 inline-flex")
+          th(class="px-8 bg-[#5aadc2] justify-center w-1/3")
             button(@click="SortCV(pages, 'donation_goal')") Donation Goal &nbsp;
-            span(v-if="order === 'asc' && OrderField==='donation_goal'" style="padding-right:3px; padding-top: 3px;")
-              ChevronUpIcon.h-6.inline-flex
-            span(v-else-if="order === 'desc' && OrderField==='donation_goal'" style="padding-right:3px; padding-top: 3px;")
-              ChevronDownIcon.h-6.inline-flex
-            span(v-else style="padding-right:3px; padding-top: 3px;")
-              ChevronUpDownIcon.h-6.inline-flex
-          th.px-8(style="background-color: #5aadc2; border-radius: 0px 60px 0px 0px; justify-content: center; width: 33.33%")
+            span(v-if="order === 'asc' && OrderField==='donation_goal'" class="pr-1 pt-1")
+              ChevronUpIcon(class="h-6 inline-flex")
+            span(v-else-if="order === 'desc' && OrderField==='donation_goal'" class="pr-1 pt-1")
+              ChevronDownIcon(class="h-6 inline-flex")
+            span(v-else class="pr-1 pt-1")
+              ChevronUpDownIcon(class="h-6 inline-flex")
+          th(class="px-8 bg-[#5aadc2] rounded-tr-3xl justify-center w-1/3")
             button(@click="SortCV(pages, 'deadline')") Deadline &nbsp;
-            span(v-if="order === 'asc' && OrderField==='deadline'" style="padding-right:3px; padding-top: 3px;")
-              ChevronUpIcon.h-6.inline-flex
-            span(v-else-if="order === 'desc' && OrderField==='deadline'" style="padding-right:3px; padding-top: 3px;")
-              ChevronDownIcon.h-6.inline-flex
-            span(v-else style="padding-right:3px; padding-top: 3px;")
-              ChevronUpDownIcon.h-6.inline-flex
+            span(v-if="order === 'asc' && OrderField==='deadline'" class="pr-1 pt-1")
+              ChevronUpIcon(class="h-6 inline-flex")
+            span(v-else-if="order === 'desc' && OrderField==='deadline'" class="pr-1 pt-1")
+              ChevronDownIcon(class="h-6 inline-flex")
+            span(v-else class="pr-1 pt-1")
+              ChevronUpDownIcon(class="h-6 inline-flex")
       tbody
         tr(v-for="(page, i) in pages" :class="{'bg-gray-200': (i+1) % 2}")
-          td(style="text-align: center")   
+          td(class="text-center")   
             NuxtLink(:to="`/Page/${page.cuid}`") {{ page.page_first_name + " " + page.page_last_name }}
-          td(style="text-align: center") {{ donationFormat(page.donation_goal) }}
-          td(style="text-align: center") {{ dateFormat(page.deadline) }}
-  .ml-9.mb-9.py-7.flex.flex-wrap.gap-2.place-content-center
-    .col-md-10.px-2.mt-2
+          td(class="text-center") {{ donationFormat(page.donation_goal) }}
+          td(class="text-center") {{ dateFormat(page.deadline) }}
+  div(class="ml-9 mb-9 py-7 flex flex-wrap gap-2 place-content-center")
+    div(class="px-2 mt-2")
         button(@click="prevPage") &lt
-    .col-md-10.px-2.mt-2
+    div(class="px-2 mt-2")
         p {{  currentPage + 1 }}
-    .col-md-10.px-2.mt-2
+    div(class="px-2 mt-2")
         button(@click="nextPage") >
-p(v-else style="text-align: center") Welcome and thank you for supporting one of the families in our Village.
+p(v-else class="text-center") Welcome and thank you for supporting one of the families in our Village.
 </template>
 
 <style scoped>

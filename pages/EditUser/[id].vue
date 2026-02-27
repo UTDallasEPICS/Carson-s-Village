@@ -18,6 +18,10 @@ import {
     ListboxOption,
 } from '@headlessui/vue'
 
+definePageMeta({
+  middleware: ["advocate-guard"]
+})
+
 const cvuser = useCookie<User>('cvuser')
 const data_user = ref<User>({
     cuid: "",
@@ -124,27 +128,23 @@ await getUsers()
 
 <template lang="pug">
 CVContainer
-    form.well.well-sm
+    form(class="p-3 rounded bg-gray-50")
         TitleComp User Account Entry 
         br
-        .bar.mx-9(style="border-top: 0.5px solid #646464;")
-        br
-        .py-4.grid(class="sm:grid-cols-3")
-            CVLabel(for="email") Email
-            .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
-                CVInput(id="email" type="email" v-model='data_user.email' placeholder="(user defined)" required)
-        .py-4.grid(class="sm:grid-cols-3")
+        div(class="information rounded-md mx-9 my-2 text-center sm:text-start text-white bg-blue-999")
+            CVLegend Family Information
+        div(class="py-4 grid sm:grid-cols-3")
             CVLabel(for="user_role") User Role
-            .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
-                select.rounded-md.outline-0.border-box.w-full.p-2.bg-white(id="user_role" style="border: 1px solid #c4c4c4;" v-model='data_user.user_role') Select User Role
+            div(class="mx-9 sm:col-span-2 sm:mr-11")
+                select(id="user_role" v-model='data_user.user_role' class="rounded-md outline-0 border-box w-full p-2 bg-white border border-[#c4c4c4]") Select User Role
                     option family
                     option advocate
                     option(v-if="isAdmin") admin
-        .py-4.grid(class="sm:grid-cols-3" v-if="addingFamily")
+        div(v-if="addingFamily" class="py-4 grid sm:grid-cols-3")
             CVLabel(for="Family") Family
-            .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
-                Listbox.shadow-sm.border.border-1.rounded-lg(id="Family" as='div' v-model="familyCuid")
-                    .relative
+            div(class="mx-9 sm:col-span-2 sm:mr-11")
+                Listbox(id="Family" as='div' v-model="familyCuid" class="shadow-sm border border-1 rounded-lg")
+                    div(class="relative")
                         Transition(
                     leave-active-class='transition ease-in duration-100'
                     leave-from-class='opacity-100'
@@ -153,29 +153,32 @@ CVContainer
                             ListboxOptions(as='div' class='w-full absolute z-10 mt-10 bg-white shadow-lg max-h-60 rounded-md px-2 py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm' )
                                 ListboxOption(as='div' v-for="family in data_all_families" :key="family.cuid" :value="family.cuid" class="px-2 border border-grey-500 py-1 my-1") {{ family.family_name }}
                     ListboxButton(class='text-left bg-white relative rounded-md pl-2 pr-10 py-2 sm:text-sm w-96') {{ familyCuid ? currentFamily.family_name : 'Select family to add the user to' }}
-        .py-4.grid(class="sm:grid-cols-3")
+        div(class="information rounded-md mx-9 my-2 text-center sm:text-start text-white bg-blue-999")
+            CVLegend User Information
+        div(class="py-4 grid sm:grid-cols-3")
+            CVLabel Email
+            div(class="mx-9 sm:col-span-2 sm:mr-11")
+                CVInput(id="email" v-model='data_user.email' placeholder="(user defined)" required)
+        
+        div(class="py-4 grid sm:grid-cols-3")
             CVLabel(for="first_name") First Name
-            .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
+            div(class="mx-9 sm:col-span-2 sm:mr-11")
                 CVInput(id="first_name" type="text" v-model='data_user.first_name' placeholder="(user-defined" required="required")
-        .py-4.grid(class="sm:grid-cols-3")
+        div(class="py-4 grid sm:grid-cols-3")
             CVLabel(for="middle_name") Middle Name
-            .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
+            div(class="mx-9 sm:col-span-2 sm:mr-11")
                 CVInput(id="middle_name" type="text" v-model='data_user.middle_name' placeholder="(user defined, optional)")
-        .py-4.grid(class="sm:grid-cols-3")
+        div(class="py-4 grid sm:grid-cols-3")
             CVLabel(for="last_name") Last Name
-            .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
+            div(class="mx-9 sm:col-span-2 sm:mr-11")
                 CVInput(id="last_name" type="text" v-model='data_user.last_name' placeholder="(user-defined)" required="required")
-        .py-4.grid(class="sm:grid-cols-3")
+        div(class="py-4 grid sm:grid-cols-3")
             CVLabel(for="phone") Phone
-            .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
+            div(class="mx-9 sm:col-span-2 sm:mr-11")
                 CVInput(id="phone" type="tel" v-model='data_user.phone' placeholder="(user defined, optional)")
-        .py-4.grid(class="sm:grid-cols-3")
-            CVLabel(for="address") Address
-            .col-md-8.mx-9(class="sm:col-span-2 sm:mr-11")
-                CVInput(id="address" type="text" v-model='data_user.address' placeholder="(user defined, optional)")
-            .col-md-10.py-2
+            div(class="py-2")
                 ActionButton(@click="save" :disabled="disableCriteria" class="transition duration-300 bg-orange-999 hover:bg-green-600 disabled:bg-orange-800 disabled:cursor-not-allowed") Save    
-        .text-red-500(v-if="errorInPage")    
+        div(v-if="errorInPage" class="text-red-500")    
             CVLabel(for="error_label") Error in Creating User in the system. 
             br
             CVLabel(for="dynamic_error") {{ errorToUser }}

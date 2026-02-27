@@ -1,12 +1,10 @@
 import  { nanoid } from "nanoid"
 // Stripe API tokens
-//import { loadStripe } from '@stripe/stripe-js'
+
 import Stripe from "stripe"
+import { isEmail } from 'class-validator';
 
 const runtime = useRuntimeConfig()
- 
-//const stripe = require('stripe')(stripeSecretKey)
-
 
 /*
 *	/Page/cuid
@@ -29,34 +27,36 @@ export default defineEventHandler(async event => {
           cuid: page_cuid
         }
     })
-    
-	const session = await stripe.checkout.sessions.create({
-		mode: 'payment',
-		line_items: [
-			{
-				price_data: {
-					currency: 'usd',
-					unit_amount: Math.trunc(parseFloat(body.amount as unknown as string) * 100) as number,
-					product_data: {
-						name: `Donation to ${page?.page_first_name} ${page?.page_last_name}`,
-					},
-				},
-				quantity: 1
-			},
-		],
-		metadata: {
-			transaction_id: transaction_id,
-			amount: Math.trunc(parseFloat(body.amount as unknown as string) * 100) as number,
-			target_user_id: userCuid,
-      target_family_id: familyCuid,
-			target_first_name: page?.page_first_name as string,
-      target_last_name: page?.page_last_name as string,
-			target_page_cuid: page?.cuid as string,
-      comments: donorComments,
-		},
-		success_url: `${runtime.BASEURL}api/integrations/stripe/complete_session/${transaction_id}?subscribing=${body.subscribed ? '1' : '0'}`,
-		cancel_url: `${runtime.BASEURL}page/${page_cuid}`,
-	});
+      
+    const session = await stripe.checkout.sessions.create({
+      mode: 'payment',
+      // Only use email if it's provided and valid
+      customer_email: isEmail(body.donorEmail) ? body.donorEmail : undefined,
+      line_items: [
+        {
+          price_data: {
+            currency: 'usd',
+            unit_amount: Math.trunc(parseFloat(body.amount as unknown as string) * 100) as number,
+            product_data: {
+              name: `Donation to ${page?.page_first_name} ${page?.page_last_name}`,
+            },
+          },
+          quantity: 1
+        },
+      ],
+      metadata: {
+        transaction_id: transaction_id,
+        amount: Math.trunc(parseFloat(body.amount as unknown as string) * 100) as number,
+        target_user_id: userCuid,
+        target_family_id: familyCuid,
+        target_first_name: page?.page_first_name as string,
+        target_last_name: page?.page_last_name as string,
+        target_page_cuid: page?.cuid as string,
+        comments: donorComments,
+      },
+      success_url: `${runtime.BASEURL}api/integrations/stripe/complete_session/${transaction_id}?subscribing=${body.subscribed ? '1' : '0'}`,
+      cancel_url: `${runtime.BASEURL}Page/${page_cuid}`,
+    });
 
 	  console.log(body.subscribed)
 
