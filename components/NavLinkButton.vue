@@ -22,7 +22,7 @@ const props = defineProps<{ to: string }>()
     position: absolute;
     left: 0;
     top: 55%;
-    transform: translateY(-16px);
+    transform: translateY(-10px);
     width: 2px;
     height: 25px;
     background-color: transparent;
@@ -32,6 +32,6 @@ const props = defineProps<{ to: string }>()
   .no-border:hover .button-content::before,
   .active .button-content::before {
     background-color: rgb(70, 184, 67);
-  } 
+  }
 </style>
         
