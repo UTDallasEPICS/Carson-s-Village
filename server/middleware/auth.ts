@@ -29,11 +29,12 @@ export default defineEventHandler(async event => {
             where: { email: claims.email }
           ,
           include: {
-            Pages: {
+            /*Pages: {
               select: {
                 cuid: true
               }
-            }, Family: {
+            }, */
+            Family: {
               select: {
                 cuid: true,
                 stripe_account_id: true,
