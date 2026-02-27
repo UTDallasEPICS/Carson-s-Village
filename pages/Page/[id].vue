@@ -1,7 +1,7 @@
 <script setup lang="ts">
 
 /*
-* Namra Zubair
+* Namra Zubair, Ofek Shaltiel, Isi Enesi, Alonso Toji
 *	EPCS 2200
 *	Carson's Village: Automated Family Page
 *	PageList.vue 
@@ -11,7 +11,7 @@
 
 
 import type { User, Page, PageDonation, Image, Reply, Family} from '@/types.d.ts'
-import { dateFormat, donationFormat } from '@/utils'
+import * as toxicity from '@tensorflow-models/toxicity';
 
 const pageData = ref<Page>({
     cuid: "",
@@ -21,15 +21,17 @@ const pageData = ref<Page>({
     page_last_name: "",
     day_of_birth: null,
     day_of_passing: null,
+    age: 0,
     visitation_date: null,
-
     visitation_location: "",
     visitation_address: "",
     visitation_description: "",
+    visitation_end_time: null,
     funeral_date: "",
     funeral_description: "",
     funeral_location: "",
     funeral_address: "",
+    funeral_end_time: null,
     obituary: "",
     deadline: "",
     donation_goal: 0,
@@ -56,14 +58,15 @@ const pageData = ref<Page>({
       Pages: [],
       AdvocateResponsible: {
           cuid: '',
+          isActive: true,
           first_name: '',
           last_name: '',
           user_role: '',
           email: '',
           middle_name: '',
           phone: '',
-          address: '',
           Pages: [],
+          Family: {},
           familyCuid: ''
       },
       FamilyDonations: [],
@@ -128,9 +131,8 @@ const create_checkout_session = async () => {
 };
 
 // Method to populate the page with data based on the cuid in the url
-const { data : pageDataDB } = await useFetch<Page>('/api/page', {
+const { data : pageDataDB } = await useFetch<Page>(`/api/page/${id.value}`, {
     method: 'GET',
-    query: { cuid: id }
 })
 
 if(pageDataDB.value){
@@ -211,9 +213,23 @@ const setImageAutoSlide = () => {
 }
 
 // Recieves emitted reply from CVReplies System to update replies in real time
-const displayReply = async (reply: Reply) => {
+const displayReply = async(reply: Reply) => {
     pageDataDB.value?.Reply.push(reply)
-}
+    /*const responseToxicity = await $fetch('/api/replies/toxicity', {
+        method: 'PUT',
+        body: {
+          pageCuid: pageCuid,
+          familyCuid: familyCuid.value,
+          replyData: reply,
+        },
+      });*/
+    const threshold = 0.6;
+
+    const classifier = await toxicity.load(threshold, ["toxicity"]
+    )
+    const predictions = await classifier.classify([reply.reply])
+    console.log(predictions[0].results[0].match)
+    }
 
 // Recieves the emit to stop displaying the donation popup from the button within the component donationEntryPoppup
 const exitPopup = () => {
@@ -252,7 +268,8 @@ setImageAutoSlide()
   .col-span-2
     .flex.flex-col.gap-5.px-4.mx-auto.mt-8(class="w-3/4 sm:px-16")
       img.mx-auto(v-if="profileImage?.url" class="w-[122px] h-[122px] rounded-[8px]" :src="`${profileImage?.url}`")
-      .text-gray-dark.mx-auto.w-max.font-poppins.text-md {{ dateFormat(pageDataDB.day_of_birth, true) + ((pageDataDB.day_of_birth || pageDataDB.day_of_passing) ? ' - ' : '') + dateFormat(pageDataDB.day_of_passing, true) }} 
+      .text-gray-dark.mx-auto.w-max.font-poppins.text-md(v-if="pageDataDB.day_of_birth && pageDataDB.day_of_passing") {{ dateFormat(pageDataDB.day_of_birth, true) + ((pageDataDB.day_of_birth || pageDataDB.day_of_passing) ? ' - ' : '') + dateFormat(pageDataDB.day_of_passing, true) }} 
+      .text-gray-dark.mx-auto.w-max.font-poppins.text-md(v-else) {{ "Age: " + pageDataDB.age }} 
   .col-span-1.justify-self-end.pr-5.pt-5
     .relative.w-96.p-1(v-if="imageData.length != 0" )
       button.absolute.left-4.top-64.bg-black.text-white(@click="prevImage" style="opacity:0.7; width: 46px; height: 46px; border-radius:50%; align-items: center; justify-content: center; line-height: 2; text-align: center;color: white;") &#60;
@@ -273,7 +290,7 @@ setImageAutoSlide()
             .font-outfit {{ longDateFormat(pageDataDB.visitation_date) }}
           .flex.row.gap-2
             .font-outfit.font-bold {{ "Time:" }}
-            .font-outfit.gap-y-5 {{ longDateFormat(pageDataDB.visitation_date, true) }}
+            .font-outfit.gap-y-5 {{ longDateFormat(pageDataDB.visitation_date, true) + " - " + longDateFormat(pageDataDB.visitation_end_time, true) }}
           .flex.row.gap-2
             .font-outfit.font-bold {{ "Location:" }}
             .font-outfit.whitespace-normal {{ pageDataDB.visitation_location ? pageDataDB.visitation_location : "TBD" }}
@@ -294,7 +311,7 @@ setImageAutoSlide()
               .font-outfit.gap-2 {{ longDateFormat(pageDataDB.funeral_date) }}
             .flex.row.gap-2
               .font-outfit.font-bold {{ "Time:" }}
-              .font-outfit.gap-y-5 {{ longDateFormat(pageDataDB.funeral_date, true) }}
+              .font-outfit.gap-y-5 {{ longDateFormat(pageDataDB.funeral_date, true) + " - " + longDateFormat(pageDataDB.funeral_end_time, true) }}
             .flex.row.gap-2
               .font-outfit.font-bold {{ "Location:" }}
               .font-outfit.whitespace-normal {{ pageDataDB.funeral_location }}

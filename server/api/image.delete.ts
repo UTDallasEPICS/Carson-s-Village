@@ -1,6 +1,5 @@
 import {loginRedirectUrl} from "../api/auth0"
-import type { Page } from "@/types.d.ts"
-
+import type { Page } from "@prisma/client" 
 /*
 *	/EditPage/cuid
 *	file:		/Pages/EditPage.vue
@@ -11,7 +10,15 @@ import type { Page } from "@/types.d.ts"
 export default defineEventHandler(async event => {
   const body = await readBody(event);
 
-  const pageFound = event.context.user?.Family?.Pages?.find((page:Page) => page.cuid == body.pageCuid) || undefined
+  const family = await event.context.client.family.findFirst({
+    where: { cuid: event.context.user?.familyCuid as string },
+      include: {
+        Pages: true,
+      }
+  });
+
+  const pageFound = family?.Pages.find(({ cuid }: Page) => cuid == body.pageCuid || {})
+  // todo check here instead of the event context object as it explodes the cookie
 try {
   if(event.context.user?.user_role === "advocate" || event.context.user?.user_role == "admin"  || event.context.user?.user_role == 'family' && body.pageCuid == null || pageFound) {
     // Deletes an image from the database.

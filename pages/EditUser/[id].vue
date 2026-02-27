@@ -67,7 +67,7 @@ const router = useRoute()
 const isAuthorized = computed(() => { cvuser.value?.user_role as string == "advocate" || cvuser.value?.user_role == "admin"})
 const isAdmin = computed(() => cvuser.value?.user_role as string == "admin")
 const cuid = computed(() => router.params.id as string);
-const disableCriteria = computed(() => !data_user.value?.email || !data_user.value?.first_name ||!data_user.value?.last_name)
+const disableCriteria = computed(() => !data_user.value?.email || !data_user.value?.first_name ||!data_user.value?.last_name || (addingFamily.value && !familyCuid.value))
 const errorInPage = ref(false);
 const errorToUser = ref("")
 

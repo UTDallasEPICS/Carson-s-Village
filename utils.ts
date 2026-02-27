@@ -49,4 +49,3 @@ export function longDateFormat(date: string, justTime = false) {
   if(justTime) return dateObj.toLocaleTimeString()
   return dateObj.toLocaleDateString(undefined, options);
 }
-

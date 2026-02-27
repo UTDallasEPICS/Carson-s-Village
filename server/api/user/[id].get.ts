@@ -1,4 +1,4 @@
-import {loginRedirectUrl} from "../api/auth0"
+import {loginRedirectUrl} from "../../api/auth0"
 
 /*
 *	/EditUser/cuid
@@ -7,16 +7,19 @@ import {loginRedirectUrl} from "../api/auth0"
 */
 
 export default defineEventHandler(async event => {
-  const { cuid } = getQuery(event);
-  if( (cuid as string) == "0" || cuid == undefined){
+  const id = getRouterParam(event, "id");
+
+  if( (id as string) == "0" || id == undefined){
     return []
   }
+  
   // retrieves a single user
   if(event.context.user?.user_role === "advocate" || event.context.user?.user_role === "admin") {
     const queryRes = await event.context.client.user.findFirst({
-      where: { cuid: (cuid as string) },
+      where: { cuid: (id as string) },
       include: {
-        AdvocateFamily: true
+        AdvocateFamily: true,
+        Family: true
       }
     });
     return queryRes;

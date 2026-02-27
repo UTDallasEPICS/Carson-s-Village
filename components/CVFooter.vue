@@ -27,13 +27,10 @@ const submit = async () => {
     if (response?.success) {
         isSubmitted.value = true;
         console.log('Data submitted successfully.');
-        //console.log("Submit?", isSubmitted.value)
     } else {
         console.error('Error submitting data.');
     }
 }
-
-//console.log("Submitted?", isSubmitted.value)
 
 </script>
 
@@ -66,11 +63,4 @@ div
 </template>
 
 <style scoped>
-.absolute {
-    position: absolute;
-}
-
-.relative {
-    position: relative;
-}
 </style>

@@ -64,23 +64,27 @@ export type Page = {
     userCuid: string,
     day_of_birth: Date | string | null,
     day_of_passing: Date | string | null,
+    age: number,
     visitation_date: Date | string | null,
     visitation_location: string,
     visitation_address: string,
     visitation_description: string,
+    visitation_end_time: Date | string | null,
     funeral_date: Date | string | null,
+    funeral_end_time: Date | string | null,
     funeral_description: string,
     funeral_location: string,
     funeral_address: string,
     obituary: string,
     deadline: Date | string | null,
     donation_goal: number | string
+
     donation_description: string,
     amount_raised: number | string
     amount_distributed: number | string
     profileImageCuid: string
     Images: Image[],
-    Family: Family,
+    Family: Partial<Family>,
     familyCuid: string,
     status: string,
     donation_status: string,
@@ -107,12 +111,13 @@ export type Family = {
 }
 
 export type User = {
+    Family: Partial<Family>;
+    isActive: boolean,
     cuid: string,
     first_name: string,
     last_name: string,
     user_role: string,
     email: string,
-    address: string,
     middle_name: string,
     phone: string,
     Pages: Page[],
