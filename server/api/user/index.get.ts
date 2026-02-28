@@ -1,4 +1,4 @@
-import {loginRedirectUrl} from "../api/auth0"
+import {loginRedirectUrl} from "../auth0"
 
 /*
 *	/EditUser/cuid

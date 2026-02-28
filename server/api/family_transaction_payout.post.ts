@@ -1,4 +1,4 @@
-import {loginRedirectUrl} from "../api/auth0"
+import {loginRedirectUrl} from "./auth0"
 import { nanoid } from "nanoid"
 import Stripe from "stripe"
 const runtime = useRuntimeConfig()

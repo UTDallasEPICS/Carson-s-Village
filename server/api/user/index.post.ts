@@ -1,6 +1,6 @@
 import { SESClient, SendEmailCommand } from "@aws-sdk/client-ses"
 const sesClient = new SESClient({ region: "us-east-1" });
-import { loginRedirectUrl } from "../api/auth0"
+import { loginRedirectUrl } from "../auth0"
 import emailTemplates from "email-templates"
 
 /*	/EditUser/0

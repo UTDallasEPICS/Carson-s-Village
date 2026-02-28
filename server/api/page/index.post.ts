@@ -1,5 +1,5 @@
 import type { Image } from "@/types.d.ts"
-import {loginRedirectUrl} from "../api/auth0"
+import {loginRedirectUrl} from "../auth0"
 
 /*
 *	/EditPage/0

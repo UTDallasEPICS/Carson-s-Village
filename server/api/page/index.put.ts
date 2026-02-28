@@ -1,4 +1,4 @@
-import {loginRedirectUrl} from "./auth0"
+import {loginRedirectUrl} from "../auth0"
 import type { Image } from "@/types.d.ts"
 
 /*
