@@ -122,11 +122,7 @@ const data_family = ref<Family>({
 })
 
 const isAdvocate = computed(() => cvuser.value?.user_role == "advocate" ||  cvuser.value?.user_role == "admin")
-const data_all_users = ref<Family[]>([])
-
-
 const replies = ref<Reply[]>([])
-const imageData = ref<Image[]>([])
 const profile_image = ref("")
 const toggleFiddlyBit = ref(true)
 const familyCuid = ref("")
@@ -138,8 +134,17 @@ const pageCuid = computed(() => router.params.EditPageId)
 const disableCriteria = computed(() => !data.value?.page_first_name || !data.value?.page_last_name || (!familyCuid.value && isAdvocate.value) )
 data.value.cuid = cuid;
 data.value.userCuid = user_cuid;
-console.log(data.value)
 const errorInPage = ref(false)
+
+// Fetch family data, and set to empty array if not authorized
+const { data: rawFamilies, error: familyError } = await useFetch('/api/family', { method: 'GET' })
+const data_all_users = computed<Family[]>(() => {
+  if (familyError.value || !rawFamilies.value) {
+    return [] as Family
+  } else {
+    return rawFamilies.value
+  }
+})
 
 // Method that saves form data to the database for a page that has cuid: router.params.EditPageId
 const save = async () => {
@@ -177,82 +182,49 @@ const currentFamily = computed(() => data_all_users.value?.find(({ cuid }: Famil
 
 // Method to populate the form when editing a pre-existing page
 const getData = async (cuid: string) => {
-    console.log(data_all_users)
-        const { data: pageData } = await useFetch('/api/page', {
-            method: 'GET',
-            query: { cuid: cuid }
-        })
-        if (pageData.value) {
-            data.value = pageData.value as unknown as Page;
-            familyCuid.value = data.value.familyCuid
-            imageData.value = data.value?.Images as unknown as Image[]
-        // Not nessesary with proper logic in watchers?
-        // 1st case is handling getting the profile image from the images in imageData
-        // 2nd case is handling corrupt values of profile image of if the profileImageCuid exists 
-        // but is not in imageDaconst currentFamily = computed(() => data_all_users.value?.find(({ cuid }: Family) => cuid == familyCuid.value) || {});ta
-        if (imageData.value?.length != 0 && (data.value.profileImageCuid == "" || imageData.value?.find((i: Image) => i.cuid == data.value.profileImageCuid) == undefined))
-            data.value.profileImageCuid = imageData.value[0].cuid;
-        // handling the case where all the images where deleted but the profile image was not cleared out
-        } else if (imageData.value?.length == 0 && data.value.profileImageCuid !== "") {
-            data.value.profileImageCuid = ""
-        }
-
-        /* 
-        * Checking if donation_goal and conversly amount raised is of type number in order to prevent
-        * donation_goal and amount_raised from becoming NaN due to applying the donationFormat function to a string. 
-        */
-        if (typeof data.value.donation_goal === 'number') {
-            data.value.amount_raised = donationFormat(data.value.amount_raised as unknown as number).replace("$", "");
-            data.value.donation_goal = donationFormat(data.value.donation_goal as unknown as number).replace("$", "");
-        }
-        replies.value = data.value?.Reply
+    const { data: pageData } = await useFetch('/api/page', {
+        method: 'GET',
+        query: { cuid: cuid }
+    })
+    if (pageData.value) {
+        data.value = pageData.value as unknown as Page;
+        familyCuid.value = data.value.familyCuid
     }
 
-
-
-
-// Method that saves images to the frontend on image upload.
-const saveImage = async (theImage: Image) => {
-    imageData.value.push(theImage)
-    data.value.Images = imageData.value as unknown as Image[]
-    // Creates a profile image for the first image uploaded
-    if (data.value.profileImageCuid == "") {
-        data.value.profileImageCuid = theImage.cuid;
+    /* 
+    * Checking if donation_goal and conversly amount raised is of type number in order to prevent
+    * donation_goal and amount_raised from becoming NaN due to applying the donationFormat function to a string. 
+    */
+    if (typeof data.value.donation_goal === 'number') {
+        data.value.amount_raised = donationFormat(data.value.amount_raised as unknown as number).replace("$", "");
+        data.value.donation_goal = donationFormat(data.value.donation_goal as unknown as number).replace("$", "");
     }
-};
-
-
-// Method to set an uploaded image as the profile image of a page
-// There is no network request because the profiile image cuid is saved with the rest of the form
-const setProfileImage = async (theImage: Image) => {
-    data.value.profileImageCuid = theImage.cuid
+    replies.value = data.value?.Reply
 }
 
-const setImagesPreview = async (Images: Image[]) => {
-    data.value.Images = Images
-    imageData.value = Images
-}
-
-watch(imageData, async () => {
-    if (imageData.value.length == 0) {
-        data.value.profileImageCuid = "";
+// Watcher for updating profile image when data.Images is updated
+watch(
+  () => data.value.Images, 
+  (images: Image[]) => {
+    if (images.length == 0) {
+      data.value.profileImageCuid = "";
     }
-
-}, { deep: true })
-
-watch(data, async () => {
-    const profileImageNotFound = data.value.Images.find((i: Image) => i.cuid == data.value.profileImageCuid) == undefined
-    if (data.value.Images.length != 0 && (data.value.profileImageCuid == "" || profileImageNotFound)) {
-        data.value.profileImageCuid = data.value.Images[0].cuid
+    // Check if profile image was deleted and if so assign it first image in array
+    else if (images.value && !images.find((img: Image) =>  img.cuid == data.value.profileImageCuid )) {
+      data.value.profileImageCuid = images.value[0]   
     }
-}, { deep: true })
+  }, 
+  { deep: true }
+)
 
+/*
 if( isAdvocate.value ) {
-        const { data: Families } = await useFetch('/api/family', {
-            method: 'GET'
-        })
-        data_all_users.value = Families.value as unknown as Family[]
+  const { data: Families } = await useFetch('/api/family', {
+      method: 'GET'
+  })
+  data_all_users.value = Families.value as unknown as Family[]
 }
+*/
 
 const updateSuspendButton = (reply:Reply, suspend:boolean) => { // updates the front end of the suspend button
     replies.value.filter((rep:Reply)=> { // ignore filter error for now
@@ -313,7 +285,7 @@ CVContainer
                             ListboxOptions(as='div' class='w-full absolute z-10 mt-10 bg-white shadow-lg max-h-60 rounded-md px-2 py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm' )
                                 ListboxOption(as='div' v-for="family in data_all_users" :key="family.cuid" :value="family.cuid" class="px-2 border border-grey-500 py-1 my-1") {{ family.family_name }}
                     ListboxButton(class='text-left bg-white relative rounded-md pl-2 pr-10 py-2 sm:text-sm w-96') {{ familyCuid ? currentFamily.family_name : 'Select family to add the page to' }}
-        ImagePreview(v-model:images="imageData" :images="data.Images" :profileImage="profileImage" :pageCuid="cuid_data" @profileImage="setProfileImage" @images="setImagesPreview")
+        ImagePreview(v-model:images="data.Images" :pageCuid="cuid_data")
         div(class="information rounded-md mx-9 my-2 text-center sm:text-start text-white bg-blue-999")
             legend(class="ml-4 sm:py-1 font-bold text-shadow-[3px_3px_4px_rgba(0,0,0,0.25)]") Profile Image Selection        
         div(class="py-4 grid sm:grid-cols-3")
@@ -333,8 +305,8 @@ description="Here, you select from photos you uploaded to show up at the top of 
                             
                         )
                             ListboxOptions(as='div' :style="{ 'margin-top': profileImgHeight + 'px' }" class='w-full absolute z-10 bg-white shadow-lg shrink-0 max-h-60 max-w-96 mt-8 px-2 py-2 text-base ring-1 ring-black ring-opacity-5 rounded-md overflow-auto focus:outline-none sm:text-sm')
-                                    ListboxOption(v-for="(image,k) in imageData" :key="image.cuid" :value="image.cuid")
-                                        img(v-if="imageData.length" :src="image.url" class="py-4 rounded-lg") 
+                                    ListboxOption(v-for="(image,k) in data.Images" :key="image.cuid" :value="image.cuid")
+                                        img(v-if="data.Images.length" :src="image.url" class="py-4 rounded-lg") 
                     ListboxButton(v-element-size="onResize" class='relative rounded-md pl-2 py-4 pr-6 max-w-96 sm:text-sm border border-[#c4c4c4]')
                         div(class="flex")
                             img(v-if="profileImage" :src="profileImage?.url" class="rounded-lg")
@@ -426,5 +398,3 @@ description="Here, you select from photos you uploaded to show up at the top of 
         div(v-if="errorInPage" class="py-4 grid sm:grid-cols-3 text-red-500")
             CVLabel(for="error") Error in Creating/Editing page in the system.
 </template>
-
-<style scoped></style>
