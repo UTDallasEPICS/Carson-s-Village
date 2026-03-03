@@ -5,11 +5,15 @@
     "dev": "nuxt dev",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
-    "postinstall": "nuxt prepare"
+    "postinstall": "nuxt prepare",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix"
   },
   "devDependencies": {
+    "@nuxt/eslint": "1.15.2",
     "@types/email-templates": "^10.0.1",
     "@vue/language-plugin-pug": "^2.0.7",
+    "eslint": "^9.39.3",
     "nuxt": "^3.11.2"
   },
   "dependencies": {

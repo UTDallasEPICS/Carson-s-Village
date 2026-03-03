@@ -14,10 +14,13 @@ export default defineEventHandler(async event => {
         Pages: true,
         FamilyMembers: true,
         AdvocateResponsible: true
-    }
-  });
-  return queryRes;
+      }
+    });
+    return queryRes;
   } else {
-    return await sendRedirect(event, loginRedirectUrl());
+    createError({
+      statusCode: 401, 
+      statusMessage: "Unauthorized"
+    }) 
   }
 })

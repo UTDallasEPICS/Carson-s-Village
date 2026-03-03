@@ -29,7 +29,7 @@ export default defineNuxtConfig({
     transpile: ['@vuepic/vue-datepicker']
 },
   modules: 
-    ['@nuxtjs/tailwindcss',],
+    ['@nuxtjs/tailwindcss', '@nuxt/eslint'],
 
   vite: {
     resolve: {
