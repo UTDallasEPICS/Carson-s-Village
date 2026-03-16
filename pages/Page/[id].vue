@@ -90,7 +90,7 @@ const donationData = ref<PageDonation>({
 
 const feeRecovery = ref(false)
 const userCuid = ref("0")
-const DisplayDonationPopup = ref(false)
+const displayDonationPopup = ref(false)
 const profileImageLink = ref("")
 const family_cuid = ref("0")
 const router = useRoute();
@@ -100,7 +100,7 @@ const cvuser = useCookie<Page>('cvuser')
 const stripeLink_ref = ref("")
 const commentModalOpen = ref(false)
 const currentComment = ref('')
-// const isAdvocateAdmin = computed(() => cvuser.value?.user_role == "admin" || cvuser.value?.user_role == "advocate")
+const isUser = computed(() => cvuser.value?.user_role == "admin" || cvuser.value?.user_role == "advocate" || cvuser.value?.user_role == "family")
 
 
 /* 
@@ -159,7 +159,7 @@ const shareMail = () => {
 }
 
 const familyCuid = computed(() => pageDataDB.value?.familyCuid)
-const donated_percentage = computed(() => (((pageDataDB.value?.amount_raised as number) / (pageDataDB.value?.donation_goal as number )) * 100).toFixed(1) + "");
+const donated_percentage = computed<Number>(() => (((pageDataDB.value?.amount_raised as number) / (pageDataDB.value?.donation_goal as number )) * 100).toFixed(1));
 const donation_goal_provided = computed(() => pageDataDB.value?.donation_goal as number > 0)
 const comments = computed(() => pageDataDB.value?.PageDonations)
 const replies = computed(() => pageDataDB.value?.Reply)
@@ -167,17 +167,6 @@ const imageData = computed(() => pageDataDB.value?.Images || [])
 const profileImage = computed(() => imageData.value?.find((image: Image) => 
           image.cuid === pageDataDB.value?.profileImageCuid
       ))
-
-// images for testing if needed.
-/*const temp = ref([
-{url:"https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fm.media-amazon.com%2Fimages%2FI%2F61c8jg5GogL._AC_SS450_.jpg&f=1&nofb=1&ipt=3e12836a0e8c59555ce3cc5c3ba1941d4ebacfe86377cb3aee4ca65c81ac5cb0&ipo=images"},
-{url:"https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fi.redd.it%2Fbwc57i93rum21.jpg&f=1&nofb=1&ipt=6cd8c33a4e48d6262d33f9672b6305dff1c96c86a5514ffa9ab39d4216355d94&ipo=images"},
-{url:"https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fm.media-amazon.com%2Fimages%2FI%2F61c8jg5GogL._AC_SS450_.jpg&f=1&nofb=1&ipt=3e12836a0e8c59555ce3cc5c3ba1941d4ebacfe86377cb3aee4ca65c81ac5cb0&ipo=images"},
-{url:"https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fi.redd.it%2Fbwc57i93rum21.jpg&f=1&nofb=1&ipt=6cd8c33a4e48d6262d33f9672b6305dff1c96c86a5514ffa9ab39d4216355d94&ipo=images"},
-{url:"https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fm.media-amazon.com%2Fimages%2FI%2F61c8jg5GogL._AC_SS450_.jpg&f=1&nofb=1&ipt=3e12836a0e8c59555ce3cc5c3ba1941d4ebacfe86377cb3aee4ca65c81ac5cb0&ipo=images"},
-{url:"https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fm.media-amazon.com%2Fimages%2FI%2F61c8jg5GogL._AC_SS450_.jpg&f=1&nofb=1&ipt=3e12836a0e8c59555ce3cc5c3ba1941d4ebacfe86377cb3aee4ca65c81ac5cb0&ipo=images"},
-{url:"https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fm.media-amazon.com%2Fimages%2FI%2F61c8jg5GogL._AC_SS450_.jpg&f=1&nofb=1&ipt=3e12836a0e8c59555ce3cc5c3ba1941d4ebacfe86377cb3aee4ca65c81ac5cb0&ipo=images"},
-])*/
 
 const currentImage = ref(0)
 // TODO: setup auto cycle on a timer
@@ -215,11 +204,6 @@ const displayReply = async (reply: Reply) => {
     pageDataDB.value?.Reply.push(reply)
 }
 
-// Recieves the emit to stop displaying the donation popup from the button within the component donationEntryPoppup
-const exitPopup = () => {
-  DisplayDonationPopup.value = false
-}
-
 const exitCommentPopup = () => {
   commentModalOpen.value = false
 }
@@ -235,14 +219,25 @@ setImageAutoSlide()
 
 <template lang="pug">
 // donation popup
-div(v-if="DisplayDonationPopup" @click.self="DisplayDonationPopup=false" class="flex z-10 items-center justify-center fixed top-0 bottom-0 left-0 right-0 bg-black/70")
-  div(class="mx-auto flex p-2 bg-white w-1/2")
-    DonationEntryPopup(@Exit="exitPopup" :amount_raised="pageDataDB.amount_raised" :donation_goal="pageDataDB.donation_goal" :donation_goal_provided="donation_goal_provided" :donated_percentage="donated_percentage" :isActive="isActive" :donationData="donationData" :pageCuid="pageCuid" :familyCuid="familyCuid")  
+DonationEntryPopup(
+  v-model:displayDonationPopup="displayDonationPopup"
+  :amount_raised="pageDataDB.amount_raised"
+  :donation_goal="pageDataDB.donation_goal" 
+  :donation_goal_provided="donation_goal_provided"
+  :donated_percentage="donated_percentage"
+  :isActive="isActive"
+  :donationData="donationData"
+  :pageCuid="pageCuid"
+  :familyCuid="familyCuid"
+)  
 div(v-if="commentModalOpen" @click.self="commentModalOpen=false" class="flex items-center justify-center z-10 fixed top-0 bottom-0 left-0 right-0 bg-black/70")
   div(class="mx-auto flex p-2 bg-white w-1/2 h-1/2")
     CommentPopup(@ExitComment="exitCommentPopup" :comment="currentComment")  
 // the header overlay with image and name
-div(class="flex gap-2 justify-center cols-2 pl-6 pr-6")
+div(
+  v-if="isUser"
+  class="flex gap-2 justify-center cols-2 pl-6 pr-6"
+)
     a(class="mr-2 mt-1 p-2 px-9 pt-3 pb-3 bg-orange-999 transition duration-300 hover:bg-green-600 rounded-[100px] h-[50px] text-white font-bold") Archive
 div(class="mt-2 min-h-24 text-white uppercase w-full bg-cover bg-center" style="background-image: url('https://carsonsvillage.org/wp-content/uploads/2018/11/iStock-862083112-BW.jpg');") 
   div(class="h-full py-8 self-center w-full text-center flex flex-col bg-teal-500/80") 
@@ -309,7 +304,7 @@ div(class="grid grid-cols-1 sm:grid-cols-2 justify-center px-2")
           div(class="text-gray-dark font-poppins text-3xl text-left font-bold leading-9 text-shadow-[3px_3px_4px_rgba(0,0,0,0.25)]") Donations
           div(class="text-gray-dark font-poppins text-1xl text-left font-bold leading-9 text-shadow-[3px_3px_4px_rgba(0,0,0,0.25)]") 
             div(class="ml-1 pt-9 pr-5 flex items-center justify-center")
-              ActionButton(name='submit' @click="DisplayDonationPopup=true" class="mx-auto text-md transition duration-300 bg-orange-999 hover:bg-green-600") DONATE NOW
+              ActionButton(name='submit' @click="displayDonationPopup=true" class="mx-auto text-md transition duration-300 bg-orange-999 hover:bg-green-600") DONATE NOW
   div(class="col-span-2")
     div(class="mx-9 sm:col-span-1 sm:mr-11")
         div(id="obituary" class="px-10 py-4 text-[#6E6E6E] font-medium text-lg leading-7 tracking-[-0.078px] break-words") {{ pageDataDB.obituary }}
