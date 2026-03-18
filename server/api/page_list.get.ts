@@ -8,7 +8,6 @@ import {loginRedirectUrl} from "../api/auth0"
 
 export default defineEventHandler(async event => {
     const { cuid, page_number } = getQuery(event);
-    console.log(cuid as string)
     
     if((cuid as string) == "0"  || cuid == undefined){
         return []
