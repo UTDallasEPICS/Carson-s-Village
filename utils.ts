@@ -18,10 +18,10 @@ export function dateFormat(date: string, justDate = false) {
 // Function that converts the donation amounts in cents to a string in the form
 // $ whole dollars.xx
 export function donationFormat(amount = 0){
-    const amountInDollars = amount / 100
     if(isNaN(amount)){
        return '$0.00'
     }
+    const amountInDollars = amount / 100
     return amountInDollars.toLocaleString(undefined, {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,

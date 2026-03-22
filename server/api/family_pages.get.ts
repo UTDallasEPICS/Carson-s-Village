@@ -16,50 +16,51 @@ export default defineEventHandler(async event => {
       const [count, pagesResult, pagesUnpaginated] = await event.context.client.$transaction([
         event.context.client.page.count( { where: {
           familyCuid : family_cuid as string
-       }}),
-       event.context.client.page.findMany({
-            where: {
-                familyCuid : family_cuid as string
-            },
-            skip: page_number as number * 12,
-            take: 12,    
-            include: {
-              User: true,
-              Family: {
-                include: {
-                  AdvocateResponsible: {
-                    select: {
-                      first_name: true,
-                      last_name: true
-                    }
+         }}),
+        event.context.client.page.findMany({
+          where: {
+              familyCuid : family_cuid as string
+          },
+          skip: page_number as number * 12,
+          take: 12,    
+          include: {
+            User: true,
+            Family: {
+              include: {
+                AdvocateResponsible: {
+                  select: {
+                    first_name: true,
+                    last_name: true
+                  }
                 }
               }
             }
           }
-    }), 
-    event.context.client.page.findMany({
-      where: {
-          familyCuid : family_cuid as string
-      },
-      include: {
-        User: true,
-        Family: {
+        }), 
+        event.context.client.page.findMany({
+          where: {
+              familyCuid : family_cuid as string
+          },
           include: {
-            AdvocateResponsible: {
-              select: {
-                first_name: true,
-                last_name: true
+            User: true,
+            Family: {
+              include: {
+                AdvocateResponsible: {
+                  select: {
+                    first_name: true,
+                    last_name: true
+                  }
+                }
               }
+            }
           }
-        }
-      }
-    }
-})
-  ])
+        })
+      ])
 
     return {
       Pagination: {
-      total: count },
+        total: count 
+      },
       data:  pagesResult,
       raw_data: pagesUnpaginated
     };

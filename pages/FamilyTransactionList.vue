@@ -118,9 +118,21 @@ div(v-if="isAdmin" class="px-10")
         ListboxButton(class='text-left bg-white relative rounded-md pl-2 pr-10 py-2 sm:text-sm w-96') {{ currentPageCuid ? (currentPage.page_first_name || currentPage.page_last_name) : 'Select Page' }}
   
   div(class="flex gap-5 justify-around")
-    DonationManagementInformation(:lastDonationDate="currentPage?.last_donation_date" :donationStatus="currentPage?.donation_status" :startDate="currentPage?.start_date" :totalPageDonations="totalPageDonations" :totalDistributed="totalDistributed" :totalRemaining="totalRemaining" :amount_raised="currentPage?.amount_raised" :amount_distributed="currentPage?.amount_distributed")
+    DonationManagementInformation(
+      :lastDonationDate="currentPage?.last_donation_date" 
+      :donationStatus="currentPage?.donation_status" 
+      :startDate="currentPage?.start_date" 
+      :totalPageDonations="totalPageDonations" 
+      :totalDistributed="totalDistributed" 
+      :totalRemaining="totalRemaining" 
+      :amount_raised="currentPage?.amount_raised" 
+      :amount_distributed="currentPage?.amount_distributed"
+    )
     div(class="basis-1/3")
-      PayoutRecord(:currentPage="currentPage" :currentFamily="currentFamily")
+      PayoutRecord(
+        :currentPage="currentPage" 
+        :currentFamily="currentFamily"
+      )
 
   CVLegend(class="mt-10 ml-2") Family Pages
   table(class="mt-5 w-full")
