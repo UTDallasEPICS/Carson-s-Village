@@ -41,7 +41,7 @@ model Family {
 
 model DonationPayout {
   cuid             String @id @default(cuid())
-  familyCuid       String @map("familly_cuid")
+  familyCuid       String @map("family_cuid")
   pageCuid         String @map("page_cuid")
   transaction_id   String @unique
   amount           Int    @default(0)

@@ -13,7 +13,7 @@ const runtime = useRuntimeConfig()
 */
 export default defineEventHandler(async event => {
     const transaction_id = nanoid();
-    const stripe = new Stripe(runtime.STRIPE_SECRET, { apiVersion:"2022-11-15"})
+    const stripe = new Stripe(runtime.STRIPE_SECRET)
     const body = await readBody(event)
     const page_cuid = body.pageCuid
     const donorComments = body.comments;
@@ -57,8 +57,6 @@ export default defineEventHandler(async event => {
       success_url: `${runtime.BASEURL}api/integrations/stripe/complete_session/${transaction_id}?subscribing=${body.subscribed ? '1' : '0'}`,
       cancel_url: `${runtime.BASEURL}Page/${page_cuid}`,
     });
-
-	  console.log(body.subscribed)
 
     const queryRes = await event.context.client.pageDonation.create({
       data: {
