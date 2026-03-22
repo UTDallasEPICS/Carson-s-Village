@@ -59,98 +59,133 @@ export default defineEventHandler(async event => {
         // check if the family has a stripe account and onboarding them with stripe if not
         if (event.context.user?.user_role == "family") {
           try {
-            if(event.context.user?.Family?.stripe_account_id == undefined) {
-                    // todo: fill with useable address type done
-                    //todo: add support_address
-                         // we can prefil some customer stuff with salesforce one day
-                    const newStripeAccount = await stripe.accounts.create({
-                        business_profile: {
-                          //industry: "Charities or social service organizations",
-                          product_description: "This is Carson's Village account used for donations on a family page",
-                          mcc: "8398",
-                          support_email: "jason@carsonsvillage.org",
-                          support_phone: "(877) 789-0722",
-                          support_url: "carsonsvillage.org",
-                          name: "Carson's Village",
-                          url: 'https://pages.carsonsvillage.org/PageList/' + event.context.user?.familyCuid,
-                          /*support_address: {
-                             city : 'Dallas',
-                             country : 'US',
-                             line1 : '2904 Floyd Street',
-                             line2 : null,
-                             postal_code : 75204,
-                             state: 'TX'
-                          }*/
-                        },
-                        settings: {
-                          payments: {
-                            statement_descriptor: 'Carsons Village'
-                          },
-                          card_payments: {
-                            statement_descriptor_prefix: 'Carsons V'
-                          }
-                        },
-                        type: 'standard',
-                        email: event.context.user?.email
-                    });
+            if(event.context.user?.Family?.stripe_account_id == undefined && process.env.NODE_ENV == "production") {
+              // todo: fill with useable address type done
+              //todo: add support_address
+              // we can prefil some customer stuff with salesforce one day
+              const newStripeAccount = await stripe.accounts.create({
+                  capabilities: {
+                    card_payments: { requested: true },
+                    transfers: { requests: true }
+                  },
+                  business_profile: {
+                    //industry: "Charities or social service organizations",
+                    product_description: "This is Carson's Village account used for donations on a family page",
+                    mcc: "8398",
+                    support_email: "jason@carsonsvillage.org",
+                    support_phone: "(877) 789-0722",
+                    support_url: "carsonsvillage.org",
+                    name: "Carson's Village",
+                    url: 'https://pages.carsonsvillage.org/PageList/' + event.context.user?.familyCuid,
+                    /*support_address: {
+                       city : 'Dallas',
+                       country : 'US',
+                       line1 : '2904 Floyd Street',
+                       line2 : null,
+                       postal_code : 75204,
+                       state: 'TX'
+                    }*/
+                  },
+                  settings: {
+                    payments: {
+                      statement_descriptor: 'Carsons Village'
+                    },
+                    card_payments: {
+                      statement_descriptor_prefix: 'Carsons V'
+                    }
+                  },
+                  type: 'express',
+                  email: event.context.user?.email
+              });
 
-                    // Adds the stripe_accounnt_id to the family, but the family is still suspended from creating pages and thus preventing stray donations.
-                    // Too extreme? Maybe we need to elaborate further to allow families to create pages that do not recieve donations.
-                    const transaction = await event.context.client?.$transaction([
-                      event.context.client?.family.update({
-                        where: { cuid: event.context.user?.familyCuid },
-                        data: { stripe_account_id: newStripeAccount.id }
-                    }), event.context.client?.page.updateMany({
-                      where: {
-                          familyCuid : event.context.user?.familyCuid as string
-                      },
-                      data: { status: 'Family Stripe Account needs onboarding'} 
-                      })
-                    ])
-                    const stripeAccountId = newStripeAccount.id;
+              // Adds the stripe_accounnt_id to the family, but the family is still suspended from creating pages and thus preventing stray donations.
+              // Too extreme? Maybe we need to elaborate further to allow families to create pages that do not recieve donations.
+              const transaction = await event.context.client?.$transaction([
+                event.context.client?.family.update({
+                  where: { cuid: event.context.user?.familyCuid },
+                  data: { stripe_account_id: newStripeAccount.id }
+              }), event.context.client?.page.updateMany({
+                where: {
+                    familyCuid : event.context.user?.familyCuid as string
+                },
+                data: { status: 'Family Stripe Account needs onboarding'} 
+                })
+              ])
+              const stripeAccountId = newStripeAccount.id;
     
-                if (stripeAccountId) {
-                    const accountLink = await stripe.accountLinks.create({
-                        account: stripeAccountId,
-                        refresh_url: `${runtime.BASEURL}`,
-                        return_url: `${runtime.BASEURL}api/complete_onboarding?stripe_account_id=${stripeAccountId}`,
-                        type: 'account_onboarding',
-                    });
-                    
-            return await sendRedirect(event, accountLink.url);
-        }
-      } else {
-        const id = event.context.user?.Family?.stripe_account_id
-        const stripeAccountFull = await stripe.accounts.retrieve(
-          id as string)
-        //console.log(stripeAccountFull)
-        // if the user backed out of the onboard, they will be redirected back to the onboard
-        if(!stripeAccountFull.details_submitted) {
-            const accountLink = await stripe.accountLinks.create({
-                account: id,
-                refresh_url: `${runtime.BASEURL}`,
-                return_url: `${runtime.BASEURL}api/complete_onboarding?stripe_account_id=${id}`,
-                type: 'account_onboarding',
-            });
-            return await sendRedirect(event, accountLink.url);
+              if (stripeAccountId) {
+                const accountLink = await stripe.accountLinks.create({
+                    account: stripeAccountId,
+                    refresh_url: `${runtime.BASEURL}`,
+                    return_url: `${runtime.BASEURL}api/complete_onboarding?stripe_account_id=${stripeAccountId}`,
+                    type: 'account_onboarding',
+                });
+                return await sendRedirect(event, accountLink.url);
+              }
+            } else if (event.context.user?.Family?.stripe_account_id == undefined && process.env.NODE_ENV != "production") {
+              const newTestStripeAccount = await stripe.accounts.create({
+                type: 'custom',
+                country: 'US',
+                email: event.context.user?.email,
+                capabilities: {
+                  card_payments: { requested: true },
+                  transfers: { requested: true },
+                },
+                business_type: 'individual',
+                individual: {
+                  first_name: 'Test',
+                  last_name: 'User',
+                  id_number: '000000000',
+                  phone: '0000000000',
+                  email: event.context.user?.email,
+                  dob: { day: 1, month: 1, year: 1902 },
+                  address: {
+                    line1: 'address_full_match',
+                    city: 'Anytown',
+                    state: 'CA',
+                    postal_code: '12345',
+                  },
+                },
+                external_account: 'btok_us_verified', 
+                business_profile: {
+                  mcc: '8398',
+                  url: 'https://test.carsonsvillage.org',
+                },
+                tos_acceptance: {
+                  date: Math.floor(Date.now() / 1000),
+                  ip: '8.8.8.8', // Placeholder IP for testing
+                },
+              });
+
+              await event.context.client?.$transaction([
+                event.context.client.family.update({
+                  where: { cuid: event.context.user?.familyCuid },
+                  data: { stripe_account_id: newTestStripeAccount.id },
+                }),
+                event.context.client.page.updateMany({
+                  where: {
+                    familyCuid: event.context.user?.familyCuid as string,
+                  },
+                  data: { status: 'Active' },
+                }),
+              ]);
+            }
+          } catch (e) {
+            console.error(e) 
+            setCookie(event,'cvtoken','')
+            setCookie(event,'cvuser','')
+        
+            return await sendRedirect(event, loginRedirectUrl())
+          }
+        } 
+      } catch(e){
+        console.error(e)
+        if((e.message as unknown as string).includes('jwt expired')) {
+          setCookie(event,'cvtoken','')
+          setCookie(event,'cvuser','')
+          return await sendRedirect(event, logoutRedirectUrl(cvtoken))
         }
       }
-      } catch (e) {
-        console.error(e) 
-        setCookie(event,'cvtoken','')
-        setCookie(event,'cvuser','')
-    
-        return await sendRedirect(event, loginRedirectUrl())
-      }
-    } 
-  } catch(e){
-    console.error(e)
-    if((e.message as unknown as string).includes('jwt expired')) {
-      setCookie(event,'cvtoken','')
-      setCookie(event,'cvuser','')
-      return await sendRedirect(event, logoutRedirectUrl(cvtoken))
     }
   }
-}
-}
 })
