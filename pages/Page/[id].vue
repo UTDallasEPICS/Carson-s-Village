@@ -102,31 +102,6 @@ const commentModalOpen = ref(false)
 const currentComment = ref('')
 const isUser = computed(() => cvuser.value?.user_role == "admin" || cvuser.value?.user_role == "advocate" || cvuser.value?.user_role == "family")
 
-
-/* 
-*  This creates a stripe session and redirects the user to stripe.
-*  Then it redirects to /PageDonation/pageCuid/transactionId
-*/
-const create_checkout_session = async () => {
-    if(feeRecovery.value) {
-      donationData.value.amount = 1.035 * donationData.value.amount
-    }
-    
-
-    const sessionInfo = await $fetch('/api/create_session', {
-        method: 'POST',
-      body: {
-        ...donationData,
-        cuid: id.value,
-        pageCuid: id.value,
-        familyCuid: pageDataDB.value?.familyCuid,
-        amount_raised: Math.trunc(parseFloat(donationData.value.amount as unknown as string) * 100) as number
-      }
-    });
-    stripeLink_ref.value = sessionInfo as string
-    await navigateTo(stripeLink_ref.value as string,  { external: true } )
-};
-
 // Method to populate the page with data based on the cuid in the url
 const { data : pageDataDB } = await useFetch<Page>('/api/page', {
     method: 'GET',

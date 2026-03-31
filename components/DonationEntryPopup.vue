@@ -61,33 +61,6 @@ const donationData = ref<PageDonation>({
     isAnonymous: false
 });
 
-const stripeLink_ref = ref("")
-const create_checkout_session = async () => {
-    console.log(feeRecovery.value)
-    if(feeRecovery.value) {
-        donationData.value.amount = Math.round((1.029 * donationData.value.amount + 0.30) * 100 ) / 100
-    } 
-    if(anonymous.value) {
-        donationData.value.donorFirstName = "anonymous"
-        donationData.value.donorLastName = ""
-    }
-    console.log(anonymous.value)
-    // todo: depreciate
-    const donorData = {
-        first_name: donationData.value.donorFirstName,
-        last_name: donationData.value.donorLastName,
-        isAnonymous: donationData.value.isAnonymous,
-        comments: donationData.value.comments
-    };
-    const sessionInfo = await $fetch('/api/integrations/stripe/create_session', {
-
-        method: 'POST',
-        body: { ...donationData.value, cuid: props.pageCuid, family_cuid: props.familyCuid, amount_raised: Math.trunc(parseFloat(donationData.value.amount as unknown as string) * 100) as number}
-    });
-    stripeLink_ref.value = sessionInfo as string
-    await navigateTo(stripeLink_ref.value as string,  { external: true } )
-};
-
 // When popup is open stop background from scrolling
 watch(() => props.displayDonationPopup, (isOpen) => {
   if (isOpen) {

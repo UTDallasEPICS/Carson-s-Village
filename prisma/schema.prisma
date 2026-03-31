@@ -90,20 +90,20 @@ model Page {
 }
 
 model PageDonation {
-  cuid           String  @id @default(cuid())
-  familyCuid     String  @map("family_cuid")
-  pageCuid       String  @map("page_cuid")
-  donorFirstName String  @default("")
-  donorLastName  String  @default("")
-  donorEmail     String  @default("")
-  comments       String  @default("")
-  isAnonymous    Boolean @default(false)
-  success        Boolean @default(false)
-  transaction_id String  @unique
-  donationDate   String  @default("") //todo: change to ""  
-  amount         Int     //In cents
-  Family         Family  @relation(fields: [familyCuid], references: cuid)
-  Page           Page    @relation(fields: [pageCuid], references: cuid)
+  cuid            String          @id @default(cuid())
+  familyCuid      String          @map("family_cuid")
+  pageCuid        String          @map("page_cuid")
+  donorFirstName  String          @default("")
+  donorLastName   String          @default("")
+  donorEmail      String          @default("")
+  comments        String          @default("")
+  isAnonymous     Boolean         @default(false)
+  status          DonationStatus
+  transaction_id  String          @unique
+  donationDate    String          @default("") //todo: change to ""  
+  amount          Int     //In cents
+  Family          Family          @relation(fields: [familyCuid], references: cuid)
+  Page            Page            @relation(fields: [pageCuid], references: cuid)
 
   @@map("page_donations")
 }
@@ -134,4 +134,9 @@ model Image {
 
   @@unique([pageCuid, url])
   @@map("images")
+}
+
+enum DonationStatus {
+  SUCCESS
+  PENDING
 }
