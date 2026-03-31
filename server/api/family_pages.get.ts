@@ -14,9 +14,11 @@ export default defineEventHandler(async event => {
 
     if(event.context.user?.user_role === "advocate"  || event.context.user?.user_role == "admin" || event.context.user?.familyCuid == family_cuid as string) {
       const [count, pagesResult, pagesUnpaginated] = await event.context.client.$transaction([
-        event.context.client.page.count( { where: {
-          familyCuid : family_cuid as string
-         }}),
+        event.context.client.page.count({ 
+          where: {
+            familyCuid : family_cuid as string 
+          }
+        }),
         event.context.client.page.findMany({
           where: {
               familyCuid : family_cuid as string

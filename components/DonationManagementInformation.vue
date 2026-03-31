@@ -26,7 +26,7 @@ div(class="grid grid-cols-3 gap-5")
       p(class="text-center mt-2") {{ donationFormat(props.totalRemaining) }}
     div(class="border border-grey-500 p-5")
       p(class="self-center text-center") Remaining Amount to Distribute
-      p(class="text-center mt-2") {{ donationFormat(props.amount_raised - props.amount_distributed) }}
+      p(class="text-center mt-2") {{ donationFormat(props.amount_available) }}
     div(class="border border-grey-500 p-5")
       p(class="self-center text-center") Last Donation Date
       p(class="text-center mt-2") {{ props.lastDonationDate ? dateFormat(props.lastDonationDate) : "No Donations" }}
@@ -40,6 +40,7 @@ const props = defineProps<{
   totalRemaining: number,
   amount_raised: number,
   amount_distributed: number,
+  amount_available: number,
   donationStatus: string,
   startDate: Date | string | null,
   lastDonationDate: Date | string | null

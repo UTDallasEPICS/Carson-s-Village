@@ -36,54 +36,55 @@ const { data: Families } = await useFetch<Family[]>('/api/family', {
     }, 
 });
 
-  const currentFamilyCuid = ref<string>("")
-  const currentFamily = computed(() => Families.value?.find(({ cuid }: Family) => cuid == currentFamilyCuid.value) || {})
-  
-  //console.log(currentFamily.value)
-  //const currentUser = computed(() => currentFamily.value?.FamilyMembers![0] as User)
-  currentFamilyCuid.value = Families.value![0]?.cuid || ""
-  
-  const { data: familyData } = await useFetch('/api/family_pages', {
-    method: 'GET',
-    query: { family_cuid: currentFamilyCuid, page_number: currentFamilyPageNumber},
-    watch: [currentFamilyCuid, currentFamilyPageNumber],
-    default() {
-      return [] as any;
-    },
-  });
-  
-  const familyPagesLength = computed(() => familyData.value.Pagination.total)
-  const currentPageCuid = ref<string>("");
-  const currentPage = computed(() => familyData.value?.raw_data.find(({ cuid }: Page) => cuid == currentPageCuid.value) || {});
-  watchEffect(() => currentPageCuid.value = familyData.value.raw_data![0]?.cuid || "");  
+const currentFamilyCuid = ref<string>("")
+currentFamilyCuid.value = Families.value![0]?.cuid || ""
+const currentFamily = computed(() => Families.value?.find(({ cuid }: Family) => cuid == currentFamilyCuid.value) || {})
 
-  const { data: donations } = await useFetch<PageDonation[]>('/api/family_donations', {
-    method: 'GET',
-    query: { family_cuid: currentFamilyCuid },
-    watch: [currentFamilyCuid],
-    default() {
-      return [] as any;
-    },
-  });
-  
-  watch(currentFamilyCuid, () => {
-    currentFamilyPageNumber.value = 0
-  })
-  const nextPage = () => { 
-  console.log(familyPagesLength.value / 12)
-    if(currentFamilyPageNumber.value < ((familyPagesLength.value / 12) - 1)){
-        currentFamilyPageNumber.value++
-    } 
-  }
-  const prevPage = () => {
-    if(currentFamilyPageNumber.value != 0){
-        currentFamilyPageNumber.value--
-    } 
-  }
+const { data: familyData } = await useFetch('/api/family_pages', {
+  method: 'GET',
+  query: { family_cuid: currentFamilyCuid, page_number: currentFamilyPageNumber},
+  watch: [currentFamilyCuid, currentFamilyPageNumber],
+  default() {
+    return [] as any;
+  },
+});
 
-  const totalPageDonations = computed(() => donations.value?.reduce((acc: number, curr: PageDonation) => acc + curr.amount, 0) || 0);
-  const totalDistributed = computed(() => familyData.value?.raw_data.reduce((acc: number, curr: Page) => acc + (curr.amount_distributed as number), 0) || 0);
-  const totalRemaining = computed(() => totalPageDonations.value - totalDistributed.value);
+const familyPagesLength = computed(() => familyData.value.Pagination.total)
+const currentPageCuid = ref<string>("");
+const currentPage = computed(() => familyData.value?.raw_data.find(({ cuid }: Page) => cuid == currentPageCuid.value) || {});
+watchEffect(
+  () => currentPageCuid.value = familyData.value.raw_data![0]?.cuid || ""
+);  
+
+console.log('\n\n', currentPage.value, '\n');
+
+const { data: donations } = await useFetch<PageDonation[]>('/api/family_donations', {
+  method: 'GET',
+  query: { family_cuid: currentFamilyCuid },
+  watch: [currentFamilyCuid],
+  default() {
+    return [] as any;
+  },
+});
+
+watch(currentFamilyCuid, () => {
+  currentFamilyPageNumber.value = 0
+})
+const nextPage = () => { 
+console.log(familyPagesLength.value / 12)
+  if(currentFamilyPageNumber.value < ((familyPagesLength.value / 12) - 1)){
+      currentFamilyPageNumber.value++
+  } 
+}
+const prevPage = () => {
+  if(currentFamilyPageNumber.value != 0){
+      currentFamilyPageNumber.value--
+  } 
+}
+
+const totalPageDonations = computed(() => familyData.value?.raw_data.reduce((acc: number, curr: Page) => acc + curr.amount_raised, 0) || 0);
+const totalDistributed = computed(() => familyData.value?.raw_data.reduce((acc: number, curr: Page) => acc + curr.amount_distributed, 0) || 0);
+const totalRemaining = computed(() => familyData.value?.raw_data.reduce((acc: number, curr: Page) => acc + curr.available, 0) || 0);
 </script>
 
 <template lang="pug">
@@ -127,11 +128,13 @@ div(v-if="isAdmin" class="px-10")
       :totalRemaining="totalRemaining" 
       :amount_raised="currentPage?.amount_raised" 
       :amount_distributed="currentPage?.amount_distributed"
+      :amount_available="currentPage?.amount_available"
     )
     div(class="basis-1/3")
       PayoutRecord(
         :currentPage="currentPage" 
         :currentFamily="currentFamily"
+        :familyAvailable="totalRemaining"
       )
 
   CVLegend(class="mt-10 ml-2") Family Pages

@@ -90,7 +90,45 @@ export type Page = {
     PageDonations: PageDonation[]
     last_donation_date: Date | string | null
     Reply: Reply[]
-  }
+};
+
+export type Page = {
+  cuid: string,
+  day_of_birth: Date | null,
+  day_of_passing: Date | null,
+  visitation_date: Date | null,
+  visitation_location: string,
+  visitation_address: string,
+  visitation_description: string,
+  funeral_date: Date | null,
+  funeral_location: string,
+  funeral_description: string,
+  funeral_address: string,
+  obituary: string,
+  donation_goal: int,
+  donation_description: string,
+  amount_raised: int,
+  amount_available: int,
+  amount_distributed: int,
+  deadline: Date | null,
+  userCuid: string,
+  profileImageCuid: string,
+  familyCuid: string | null,
+  status: string,
+  donation_status: string,
+  duration: string,
+  start_date: Date,          
+  goal_met_date: Date | null,         
+  page_first_name: string,
+  page_last_name: string,
+  last_donation_date: Date | null,
+  DonationPayouts: DonationPayout[],
+  Reply: Reply[],
+  Images: Image[],
+  PageDonations: PageDonation[],
+  Family: Family | null,
+  User: User,
+};
 
 export type Family = {
   cuid: string;
@@ -122,23 +160,27 @@ export type User = {
     //DonationPayouts: DonationPayout[]  
 }
 
+export type DonationStatus = 'DEPOSITED' | 'SUCCESS' | 'PENDING' | 'FAILED';
 export type PageDonation = {
-  cuid: string,  
-  userCuid: string,
-  familyCuid: String,  
-  pageCuid: string,  
-  success: boolean, 
-  transaction_id: string,  
-  amount: number,
+  cuid: string,
+  familyCuid: string,
+  pageCuid: string,
   donorFirstName: string,
   donorLastName: string,
   donorEmail: string,
-  isAnonymous: boolean,
   comments: string,
-  Page: Page,
-  donationDate: Date | string | null
-  //User: User
-}
+  isAnonymous: boolean,
+  status: DonationStatus,
+  checkoutId: string,
+  paymentId: string,
+  donationDate: Date,
+  amount: number,
+  fee: number | null,
+  net: number | null,
+  availableOn: Date | null,
+  Family: Family,
+  Page: Page
+};
 
 
 export type donation_payout = {

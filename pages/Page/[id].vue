@@ -10,19 +10,14 @@
 */
 
 
-import type { User, Page, PageDonation, Image, Reply, Family} from '@/types.d.ts'
+import type { User, Page, PageDonation, DonationPayout, Image, Reply, Family } from '@/types.d.ts'
 import { dateFormat, donationFormat } from '@/utils'
 
 const pageData = ref<Page>({
     cuid: "",
-    userCuid: "",
-    familyCuid: "",
-    page_first_name: "",
-    page_last_name: "",
     day_of_birth: null,
     day_of_passing: null,
     visitation_date: null,
-
     visitation_location: "",
     visitation_address: "",
     visitation_description: "",
@@ -31,20 +26,27 @@ const pageData = ref<Page>({
     funeral_location: "",
     funeral_address: "",
     obituary: "",
-    deadline: "",
     donation_goal: 0,
+    donation_description: "",
     amount_raised: 0,
+    amount_available: 0,
     amount_distributed: 0,
+    deadline: "",
+    userCuid: "",
     profileImageCuid: "",
-    Images: [],
+    familyCuid: "",
     status: "active",
     donation_status: "in progress",
     duration: "",
     start_date: null,
     goal_met_date: null,
+    page_first_name: "",
+    page_last_name: "",
     last_donation_date: null,
-    PageDonations: [],
+    DonationPayouts: [] as DonationPayout[],
     Reply: [],
+    Images: [],
+    PageDonations: [],
     Family: {
       cuid: "",
       family_name: "",
@@ -68,24 +70,28 @@ const pageData = ref<Page>({
       },
       FamilyDonations: [],
       advocateCuid: ""
-    } 
+    },
+    User: {} as User
 });
 
 const donationData = ref<PageDonation>({
-    amount: 5,
-    success: false,
-    userCuid: "",
     cuid: "",
-    pageCuid: "",
     familyCuid: "",
-    transaction_id : "",
+    pageCuid: "",
     donorFirstName: "",
     donorLastName: "",
     donorEmail: "",
-    comments: "", 
-    isAnonymous : false,
+    comments: "",
+    isAnonymous: false,
+    checkoutId: "",
+    paymentId: "",
     donationDate: "",
-    Page: ref<Page[]>([]).value[0]
+    amount: 5,
+    fee: null,
+    net: null,
+    availableOn: null,
+    Family: ref<Family>(),
+    Page: ref<Page>(),
 });
 
 const feeRecovery = ref(false)
@@ -101,31 +107,6 @@ const stripeLink_ref = ref("")
 const commentModalOpen = ref(false)
 const currentComment = ref('')
 const isUser = computed(() => cvuser.value?.user_role == "admin" || cvuser.value?.user_role == "advocate" || cvuser.value?.user_role == "family")
-
-
-/* 
-*  This creates a stripe session and redirects the user to stripe.
-*  Then it redirects to /PageDonation/pageCuid/transactionId
-*/
-const create_checkout_session = async () => {
-    if(feeRecovery.value) {
-      donationData.value.amount = 1.035 * donationData.value.amount
-    }
-    
-
-    const sessionInfo = await $fetch('/api/create_session', {
-        method: 'POST',
-      body: {
-        ...donationData,
-        cuid: id.value,
-        pageCuid: id.value,
-        familyCuid: pageDataDB.value?.familyCuid,
-        amount_raised: Math.trunc(parseFloat(donationData.value.amount as unknown as string) * 100) as number
-      }
-    });
-    stripeLink_ref.value = sessionInfo as string
-    await navigateTo(stripeLink_ref.value as string,  { external: true } )
-};
 
 // Method to populate the page with data based on the cuid in the url
 const { data : pageDataDB } = await useFetch<Page>('/api/page', {

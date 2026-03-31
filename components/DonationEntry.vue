@@ -28,7 +28,6 @@ const subscribing = ref(true)
 
 const donationData = ref<PageDonation>({
     amount: 5,
-    success: false,
     cuid: "",
     pageCuid: props.pageCuid,
     familyCuid: props.familyCuid,
@@ -39,7 +38,6 @@ const donationData = ref<PageDonation>({
     comments: "",
     donationDate: null,
     Page: ref<Page[]>([]).value[0],
-    userCuid: '',
     isAnonymous: false
 });
 
@@ -63,7 +61,12 @@ const create_checkout_session = async () => {
     };
     const sessionInfo = await $fetch('/api/integrations/stripe/create_session', {
         method: 'POST',
-        body: { ...donationData.value, cuid: props.pageCuid, family_cuid: props.familyCuid, amount_raised: Math.trunc(parseFloat(donationData.value.amount as unknown as string) * 100) as number, subscribed: subscribing.value}
+        body: {
+          ...donationData.value,
+          cuid: props.pageCuid,
+          family_cuid: props.familyCuid,
+          subscribed: subscribing.value
+        }
     });
 
     stripeLink_ref.value = sessionInfo as string

@@ -8,28 +8,28 @@
 export default defineEventHandler(async event => {
 	const { cuid } = getQuery(event);
 	if( (cuid as string) == "0" || cuid == undefined){
-		return false
+          return false
 	}
 	const queryRes = await event.context.client.page.findFirst({
 	where: {
-		cuid : cuid as string
+          cuid : cuid as string
 	},
 	include: {
-		Images: true,
-		PageDonations: {
-			where: {
-				success: true
-			},
-			orderBy: {
-				donationDate: 'desc'
-			},
-		},
-		Reply: {
-			orderBy: {
-				date: 'desc'
-			}
-		}
+          Images: true,
+          PageDonations: {
+            where: {
+              status: "SUCCESS"
+            },
+            orderBy: {
+              donationDate: 'desc'
+            },
+          },
+          Reply: {
+            orderBy: {
+              date: 'desc'
+            }
+          }
 	}
 	});
-	  return queryRes;
+        return queryRes;
 })

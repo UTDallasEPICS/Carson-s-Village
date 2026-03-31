@@ -6,6 +6,7 @@ import type { Family, User, Page, PageDonation, donation_payout } from "@/types.
 const props = defineProps<{
   currentPage: Page
   currentFamily: Family
+  familyAvailable: number
 }>()
 const transaction_id = ref("")
 const error = ref("")
@@ -33,12 +34,12 @@ const save = async () => {
     error.value = result as string
   }
 };
-const setWholeAmountPage = function(){
-  amount.value = (((props.currentPage.amount_raised as number) - (props.currentPage.amount_distributed as number)) / 100.0) + ""
+const setWholeAmountPage = function() {
+  amount.value = (props.currentPage.amount_available / 100.0) + "";
 }
 
-const setWholeAmountFamily = function(){
-  amount.value = (((props.currentFamily.Pages.reduce((acc: number, curr: Page) => acc + (curr.amount_raised as number), 0) || 0)) - (props.currentFamily.Pages.reduce((acc: number, curr: Page) => acc + (curr.amount_distributed as number), 0) || 0)) /100.0 + ""
+const setWholeAmountFamily = function() {
+  amount.value = (props.familyAvailable / 100.0) + "";
 }
 
 </script>

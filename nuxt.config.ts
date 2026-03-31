@@ -22,6 +22,7 @@ export default defineNuxtConfig({
     ISSUER: '',
     STRIPE_PUBLIC: '',
     STRIPE_SECRET: '',
+    STRIPE_WEBHOOK_SECRET: '',
     AWS_S3_BUCKET_NAME: '',
     EMAIL_SOURCE_ADDRESS: '',
   },
@@ -35,5 +36,10 @@ export default defineNuxtConfig({
     resolve: {
       dedupe:["vue"]
     },
+    server: {
+      allowedHosts: [
+        '.trycloudflare.com'
+      ]
+    }
   },
 })

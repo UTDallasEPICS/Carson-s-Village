@@ -1,6 +1,3 @@
-import  { nanoid } from "nanoid"
-// Stripe API tokens
-
 import Stripe from "stripe"
 import { isEmail } from 'class-validator';
 
@@ -12,7 +9,6 @@ const runtime = useRuntimeConfig()
 *	submit donation details to the database and creates a stripe session
 */
 export default defineEventHandler(async event => {
-    const transaction_id = nanoid();
     const stripe = new Stripe(runtime.STRIPE_SECRET)
     const body = await readBody(event)
     const page_cuid = body.pageCuid
@@ -20,6 +16,9 @@ export default defineEventHandler(async event => {
     const state = {}; 
     const userCuid = body.userCuid
     const familyCuid = body.familyCuid 
+
+    // Only flag subscribing if valid email and subscribed option TRUE
+    const isSubscribing = isEmail(body.donorEmail) && body.subscribed;
 
     try {
       const page = await event.context.client.page.findFirst({
@@ -39,45 +38,23 @@ export default defineEventHandler(async event => {
             unit_amount: Math.trunc(parseFloat(body.amount as unknown as string) * 100) as number,
             product_data: {
               name: `Donation to ${page?.page_first_name} ${page?.page_last_name}`,
-            },
+            },  
           },
           quantity: 1
         },
       ],
       metadata: {
-        transaction_id: transaction_id,
-        amount: Math.trunc(parseFloat(body.amount as unknown as string) * 100) as number,
-        target_user_id: userCuid,
         target_family_id: familyCuid,
-        target_first_name: page?.page_first_name as string,
-        target_last_name: page?.page_last_name as string,
         target_page_cuid: page?.cuid as string,
+        donor_first_name: body.donorFirstName,
+        donor_last_name: body.donorLastName,
+        isSubscribing: isSubscribing as string,
+        isAnonymous: body.isAnonymous as string,
         comments: donorComments,
       },
-      success_url: `${runtime.BASEURL}api/integrations/stripe/complete_session/${transaction_id}?subscribing=${body.subscribed ? '1' : '0'}`,
-      cancel_url: `${runtime.BASEURL}Page/${page_cuid}`,
+      success_url: `${runtime.BASEURL}Page/${page_cuid}`,
+      cancel_url: `${runtime.BASEURL}Page/${page_cuid}`
     });
-
-    const queryRes = await event.context.client.pageDonation.create({
-      data: {
-        transaction_id: transaction_id,
-        amount: Math.trunc(parseFloat(body.amount as unknown as string) * 100) as number,
-        donorFirstName: body.donorFirstName,
-        donorLastName: body.donorLastName,
-        donorEmail: body.donorEmail,
-        comments: donorComments, 
-        donationDate: new Date().toISOString(),
-        Family: {
-          connect: {
-            cuid: familyCuid
-          }
-        },
-        Page: {
-          connect: {
-            cuid: page_cuid,
-          }
-        }
-    }})
 
     return session.url;
   } catch(e) {
