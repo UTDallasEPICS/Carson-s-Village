@@ -1,7 +1,6 @@
 // This file contains the code for handling the POST request to the image upload endpoint
 
 import { nanoid } from "nanoid"
-import { getSignedFileUrl } from "./integrations/aws"
 const runtime = useRuntimeConfig()
 export default defineEventHandler(async (event) => {
   const body = await readBody(event) 
