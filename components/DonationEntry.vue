@@ -6,10 +6,6 @@ const props = defineProps({
         type: String,
         default: ""
     }, 
-    userCuid: {
-        type: String,
-        default: ""
-    }, 
     familyCuid: {
         type: String,
         default: ""
@@ -29,18 +25,14 @@ const displayAmount = ref(5)
 
 const donationData = ref<PageDonation>({
     amount: 500,
-    success: false,
-    cuid: "",
     pageCuid: props.pageCuid,
     familyCuid: props.familyCuid,
-    transaction_id: "",
     donorFirstName: "",
     donorLastName: "",
     donorEmail: cvuser.value?.email ?? "",
     comments: "",
     donationDate: null,
     Page: ref<Page[]>([]).value[0],
-    userCuid: props.userCuid,
     isAnonymous: false
 });
 
@@ -48,7 +40,7 @@ const donationData = ref<PageDonation>({
 watch(
   displayAmount,
   (amount) => {
-    donationData.value.amount = amount * 100;
+    donationData.value.amount = amount ? amount * 100 : 0;
   }
 );
 
@@ -63,7 +55,7 @@ const create_checkout_session = async () => {
     }
 
     // Create stripe checkout and redirect user to checkout
-    const sessionUrl = await $fetch('/api/integrations/stripe/create_session', {
+    const sessionUrl = await $fetch('/api/stripe/create_session', {
         method: 'POST',
         body: {
           ...donationData.value, 
