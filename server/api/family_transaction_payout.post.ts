@@ -24,7 +24,6 @@ export default defineEventHandler(async event => {
           }
 
           if(balance < body.amount) {
-            //console.log(balance)
             return "Stripe Account Balance too low"
           }
 

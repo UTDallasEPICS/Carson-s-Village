@@ -1,3 +1,7 @@
+engineStrict: true
+
+nodeVersion: 24.11.1
+
 onlyBuiltDependencies:
   - '@parcel/watcher'
   - '@prisma/client'
@@ -5,6 +9,4 @@ onlyBuiltDependencies:
   - aws-sdk
   - esbuild
   - prisma
-
-nodeVersion: 24.11.1
-engineStrict: true
+  - unrs-resolver

@@ -6,30 +6,39 @@
 */
 
 export default defineEventHandler(async event => {
-	const { cuid } = getQuery(event);
-	if( (cuid as string) == "0" || cuid == undefined){
-		return false
-	}
-	const queryRes = await event.context.client.page.findFirst({
-	where: {
-		cuid : cuid as string
-	},
-	include: {
-		Images: true,
-		PageDonations: {
-			where: {
-				success: true
-			},
-			orderBy: {
-				donationDate: 'desc'
-			},
-		},
-		Reply: {
-			orderBy: {
-				date: 'desc'
-			}
-		}
-	}
-	});
-	  return queryRes;
+  const { cuid } = getQuery(event);
+
+  if( (cuid as string) == "0" || cuid == undefined){
+    throw createError({
+      statusCode: 400,
+      statusMessage: `Page ${cuid} is not allowed`
+    });
+  }
+
+  const queryRes = await event.context.client.page.findFirst({
+    where: {
+      cuid : cuid as string
+    },
+    include: {
+      Images: true,
+      PageDonations: {
+        orderBy: {
+          donationInitiated: 'desc'
+        },
+      },
+      Reply: {
+        orderBy: {
+          date: 'desc'
+        }
+      }
+    }
+  });
+  if (!queryRes) {
+    throw createError({
+      statusCode: 404,
+      statusMessage: `Could not find Page ${cuid}`
+    });
+  }
+
+  return queryRes;
 })
