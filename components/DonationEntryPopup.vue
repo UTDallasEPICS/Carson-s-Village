@@ -44,23 +44,6 @@ defineEmits(['update:displayDonationPopup']);
 const feeRecovery = ref(false)
 const anonymous = ref(false)
 
-const donationData = ref<PageDonation>({
-    amount: 5,
-    success: false,
-    cuid: "",
-    pageCuid: props.pageCuid,
-    familyCuid: props.familyCuid,
-    transaction_id: "",
-    donorFirstName: "",
-    donorLastName: "",
-    donorEmail: "",
-    comments: "",
-    donationDate: null,
-    Page: ref<Page[]>([]).value[0],
-    userCuid: '',
-    isAnonymous: false
-});
-
 // When popup is open stop background from scrolling
 watch(() => props.displayDonationPopup, (isOpen) => {
   if (isOpen) {
@@ -90,8 +73,6 @@ div(
           h1(class="ml-4 pt-9 text-2xl text-gray-dark sm:text-3xl font-semibold tracking-[0.35px]") Donor Information
       DonationEntry(
         v-if="isActive"
-        :isActive="isActive"
-        :donationData="donationData"
         :pageCuid="pageCuid"
         :familyCuid="familyCuid"
       )

@@ -71,23 +71,6 @@ const pageData = ref<Page>({
     } 
 });
 
-const donationData = ref<PageDonation>({
-    amount: 5,
-    success: false,
-    userCuid: "",
-    cuid: "",
-    pageCuid: "",
-    familyCuid: "",
-    transaction_id : "",
-    donorFirstName: "",
-    donorLastName: "",
-    donorEmail: "",
-    comments: "", 
-    isAnonymous : false,
-    donationDate: "",
-    Page: ref<Page[]>([]).value[0]
-});
-
 const feeRecovery = ref(false)
 const userCuid = ref("0")
 const displayDonationPopup = ref(false)
@@ -111,11 +94,9 @@ const { data : pageDataDB } = await useFetch<Page>('/api/page', {
 if(pageDataDB.value){
     pageData.value = pageDataDB.value as unknown as Page;
     userCuid.value = pageData.value.userCuid
-    //familyCuid = family_cuid.value as string
-    //familyCuid.value = pageDataDB.value.familyCuid as string
-  }
+}
 
-const isActive = computed(() => pageDataDB.value?.status == "active")
+const isActive = computed(() => pageDataDB.value?.status.toLowerCase() == "active")
 
 // todo: Set as pop up?
 const shareFacebook = () => {
@@ -201,7 +182,6 @@ DonationEntryPopup(
   :donation_goal_provided="donation_goal_provided"
   :donated_percentage="donated_percentage"
   :isActive="isActive"
-  :donationData="donationData"
   :pageCuid="pageCuid"
   :familyCuid="familyCuid"
 )  

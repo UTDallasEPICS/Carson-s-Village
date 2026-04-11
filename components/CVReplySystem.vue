@@ -9,7 +9,6 @@ const props = defineProps<{
     replies: Reply[]
 }>()
 
-console.log(props.familyCuid)
 const replyData = ref<Partial<Reply>>({
     name: "",
     reply:"",

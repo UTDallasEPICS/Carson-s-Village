@@ -9,10 +9,6 @@ const props = defineProps({
     familyCuid: {
         type: String,
         default: ""
-    },
-    isActive: {
-        type: Boolean,
-        default: false
     }
 })
 
@@ -46,8 +42,8 @@ watch(
 
 const create_checkout_session = async () => {
     if(feeRecovery.value) {
-      // Calculate stripe fee
-      donationData.value.amount += Math.ceil(((donationData.value.amount * 0.029 + 0.3) / 0.971) * 100);
+      // Calculate stripe fee and add to amount
+      donationData.value.amount += Math.ceil((donationData.value.amount * 0.029 + 30) / 0.971);
     } 
     if(anonymous.value) {
         donationData.value.donorFirstName = "anonymous"
@@ -64,8 +60,6 @@ const create_checkout_session = async () => {
     });
     await navigateTo(sessionUrl as string,  { external: true } )
 };
-
-//todo: fix form
 </script>
 
 <template lang="pug">
@@ -92,7 +86,7 @@ form
             br
     img(v-if="displayAmount < 5" src="/tooLowDonations.png" class="h-[115px] w-[600px]")
     input(id="fee_recovery" type='checkbox' class="sm:ml-1" v-model='feeRecovery')
-    label.mt-4.ml-4.text-md(for='fee_recovery' class="sm:mt-0 tracking-[0.35px]") I'd like to help cover the transaction fees of ${{ props.isActive ? ((0.029 * displayAmount + 0.30)/0.971).toFixed(2) : 0}} for my donation. 
+    label.mt-4.ml-4.text-md(for='fee_recovery' class="sm:mt-0 tracking-[0.35px]") I'd like to help cover the transaction fees of ${{(0.029 * displayAmount + 0.30).toFixed(2)}} for my donation. 
     div(class="col-md-8 ml-4 pt-6 pr-5 flex items-center justify-center")
         ActionButton(class="mx-auto text-md" @click="create_checkout_session" :disabled="displayAmount < 5" :class="{'transition duration-300 bg-orange-999 hover:bg-green-600': true, 'cursor-not-allowed': displayAmount < 5 }") DONATE NOW
 </template>

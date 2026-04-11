@@ -42,7 +42,7 @@ const onFile = async (event: Event) => {
       body: file,
     })
     if (!response.ok) {
-      console.log("Failed to upload a file")
+      console.error("Failed to upload a file")
       throw new Error("Failed to upload data")  
     }
 

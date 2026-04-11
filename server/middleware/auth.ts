@@ -9,8 +9,24 @@ import { PrismaClient } from "@prisma/client"
 import type { User, Family} from "@/types.d.ts"
 const client = new PrismaClient()
 export default defineEventHandler(async event => {
-  const stripe = new Stripe(runtime.STRIPE_SECRET, { apiVersion:"2022-11-15"}) // todo: upgrade to "2023-10-16" version
-  event.context.client = client
+  const method = getMethod(event);
+  if (method == "POST") {
+    const rawBody = await readRawBody(event, false);  // Attach rawbody so stripe webhook authentication works
+    event.context.rawBody = rawBody;
+  }
+
+  event.context.client = client;
+
+  // Define routes excluded from middleware
+  const excludedRoutes = [ '/api/stripe/webhooks' ];
+  const isExcluded = excludedRoutes.some((route) => 
+    event.path.startsWith(route)
+  );
+  if (isExcluded) {
+    return;
+  }
+
+  const stripe = new Stripe(runtime.STRIPE_SECRET)
   const cvtoken = getCookie(event, "cvtoken") || ""
   // not logged in but trying to
   if (!cvtoken && !(event.node.req.url?.includes('/api/callback') || event.node.req.url?.includes("/Page/") || event.node.req.url?.includes("/api/page") || event.node.req.url?.includes("/"))) {
@@ -66,6 +82,11 @@ export default defineEventHandler(async event => {
               const newStripeAccount = await stripe.accounts.create({
                   capabilities: {
                     card_payments: { requested: true },
+                    us_bank_account_ach_payments: { requested: true },
+                    amazon_pay_payments: { requested: true },
+                    revolut_pay_payments: { requested: true },
+                    klarna_payments: { requested: true },
+                    affirm_payments: { requested: true },
                     transfers: { requests: true }
                   },
                   business_profile: {

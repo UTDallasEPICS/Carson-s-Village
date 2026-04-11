@@ -11,7 +11,7 @@ const runtime = useRuntimeConfig()
 export default defineEventHandler(async event => {
   const stripe = new Stripe(runtime.STRIPE_SECRET)
   const body = await readBody(event)
-  const isSubsribing: boolean = isEmail(body.donorEmail) && body.subscribed;
+  const isSubscribing: boolean = isEmail(body.donorEmail) && body.subscribed;
 
   try {
       
@@ -49,8 +49,25 @@ export default defineEventHandler(async event => {
         target_last_name: page?.page_last_name,
         donor_first_name: body.donorFirstName,
         donor_last_name: body.donorLastName,
+        donation_date: Date.now(),
         comments: body.comments,
         isSubscribing: isSubscribing,
+      },
+
+      // attach metadata to payment as well, and also add donor email
+      payment_intent_data: {
+        metadata: {
+          target_family_id: body.familyCuid,
+          target_pageCuid: body.pageCuid,
+          target_first_name: page?.page_first_name,
+          target_last_name: page?.page_last_name,
+          donor_first_name: body.donorFirstName,
+          donor_last_name: body.donorLastName,
+          donor_email: isEmail(body.donorEmail) ? body.donorEmail : undefined,
+          donation_date: Date.now(),
+          comments: body.comments,
+          isSubscribing: isSubscribing,
+        },
       },
       success_url: `${runtime.BASEURL}Page/${body.pageCuid}`,
       cancel_url: `${runtime.BASEURL}Page/${body.pageCuid}`,
