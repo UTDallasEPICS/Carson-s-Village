@@ -17,6 +17,7 @@
     "@vue/language-plugin-pug": "^2.0.7",
     "eslint": "^9.39.3",
     "nuxt": "^3.11.2",
+    "tsx": "^4.21.0",
     "prisma": "^7.7.0"
   },
   "dependencies": {
