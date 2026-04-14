@@ -8,26 +8,82 @@ datasource db {
 }
 
 model User {
-  cuid           String   @id @default(cuid())
-  email          String   @unique
-  user_role      String   @default("family")
-  first_name     String   @default("")
-  middle_name    String   @default("")
-  last_name      String   @default("")
-  phone          String   @default("")
-  address        String   @default("")
-  familyCuid     String?
+  id              String    @id
+  name            String
+  email           String
+  emailVerified   Boolean   @default(false)
+  image           String?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  role            Role      @default('family')
+  banned          Boolean?
+  banReason       String?
+  banExpires      DateTime?
+
+  phone           String   @default("")
+  address         String   @default("")
+  familyCuid      String?
 
   //RELATIONS
-  Family         Family?  @relation("family_member", fields: [familyCuid], references: [cuid])
-  AdvocateFamily Family[] @relation("advocate_family")
-  Pages          Page[]
+  Family          Family?  @relation("family_member", fields: [familyCuid], references: [id])
+  AdvocateFamily  Family[] @relation("advocate_family")
+  Pages           Page[]
+  sessions        Session[]
+  accounts        Account[]
 
-  @@map("user_accounts")
+  @@unique([email])
+  @@map("user")
+}
+
+model Session {
+  id              String    @id
+  expiresAt       DateTime
+  token           String
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  userId          String
+  impersonatedBy  String?
+
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("session")
+}
+
+model Account {
+  id                String  @id
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@map("account")
+}
+
+model Verification {
+  id          String   @id @default(cuid())
+  identifier  String
+  value       String
+  expiresAt   DateTime
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@unique([identifier, value])
+  @@map("verification")
 }
 
 model Family {
-  cuid                  String           @id @default(cuid())
+  id                    String           @id 
   family_name           String
   stripe_account_id     String?
   created_at            DateTime
@@ -36,13 +92,13 @@ model Family {
 
   //RELATIONS
   FamilyMembers         User[]           @relation("family_member")
-  AdvocateResponsible   User             @relation("advocate_family", fields: [advocateCuid], references: [cuid])
+  AdvocateResponsible   User             @relation("advocate_family", fields: [advocateCuid], references: [id])
   FamilyDonations       PageDonation[]
   Pages                 Page[]
 }
 
 model Page {
-  cuid                   String           @id @default(cuid())
+  id                    String           @id 
   day_of_birth           DateTime?
   day_of_passing         DateTime?
   visitation_date        DateTime?
@@ -72,8 +128,8 @@ model Page {
   last_donation_date     DateTime?
 
   //RELATIONS
-  Family                 Family?          @relation(fields: [familyCuid], references: [cuid])
-  User                   User             @relation(fields: [userCuid], references: [cuid])
+  Family                 Family?          @relation(fields: [familyCuid], references: [id])
+  User                   User             @relation(fields: [userCuid], references: [id])
   Reply                  Reply[]
   Images                 Image[]
   PageDonations          PageDonation[]
@@ -83,7 +139,7 @@ model Page {
 
 // Page donations only created when donation is confirmed successful
 model PageDonation {
-  cuid                String         @id @default(cuid())
+  id                  String         @id 
   familyCuid          String         @map("family_cuid")
   pageCuid            String         @map("page_cuid")
   donorFirstName      String         @default("")
@@ -95,38 +151,44 @@ model PageDonation {
   amount              Int            //In cents
 
   //RELATIONS
-  Family              Family         @relation(fields: [familyCuid], references: cuid)
-  Page                Page           @relation(fields: [pageCuid], references: cuid)
+  Family              Family         @relation(fields: [familyCuid], references: id)
+  Page                Page           @relation(fields: [pageCuid], references: id)
 
   @@map("page_donations")
 }
 
 model CC_Token {
-  cuid          String   @id @default("0")
+  id          String    @id @default("0")
   token         String
   refresh_token String
   date          DateTime @default(now())
 }
 
 model Reply {
-  cuid       String   @id @default(cuid())
-  pageCuid   String   @map("page_cuid")
-  familyCuid String   @map("family_cuid")
-  reply      String   @default("")
-  name       String?  @default("")
-  Page       Page     @relation(fields: [pageCuid], references: cuid)
-  suspended  Boolean  @default(false)
-  date       DateTime @default(now())
+  id          String    @id 
+  pageCuid    String    @map("page_cuid")
+  familyCuid  String    @map("family_cuid")
+  reply       String    @default("")
+  name        String?   @default("")
+  Page        Page      @relation(fields: [pageCuid], references: id)
+  suspended   Boolean   @default(false)
+  date        DateTime  @default(now())
 }
 
 model Image {
-  cuid     String  @id @default(cuid())
-  url      String
-  pageCuid String?
+  id        String  @id 
+  url       String
+  pageCuid  String?
 
   //RELATIONS
-  Page     Page?   @relation(fields: [pageCuid], references: [cuid])
+  Page      Page?   @relation(fields: [pageCuid], references: [id])
 
   @@unique([pageCuid, url])
   @@map("images")
+}
+
+enum Role {
+  admin
+  advocate
+  family
 }
