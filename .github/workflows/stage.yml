@@ -9,7 +9,7 @@ jobs:
   build:
     permissions:
       id-token: write # This is required for requesting the JWT
-    runs-on: ubuntu-latest-arm
+    runs-on: ubuntu-24.04-arm
 
     steps:
       - name: Checkout code
