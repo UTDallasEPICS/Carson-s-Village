@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 definePageMeta({
-  middleware: ["advocate-guard"]
+  middleware: ["admin-guard"]
 })
 
 const router = useRoute()

@@ -13,7 +13,7 @@ import type { Family } from "~~/prisma/generated/models"
 import { ChevronUpIcon, ChevronDownIcon, ChevronUpDownIcon } from '@heroicons/vue/24/solid'
 
 definePageMeta({
-  middleware: ["advocate-guard"]
+  middleware: ["admin-guard"]
 })
 
 type User2 = {

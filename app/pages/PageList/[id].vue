@@ -1,4 +1,8 @@
 <script lang = "ts" setup>
+definePageMeta({
+  middleware: ['family-guard']
+})
+
 import { dateFormat, donationFormat } from '@/utils'
 import type { Page, User, Image, PageDonation, Reply } from '@/types.d.ts'
 import { ref } from "vue";

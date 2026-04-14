@@ -9,6 +9,9 @@
 *	Located under "/EditPage/"
 */
 
+definePageMeta({
+  middleware: ['family-guard']
+})
 
 import { dateFormat, donationFormat } from '@/utils'
 import '@vuepic/vue-datepicker/dist/main.css';

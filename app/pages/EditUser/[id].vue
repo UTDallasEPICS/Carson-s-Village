@@ -19,7 +19,7 @@ import {
 } from '@headlessui/vue'
 
 definePageMeta({
-  middleware: ["advocate-guard"]
+  middleware: ['family-guard']
 })
 
 const cvuser = useCookie<User>('cvuser')

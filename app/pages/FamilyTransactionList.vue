@@ -9,7 +9,7 @@
 */
 
 definePageMeta({
-  middleware: ["admin-guard"]
+  middleware: ["family-guard"]
 })
 
 import { dateFormat, donationFormat } from '@/utils'

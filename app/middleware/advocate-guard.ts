@@ -1,8 +1,7 @@
 export default defineNuxtRouteMiddleware((to, from) => {
-  const cvuser = useCookie("cvuser")
-  const role = cvuser.value?.user_role
+  const { data: session } = await authClient.getSession(useFetch);
 
-  if (role != "advocate" && role != "admin") {
-    return navigateTo("/")
+  if (!session.value || session.value.role !== 'admin' || session.value.role !== 'advocate') {
+    return navigateTo('/');
   }
 })

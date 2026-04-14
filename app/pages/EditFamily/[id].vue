@@ -20,7 +20,7 @@ import {
 import { vElementSize } from '@vueuse/components'
 
 definePageMeta({
-  middleware: ["advocate-guard"]
+  middleware: ["family-guard"]
 })
 
 const cvuser = useCookie<User>('cvuser')
