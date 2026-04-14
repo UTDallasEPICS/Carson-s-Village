@@ -25,7 +25,7 @@ export default defineEventHandler(async event => {
         console.log("amount raised after removing formating ", data.amount_raised)
       }
       // updates a pre-existing page
-      const queryRes = await event.context.client.page.update({
+      const queryRes = await prisma.page.update({
         where: {
           cuid: data.cuid
         },

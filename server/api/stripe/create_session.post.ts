@@ -15,7 +15,7 @@ export default defineEventHandler(async event => {
 
   try {
       
-    const page = await event.context.client.page.findFirst({
+    const page = await prisma.page.findFirst({
       where: {
         cuid: body.pageCuid
       },

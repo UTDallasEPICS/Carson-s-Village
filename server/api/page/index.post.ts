@@ -15,13 +15,13 @@ export default defineEventHandler(async event => {
     data.donation_goal = Math.trunc(data.donation_goal * 100);
     data.amount_raised = Math.trunc(data.amount_raised * 100);
     try {
-      const family = await event.context.client.family.findFirst({
+      const family = await prisma.family.findFirst({
         where: { cuid: familyCuid as string }
       })
 
       data.status = family?.stripe_account_id ? 'active' : 'no family stripe account'
       // Creates a new entry in the database in the page model to a specfic user
-      const queryRes = await event.context.client.page.create({
+      const queryRes = await prisma.page.create({
         data: {
           ...data, cuid: undefined,
           User: {
@@ -41,7 +41,7 @@ export default defineEventHandler(async event => {
         // Reason: the cuid for the family page is created in the above in the creation query
         await Promise.all(
           Images.map(async (image: Image) => 
-            await event.context.client.image.update({
+            await prisma.image.update({
               where: {
                 cuid: image.cuid
               },

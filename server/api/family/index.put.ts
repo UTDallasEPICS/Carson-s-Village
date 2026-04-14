@@ -15,7 +15,7 @@ const body = await readBody(event);
 console.log(body)
 if(event.context.user?.user_role === "advocate" || event.context.user?.user_role === "admin") {
     try {
-        const queryRes = await event.context.client.family.update({
+        const queryRes = await prisma.family.update({
           where: {
             cuid: familyCuid as string
           },

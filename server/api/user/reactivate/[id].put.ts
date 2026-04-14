@@ -11,7 +11,7 @@ const body = await readBody(event);
 const cvtoken = getCookie(event, "cvtoken") || ""
 if(event.context.user?.user_role == "advocate" || event.context.user?.user_role === "admin"){
     if(body.user_role == 'family' || (body.user_role == 'admin' && event.context.user?.user_role === "admin") || (body.user_role == 'advocate' && event.context.user?.user_role === "admin")) {
-      const queryRes = await event.context.client.user.update({
+      const queryRes = await prisma.user.update({
         where: {
           cuid: id
         },

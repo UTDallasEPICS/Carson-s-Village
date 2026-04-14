@@ -9,7 +9,7 @@ export default defineEventHandler(async event => {
   const { pageCuid } = getQuery(event)
 
   // retrives all the images that belong to a family page to a family page
-  const queryRes = await event.context.client.image.findMany({
+  const queryRes = await prisma.image.findMany({
       where: {
           pageCuid : pageCuid as string
         }

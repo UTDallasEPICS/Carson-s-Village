@@ -14,9 +14,9 @@ export default defineEventHandler(async event => {
     }
 
     if(event.context.user?.user_role === "admin" && cuid === "") {
-      const [count, pagesResult] = await event.context.client.$transaction([
-        event.context.client.page.count(),
-        event.context.client.page.findMany({
+      const [count, pagesResult] = await prisma.$transaction([
+        prisma.page.count(),
+        prisma.page.findMany({
         skip: page_number as number * 12,
         take: 12,
         include: {
@@ -36,8 +36,8 @@ export default defineEventHandler(async event => {
         data:  pagesResult
       };
     } else if(event.context.user?.user_role === "advocate" && cuid === "") {
-      const [count, pagesResult] = await event.context.client.$transaction([
-        event.context.client.page.count({
+      const [count, pagesResult] = await prisma.$transaction([
+        prisma.page.count({
           where: {
             Family: {
               AdvocateResponsible: {
@@ -46,7 +46,7 @@ export default defineEventHandler(async event => {
             },
           } 
         }),
-        event.context.client.page.findMany({
+        prisma.page.findMany({
         skip: page_number as number * 12,
         take: 12,
         where: {
@@ -73,15 +73,15 @@ export default defineEventHandler(async event => {
         data:  pagesResult
       };
     } else if(event.context.user?.user_role === "admin" && cuid !=="" || event.context.user?.user_role === "advocate" && cuid !==""  || event.context.user?.cuid == cuid ||  event.context.user?.familyCuid == cuid){
-      const [count, pagesResult, pagesUnpaginated] = await event.context.client.$transaction([
-        event.context.client.page.count({ where: {
+      const [count, pagesResult, pagesUnpaginated] = await prisma.$transaction([
+        prisma.page.count({ where: {
           OR: [ { 
             userCuid: cuid as string },
             {
             familyCuid: cuid as string
           } ]
       }}),
-         event.context.client.page.findMany({
+         prisma.page.findMany({
             where: {
               OR: [ {
                 userCuid: cuid as string,
@@ -101,7 +101,7 @@ export default defineEventHandler(async event => {
                     }
                   }
                 }),
-        event.context.client.page.findMany({
+        prisma.page.findMany({
           where: {
             OR: [ {  
               userCuid: cuid as string },

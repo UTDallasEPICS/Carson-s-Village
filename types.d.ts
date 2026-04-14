@@ -44,12 +44,12 @@ export type DonationPayout = PDonationPayout & {
   Pages?: PayoutToPage;
 };
 */
-import { PrismaClient, DonationPayout } from "@prisma/client"
+import { PrismaClient,  } from "~~/prisma/generated/client";
+import type { DonationPayout } from "~~/prisma/generated/models";
 
 declare module 'h3' {
   interface H3EventContext {
     user?: Partial<User> & { Family: Partial<Family>}; 
-    client: PrismaClient;
     claims?: {
       email: string
     }

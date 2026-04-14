@@ -9,7 +9,7 @@ import {loginRedirectUrl} from "../auth0"
 export default defineEventHandler(async event => {
 
   if(event.context.user?.user_role === "advocate" || event.context.user?.user_role === "admin") {
-    const queryRes = await event.context.client.family.findMany({
+    const queryRes = await prisma.family.findMany({
       include: {
         Pages: true,
         FamilyMembers: true,

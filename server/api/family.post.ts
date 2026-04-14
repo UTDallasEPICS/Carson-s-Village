@@ -46,7 +46,7 @@ export default defineEventHandler(async event => {
 
   if(event.context.user?.user_role === "advocate" || event.context.user?.user_role === "admin") {
     try {
-      const queryRes = await event.context.client.family.create({
+      const queryRes = await prisma.family.create({
         data: {
           family_name: family_name,
           AdvocateResponsible: {

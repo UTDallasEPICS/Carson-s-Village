@@ -23,7 +23,7 @@ export default defineEventHandler(async event => {
 
         const respBody = await response.json()
 
-        const addToken = await event.context.client?.CC_Token.upsert({
+        const addToken = await prisma.CC_Token.upsert({
           where: {
             cuid: "0"
           },

@@ -17,9 +17,9 @@ export default defineEventHandler(async event => {
     } else {
       orderBy = { [(sortedColumn as string) || 'last_name']: order || 'asc' };
     }
-    const [ count, userData, unsortedUsers ] = await event.context.client.$transaction([
-      event.context.client.user.count(),
-      event.context.client.user.findMany({
+    const [ count, userData, unsortedUsers ] = await prisma.$transaction([
+      prisma.user.count(),
+      prisma.user.findMany({
     orderBy: orderBy,
       skip: page_number as number * 12,
       take: 12,
@@ -28,7 +28,7 @@ export default defineEventHandler(async event => {
         Family: true
       }
       }),
-      event.context.client.user.findMany({
+      prisma.user.findMany({
       skip: page_number as number * 12,
       take: 12,
       include: {

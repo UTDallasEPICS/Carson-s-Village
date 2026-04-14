@@ -9,7 +9,7 @@ import {loginRedirectUrl} from "../auth0"
 export default defineEventHandler(async event => {
   const family_cuid = getRouterParam(event, 'id')
   if( event.context.user?.user_role == "advocate" || event.context.user?.user_role == "admin" || event.context.user?.familyCuid === family_cuid as string){
-    const queryRes = await event.context.client.family.findFirst({
+    const queryRes = await prisma.family.findFirst({
         where: { cuid: family_cuid as string },
       include: {
         Pages: true,

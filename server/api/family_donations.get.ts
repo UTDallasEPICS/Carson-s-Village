@@ -13,7 +13,7 @@ export default defineEventHandler(async event => {
     }
     if(event.context.user?.user_role === "admin") {
       console.log(family_cuid)
-      const queryRes = await event.context.client.pageDonation.findMany({
+      const queryRes = await prisma.pageDonation.findMany({
           where: {
             familyCuid: family_cuid as string,
             success: true

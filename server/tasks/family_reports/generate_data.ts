@@ -1,9 +1,7 @@
 const runtime = useRuntimeConfig()
 const creds = runtime.CONSTANT_CONTACTS_CLIENTID + ':' + runtime.CONSTANT_CONTACTS_SECRET
 const encodedCreds = btoa(creds)
-import { PrismaClient } from "@prisma/client";
-import type { Page } from "~/types";
-const prisma = new PrismaClient()
+import type { Page } from "~/types.d.ts";
 export default defineTask({
     meta: {
       name: "family_reports:generate_data",

@@ -1,8 +1,8 @@
-import {authRequestUrl} from './constant_contacts' 
+import {authRequestUrl} from './constant_contacts'
 
 export default defineEventHandler(async event => {
   if (event.context.user?.user_role === "admin")  {
-    const removeToken = await event.context.client.CC_Token.deleteMany()
+    const removeToken = await prisma.CC_Token.deleteMany()
 
     await sendRedirect(event, authRequestUrl())
   }

@@ -4,7 +4,7 @@ const runtime = useRuntimeConfig()
 const stripe = new Stripe(runtime.STRIPE_SECRET)
 
 export default defineEventHandler(async (event) => {
-  const prisma = event.context.client;
+  
 
   const stripeEvent = await getStripeEvent(event, stripe);
   if (!stripeEvent) {
@@ -40,7 +40,7 @@ export default defineEventHandler(async (event) => {
           amount: netAmount
         }
       });
-      donationCuid = donaton.cuid;
+      donationCuid = donation.cuid;
 
       // Handle email newsletter subscriptions, metadata only stores strings
       if (metadata.isSubscribing === "true") {
@@ -82,9 +82,9 @@ export default defineEventHandler(async (event) => {
       console.error("Error proccessing donation charge:", e)
       
       // Delete donation in database if it exists
-      if (d) {
+      if (donationCuid) {
         const deletion = await prisma.pageDonation.delete({
-          where: { cuid: donation.cuid }
+          where: { cuid: donationCuid }
         });
       }
 

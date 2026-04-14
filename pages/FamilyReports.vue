@@ -98,7 +98,7 @@ div
     // todo: add number of family family pages an advocate is responsible, total amount raised by the families an advocate is responsible for
     //import { Family } from '@prisma/client'; 
     import type { Family, User } from '@/types.d.ts'
-    import type { Page } from '@prisma/client'
+    import type { Page } from '~~/prisma/generated/models'
     import { ref } from 'vue';
 
     import { ChevronUpIcon, ChevronDownIcon, ChevronUpDownIcon } from '@heroicons/vue/24/solid'

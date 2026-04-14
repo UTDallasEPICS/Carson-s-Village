@@ -16,7 +16,7 @@ if(event.context.user?.user_role == "advocate"  || event.context.user?.user_role
     // todo: add security so that admins can change any user, advocates can change those that they are responsible for, and users should not be able to change their own email (or stuff breaks obviously).
     // todo: change api to use a more standard format. Here we specify the fields of the body instead of using ...body because ...body breaks here
     if(body.user_role == 'family' && body.familyCuid !== '') {
-      const queryRes = await event.context.client.user.update({
+      const queryRes = await prisma.user.update({
         where: {
           cuid: body.cuid
         },
@@ -33,7 +33,7 @@ if(event.context.user?.user_role == "advocate"  || event.context.user?.user_role
         }  
           });
     } else {
-    const queryRes = await event.context.client.user.update({
+    const queryRes = await prisma.user.update({
       where: {
         cuid: body.cuid
       },

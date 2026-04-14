@@ -15,7 +15,7 @@ export default defineEventHandler(async event => {
     });
   }
 
-  const queryRes = await event.context.client.page.findFirst({
+  const queryRes = await prisma.page.findFirst({
     where: {
       cuid : cuid as string
     },

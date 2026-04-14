@@ -1,8 +1,6 @@
 // This file contains the code for handling the POST request to the image upload endpoint
 // Unused, but it works pretty well.
 import { nanoid } from "nanoid"
-import { PrismaClient } from "@prisma/client"
-const prisma = new PrismaClient()
 
 /*
 *	/EditPage/cuid (image replace)

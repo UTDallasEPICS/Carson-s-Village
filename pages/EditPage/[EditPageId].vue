@@ -22,7 +22,7 @@ import {
 import { ChevronDownIcon, ChevronLeftIcon } from '@heroicons/vue/24/solid'
 import { vElementSize } from '@vueuse/components'
 import type { Image, Page, User, PageDonation, Reply } from '@/types.d.ts'
-import type { Family } from "@prisma/client"
+import type { Family } from "~~/prisma/generated/models"
 
 const router = useRoute()
 const cvuser = useCookie<User>('cvuser');

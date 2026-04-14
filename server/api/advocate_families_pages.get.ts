@@ -1,5 +1,3 @@
-import { PrismaClient } from "@prisma/client"
-const prisma = new PrismaClient()
 import {loginRedirectUrl} from "../api/auth0"
 
 export default defineEventHandler(async event => {

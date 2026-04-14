@@ -42,7 +42,7 @@ export default defineEventHandler(async event => {
       if(body.user_role == "advocate" || (body.user_role == "admin" && event.context.user?.user_role === "admin")) {
         delete body.Pages
         delete body.AdvocateFamily
-        const queryRes = await event.context.client.user.create({
+        const queryRes = await prisma.user.create({
           data: {
             ...body, cuid: undefined, familyCuid: undefined
             }
@@ -52,11 +52,11 @@ export default defineEventHandler(async event => {
         } else if(body.user_role == "family") {
           delete body.Pages
           delete body.AdvocateFamily
-          const userRes = await event.context.client.user.create({
+          const userRes = await prisma.user.create({
             data: {
               ...body, cuid: undefined,
           }})
-          const queryRes = await event.context.client.family.update({
+          const queryRes = await prisma.family.update({
             where: { cuid: body.familyCuid },
             data: {
               updated_at: now,

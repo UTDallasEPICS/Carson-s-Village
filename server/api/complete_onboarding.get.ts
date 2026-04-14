@@ -15,7 +15,7 @@ export default defineEventHandler(async event => {
   console.log(stripeAccountFull)
   // if the user backed out of the onboard, they will be redirected back to the onboard
   if(stripeAccountFull.details_submitted) {  
-    const queryRes = await event.context.client.page.updateMany({
+    const queryRes = await prisma.page.updateMany({
       where: {
           familyCuid : event.context.user?.familyCuid as string
       },

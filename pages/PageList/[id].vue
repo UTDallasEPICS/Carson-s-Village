@@ -2,7 +2,7 @@
 import { dateFormat, donationFormat } from '@/utils'
 import type { Page, User, Image, PageDonation, Reply } from '@/types.d.ts'
 import { ref } from "vue";
-import type { Family } from '@prisma/client'
+import type { Family } from '~~/prisma/generated/models'
 import {
     Listbox,
     ListboxButton,

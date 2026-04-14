@@ -14,14 +14,14 @@ export default defineEventHandler(async (event) => {
   if(event.context.user.user_role == "admin" || event.context.user.user_role == "advocate" || event.context.user.user_role == "family") {
     try {
     // Creates a new entry in the database in the image model
-      const image = await event.context.client.image.create({
+      const image = await prisma.image.create({
         data: {
           url: contentUrl
           }
         });
 
       if(body.pageCuid != "0") {
-        const queryRes = await event.context.client.image.update({
+        const queryRes = await prisma.image.update({
           where: {
             cuid: image.cuid
           },

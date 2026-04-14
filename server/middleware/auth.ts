@@ -5,9 +5,8 @@ import Stripe from "stripe"
 const runtime = useRuntimeConfig()
 
 const stripeSecretKey = runtime.STRIPE_SECRET;
-import { PrismaClient } from "@prisma/client"
 import type { User, Family} from "@/types.d.ts"
-const client = new PrismaClient()
+
 export default defineEventHandler(async event => {
   const method = getMethod(event);
   if (method == "POST") {
@@ -15,7 +14,7 @@ export default defineEventHandler(async event => {
     event.context.rawBody = rawBody;
   }
 
-  event.context.client = client;
+  
 
   // Define routes excluded from middleware
   const excludedRoutes = [ '/api/stripe/webhooks' ];
@@ -40,7 +39,7 @@ export default defineEventHandler(async event => {
           fs.readFileSync(process.cwd()+"/cert-dev.pem")
         )
         event.context.claims = claims
-        event.context.user = await event.context.client.user.findFirst(
+        event.context.user = await prisma.user.findFirst(
           {
             where: { email: claims.email }
           ,
@@ -121,11 +120,11 @@ export default defineEventHandler(async event => {
 
               // Adds the stripe_accounnt_id to the family, but the family is still suspended from creating pages and thus preventing stray donations.
               // Too extreme? Maybe we need to elaborate further to allow families to create pages that do not recieve donations.
-              const transaction = await event.context.client?.$transaction([
-                event.context.client?.family.update({
+              const transaction = await prisma?.$transaction([
+                prisma?.family.update({
                   where: { cuid: event.context.user?.familyCuid },
                   data: { stripe_account_id: newStripeAccount.id }
-              }), event.context.client?.page.updateMany({
+              }), prisma?.page.updateMany({
                 where: {
                     familyCuid : event.context.user?.familyCuid as string
                 },
@@ -178,12 +177,12 @@ export default defineEventHandler(async event => {
                 },
               });
 
-              await event.context.client?.$transaction([
-                event.context.client.family.update({
+              await prisma?.$transaction([
+                prisma.family.update({
                   where: { cuid: event.context.user?.familyCuid },
                   data: { stripe_account_id: newTestStripeAccount.id },
                 }),
-                event.context.client.page.updateMany({
+                prisma.page.updateMany({
                   where: {
                     familyCuid: event.context.user?.familyCuid as string,
                   },

@@ -11,7 +11,7 @@ export default defineEventHandler(async event => {
         if(event.context.user?.user_role == "admin") { 
           // update success flag in transaction
           
-          const family = await event.context.client.family.findFirst({
+          const family = await prisma.family.findFirst({
               where: {
                   cuid: familyCuid
               }
@@ -42,8 +42,8 @@ export default defineEventHandler(async event => {
             transfer.balance_transaction as string,
           );
           console.log(transferBalanceTransaction.fee_details)
-            await event.context.client.$transaction([
-              event.context.client.donationPayout.create({
+            await prisma.$transaction([
+              prisma.donationPayout.create({
                 data: {
                   transaction_id: transfer.id,
                   amount: body.amount, 
@@ -59,7 +59,7 @@ export default defineEventHandler(async event => {
                     }
                   }
               }}),
-              event.context.client.page.update({
+              prisma.page.update({
                 where: {
                   cuid: body.pageCuid as string
                 },
