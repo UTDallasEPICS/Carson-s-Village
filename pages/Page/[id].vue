@@ -71,26 +71,9 @@ const pageData = ref<Page>({
     } 
 });
 
-const donationData = ref<PageDonation>({
-    amount: 5,
-    success: false,
-    userCuid: "",
-    cuid: "",
-    pageCuid: "",
-    familyCuid: "",
-    transaction_id : "",
-    donorFirstName: "",
-    donorLastName: "",
-    donorEmail: "",
-    comments: "", 
-    isAnonymous : false,
-    donationDate: "",
-    Page: ref<Page[]>([]).value[0]
-});
-
 const feeRecovery = ref(false)
 const userCuid = ref("0")
-const DisplayDonationPopup = ref(false)
+const displayDonationPopup = ref(false)
 const profileImageLink = ref("")
 const family_cuid = ref("0")
 const router = useRoute();
@@ -100,32 +83,7 @@ const cvuser = useCookie<Page>('cvuser')
 const stripeLink_ref = ref("")
 const commentModalOpen = ref(false)
 const currentComment = ref('')
-// const isAdvocateAdmin = computed(() => cvuser.value?.user_role == "admin" || cvuser.value?.user_role == "advocate")
-
-
-/* 
-*  This creates a stripe session and redirects the user to stripe.
-*  Then it redirects to /PageDonation/pageCuid/transactionId
-*/
-const create_checkout_session = async () => {
-    if(feeRecovery.value) {
-      donationData.value.amount = 1.035 * donationData.value.amount
-    }
-    
-
-    const sessionInfo = await $fetch('/api/create_session', {
-        method: 'POST',
-      body: {
-        ...donationData,
-        cuid: id.value,
-        pageCuid: id.value,
-        familyCuid: pageDataDB.value?.familyCuid,
-        amount_raised: Math.trunc(parseFloat(donationData.value.amount as unknown as string) * 100) as number
-      }
-    });
-    stripeLink_ref.value = sessionInfo as string
-    await navigateTo(stripeLink_ref.value as string,  { external: true } )
-};
+const isUser = computed(() => cvuser.value?.user_role == "admin" || cvuser.value?.user_role == "advocate" || cvuser.value?.user_role == "family")
 
 // Method to populate the page with data based on the cuid in the url
 const { data : pageDataDB } = await useFetch<Page>('/api/page', {
@@ -136,11 +94,9 @@ const { data : pageDataDB } = await useFetch<Page>('/api/page', {
 if(pageDataDB.value){
     pageData.value = pageDataDB.value as unknown as Page;
     userCuid.value = pageData.value.userCuid
-    //familyCuid = family_cuid.value as string
-    //familyCuid.value = pageDataDB.value.familyCuid as string
-  }
+}
 
-const isActive = computed(() => pageDataDB.value?.status == "active")
+const isActive = computed(() => pageDataDB.value?.status.toLowerCase() == "active")
 
 // todo: Set as pop up?
 const shareFacebook = () => {
@@ -159,7 +115,7 @@ const shareMail = () => {
 }
 
 const familyCuid = computed(() => pageDataDB.value?.familyCuid)
-const donated_percentage = computed(() => (((pageDataDB.value?.amount_raised as number) / (pageDataDB.value?.donation_goal as number )) * 100).toFixed(1) + "");
+const donated_percentage = computed<Number>(() => (((pageDataDB.value?.amount_raised as number) / (pageDataDB.value?.donation_goal as number )) * 100).toFixed(1));
 const donation_goal_provided = computed(() => pageDataDB.value?.donation_goal as number > 0)
 const comments = computed(() => pageDataDB.value?.PageDonations)
 const replies = computed(() => pageDataDB.value?.Reply)
@@ -167,17 +123,6 @@ const imageData = computed(() => pageDataDB.value?.Images || [])
 const profileImage = computed(() => imageData.value?.find((image: Image) => 
           image.cuid === pageDataDB.value?.profileImageCuid
       ))
-
-// images for testing if needed.
-/*const temp = ref([
-{url:"https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fm.media-amazon.com%2Fimages%2FI%2F61c8jg5GogL._AC_SS450_.jpg&f=1&nofb=1&ipt=3e12836a0e8c59555ce3cc5c3ba1941d4ebacfe86377cb3aee4ca65c81ac5cb0&ipo=images"},
-{url:"https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fi.redd.it%2Fbwc57i93rum21.jpg&f=1&nofb=1&ipt=6cd8c33a4e48d6262d33f9672b6305dff1c96c86a5514ffa9ab39d4216355d94&ipo=images"},
-{url:"https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fm.media-amazon.com%2Fimages%2FI%2F61c8jg5GogL._AC_SS450_.jpg&f=1&nofb=1&ipt=3e12836a0e8c59555ce3cc5c3ba1941d4ebacfe86377cb3aee4ca65c81ac5cb0&ipo=images"},
-{url:"https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fi.redd.it%2Fbwc57i93rum21.jpg&f=1&nofb=1&ipt=6cd8c33a4e48d6262d33f9672b6305dff1c96c86a5514ffa9ab39d4216355d94&ipo=images"},
-{url:"https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fm.media-amazon.com%2Fimages%2FI%2F61c8jg5GogL._AC_SS450_.jpg&f=1&nofb=1&ipt=3e12836a0e8c59555ce3cc5c3ba1941d4ebacfe86377cb3aee4ca65c81ac5cb0&ipo=images"},
-{url:"https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fm.media-amazon.com%2Fimages%2FI%2F61c8jg5GogL._AC_SS450_.jpg&f=1&nofb=1&ipt=3e12836a0e8c59555ce3cc5c3ba1941d4ebacfe86377cb3aee4ca65c81ac5cb0&ipo=images"},
-{url:"https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fm.media-amazon.com%2Fimages%2FI%2F61c8jg5GogL._AC_SS450_.jpg&f=1&nofb=1&ipt=3e12836a0e8c59555ce3cc5c3ba1941d4ebacfe86377cb3aee4ca65c81ac5cb0&ipo=images"},
-])*/
 
 const currentImage = ref(0)
 // TODO: setup auto cycle on a timer
@@ -215,11 +160,6 @@ const displayReply = async (reply: Reply) => {
     pageDataDB.value?.Reply.push(reply)
 }
 
-// Recieves the emit to stop displaying the donation popup from the button within the component donationEntryPoppup
-const exitPopup = () => {
-  DisplayDonationPopup.value = false
-}
-
 const exitCommentPopup = () => {
   commentModalOpen.value = false
 }
@@ -235,118 +175,124 @@ setImageAutoSlide()
 
 <template lang="pug">
 // donation popup
-.flex(@click.self="DisplayDonationPopup=false" v-if="DisplayDonationPopup" style="z-index: 10; align-items: center; justify-content: center; position: fixed; top: 0; bottom: 0; left: 0; right: 0; background: rgba(0, 0, 0, 0.7);")
-  .mx-auto.flex.p-2.bg-white(class="w-1/2")
-    DonationEntryPopup(@Exit="exitPopup" :amount_raised="pageDataDB.amount_raised" :donation_goal="pageDataDB.donation_goal" :donation_goal_provided="donation_goal_provided" :donated_percentage="donated_percentage" :isActive="isActive" :donationData="donationData" :pageCuid="pageCuid" :familyCuid="familyCuid")  
-.flex.align-center.justify-center(@click.self="commentModalOpen=false" v-if="commentModalOpen" style="z-index: 10; position: fixed; top: 0; bottom: 0; left: 0; right: 0; background: rgba(0, 0, 0, 0.7);")
-  .mx-auto.flex.p-2.bg-white(class="w-1/2 h-1/2")
+DonationEntryPopup(
+  v-model:displayDonationPopup="displayDonationPopup"
+  :amount_raised="pageDataDB.amount_raised"
+  :donation_goal="pageDataDB.donation_goal" 
+  :donation_goal_provided="donation_goal_provided"
+  :donated_percentage="donated_percentage"
+  :isActive="isActive"
+  :pageCuid="pageCuid"
+  :familyCuid="familyCuid"
+)  
+div(v-if="commentModalOpen" @click.self="commentModalOpen=false" class="flex items-center justify-center z-10 fixed top-0 bottom-0 left-0 right-0 bg-black/70")
+  div(class="mx-auto flex p-2 bg-white w-1/2 h-1/2")
     CommentPopup(@ExitComment="exitCommentPopup" :comment="currentComment")  
 // the header overlay with image and name
-.flex.gap-2.justify-center.cols-2.pl-6.pr-6
-    a.mr-2.mt-1.p-2.px-9.pt-3.pb-3.bg-orange-999(class="transition duration-300 bg-orange-999 hover:bg-green-600" style="border-radius: 100px; height: 50px; color: white; font-weight: 700;") Archive
-.mt-2.min-h-24.text-white.uppercase.w-full(style="background-image: url('https://carsonsvillage.org/wp-content/uploads/2018/11/iStock-862083112-BW.jpg');") 
-  .h-full.py-8.self-center.w-full.text-center.flex.flex-col(style="background-color: rgba(50, 119, 136, .8)") 
-    p.my-auto.font-bold.text-5xl {{ pageDataDB.page_first_name + " " + pageDataDB.page_last_name }}
+div(
+  v-if="isUser"
+  class="flex gap-2 justify-center cols-2 pl-6 pr-6"
+)
+    a(class="mr-2 mt-1 p-2 px-9 pt-3 pb-3 bg-orange-999 transition duration-300 hover:bg-green-600 rounded-[100px] h-[50px] text-white font-bold") Archive
+div(class="mt-2 min-h-24 text-white uppercase w-full bg-cover bg-center" style="background-image: url('https://carsonsvillage.org/wp-content/uploads/2018/11/iStock-862083112-BW.jpg');") 
+  div(class="h-full py-8 self-center w-full text-center flex flex-col bg-teal-500/80") 
+    p(class="my-auto font-bold text-5xl") {{ pageDataDB.page_first_name + " " + pageDataDB.page_last_name }}
 
-.grid.grid-cols-1(class="sm:grid-cols-2").justify-center.px-2
-  .col-span-2
-    .flex.flex-col.gap-5.px-4.mx-auto.mt-8(class="w-3/4 sm:px-16")
-      img.mx-auto(v-if="profileImage?.url" class="w-[122px] h-[122px] rounded-[8px]" :src="`${profileImage?.url}`")
-      .text-gray-dark.mx-auto.w-max.font-poppins.text-md {{ dateFormat(pageDataDB.day_of_birth, true) + ((pageDataDB.day_of_birth || pageDataDB.day_of_passing) ? ' - ' : '') + dateFormat(pageDataDB.day_of_passing, true) }} 
-  .col-span-1.justify-self-end.pr-5.pt-5
-    .relative.w-96.p-1(v-if="imageData.length != 0" )
-      button.absolute.left-4.top-64.bg-black.text-white(@click="prevImage" style="opacity:0.7; width: 46px; height: 46px; border-radius:50%; align-items: center; justify-content: center; line-height: 2; text-align: center;color: white;") &#60;
-      button.absolute.right-8.top-64.bg-black.text-white(@click="nextImage" style="opacity:0.7; width: 46px; height: 46px; border-radius:50%; align-items: center; justify-content: center; line-height: 2; text-align: center;color: white;") &#62;
-      img.w-96.cursor-pointer(style="z-index: -1; object-fit: cover;" @click="showPreview(profileImage)" :src="imageData[currentImage].url")     
-      div(class="w-full h-full overflow-auto block fixed left-0 top-0" style="z-index: 1000; background-color: rgba(0, 0, 0, 0.8);" v-if="previewImage" @click.self="closePreview")
-        img.py-2(v-for="(image, index) in imageData" class="block max-w-[80%] max-h-[80%] m-auto"
-              :key="index" :src="image.url")
-        span.absolute.cursor-pointer(class="top-[15px] right-[35px] text-[30px] transition duration-300 text-gray-400 hover:text-white focus:text-white cursor-pointer"  
-          @click="closePreview"
-          ) &times;
+div(class="grid grid-cols-1 sm:grid-cols-2 justify-center px-2")
+  div(class="col-span-2")
+    div(class="flex flex-col gap-5 px-4 mx-auto mt-8 w-3/4 sm:px-16")
+      img(v-if="profileImage?.url" :src="`${profileImage?.url}`" class="mx-auto w-[122px] h-[122px] rounded-[8px]")
+      div(class="text-gray-dark mx-auto w-max font-poppins text-md") {{ dateFormat(pageDataDB.day_of_birth, true) + ((pageDataDB.day_of_birth || pageDataDB.day_of_passing) ? ' - ' : '') + dateFormat(pageDataDB.day_of_passing, true) }} 
+  div(class="col-span-1 justify-self-end pr-5 pt-5")
+    div(v-if="imageData.length != 0" class="relative w-96 p-1")
+      button(@click="prevImage" class="absolute left-4 top-64 bg-black text-white opacity-70 w-[46px] h-[46px] rounded-full items-center justify-center leading-loose text-center text-white") &#60;
+      button(@click="nextImage" class="absolute right-8 top-64 bg-black text-white opacity-70 w-[46px] h-[46px] rounded-full items-center justify-center leading-loose text-center text-white") &#62;
+      img(:src="imageData[currentImage].url" @click="showPreview(profileImage)" class="w-96 cursor-pointer z-[-1] object-cover")     
+      div(v-if="previewImage" @click.self="closePreview" class="w-full h-full overflow-auto block fixed left-0 top-0 z-[1000] bg-black/80")
+        img(v-for="(image, index) in imageData" :key="index" :src="image.url" class="py-2 block max-w-[80%] max-h-[80%] m-auto")
+        span(@click="closePreview" class="absolute cursor-pointer top-[15px] right-[35px] text-[30px] transition duration-300 text-gray-400 hover:text-white focus:text-white cursor-pointer") &times;
   // services list
-  .col-span-1(class="sm:grid-cols-2").pt-5.pl-5.pr-15
-        .flex.flex-col(v-if="pageDataDB.visitation_date").pb-5.pr-15
-          .text-gray-dark.font-poppins.text-3xl.text-left.font-bold(style="line-height: 10px; justify-content: start; text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") Visitation
-          .flex.row.gap-2.pt-2
-            .font-outfit.flex-col.font-bold {{ "Date:" }}
-            .font-outfit {{ longDateFormat(pageDataDB.visitation_date) }}
-          .flex.row.gap-2
-            .font-outfit.font-bold {{ "Time:" }}
-            .font-outfit.gap-y-5 {{ longDateFormat(pageDataDB.visitation_date, true) }}
-          .flex.row.gap-2
-            .font-outfit.font-bold {{ "Location:" }}
-            .font-outfit.whitespace-normal {{ pageDataDB.visitation_location ? pageDataDB.visitation_location : "TBD" }}
-          .flex.row.gap-2
-            .font-outfit.gap-y-5 {{ pageDataDB.visitation_address }}
-          .flex.row.gap-2.pr-10 
-            .font-outfit.font-bold {{ "Description:" }}
-            .font-outfit.whitespace-normal {{ pageDataDB.visitation_description }}
+  div(class="col-span-1 sm:grid-cols-2 pt-5 pl-5 pr-15")
+        div(v-if="pageDataDB.visitation_date" class="flex flex-col pb-5 pr-15")
+          div(class="text-gray-dark font-poppins text-3xl text-left font-bold leading-10 justify-start text-shadow-[3px_3px_4px_rgba(0,0,0,0.25)]") Visitation
+          div(class="flex row gap-2 pt-2")
+            div(class="font-outfit flex-col font-bold") {{ "Date:" }}
+            div(class="font-outfit") {{ longDateFormat(pageDataDB.visitation_date) }}
+          div(class="flex row gap-2")
+            div(class="font-outfit font-bold") {{ "Time:" }}
+            div(class="font-outfit gap-y-5") {{ longDateFormat(pageDataDB.visitation_date, true) }}
+          div(class="flex row gap-2")
+            div(class="font-outfit font-bold") {{ "Location:" }}
+            div(class="font-outfit whitespace-normal") {{ pageDataDB.visitation_location ? pageDataDB.visitation_location : "TBD" }}
+          div(class="flex row gap-2")
+            div(class="font-outfit gap-y-5") {{ pageDataDB.visitation_address }}
+          div(class="flex row gap-2 pr-10") 
+            div(class="font-outfit font-bold") {{ "Description:" }}
+            div(class="font-outfit whitespace-normal") {{ pageDataDB.visitation_description }}
             
-        .flex.flex-col(v-else).pb-5.pr-15
-          .text-gray-dark.font-poppins.text-3xl.text-left.font-bold(style="line-height: 36px; text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") Visitation
-          .flex.row.gap-2
-            .font-outfit {{ "There is no visitation information available at this time." }}
-        .flex.flex-col(v-if="pageDataDB.funeral_date").pb-5.pr-15
-            .text-gray-dark.font-poppins.text-3xl.text-left.font-bold(style="line-height: 36px; text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") Funeral Service
-            .flex.row.gap-2
-              .font-outfit.font-bold {{ "Date:" }}
-              .font-outfit.gap-2 {{ longDateFormat(pageDataDB.funeral_date) }}
-            .flex.row.gap-2
-              .font-outfit.font-bold {{ "Time:" }}
-              .font-outfit.gap-y-5 {{ longDateFormat(pageDataDB.funeral_date, true) }}
-            .flex.row.gap-2
-              .font-outfit.font-bold {{ "Location:" }}
-              .font-outfit.whitespace-normal {{ pageDataDB.funeral_location }}
-            .flex.row.gap-2
-              .font-outfit.whitespace-normal {{ pageDataDB.funeral_address }}
-            .flex.row.gap-2.pr-10 
-              .font-outfit.font-bold {{ "Description:" }}
-              .font-outfit {{ pageDataDB.funeral_description }}
+        div(v-else class="flex flex-col pb-5 pr-15")
+          div(class="text-gray-dark font-poppins text-3xl text-left font-bold leading-9 text-shadow-[3px_3px_4px_rgba(0,0,0,0.25)]") Visitation
+          div(class="flex row gap-2")
+            div(class="font-outfit") {{ "There is no visitation information available at this time." }}
+        div(v-if="pageDataDB.funeral_date" class="flex flex-col pb-5 pr-15")
+            div(class="text-gray-dark font-poppins text-3xl text-left font-bold leading-9 text-shadow-[3px_3px_4px_rgba(0,0,0,0.25)]") Funeral Service
+            div(class="flex row gap-2")
+              div(class="font-outfit font-bold") {{ "Date:" }}
+              div(class="font-outfit gap-2") {{ longDateFormat(pageDataDB.funeral_date) }}
+            div(class="flex row gap-2")
+              div(class="font-outfit font-bold") {{ "Time:" }}
+              div(class="font-outfit gap-y-5") {{ longDateFormat(pageDataDB.funeral_date, true) }}
+            div(class="flex row gap-2")
+              div(class="font-outfit font-bold") {{ "Location:" }}
+              div(class="font-outfit whitespace-normal") {{ pageDataDB.funeral_location }}
+            div(class="flex row gap-2")
+              div(class="font-outfit whitespace-normal") {{ pageDataDB.funeral_address }}
+            div(class="flex row gap-2 pr-10") 
+              div(class="font-outfit font-bold") {{ "Description:" }}
+              div(class="font-outfit") {{ pageDataDB.funeral_description }}
 
-        .flex.flex-col(v-else).pb-5
-            .text-gray-dark.font-poppins.text-3xl.text-left.font-bold(style="line-height: 36px; text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") Funeral Service
-            .flex.row.gap-2
-              .font-outfit.gap-y-5 {{ "There is no funeral information avilable at this time" }}
-        .flex.flex-col.pb-5
-          .text-gray-dark.font-poppins.text-3xl.text-left.font-bold(style="line-height: 36px; text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") Donations
-          .text-gray-dark.font-poppins.text-1xl.text-left.font-bold(style="line-height: 36px; text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.25);") 
-            .col-md-1.ml-1.pt-9.pr-5.flex.items-center.justify-center
-              ActionButton.mx-auto.text-md(name='submit' @click="DisplayDonationPopup=true" class="transition duration-300 bg-orange-999 hover:bg-green-600" ) DONATE NOW
-  .col-span-2
-    .col-md-8.mx-9(class="sm:col-span-1 sm:mr-11")
-        .px-10.py-4(style="color: #6E6E6E; font-weight: 500; font-size: 18px; line-height: 28px; letter-spacing: -0.078px; word-break: break-word;" id="obituary") {{ pageDataDB.obituary }}
+        div(v-else class="flex flex-col pb-5")
+            div(class="text-gray-dark font-poppins text-3xl text-left font-bold leading-9 text-shadow-[3px_3px_4px_rgba(0,0,0,0.25)]") Funeral Service
+            div(class="flex row gap-2")
+              div(class="font-outfit gap-y-5") {{ "There is no funeral information avilable at this time" }}
+        div(class="flex flex-col pb-5")
+          div(class="text-gray-dark font-poppins text-3xl text-left font-bold leading-9 text-shadow-[3px_3px_4px_rgba(0,0,0,0.25)]") Donations
+          div(class="text-gray-dark font-poppins text-1xl text-left font-bold leading-9 text-shadow-[3px_3px_4px_rgba(0,0,0,0.25)]") 
+            div(class="ml-1 pt-9 pr-5 flex items-center justify-center")
+              ActionButton(name='submit' @click="displayDonationPopup=true" class="mx-auto text-md transition duration-300 bg-orange-999 hover:bg-green-600") DONATE NOW
+  div(class="col-span-2")
+    div(class="mx-9 sm:col-span-1 sm:mr-11")
+        div(id="obituary" class="px-10 py-4 text-[#6E6E6E] font-medium text-lg leading-7 tracking-[-0.078px] break-words") {{ pageDataDB.obituary }}
 
-//.container(class="sm:overflow-hidden sm:w-3/4 sm:mt-4 sm:mx-auto sm:place-content-center sm:max-w-xl sm:p-6 sm:rounded-card sm:shadow-card")
-.py-4.grid.gap-1(style="text-align: left")
-  .py-4.grid.gap-4(v-if="comments?.length" class="w-full justify-center" style="grid-template-columns: repeat(3, 30rem); ")
-      .flex.flex-col.gap-4.h-full.min-w-44.p-4.rounded-lg.bg-white.border-border-gray-300.shadow-md(v-for="(comment, i) in comments" :key="i" class="py-4 transition duration-300 hover:shadow-xl")
-        .flex.justify-between.gap-5
-          .text-xl.font-bold {{ comment.donorFirstName }} {{ comment.donorLastName }}
-          .text-xl.font-bold {{ dateFormat(comment.donationDate, true) }}
-        .text-xl.grow.w-fit.text-gray-600(:class="{'border-l-2 border-green-500 pl-3': comment.comments.length}") {{ comment.comments.length > 200 ? (comment.comments.substring(0, 200) + " ...") :  comment.comments.substring(0, 200) }}
-          span.text-xl.w-fit.text-green-400.cursor-pointer(v-if="comment.comments.length > 200" @click="openCommentPopup(comment.comments)") {{ " Read More" }}
-        .flex.justify-between.gap-5
-          .text-xl.font-bold Amount Donated
-          .text-xl.font-bold.text-green-600 {{ donationFormat(comment.amount) }}
+div(class="py-4 grid gap-1 text-left")
+  div(v-if="comments?.length" class="py-4 grid gap-4 w-full justify-center grid-cols-[repeat(3,30rem)]")
+      div(v-for="(comment, i) in comments" :key="i" class="flex flex-col gap-4 h-full min-w-44 p-4 rounded-lg bg-white border-border-gray-300 shadow-md py-4 transition duration-300 hover:shadow-xl")
+        div(class="flex justify-between gap-5")
+          div(class="text-xl font-bold") {{ comment.donorFirstName }} {{ comment.donorLastName }}
+          div(class="text-xl font-bold") {{ dateFormat(comment.donationDate, true) }}
+        div(class="text-xl grow w-fit text-gray-600" :class="{'border-l-2 border-green-500 pl-3': comment.comments.length}") {{ comment.comments.length > 200 ? (comment.comments.substring(0, 200) + " ...") :  comment.comments.substring(0, 200) }}
+          span(v-if="comment.comments.length > 200" @click="openCommentPopup(comment.comments)" class="text-xl w-fit text-green-400 cursor-pointer") {{ " Read More" }}
+        div(class="flex justify-between gap-5")
+          div(class="text-xl font-bold") Amount Donated
+          div(class="text-xl font-bold text-green-600") {{ donationFormat(comment.amount) }}
   CVReplySystem(:pageCuid="id" :familyCuid="familyCuid" :replies="replies" @displayReply="displayReply")
-  .py-4.grid.row-span-3.gap-2(v-if="replies?.length")
-    .p-2.bg-white.rounded-lg.mb-2.shadow-md.pb-4(v-for="(reply,i) in replies.filter(item => !item.suspended)" :key="i") 
-      .flex.justify-between.gap-5.pd-4
-        .ml-1.text-lg.font-bold {{reply.name}}
-        .ml-1.text-lg {{ dateFormat(reply.date) }}
-      .ml-1.pt-3.pb-3.pl-5.border-l-2.border-green-500 {{reply.reply}}
-div.flex(style="color: gray; font-weight: 700; justify-content: center; align-items: center; height: 100px;")
+  div(v-if="replies?.length" class="py-4 grid row-span-3 gap-2")
+    div(v-for="(reply,i) in replies.filter(item => !item.suspended)" :key="i" class="p-2 bg-white rounded-lg mb-2 shadow-md pb-4") 
+      div(class="flex justify-between gap-5 pd-4")
+        div(class="ml-1 text-lg font-bold") {{reply.name}}
+        div(class="ml-1 text-lg") {{ dateFormat(reply.date) }}
+      div(class="ml-1 pt-3 pb-3 pl-5 border-l-2 border-green-500") {{reply.reply}}
+div(class="flex text-gray-500 font-bold justify-center items-center h-[100px]")
   label SHARE THIS PAGE |&nbsp;
-  .col
+  div
     button(@click="shareFacebook")
-      img(src="/facebook-fa.png" style="width:30px; height:33px;") 
-  .col
+      img(src="/facebook-fa.png" class="w-[30px] h-[33px]") 
+  div
     button(@click="shareXFormerlyKnownAsTwitter")
-        img(src="/twitter_fa.png" style="width:30px; height:29px;") 
-  .col
+        img(src="/twitter_fa.png" class="w-[30px] h-[29px]") 
+  div
     button(@click="shareMail")
-        img(src="/mail_fa.png" style="width:50px; height:29px;") 
-  .col
+        img(src="/mail_fa.png" class="w-[50px] h-[29px]") 
+  div
     p {{ "" }}
 </template>

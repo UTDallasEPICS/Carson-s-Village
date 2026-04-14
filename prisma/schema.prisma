@@ -1,11 +1,10 @@
 generator client {
-  provider      = "prisma-client-js"
-  binaryTargets = ["native", "debian-openssl-3.0.x", "linux-musl", "linux-musl-arm64-openssl-3.0.x"]
+  provider = "prisma-client"
+  output   = "./generated"
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider = "sqlite"
 }
 
 model User {
@@ -18,9 +17,11 @@ model User {
   phone          String   @default("")
   address        String   @default("")
   familyCuid     String?
+
+  //RELATIONS
+  Family         Family?  @relation("family_member", fields: [familyCuid], references: [cuid])
   AdvocateFamily Family[] @relation("advocate_family")
   Pages          Page[]
-  Family         Family?  @relation("family_member", fields: [familyCuid], references: [cuid])
 
   @@map("user_accounts")
 }
@@ -29,25 +30,15 @@ model Family {
   cuid                  String           @id @default(cuid())
   family_name           String
   stripe_account_id     String?
-  created_at            DateTime          
+  created_at            DateTime
   updated_at            DateTime?
   advocateCuid          String           @map("advocate_cuid")
-  FamilyDonationPayouts DonationPayout[]
+
+  //RELATIONS
+  FamilyMembers         User[]           @relation("family_member")
   AdvocateResponsible   User             @relation("advocate_family", fields: [advocateCuid], references: [cuid])
   FamilyDonations       PageDonation[]
   Pages                 Page[]
-  FamilyMembers         User[]           @relation("family_member")
-}
-
-model DonationPayout {
-  cuid             String @id @default(cuid())
-  familyCuid       String @map("familly_cuid")
-  pageCuid         String @map("page_cuid")
-  transaction_id   String @unique
-  amount           Int    @default(0)
-  distributionDate DateTime
-  Family           Family @relation(fields: [familyCuid], references: [cuid])
-  Page             Page   @relation(fields: [pageCuid], references: [cuid])
 }
 
 model Page {
@@ -74,45 +65,47 @@ model Page {
   status                 String           @default("active")
   donation_status        String           @default("in progress")
   duration               String           @default("0 days")
-  start_date             DateTime          
-  goal_met_date          DateTime?         
+  start_date             DateTime
+  goal_met_date          DateTime?
   page_first_name        String           @default("")
   page_last_name         String           @default("")
-  last_donation_date     DateTime?         @default(now())
-  DonationPayouts        DonationPayout[]
+  last_donation_date     DateTime?
+
+  //RELATIONS
+  Family                 Family?          @relation(fields: [familyCuid], references: [cuid])
+  User                   User             @relation(fields: [userCuid], references: [cuid])
   Reply                  Reply[]
   Images                 Image[]
   PageDonations          PageDonation[]
-  Family                 Family?          @relation(fields: [familyCuid], references: [cuid])
-  User                   User             @relation(fields: [userCuid], references: [cuid])
 
   @@map("pages")
 }
 
+// Page donations only created when donation is confirmed successful
 model PageDonation {
-  cuid           String  @id @default(cuid())
-  familyCuid     String  @map("family_cuid")
-  pageCuid       String  @map("page_cuid")
-  donorFirstName String  @default("")
-  donorLastName  String  @default("")
-  donorEmail     String  @default("")
-  comments       String  @default("")
-  isAnonymous    Boolean @default(false)
-  success        Boolean @default(false)
-  transaction_id String  @unique
-  donationDate   String  @default("") //todo: change to ""  
-  amount         Int     //In cents
-  Family         Family  @relation(fields: [familyCuid], references: cuid)
-  Page           Page    @relation(fields: [pageCuid], references: cuid)
+  cuid                String         @id @default(cuid())
+  familyCuid          String         @map("family_cuid")
+  pageCuid            String         @map("page_cuid")
+  donorFirstName      String         @default("")
+  donorLastName       String         @default("")
+  donorEmail          String         @default("")
+  comments            String         @default("")
+  donationInitiated   DateTime
+  donationProcessed   DateTime       @default(now())
+  amount              Int            //In cents
+
+  //RELATIONS
+  Family              Family         @relation(fields: [familyCuid], references: cuid)
+  Page                Page           @relation(fields: [pageCuid], references: cuid)
 
   @@map("page_donations")
 }
 
 model CC_Token {
-  cuid          String @id @default("0")
+  cuid          String   @id @default("0")
   token         String
   refresh_token String
-  date          DateTime  @default(now())
+  date          DateTime @default(now())
 }
 
 model Reply {
@@ -130,6 +123,8 @@ model Image {
   cuid     String  @id @default(cuid())
   url      String
   pageCuid String?
+
+  //RELATIONS
   Page     Page?   @relation(fields: [pageCuid], references: [cuid])
 
   @@unique([pageCuid, url])

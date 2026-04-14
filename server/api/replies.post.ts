@@ -14,7 +14,7 @@ export default defineEventHandler(async (event) => {
     }
     
     try {
-      newReply = await event.context.client.reply.create({
+      newReply = await prisma.reply.create({
         data: { ...replyData._value}
       }) as unknown as Reply
     } catch(error) {

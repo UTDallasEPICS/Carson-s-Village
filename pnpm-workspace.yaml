@@ -1,0 +1,13 @@
+engineStrict: true
+
+nodeVersion: 24.11.1
+
+onlyBuiltDependencies:
+  - '@parcel/watcher'
+  - '@prisma/client'
+  - '@prisma/engines'
+  - aws-sdk
+  - better-sqlite3
+  - esbuild
+  - prisma
+  - unrs-resolver

@@ -14,7 +14,6 @@ type imageLinkTypes = {
 }
 
 const props = defineProps<{pageCuid: string}>()
-console.log(props.pageCuid)
 // uploads images using presigned url to S3 bucket
 const onFile = async (event: Event) => {
   const Files = event?.target?.files
@@ -31,31 +30,30 @@ const onFile = async (event: Event) => {
       method: 'POST',
       body: imageDataObj
     });
-  const { uploadUrl, image } = imageData as unknown as imageLinkTypes;
 
-  // Executing the image upload by using the presigned url and file as well as its size and type in the request
-  const response = await fetch(uploadUrl, {
-    method: "PUT",
-    headers: {
-    "Content-Length": file.size,
-    "Content-Type": file.type,
-  },
-    body: file,
-  })
-  if (!response.ok) {
-    console.log("Failed to upload a file")
-    throw new Error("Failed to upload data")  
-  }
+    const { uploadUrl, image } = imageData as unknown as imageLinkTypes;
 
-  emit('imageUploaded', image)
+    // Executing the image upload by using the presigned url and file as well as its size and type in the request
+    const response = await fetch(uploadUrl, {
+      method: "PUT",
+      headers: {
+        "Content-Type": file.type
+      },
+      body: file,
+    })
+    if (!response.ok) {
+      console.error("Failed to upload a file")
+      throw new Error("Failed to upload data")  
+    }
+
+    emit('imageUploaded', image)
   }
 } 
 </script>
 
 
 <template lang="pug">
-input#images.rounded-md.outline-0.border-box.p-2( 
-  style="border: 1px solid #c4c4c4;" 
+input#images(class="rounded-md outline-0 border-box p-2 border border-[#c4c4c4]"
   type="file"  
   @change="onFile"
   accept=".png,.jpeg,.jpg,.gif" multiple)

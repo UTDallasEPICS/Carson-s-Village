@@ -1,5 +1,5 @@
 <template lang="pug">
-legend.ml-4(class="sm:py-1" style="font-weight: 700;")
+legend(class="ml-4 sm:py-1 font-bold")
     slot
 </template>
             

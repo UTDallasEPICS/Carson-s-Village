@@ -6,9 +6,9 @@ const encodedCreds = btoa(creds)
 export default defineEventHandler(async event => {
   if (event.context.user?.user_role === "admin") {
     let refreshToken = null
-    const refreshTokenCount = await event.context.client?.CC_Token.count()
+    const refreshTokenCount = await prisma?.CC_Token.count()
     if(refreshTokenCount !== 0) {
-      refreshToken = await event.context.client?.CC_Token.findFirst({
+      refreshToken = await prisma?.CC_Token.findFirst({
         where: {
           cuid: "0"
         }
@@ -50,7 +50,7 @@ export default defineEventHandler(async event => {
         //return { error: "Failed to refresh token / Internal Server Error", statusCode: 500}
       }
 
-      const addToken = await event.context.client?.CC_Token.upsert({
+      const addToken = await prisma?.CC_Token.upsert({
         where: {
           cuid: "0"
         },

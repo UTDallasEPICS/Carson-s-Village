@@ -1,3 +1,4 @@
+dev.db
 node_modules
 *.log*
 .nuxt
@@ -7,3 +8,4 @@ node_modules
 *env*
 !.env.example
 dist
+*.diff

@@ -4,7 +4,7 @@ export default defineEventHandler(async event => {
     const body = await readBody(event);
     const { email, first_name, last_name } = body;
 
-    const token = await event.context.client?.CC_Token.findUnique({
+    const token = await prisma.CC_Token.findUnique({
         where: {
             cuid: "0"
         }

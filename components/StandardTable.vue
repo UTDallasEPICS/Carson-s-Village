@@ -80,29 +80,29 @@ tr(v-for="row in rows")
 </script>
 
 <template lang="pug">
-.container.bg-white.mx-auto.mt-1(class="w-11/12 sm:w-[1000px]" style="height: auto; box-shadow: 0px 3px 6px 3px rgba(0, 0, 0, 0.15), 0px 3px 3px rgba(0, 0, 0, 0.3); border-radius: 60px;")
-    table(style="table-layout: auto;")
+div(class="container bg-white mx-auto mt-1 w-11/12 sm:w-[1000px] h-auto rounded-[60px] shadow-[0px_3px_6px_3px_rgba(0,0,0,0.15),0px_3px_3px_rgba(0,0,0,0.3)]")
+    table(class="table-auto")
         thead
             tr
-                th.font-poppins.font-bold.font-bold.p-2(style="--tw-bg-opacity: 1; background-color: #5aadc2;border-radius: 60px 0px 0px 0px; width:33%; overflow: hidden") 
+                th(class="font-poppins font-bold p-2 bg-[#5aadc2] rounded-tl-[60px] w-[33%] overflow-hidden") 
                     slot
-                th.font-poppins.font-bold(style="width:34%; --tw-bg-opacity: 1; background-color: #5aadc2;") 
+                th(class="font-poppins font-bold w-[34%] bg-[#5aadc2]") 
                     slot
-                th.font-poppins.font-bold(style="--tw-bg-opacity: 1; background-color: #5aadc2;")
+                th(class="font-poppins font-bold bg-[#5aadc2]")
                     slot
-                th.font-poppins.font-bold(style="width:33%; --tw-bg-opacity: 1; border-radius: 0px 60px 0px 0px; background-color: #5aadc2;")
+                th(class="font-poppins font-bold w-[33%] rounded-tr-[60px] bg-[#5aadc2]")
                     slot
             tr(v-for="(item, i) in itemList" 
                 :key="i" 
             )
-                td.font-poppins.text-gray-dark.font-bold(style="text-align: center") 
+                td(class="font-poppins text-gray-dark font-bold text-center") 
                     slot
-                td.font-poppins.text-gray-dark.font-bold(style="text-align: center") 
+                td(class="font-poppins text-gray-dark font-bold text-center") 
                     slot
                 td
-                LinkButton(class="sm:my-2" style="white-space: nowrap; display: flex; flex-direction: row; padding: 14px 24px; gap: 10px;" :to="") 
+                LinkButton(class="sm:my-2 whitespace-nowrap flex flex-row py-3.5 px-6 gap-2.5" :to="") 
                     slot
-    .container.mx-auto(class="w-auto sm:w-[1000px]" style="--tw-bg-opacity: 1; background-color: #5aadc2;height: 50px; border-radius: 0px 0px 60px 60px;")
+    div(class="container mx-auto w-auto sm:w-[1000px] bg-[#5aadc2] h-[50px] rounded-b-[60px]")
 </template>
 
 <style scoped></style>

@@ -1,8 +1,7 @@
 const runtime = useRuntimeConfig()
 const creds = runtime.CONSTANT_CONTACTS_CLIENTID + ':' + runtime.CONSTANT_CONTACTS_SECRET
 const encodedCreds = btoa(creds)
-import { PrismaClient } from "@prisma/client";
-const prisma = new PrismaClient()
+
 export default defineTask({
     meta: {
       name: "token:refresh",

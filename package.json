@@ -5,12 +5,20 @@
     "dev": "nuxt dev",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
-    "postinstall": "nuxt prepare"
+    "postinstall": "nuxt prepare",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix"
   },
   "devDependencies": {
+    "@nuxt/eslint": "1.15.2",
+    "@types/better-sqlite3": "^7.6.13",
     "@types/email-templates": "^10.0.1",
+    "@types/node": "^25.6.0",
     "@vue/language-plugin-pug": "^2.0.7",
-    "nuxt": "^3.11.2"
+    "eslint": "^9.39.3",
+    "nuxt": "^3.11.2",
+    "tsx": "^4.21.0",
+    "prisma": "^7.7.0"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.226.0",
@@ -21,27 +29,30 @@
     "@lbgm/phone-number-input": "^1.0.8",
     "@nuxt/ui-templates": "^1.2.0",
     "@nuxtjs/tailwindcss": "^6.1.3",
-    "@prisma/client": "^4.16.2",
-    "@stripe/stripe-js": "^1.52.1",
+    "@prisma/adapter-better-sqlite3": "^7.7.0",
+    "@prisma/client": "^7.7.0",
     "@suadelabs/vue3-multiselect": "^1.0.2",
     "@tensorflow-models/toxicity": "^1.2.2",
     "@vuepic/vue-datepicker": "^5.4.0",
     "@vueuse/components": "^13.1.0",
     "autoprefixer": "^10.4.19",
+    "class-validator": "^0.14.2",
+    "dotenv": "^17.4.2",
     "email-templates": "^10.0.1",
     "jsonwebtoken": "^9.0.0",
     "nanoid": "^4.0.0",
-    "nuxt-stripe-module": "^3.2.0",
-    "pnpm": "^8.15.6",
     "postcss": "^8.4.39",
-    "prisma": "^4.8.0",
     "s3": "^2.0.0",
-    "stripe": "^12.4.0",
+    "stripe": "^20.4.1",
     "tailwindcss": "^3.4.6",
     "vite": "^4.1.4",
     "vite-plugin-pug": "^0.3.2",
     "vue": "^3.3.4",
     "vue-multiselect": "^3.1.0",
     "vue-router": "^4.1.6"
+  },
+  "engines": {
+    "node": ">=24.0.0",
+    "pnpm": ">=10.0.0"
   }
 }

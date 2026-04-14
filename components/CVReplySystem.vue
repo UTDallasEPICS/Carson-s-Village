@@ -9,7 +9,6 @@ const props = defineProps<{
     replies: Reply[]
 }>()
 
-console.log(props.familyCuid)
 const replyData = ref<Partial<Reply>>({
     name: "",
     reply:"",
@@ -52,15 +51,15 @@ const submitComment = async () => {
 </script>
 
 <template lang="pug">
-.comment-system.flex.flex-col.items-center(class="sm:mx-4 sm:w-full sm:py-2")
+div(class="comment-system flex flex-col items-center sm:mx-4 sm:w-full sm:py-2")
 
-      h2.text-center.mt-4.mb-6.font-bold Leave a Message
-      .flex.justify-center(class="w-2/3")
+      h2(class="text-center mt-4 mb-6 font-bold") Leave a Message
+      div(class="flex justify-center w-2/3")
         CVTextArea(id="reply" name='reply' v-model="replyData.reply" placeholder='Replies' class="font-normal h-40 w-full")
-      .field-row.flex.justify-center.mt-4(class="w-2/3")
+      div(class="field-row flex justify-center mt-4 w-2/3")
           CVInput(id="name" name='name' v-model="replyData.name" placeholder='Name' class="font-normal w-2/3" )     
-      .ml-4.pt-6.pr-5.flex.items-center.justify-center.mt-6
-          ActionButton.mx-auto.text-md(@click="submitComment" class="transition duration-300 bg-orange-999 hover:bg-green-600") Submit
+      div(class="ml-4 pt-6 pr-5 flex items-center justify-center mt-6")
+          ActionButton(class="mx-auto text-md transition duration-300 bg-orange-999 hover:bg-green-600" @click="submitComment") Submit
       div(v-if="successMessage" class="mt-4 text-green-500") {{ successMessage }}
 
 </template>

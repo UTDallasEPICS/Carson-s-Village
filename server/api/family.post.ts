@@ -1,5 +1,5 @@
 import { SESClient, SendEmailCommand } from "@aws-sdk/client-ses"
-const sesClient = new SESClient({ region: "us-east-1" });
+const sesClient = new SESClient({ region: "us-east-2" });
 import {loginRedirectUrl} from "../api/auth0"
 import emailTemplates from "email-templates"
 
@@ -32,17 +32,21 @@ export default defineEventHandler(async event => {
     const res = await sesClient.send(sendEmailCommand)
   };
 
-const body = await readBody(event);
-//const now = (new Date()).toISOString();
-  const { family_name,
+  const body = await readBody(event);
+  //const now = (new Date()).toISOString();
+  const {
+    family_name,
     first_name,
     email,
     middle_name,
     last_name,
-    phone, address } = body
-if(event.context.user?.user_role === "advocate" || event.context.user?.user_role === "admin") {
+    phone, 
+    address 
+  } = body
+
+  if(event.context.user?.user_role === "advocate" || event.context.user?.user_role === "admin") {
     try {
-      const queryRes = await event.context.client.family.create({
+      const queryRes = await prisma.family.create({
         data: {
           family_name: family_name,
           AdvocateResponsible: {
@@ -62,14 +66,13 @@ if(event.context.user?.user_role === "advocate" || event.context.user?.user_role
             }
           }
         }
-      }
-   )
-   await sendEmail(body.email, "invitation", "Invitation to Carson's village", ({...body, url: `${runtime.BASEURL}api/login`}))
-      return queryRes
+      })
+    await sendEmail(body.email, "invitation", "Invitation to Carson's village", ({...body, url: `${runtime.BASEURL}api/login`}))
+    return queryRes
       
     } catch (e) {
       console.log(e)
     }
   }
-    return false
+  return false
 })

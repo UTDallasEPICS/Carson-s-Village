@@ -1,46 +1,48 @@
 // This file contains the code for handling the POST request to the image upload endpoint
 
 import { nanoid } from "nanoid"
-import { getSignedFileUrl } from "./integrations/aws"
 const runtime = useRuntimeConfig()
 export default defineEventHandler(async (event) => {
-    const body = await readBody(event) 
-    // key used to retrieve image later on
-    const key = nanoid() + "-"  + body.filename
-    // gets presigned URL from aws.ts and returns it to the call from vue
-    const uploadUrl =  await getSignedFileUrl(body.contentLength, body.contentType, key);
-    const contentUrl =  "https://" + runtime.AWS_S3_BUCKET_NAME + "/" + key;
-    
-  
-  // only signed in users may upload
-  if(event.context.user?.cuid != "") {
-  //try{
-  // Creates a new entry in the database in the image model
-    const image = await event.context.client.image.create({
-      data: {
-        url: contentUrl
-        }
-      });
+  const body = await readBody(event) 
+  // key used to retrieve image later on
+  const key = nanoid() + "-"  + body.filename
+  // gets presigned URL from aws.ts and returns it to the call from vue
+  const uploadUrl =  await getSignedFileUrl(body.contentType, key);
+  const contentUrl =  "https://s3.us-east-2.amazonaws.com/" + runtime.AWS_S3_BUCKET_NAME + "/" + key;
 
-    if(body.pageCuid != "0") {
-      const queryRes = await event.context.client.image.update({
-        where: {
-          cuid: image.cuid
-        },
+  // only signed in users may upload
+  if(event.context.user.user_role == "admin" || event.context.user.user_role == "advocate" || event.context.user.user_role == "family") {
+    try {
+    // Creates a new entry in the database in the image model
+      const image = await prisma.image.create({
         data: {
-          pageCuid: body.pageCuid
+          url: contentUrl
           }
         });
+
+      if(body.pageCuid != "0") {
+        const queryRes = await prisma.image.update({
+          where: {
+            cuid: image.cuid
+          },
+          data: {
+            pageCuid: body.pageCuid
+            }
+          });
+      }
+      return  {
+        uploadUrl: uploadUrl,
+        image
+      } 
+    } catch(e){
+      console.error(e)
     }
-    return  {
-      uploadUrl: uploadUrl,
-      image
-    } 
-    }
-  //}
-  /*} catch(e){
-    console.error(e)
-  }*/
+  } else {
+    throw createError({
+      statusCode: 401,
+      statusMessage: "Not authorized"
+    })
+  }
     
 
  // } catch (err) { 
