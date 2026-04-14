@@ -1,4 +1,4 @@
-import {loginRedirectUrl} from "../api/auth0"
+
 
 export default defineEventHandler(async event => {
   const { advocate_cuid } = getQuery(event)

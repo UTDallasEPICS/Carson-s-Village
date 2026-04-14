@@ -1,4 +1,4 @@
-import {loginRedirectUrl} from "../api/auth0"
+
 
 /*
 *	/PageList/cuid

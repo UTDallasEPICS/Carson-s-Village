@@ -1,4 +1,4 @@
-import {loginRedirectUrl, logoutRedirectUrl} from "../api/auth0"
+
 import Stripe from "stripe"
 const runtime = useRuntimeConfig()
 

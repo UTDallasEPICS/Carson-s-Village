@@ -1,5 +1,3 @@
-import {loginRedirectUrl} from "../auth0"
-
 /*
 *	/Users
 *	function:	GET
