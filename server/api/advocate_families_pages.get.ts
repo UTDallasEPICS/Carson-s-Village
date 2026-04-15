@@ -1,8 +1,18 @@
-
-
 export default defineEventHandler(async event => {
+  const session = await auth.api.getSession({
+    headers: event.headers
+  })
+
+  if (!session) {
+    throw createError({
+      statusCode: 401,
+      statusMessage: 'Unauthorized'
+    });
+  }
+
   const { advocate_cuid } = getQuery(event)
-  if(event.context.user?.user_role === "advocate" || event.context.user?.user_role === "admin") {
+
+  if(session.role === "advocate" || session.role === "admin") {
     const result = await prisma.family.findMany({
       where: { 
           advocateCuid: advocate_cuid as string
@@ -13,6 +23,9 @@ export default defineEventHandler(async event => {
     })
     return result
   } else {
-    return await sendRedirect(event, loginRedirectUrl())
+    throw createError({
+      statusCode: 401,
+      statusMessage: 'Unauthorized'
+    });
   }
 })

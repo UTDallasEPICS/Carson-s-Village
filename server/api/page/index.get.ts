@@ -1,4 +1,3 @@
-
 /*
 *	/EditPage/cuid or /Page/cuid
 *	function:	GET
@@ -17,7 +16,7 @@ export default defineEventHandler(async event => {
 
   const queryRes = await prisma.page.findFirst({
     where: {
-      cuid : cuid as string
+      id: cuid as string
     },
     include: {
       Images: true,
@@ -33,6 +32,7 @@ export default defineEventHandler(async event => {
       }
     }
   });
+
   if (!queryRes) {
     throw createError({
       statusCode: 404,

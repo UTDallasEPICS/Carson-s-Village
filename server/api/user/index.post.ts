@@ -9,6 +9,16 @@ import emailTemplates from "email-templates"
 */
 const runtime = useRuntimeConfig()
 export default defineEventHandler(async event => {
+  const session = await auth.api.getSession({
+    headers: event.headers
+  })
+
+  if (!session) {
+    throw createError({
+      statusCode: 401,
+      statusMessage: 'Unauthorized'
+    });
+  }
 
   const EmailTemplates = new emailTemplates({
     views: {
@@ -35,42 +45,49 @@ export default defineEventHandler(async event => {
 
   const body = await readBody(event)
   const now = (new Date()).toISOString();
-  console.log(body.AdvocateFamily)
-  if(event.context.user?.user_role === "advocate" || event.context.user?.user_role === "admin") {
+
+  if(session.role === "advocate" || session.role === "admin") {
     try{
       // creates a new user entry in the user model/table.
-      if(body.user_role == "advocate" || (body.user_role == "admin" && event.context.user?.user_role === "admin")) {
+      if(body.user_role == "advocate" || (body.user_role == "admin" && session.role === "admin")) {
         delete body.Pages
         delete body.AdvocateFamily
         const queryRes = await prisma.user.create({
           data: {
-            ...body, cuid: undefined, familyCuid: undefined
+            ...body, id: undefined, familyId: undefined
             }
           });
+        
+          // TODO: Move this to better-auth login
           await sendEmail(body.email, "invitation", "Invitation to Carson's village", ({...body, url: `${runtime.BASEURL}api/login`}))
           return { success: true, result: queryRes }
-        } else if(body.user_role == "family") {
-          delete body.Pages
-          delete body.AdvocateFamily
-          const userRes = await prisma.user.create({
-            data: {
-              ...body, cuid: undefined,
-          }})
-          const queryRes = await prisma.family.update({
-            where: { cuid: body.familyCuid },
-            data: {
-              updated_at: now,
-              FamilyMembers: {
-                connect: {
-                  cuid: userRes.cuid
-                }
-              }, 
+      } 
+      else if (body.user_role == "family") {
+        delete body.Pages
+        delete body.AdvocateFamily
+
+        const userRes = await prisma.user.create({
+          data: {
+            ...body, id: undefined,
           }
-        } 
-         )
-         await sendEmail(body.email, "invitation", "Invitation to Carson's village", ({...body, url: `${runtime.BASEURL}api/login`}))
-         return { success: true, result: queryRes }
-        }
+        })
+
+        const queryRes = await prisma.family.update({
+          where: { id: body.familyCuid },
+          data: {
+            updated_at: now,
+            FamilyMembers: {
+              connect: {
+                id: userRes.cuid
+              }
+            }, 
+          }
+        })
+
+        // TODO: Move this to better-auth
+        await sendEmail(body.email, "invitation", "Invitation to Carson's village", ({...body, url: `${runtime.BASEURL}api/login`}))
+        return { success: true, result: queryRes }
+      }
          
       } catch(e: any){
         let error = e as string || undefined
@@ -80,6 +97,9 @@ export default defineEventHandler(async event => {
         })
       }
   } else{
-    return await sendRedirect(event, loginRedirectUrl());
+    throw createError({
+      statusCode: 401,
+      statusMessage: 'Unauthorized'
+    });
   }
 })

@@ -7,25 +7,36 @@ const stripeSecretKey = runtime.STRIPE_SECRET;
 // After the family has submitted all of their details to Stripe, their Carson's Village pages will be active.
 
 export default defineEventHandler(async event => {
+  const session = await auth.api.getSession({
+    headers: event.headers
+  })
+
+  if (!session) {
+    throw createError({
+      statusCode: 401,
+      statusMessage: 'Unauthorized'
+    });
+  }
+
   const { stripe_account_id } = getQuery(event)
   const stripe = new Stripe(runtime.STRIPE_SECRET)
-  const cvtoken = getCookie(event, "cvtoken") || ""
-
   const stripeAccountFull = await stripe.accounts.retrieve(stripe_account_id as string)
-  console.log(stripeAccountFull)
+  
   // if the user backed out of the onboard, they will be redirected back to the onboard
   if(stripeAccountFull.details_submitted) {  
     const queryRes = await prisma.page.updateMany({
       where: {
-          familyCuid : event.context.user?.familyCuid as string
+        familyCuid : session.familyId as string
       },
-      data: { status: 'active'} 
+      data: {
+        status: 'active'
+      } 
     })
   } else {
     await sendRedirect(event, '/')
     return false
   }
-   await sendRedirect(event, '/')
-   return true
+  await sendRedirect(event, '/')
+  return true
   
 })

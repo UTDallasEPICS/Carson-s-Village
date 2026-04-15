@@ -80,15 +80,6 @@ const createFamily = async () => {
   } 
 }
 
-//todo add the ui back for this
-/*const onResize = ({ height }: { height: number }) => {
-    console.log(height)
-    if(height != 0) {
-        bottomHeight.value = height + 150
-    } else {
-        bottomHeight.value = 20
-    }
-}*/
 </script>
 
 <template lang="pug">

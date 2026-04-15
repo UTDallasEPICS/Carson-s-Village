@@ -1,5 +1,3 @@
-
-
 /*
 *	/EditUser/cuid
 *	function:	GET
@@ -7,20 +5,36 @@
 */
 
 export default defineEventHandler(async event => {
+  const session = await auth.api.getSession({
+    headers: event.headers
+  })
+
+  if (!session) {
+    throw createError({
+      statusCode: 401,
+      statusMessage: 'Unauthorized'
+    });
+  }
   const { cuid } = getQuery(event);
   if( (cuid as string) == "0" || cuid == undefined){
     return []
   }
+
   // retrieves a single user
-  if(event.context.user?.user_role === "advocate" || event.context.user?.user_role === "admin") {
+  if(session.role === "advocate" || session.role === "admin") {
     const queryRes = await prisma.user.findFirst({
-      where: { cuid: (cuid as string) },
+      where: {
+        id: (cuid as string)
+      },
       include: {
         AdvocateFamily: true
       }
     });
     return queryRes;
   } else {
-    return await sendRedirect(event, loginRedirectUrl());
+    throw createError({
+      statusCode: 401,
+      statusMessage: 'Unauthorized'
+    });
   }
 })

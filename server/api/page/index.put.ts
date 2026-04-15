@@ -1,4 +1,3 @@
-
 import type { Image } from "@/types.d.ts"
 
 /*
@@ -8,12 +7,21 @@ import type { Image } from "@/types.d.ts"
 */
 
 export default defineEventHandler(async event => {
+  const session = await auth.api.getSession({
+    headers: event.headers
+  })
+
+  if (!session) {
+    throw createError({
+      statusCode: 401,
+      statusMessage: 'Unauthorized'
+    });
+  }
   const { Images, Reply, PageDonations, userCuid, familyCuid, Family, ...data } = await readBody(event)
   //const userCuid = data.userCuid
   //delete data.userCuid;
   
-  if(event.context.user?.user_role === "advocate" || event.context.user?.user_role == "admin" || event.context.user?.cuid == userCuid || event.context.user?.Family?.cuid == familyCuid ) {
-    console.log(data.amount_raised)
+  if(session.role === "advocate" || session.role == "admin" || session.id == userCuid || session.familyId == familyCuid ) {
     delete data.Family // Not sure why this is needed to fix an error
     try {
       // Removes comma parses the whole decimal number and converts it to cents to be stored in DB
@@ -27,7 +35,7 @@ export default defineEventHandler(async event => {
       // updates a pre-existing page
       const queryRes = await prisma.page.update({
         where: {
-          cuid: data.cuid
+          id: data.cuid
         },
         data: {
           ...data
@@ -35,10 +43,15 @@ export default defineEventHandler(async event => {
       });
     } catch (e) {
       console.error(e);
-      return false
+      throw createError({
+        statusCode: 500,
+        statusMessage: `Failed to update page ${data.cuid}`
+      });
     }
-    return true
-} else{
-  return await sendRedirect(event, loginRedirectUrl());
-}
+  } else {
+      throw createError({
+        statusCode: 401,
+        statusMessage: 'Unauthorized'
+      });
+  }
 });

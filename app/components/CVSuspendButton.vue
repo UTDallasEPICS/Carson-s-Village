@@ -2,37 +2,33 @@
 import type { Reply } from '@/types.d.ts'
 
 const props = defineProps<{ 
-    rep : Reply
-    suspend : boolean
+  rep : Reply
+  suspend : boolean
 }>()
 const emit = defineEmits(["update:suspend"]) // define event emitted by component
 
 const pushSuspend = async () => { 
-    console.log(props.rep)
-    const suspendSuccess  = await $fetch(`/api/replies_suspend`, {
-        method: 'PUT',
-        body: ({ 
-            replyData: props.rep ,
-            suspended: true
-         })
-    }
-    )
-    console.log(props.rep)
+    const suspendSuccess = await $fetch(`/api/replies_suspend`, {
+      method: 'PUT',
+      body: ({ 
+        replyData: props.rep ,
+        suspended: true
+      })
+    })
+
     emit('update:suspend', props.rep, true)
 }
 
 const pushUnsuspend = async () => {
-    console.log(props.rep)
-    const unsuspendSuccess = await $fetch(`/api/replies_suspend`, {  
-        method: 'PUT',
-        body: ({ 
-            replyData: props.rep ,
-            suspended: false
-         })
-    }
-    )
-    console.log(props.rep)
-    emit('update:suspend', props.rep, false)
+  const unsuspendSuccess = await $fetch(`/api/replies_suspend`, {  
+    method: 'PUT',
+    body: ({ 
+      replyData: props.rep ,
+      suspended: false
+    })
+  })
+
+  emit('update:suspend', props.rep, false)
 }
 
 </script>

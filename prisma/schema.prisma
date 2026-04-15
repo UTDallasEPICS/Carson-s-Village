@@ -19,13 +19,13 @@ model User {
   banned          Boolean?
   banReason       String?
   banExpires      DateTime?
+  familyId        String?
 
   phone           String   @default("")
   address         String   @default("")
-  familyCuid      String?
 
   //RELATIONS
-  Family          Family?  @relation("family_member", fields: [familyCuid], references: [id])
+  Family          Family?  @relation("family_member", fields: [familyId], references: [id])
   AdvocateFamily  Family[] @relation("advocate_family")
   Pages           Page[]
   sessions        Session[]
@@ -83,16 +83,16 @@ model Verification {
 }
 
 model Family {
-  id                    String           @id 
+  id                    String          @id 
   family_name           String
   stripe_account_id     String?
-  created_at            DateTime
-  updated_at            DateTime?
-  advocateCuid          String           @map("advocate_cuid")
+  created_at            DateTime        @default(now())
+  updated_at            DateTime        @updatedAt
+  advocateCuid          String          @map("advocate_cuid")
 
   //RELATIONS
-  FamilyMembers         User[]           @relation("family_member")
-  AdvocateResponsible   User             @relation("advocate_family", fields: [advocateCuid], references: [id])
+  FamilyMembers         User[]          @relation("family_member")
+  AdvocateResponsible   User            @relation("advocate_family", fields: [advocateCuid], references: [id])
   FamilyDonations       PageDonation[]
   Pages                 Page[]
 }
@@ -158,10 +158,10 @@ model PageDonation {
 }
 
 model CC_Token {
-  id          String    @id @default("0")
+  id            String    @id @default("0")
   token         String
   refresh_token String
-  date          DateTime @default(now())
+  date          DateTime  @default(now())
 }
 
 model Reply {
@@ -170,9 +170,12 @@ model Reply {
   familyCuid  String    @map("family_cuid")
   reply       String    @default("")
   name        String?   @default("")
-  Page        Page      @relation(fields: [pageCuid], references: id)
   suspended   Boolean   @default(false)
   date        DateTime  @default(now())
+
+  //RELATIONS
+  Page        Page      @relation(fields: [pageCuid], references: id)
+  Family      Family    @relation(fields: [familyCuid], references: id)
 }
 
 model Image {

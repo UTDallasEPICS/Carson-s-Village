@@ -21,7 +21,12 @@ export const auth = betterAuth({
       role: {
         type: ['family', 'advocate', 'admin'],
         defaultValue: 'family',
-        input: false
+        input: false,
+      },
+      
+      // Attach familyId
+      familyId: {
+        type: 'string',
       }
     }
   },

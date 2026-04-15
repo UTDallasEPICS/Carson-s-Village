@@ -9,6 +9,17 @@ import emailTemplates from "email-templates"
 */
 const runtime = useRuntimeConfig()
 export default defineEventHandler(async event => {
+  const session = await auth.api.getSession({
+    headers: event.headers
+  })
+
+  if (!session) {
+    throw createError({
+      statusCode: 401,
+      statusMessage: 'Unauthorized'
+    });
+  }
+
   const EmailTemplates = new emailTemplates({
     views: {
       root: "./emails",
@@ -33,7 +44,7 @@ export default defineEventHandler(async event => {
   };
 
   const body = await readBody(event);
-  //const now = (new Date()).toISOString();
+
   const {
     family_name,
     first_name,
@@ -44,35 +55,43 @@ export default defineEventHandler(async event => {
     address 
   } = body
 
-  if(event.context.user?.user_role === "advocate" || event.context.user?.user_role === "admin") {
+  if(session.role === "advocate" || session.role === "admin") {
     try {
       const queryRes = await prisma.family.create({
         data: {
           family_name: family_name,
           AdvocateResponsible: {
-            connect: { cuid: event.context.user?.cuid }
+            connect: {
+              id: session.id
+            }
           },
-          created_at: new Date(),
-          updated_at: null,
-          cuid: undefined,
           FamilyMembers: {
             create: {
-              first_name,
+              name: `${first_name ? first_name : ''}${middle_name ? middle_name : ' '}${last_name}`,
               email,
-              middle_name,
-              last_name,
               phone,
               address,
             }
           }
         }
       })
-    await sendEmail(body.email, "invitation", "Invitation to Carson's village", ({...body, url: `${runtime.BASEURL}api/login`}))
-    return queryRes
-      
+
+      // Refactor to use new login
+      await sendEmail(body.email, "invitation", "Invitation to Carson's village", ({...body, url: `${runtime.BASEURL}api/login`}))
+      return queryRes
     } catch (e) {
-      console.log(e)
+      console.error(e)
+      throw createError({
+        statusCode: 500,
+        statusMessage: 'Something went wrong',
+        cause: e
+      });
     }
   }
-  return false
+  else {
+    throw createError({
+      statusCode: 401,
+      statusMessage: 'Unauthorized'
+    });
+  }
 })
