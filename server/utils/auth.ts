@@ -2,13 +2,12 @@ import { betterAuth } from 'better-auth'
 import { prismaAdapter } from 'better-auth/adapters/prisma'
 import { emailOTP } from 'better-auth/plugins/email-otp'
 import nodemailer from 'nodemailer'
-import { SES, SendRawEmailCommand } from "@aws-sdk/client-ses"
+import { SESv2Client, SendEmailCommand } from "@aws-sdk/client-sesv2"
 const runtime = useRuntimeConfig()
 
-const ses = new SES({ region: "us-east-2" });
-
+const sesClient = new SESv2Client({ region: "us-east-2" });
 const transporter = nodemailer.createTransport({
-  SES: { ses, aws: { SendRawEmailCommand } },
+  SES: { sesClient, aws: { SendEmailCommand } },
 });
 
 export const auth = betterAuth({

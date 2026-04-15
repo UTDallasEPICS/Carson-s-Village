@@ -1,12 +1,8 @@
-import { SESClient, SendEmailCommand } from "@aws-sdk/client-ses"
-const sesClient = new SESClient({ region: "us-east-2" });
-
-import emailTemplates from "email-templates"
-
 /*	/EditUser/0
 *	  function:	POST
 *	  submit user account details to database
 */
+
 const runtime = useRuntimeConfig()
 export default defineEventHandler(async event => {
   const session = await auth.api.getSession({
@@ -33,15 +29,6 @@ export default defineEventHandler(async event => {
     },
   })
 
-  const sendEmail = async (to: string, template: string, subject: string, data: string) => {
-    const { html, text } = await EmailTemplates.renderAll(template, data)
-    const sendEmailCommand = new SendEmailCommand({
-      Destination: { ToAddresses: [to] }, 
-      Message: {Subject: {Charset: "UTF-8", Data: subject},Body:{Html: {Charset: "UTF-8", Data: html}, Text: {Charset: "UTF-8", Data: text}}},
-      Source: runtime.EMAIL_SOURCE_ADDRESS,
-    })
-    const res = await sesClient.send(sendEmailCommand)
-  };
 
   const body = await readBody(event)
   const now = (new Date()).toISOString();
