@@ -62,7 +62,7 @@ ClientOnly
       )
         img(class="w-20 h-14" src="/CVLogo.png")
       a(class="flex items-center pt-5 px-2 py-2 text-sm font-medium rounded-md text-blue-999 cursor-pointer hover:!text-black bg-white"
-        href="/api/login"
+        href="/login"
       )
         p(class="uppercase white w-max font-bold text-orange-999") LOGIN
       DropdownMenu(:has-submenus="true" :num-submenus="4"

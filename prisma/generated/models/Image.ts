@@ -25,19 +25,19 @@ export type AggregateImage = {
 }
 
 export type ImageMinAggregateOutputType = {
-  cuid: string | null
+  id: string | null
   url: string | null
   pageCuid: string | null
 }
 
 export type ImageMaxAggregateOutputType = {
-  cuid: string | null
+  id: string | null
   url: string | null
   pageCuid: string | null
 }
 
 export type ImageCountAggregateOutputType = {
-  cuid: number
+  id: number
   url: number
   pageCuid: number
   _all: number
@@ -45,19 +45,19 @@ export type ImageCountAggregateOutputType = {
 
 
 export type ImageMinAggregateInputType = {
-  cuid?: true
+  id?: true
   url?: true
   pageCuid?: true
 }
 
 export type ImageMaxAggregateInputType = {
-  cuid?: true
+  id?: true
   url?: true
   pageCuid?: true
 }
 
 export type ImageCountAggregateInputType = {
-  cuid?: true
+  id?: true
   url?: true
   pageCuid?: true
   _all?: true
@@ -136,7 +136,7 @@ export type ImageGroupByArgs<ExtArgs extends runtime.Types.Extensions.InternalAr
 }
 
 export type ImageGroupByOutputType = {
-  cuid: string
+  id: string
   url: string
   pageCuid: string | null
   _count: ImageCountAggregateOutputType | null
@@ -163,21 +163,21 @@ export type ImageWhereInput = {
   AND?: Prisma.ImageWhereInput | Prisma.ImageWhereInput[]
   OR?: Prisma.ImageWhereInput[]
   NOT?: Prisma.ImageWhereInput | Prisma.ImageWhereInput[]
-  cuid?: Prisma.StringFilter<"Image"> | string
+  id?: Prisma.StringFilter<"Image"> | string
   url?: Prisma.StringFilter<"Image"> | string
   pageCuid?: Prisma.StringNullableFilter<"Image"> | string | null
   Page?: Prisma.XOR<Prisma.PageNullableScalarRelationFilter, Prisma.PageWhereInput> | null
 }
 
 export type ImageOrderByWithRelationInput = {
-  cuid?: Prisma.SortOrder
+  id?: Prisma.SortOrder
   url?: Prisma.SortOrder
   pageCuid?: Prisma.SortOrderInput | Prisma.SortOrder
   Page?: Prisma.PageOrderByWithRelationInput
 }
 
 export type ImageWhereUniqueInput = Prisma.AtLeast<{
-  cuid?: string
+  id?: string
   pageCuid_url?: Prisma.ImagePageCuidUrlCompoundUniqueInput
   AND?: Prisma.ImageWhereInput | Prisma.ImageWhereInput[]
   OR?: Prisma.ImageWhereInput[]
@@ -185,10 +185,10 @@ export type ImageWhereUniqueInput = Prisma.AtLeast<{
   url?: Prisma.StringFilter<"Image"> | string
   pageCuid?: Prisma.StringNullableFilter<"Image"> | string | null
   Page?: Prisma.XOR<Prisma.PageNullableScalarRelationFilter, Prisma.PageWhereInput> | null
-}, "cuid" | "pageCuid_url">
+}, "id" | "pageCuid_url">
 
 export type ImageOrderByWithAggregationInput = {
-  cuid?: Prisma.SortOrder
+  id?: Prisma.SortOrder
   url?: Prisma.SortOrder
   pageCuid?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.ImageCountOrderByAggregateInput
@@ -200,48 +200,48 @@ export type ImageScalarWhereWithAggregatesInput = {
   AND?: Prisma.ImageScalarWhereWithAggregatesInput | Prisma.ImageScalarWhereWithAggregatesInput[]
   OR?: Prisma.ImageScalarWhereWithAggregatesInput[]
   NOT?: Prisma.ImageScalarWhereWithAggregatesInput | Prisma.ImageScalarWhereWithAggregatesInput[]
-  cuid?: Prisma.StringWithAggregatesFilter<"Image"> | string
+  id?: Prisma.StringWithAggregatesFilter<"Image"> | string
   url?: Prisma.StringWithAggregatesFilter<"Image"> | string
   pageCuid?: Prisma.StringNullableWithAggregatesFilter<"Image"> | string | null
 }
 
 export type ImageCreateInput = {
-  cuid?: string
+  id: string
   url: string
   Page?: Prisma.PageCreateNestedOneWithoutImagesInput
 }
 
 export type ImageUncheckedCreateInput = {
-  cuid?: string
+  id: string
   url: string
   pageCuid?: string | null
 }
 
 export type ImageUpdateInput = {
-  cuid?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.StringFieldUpdateOperationsInput | string
   url?: Prisma.StringFieldUpdateOperationsInput | string
   Page?: Prisma.PageUpdateOneWithoutImagesNestedInput
 }
 
 export type ImageUncheckedUpdateInput = {
-  cuid?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.StringFieldUpdateOperationsInput | string
   url?: Prisma.StringFieldUpdateOperationsInput | string
   pageCuid?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type ImageCreateManyInput = {
-  cuid?: string
+  id: string
   url: string
   pageCuid?: string | null
 }
 
 export type ImageUpdateManyMutationInput = {
-  cuid?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.StringFieldUpdateOperationsInput | string
   url?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
 export type ImageUncheckedUpdateManyInput = {
-  cuid?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.StringFieldUpdateOperationsInput | string
   url?: Prisma.StringFieldUpdateOperationsInput | string
   pageCuid?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
@@ -262,19 +262,19 @@ export type ImagePageCuidUrlCompoundUniqueInput = {
 }
 
 export type ImageCountOrderByAggregateInput = {
-  cuid?: Prisma.SortOrder
+  id?: Prisma.SortOrder
   url?: Prisma.SortOrder
   pageCuid?: Prisma.SortOrder
 }
 
 export type ImageMaxOrderByAggregateInput = {
-  cuid?: Prisma.SortOrder
+  id?: Prisma.SortOrder
   url?: Prisma.SortOrder
   pageCuid?: Prisma.SortOrder
 }
 
 export type ImageMinOrderByAggregateInput = {
-  cuid?: Prisma.SortOrder
+  id?: Prisma.SortOrder
   url?: Prisma.SortOrder
   pageCuid?: Prisma.SortOrder
 }
@@ -322,12 +322,12 @@ export type ImageUncheckedUpdateManyWithoutPageNestedInput = {
 }
 
 export type ImageCreateWithoutPageInput = {
-  cuid?: string
+  id: string
   url: string
 }
 
 export type ImageUncheckedCreateWithoutPageInput = {
-  cuid?: string
+  id: string
   url: string
 }
 
@@ -360,61 +360,61 @@ export type ImageScalarWhereInput = {
   AND?: Prisma.ImageScalarWhereInput | Prisma.ImageScalarWhereInput[]
   OR?: Prisma.ImageScalarWhereInput[]
   NOT?: Prisma.ImageScalarWhereInput | Prisma.ImageScalarWhereInput[]
-  cuid?: Prisma.StringFilter<"Image"> | string
+  id?: Prisma.StringFilter<"Image"> | string
   url?: Prisma.StringFilter<"Image"> | string
   pageCuid?: Prisma.StringNullableFilter<"Image"> | string | null
 }
 
 export type ImageCreateManyPageInput = {
-  cuid?: string
+  id: string
   url: string
 }
 
 export type ImageUpdateWithoutPageInput = {
-  cuid?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.StringFieldUpdateOperationsInput | string
   url?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
 export type ImageUncheckedUpdateWithoutPageInput = {
-  cuid?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.StringFieldUpdateOperationsInput | string
   url?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
 export type ImageUncheckedUpdateManyWithoutPageInput = {
-  cuid?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.StringFieldUpdateOperationsInput | string
   url?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
 
 
 export type ImageSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
-  cuid?: boolean
+  id?: boolean
   url?: boolean
   pageCuid?: boolean
   Page?: boolean | Prisma.Image$PageArgs<ExtArgs>
 }, ExtArgs["result"]["image"]>
 
 export type ImageSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
-  cuid?: boolean
+  id?: boolean
   url?: boolean
   pageCuid?: boolean
   Page?: boolean | Prisma.Image$PageArgs<ExtArgs>
 }, ExtArgs["result"]["image"]>
 
 export type ImageSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
-  cuid?: boolean
+  id?: boolean
   url?: boolean
   pageCuid?: boolean
   Page?: boolean | Prisma.Image$PageArgs<ExtArgs>
 }, ExtArgs["result"]["image"]>
 
 export type ImageSelectScalar = {
-  cuid?: boolean
+  id?: boolean
   url?: boolean
   pageCuid?: boolean
 }
 
-export type ImageOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"cuid" | "url" | "pageCuid", ExtArgs["result"]["image"]>
+export type ImageOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "url" | "pageCuid", ExtArgs["result"]["image"]>
 export type ImageInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   Page?: boolean | Prisma.Image$PageArgs<ExtArgs>
 }
@@ -431,7 +431,7 @@ export type $ImagePayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
     Page: Prisma.$PagePayload<ExtArgs> | null
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
-    cuid: string
+    id: string
     url: string
     pageCuid: string | null
   }, ExtArgs["result"]["image"]>
@@ -517,8 +517,8 @@ export interface ImageDelegate<ExtArgs extends runtime.Types.Extensions.Internal
    * // Get first 10 Images
    * const images = await prisma.image.findMany({ take: 10 })
    * 
-   * // Only select the `cuid`
-   * const imageWithCuidOnly = await prisma.image.findMany({ select: { cuid: true } })
+   * // Only select the `id`
+   * const imageWithIdOnly = await prisma.image.findMany({ select: { id: true } })
    * 
    */
   findMany<T extends ImageFindManyArgs>(args?: Prisma.SelectSubset<T, ImageFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ImagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
@@ -562,9 +562,9 @@ export interface ImageDelegate<ExtArgs extends runtime.Types.Extensions.Internal
    *   ]
    * })
    * 
-   * // Create many Images and only return the `cuid`
-   * const imageWithCuidOnly = await prisma.image.createManyAndReturn({
-   *   select: { cuid: true },
+   * // Create many Images and only return the `id`
+   * const imageWithIdOnly = await prisma.image.createManyAndReturn({
+   *   select: { id: true },
    *   data: [
    *     // ... provide data here
    *   ]
@@ -653,9 +653,9 @@ export interface ImageDelegate<ExtArgs extends runtime.Types.Extensions.Internal
    *   ]
    * })
    * 
-   * // Update zero or more Images and only return the `cuid`
-   * const imageWithCuidOnly = await prisma.image.updateManyAndReturn({
-   *   select: { cuid: true },
+   * // Update zero or more Images and only return the `id`
+   * const imageWithIdOnly = await prisma.image.updateManyAndReturn({
+   *   select: { id: true },
    *   where: {
    *     // ... provide filter here
    *   },
@@ -858,7 +858,7 @@ export interface Prisma__ImageClient<T, Null = never, ExtArgs extends runtime.Ty
  * Fields of the Image model
  */
 export interface ImageFieldRefs {
-  readonly cuid: Prisma.FieldRef<"Image", 'String'>
+  readonly id: Prisma.FieldRef<"Image", 'String'>
   readonly url: Prisma.FieldRef<"Image", 'String'>
   readonly pageCuid: Prisma.FieldRef<"Image", 'String'>
 }

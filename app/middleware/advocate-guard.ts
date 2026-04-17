@@ -1,7 +1,7 @@
-export default defineNuxtRouteMiddleware((to, from) => {
-  const { data: session } = await authClient.getSession(useFetch);
+export default defineNuxtRouteMiddleware(async (to, from) => {
+  const { data: session } = await authClient.useSession(useFetch);
 
   if (!session.value || session.value.role !== 'admin' || session.value.role !== 'advocate') {
-    return navigateTo('/');
+    return navigateTo('/Search/?search=')
   }
 })

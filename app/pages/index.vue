@@ -8,6 +8,9 @@
 *	Located under "/index"
 */
 
+definePageMeta({
+  middleware: ["family-guard"]
+})
 
 import type { User } from '@/types.d.ts'
 

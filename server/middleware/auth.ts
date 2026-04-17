@@ -5,6 +5,10 @@ const stripeSecretKey = runtime.STRIPE_SECRET;
 import type { User, Family} from "@/types.d.ts"
 
 export default defineEventHandler(async event => {
+  //REMOVE
+  return;
+  //REMOVE
+  
   const method = getMethod(event);
   if (method == "POST") {
     const rawBody = await readRawBody(event, false);  // Attach rawbody so stripe webhook authentication works

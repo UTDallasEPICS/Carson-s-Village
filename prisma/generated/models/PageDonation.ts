@@ -35,7 +35,7 @@ export type PageDonationSumAggregateOutputType = {
 }
 
 export type PageDonationMinAggregateOutputType = {
-  cuid: string | null
+  id: string | null
   familyCuid: string | null
   pageCuid: string | null
   donorFirstName: string | null
@@ -48,7 +48,7 @@ export type PageDonationMinAggregateOutputType = {
 }
 
 export type PageDonationMaxAggregateOutputType = {
-  cuid: string | null
+  id: string | null
   familyCuid: string | null
   pageCuid: string | null
   donorFirstName: string | null
@@ -61,7 +61,7 @@ export type PageDonationMaxAggregateOutputType = {
 }
 
 export type PageDonationCountAggregateOutputType = {
-  cuid: number
+  id: number
   familyCuid: number
   pageCuid: number
   donorFirstName: number
@@ -84,7 +84,7 @@ export type PageDonationSumAggregateInputType = {
 }
 
 export type PageDonationMinAggregateInputType = {
-  cuid?: true
+  id?: true
   familyCuid?: true
   pageCuid?: true
   donorFirstName?: true
@@ -97,7 +97,7 @@ export type PageDonationMinAggregateInputType = {
 }
 
 export type PageDonationMaxAggregateInputType = {
-  cuid?: true
+  id?: true
   familyCuid?: true
   pageCuid?: true
   donorFirstName?: true
@@ -110,7 +110,7 @@ export type PageDonationMaxAggregateInputType = {
 }
 
 export type PageDonationCountAggregateInputType = {
-  cuid?: true
+  id?: true
   familyCuid?: true
   pageCuid?: true
   donorFirstName?: true
@@ -210,7 +210,7 @@ export type PageDonationGroupByArgs<ExtArgs extends runtime.Types.Extensions.Int
 }
 
 export type PageDonationGroupByOutputType = {
-  cuid: string
+  id: string
   familyCuid: string
   pageCuid: string
   donorFirstName: string
@@ -246,7 +246,7 @@ export type PageDonationWhereInput = {
   AND?: Prisma.PageDonationWhereInput | Prisma.PageDonationWhereInput[]
   OR?: Prisma.PageDonationWhereInput[]
   NOT?: Prisma.PageDonationWhereInput | Prisma.PageDonationWhereInput[]
-  cuid?: Prisma.StringFilter<"PageDonation"> | string
+  id?: Prisma.StringFilter<"PageDonation"> | string
   familyCuid?: Prisma.StringFilter<"PageDonation"> | string
   pageCuid?: Prisma.StringFilter<"PageDonation"> | string
   donorFirstName?: Prisma.StringFilter<"PageDonation"> | string
@@ -261,7 +261,7 @@ export type PageDonationWhereInput = {
 }
 
 export type PageDonationOrderByWithRelationInput = {
-  cuid?: Prisma.SortOrder
+  id?: Prisma.SortOrder
   familyCuid?: Prisma.SortOrder
   pageCuid?: Prisma.SortOrder
   donorFirstName?: Prisma.SortOrder
@@ -276,7 +276,7 @@ export type PageDonationOrderByWithRelationInput = {
 }
 
 export type PageDonationWhereUniqueInput = Prisma.AtLeast<{
-  cuid?: string
+  id?: string
   AND?: Prisma.PageDonationWhereInput | Prisma.PageDonationWhereInput[]
   OR?: Prisma.PageDonationWhereInput[]
   NOT?: Prisma.PageDonationWhereInput | Prisma.PageDonationWhereInput[]
@@ -291,10 +291,10 @@ export type PageDonationWhereUniqueInput = Prisma.AtLeast<{
   amount?: Prisma.IntFilter<"PageDonation"> | number
   Family?: Prisma.XOR<Prisma.FamilyScalarRelationFilter, Prisma.FamilyWhereInput>
   Page?: Prisma.XOR<Prisma.PageScalarRelationFilter, Prisma.PageWhereInput>
-}, "cuid">
+}, "id">
 
 export type PageDonationOrderByWithAggregationInput = {
-  cuid?: Prisma.SortOrder
+  id?: Prisma.SortOrder
   familyCuid?: Prisma.SortOrder
   pageCuid?: Prisma.SortOrder
   donorFirstName?: Prisma.SortOrder
@@ -315,7 +315,7 @@ export type PageDonationScalarWhereWithAggregatesInput = {
   AND?: Prisma.PageDonationScalarWhereWithAggregatesInput | Prisma.PageDonationScalarWhereWithAggregatesInput[]
   OR?: Prisma.PageDonationScalarWhereWithAggregatesInput[]
   NOT?: Prisma.PageDonationScalarWhereWithAggregatesInput | Prisma.PageDonationScalarWhereWithAggregatesInput[]
-  cuid?: Prisma.StringWithAggregatesFilter<"PageDonation"> | string
+  id?: Prisma.StringWithAggregatesFilter<"PageDonation"> | string
   familyCuid?: Prisma.StringWithAggregatesFilter<"PageDonation"> | string
   pageCuid?: Prisma.StringWithAggregatesFilter<"PageDonation"> | string
   donorFirstName?: Prisma.StringWithAggregatesFilter<"PageDonation"> | string
@@ -328,7 +328,7 @@ export type PageDonationScalarWhereWithAggregatesInput = {
 }
 
 export type PageDonationCreateInput = {
-  cuid?: string
+  id: string
   donorFirstName?: string
   donorLastName?: string
   donorEmail?: string
@@ -341,7 +341,7 @@ export type PageDonationCreateInput = {
 }
 
 export type PageDonationUncheckedCreateInput = {
-  cuid?: string
+  id: string
   familyCuid: string
   pageCuid: string
   donorFirstName?: string
@@ -354,7 +354,7 @@ export type PageDonationUncheckedCreateInput = {
 }
 
 export type PageDonationUpdateInput = {
-  cuid?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.StringFieldUpdateOperationsInput | string
   donorFirstName?: Prisma.StringFieldUpdateOperationsInput | string
   donorLastName?: Prisma.StringFieldUpdateOperationsInput | string
   donorEmail?: Prisma.StringFieldUpdateOperationsInput | string
@@ -367,7 +367,7 @@ export type PageDonationUpdateInput = {
 }
 
 export type PageDonationUncheckedUpdateInput = {
-  cuid?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.StringFieldUpdateOperationsInput | string
   familyCuid?: Prisma.StringFieldUpdateOperationsInput | string
   pageCuid?: Prisma.StringFieldUpdateOperationsInput | string
   donorFirstName?: Prisma.StringFieldUpdateOperationsInput | string
@@ -380,7 +380,7 @@ export type PageDonationUncheckedUpdateInput = {
 }
 
 export type PageDonationCreateManyInput = {
-  cuid?: string
+  id: string
   familyCuid: string
   pageCuid: string
   donorFirstName?: string
@@ -393,7 +393,7 @@ export type PageDonationCreateManyInput = {
 }
 
 export type PageDonationUpdateManyMutationInput = {
-  cuid?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.StringFieldUpdateOperationsInput | string
   donorFirstName?: Prisma.StringFieldUpdateOperationsInput | string
   donorLastName?: Prisma.StringFieldUpdateOperationsInput | string
   donorEmail?: Prisma.StringFieldUpdateOperationsInput | string
@@ -404,7 +404,7 @@ export type PageDonationUpdateManyMutationInput = {
 }
 
 export type PageDonationUncheckedUpdateManyInput = {
-  cuid?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.StringFieldUpdateOperationsInput | string
   familyCuid?: Prisma.StringFieldUpdateOperationsInput | string
   pageCuid?: Prisma.StringFieldUpdateOperationsInput | string
   donorFirstName?: Prisma.StringFieldUpdateOperationsInput | string
@@ -427,7 +427,7 @@ export type PageDonationOrderByRelationAggregateInput = {
 }
 
 export type PageDonationCountOrderByAggregateInput = {
-  cuid?: Prisma.SortOrder
+  id?: Prisma.SortOrder
   familyCuid?: Prisma.SortOrder
   pageCuid?: Prisma.SortOrder
   donorFirstName?: Prisma.SortOrder
@@ -444,7 +444,7 @@ export type PageDonationAvgOrderByAggregateInput = {
 }
 
 export type PageDonationMaxOrderByAggregateInput = {
-  cuid?: Prisma.SortOrder
+  id?: Prisma.SortOrder
   familyCuid?: Prisma.SortOrder
   pageCuid?: Prisma.SortOrder
   donorFirstName?: Prisma.SortOrder
@@ -457,7 +457,7 @@ export type PageDonationMaxOrderByAggregateInput = {
 }
 
 export type PageDonationMinOrderByAggregateInput = {
-  cuid?: Prisma.SortOrder
+  id?: Prisma.SortOrder
   familyCuid?: Prisma.SortOrder
   pageCuid?: Prisma.SortOrder
   donorFirstName?: Prisma.SortOrder
@@ -558,7 +558,7 @@ export type PageDonationUncheckedUpdateManyWithoutPageNestedInput = {
 }
 
 export type PageDonationCreateWithoutFamilyInput = {
-  cuid?: string
+  id: string
   donorFirstName?: string
   donorLastName?: string
   donorEmail?: string
@@ -570,7 +570,7 @@ export type PageDonationCreateWithoutFamilyInput = {
 }
 
 export type PageDonationUncheckedCreateWithoutFamilyInput = {
-  cuid?: string
+  id: string
   pageCuid: string
   donorFirstName?: string
   donorLastName?: string
@@ -610,7 +610,7 @@ export type PageDonationScalarWhereInput = {
   AND?: Prisma.PageDonationScalarWhereInput | Prisma.PageDonationScalarWhereInput[]
   OR?: Prisma.PageDonationScalarWhereInput[]
   NOT?: Prisma.PageDonationScalarWhereInput | Prisma.PageDonationScalarWhereInput[]
-  cuid?: Prisma.StringFilter<"PageDonation"> | string
+  id?: Prisma.StringFilter<"PageDonation"> | string
   familyCuid?: Prisma.StringFilter<"PageDonation"> | string
   pageCuid?: Prisma.StringFilter<"PageDonation"> | string
   donorFirstName?: Prisma.StringFilter<"PageDonation"> | string
@@ -623,7 +623,7 @@ export type PageDonationScalarWhereInput = {
 }
 
 export type PageDonationCreateWithoutPageInput = {
-  cuid?: string
+  id: string
   donorFirstName?: string
   donorLastName?: string
   donorEmail?: string
@@ -635,7 +635,7 @@ export type PageDonationCreateWithoutPageInput = {
 }
 
 export type PageDonationUncheckedCreateWithoutPageInput = {
-  cuid?: string
+  id: string
   familyCuid: string
   donorFirstName?: string
   donorLastName?: string
@@ -672,7 +672,7 @@ export type PageDonationUpdateManyWithWhereWithoutPageInput = {
 }
 
 export type PageDonationCreateManyFamilyInput = {
-  cuid?: string
+  id: string
   pageCuid: string
   donorFirstName?: string
   donorLastName?: string
@@ -684,7 +684,7 @@ export type PageDonationCreateManyFamilyInput = {
 }
 
 export type PageDonationUpdateWithoutFamilyInput = {
-  cuid?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.StringFieldUpdateOperationsInput | string
   donorFirstName?: Prisma.StringFieldUpdateOperationsInput | string
   donorLastName?: Prisma.StringFieldUpdateOperationsInput | string
   donorEmail?: Prisma.StringFieldUpdateOperationsInput | string
@@ -696,7 +696,7 @@ export type PageDonationUpdateWithoutFamilyInput = {
 }
 
 export type PageDonationUncheckedUpdateWithoutFamilyInput = {
-  cuid?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.StringFieldUpdateOperationsInput | string
   pageCuid?: Prisma.StringFieldUpdateOperationsInput | string
   donorFirstName?: Prisma.StringFieldUpdateOperationsInput | string
   donorLastName?: Prisma.StringFieldUpdateOperationsInput | string
@@ -708,7 +708,7 @@ export type PageDonationUncheckedUpdateWithoutFamilyInput = {
 }
 
 export type PageDonationUncheckedUpdateManyWithoutFamilyInput = {
-  cuid?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.StringFieldUpdateOperationsInput | string
   pageCuid?: Prisma.StringFieldUpdateOperationsInput | string
   donorFirstName?: Prisma.StringFieldUpdateOperationsInput | string
   donorLastName?: Prisma.StringFieldUpdateOperationsInput | string
@@ -720,7 +720,7 @@ export type PageDonationUncheckedUpdateManyWithoutFamilyInput = {
 }
 
 export type PageDonationCreateManyPageInput = {
-  cuid?: string
+  id: string
   familyCuid: string
   donorFirstName?: string
   donorLastName?: string
@@ -732,7 +732,7 @@ export type PageDonationCreateManyPageInput = {
 }
 
 export type PageDonationUpdateWithoutPageInput = {
-  cuid?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.StringFieldUpdateOperationsInput | string
   donorFirstName?: Prisma.StringFieldUpdateOperationsInput | string
   donorLastName?: Prisma.StringFieldUpdateOperationsInput | string
   donorEmail?: Prisma.StringFieldUpdateOperationsInput | string
@@ -744,7 +744,7 @@ export type PageDonationUpdateWithoutPageInput = {
 }
 
 export type PageDonationUncheckedUpdateWithoutPageInput = {
-  cuid?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.StringFieldUpdateOperationsInput | string
   familyCuid?: Prisma.StringFieldUpdateOperationsInput | string
   donorFirstName?: Prisma.StringFieldUpdateOperationsInput | string
   donorLastName?: Prisma.StringFieldUpdateOperationsInput | string
@@ -756,7 +756,7 @@ export type PageDonationUncheckedUpdateWithoutPageInput = {
 }
 
 export type PageDonationUncheckedUpdateManyWithoutPageInput = {
-  cuid?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.StringFieldUpdateOperationsInput | string
   familyCuid?: Prisma.StringFieldUpdateOperationsInput | string
   donorFirstName?: Prisma.StringFieldUpdateOperationsInput | string
   donorLastName?: Prisma.StringFieldUpdateOperationsInput | string
@@ -770,7 +770,7 @@ export type PageDonationUncheckedUpdateManyWithoutPageInput = {
 
 
 export type PageDonationSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
-  cuid?: boolean
+  id?: boolean
   familyCuid?: boolean
   pageCuid?: boolean
   donorFirstName?: boolean
@@ -785,7 +785,7 @@ export type PageDonationSelect<ExtArgs extends runtime.Types.Extensions.Internal
 }, ExtArgs["result"]["pageDonation"]>
 
 export type PageDonationSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
-  cuid?: boolean
+  id?: boolean
   familyCuid?: boolean
   pageCuid?: boolean
   donorFirstName?: boolean
@@ -800,7 +800,7 @@ export type PageDonationSelectCreateManyAndReturn<ExtArgs extends runtime.Types.
 }, ExtArgs["result"]["pageDonation"]>
 
 export type PageDonationSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
-  cuid?: boolean
+  id?: boolean
   familyCuid?: boolean
   pageCuid?: boolean
   donorFirstName?: boolean
@@ -815,7 +815,7 @@ export type PageDonationSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.
 }, ExtArgs["result"]["pageDonation"]>
 
 export type PageDonationSelectScalar = {
-  cuid?: boolean
+  id?: boolean
   familyCuid?: boolean
   pageCuid?: boolean
   donorFirstName?: boolean
@@ -827,7 +827,7 @@ export type PageDonationSelectScalar = {
   amount?: boolean
 }
 
-export type PageDonationOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"cuid" | "familyCuid" | "pageCuid" | "donorFirstName" | "donorLastName" | "donorEmail" | "comments" | "donationInitiated" | "donationProcessed" | "amount", ExtArgs["result"]["pageDonation"]>
+export type PageDonationOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "familyCuid" | "pageCuid" | "donorFirstName" | "donorLastName" | "donorEmail" | "comments" | "donationInitiated" | "donationProcessed" | "amount", ExtArgs["result"]["pageDonation"]>
 export type PageDonationInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   Family?: boolean | Prisma.FamilyDefaultArgs<ExtArgs>
   Page?: boolean | Prisma.PageDefaultArgs<ExtArgs>
@@ -848,7 +848,7 @@ export type $PageDonationPayload<ExtArgs extends runtime.Types.Extensions.Intern
     Page: Prisma.$PagePayload<ExtArgs>
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
-    cuid: string
+    id: string
     familyCuid: string
     pageCuid: string
     donorFirstName: string
@@ -941,8 +941,8 @@ export interface PageDonationDelegate<ExtArgs extends runtime.Types.Extensions.I
    * // Get first 10 PageDonations
    * const pageDonations = await prisma.pageDonation.findMany({ take: 10 })
    * 
-   * // Only select the `cuid`
-   * const pageDonationWithCuidOnly = await prisma.pageDonation.findMany({ select: { cuid: true } })
+   * // Only select the `id`
+   * const pageDonationWithIdOnly = await prisma.pageDonation.findMany({ select: { id: true } })
    * 
    */
   findMany<T extends PageDonationFindManyArgs>(args?: Prisma.SelectSubset<T, PageDonationFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PageDonationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
@@ -986,9 +986,9 @@ export interface PageDonationDelegate<ExtArgs extends runtime.Types.Extensions.I
    *   ]
    * })
    * 
-   * // Create many PageDonations and only return the `cuid`
-   * const pageDonationWithCuidOnly = await prisma.pageDonation.createManyAndReturn({
-   *   select: { cuid: true },
+   * // Create many PageDonations and only return the `id`
+   * const pageDonationWithIdOnly = await prisma.pageDonation.createManyAndReturn({
+   *   select: { id: true },
    *   data: [
    *     // ... provide data here
    *   ]
@@ -1077,9 +1077,9 @@ export interface PageDonationDelegate<ExtArgs extends runtime.Types.Extensions.I
    *   ]
    * })
    * 
-   * // Update zero or more PageDonations and only return the `cuid`
-   * const pageDonationWithCuidOnly = await prisma.pageDonation.updateManyAndReturn({
-   *   select: { cuid: true },
+   * // Update zero or more PageDonations and only return the `id`
+   * const pageDonationWithIdOnly = await prisma.pageDonation.updateManyAndReturn({
+   *   select: { id: true },
    *   where: {
    *     // ... provide filter here
    *   },
@@ -1283,7 +1283,7 @@ export interface Prisma__PageDonationClient<T, Null = never, ExtArgs extends run
  * Fields of the PageDonation model
  */
 export interface PageDonationFieldRefs {
-  readonly cuid: Prisma.FieldRef<"PageDonation", 'String'>
+  readonly id: Prisma.FieldRef<"PageDonation", 'String'>
   readonly familyCuid: Prisma.FieldRef<"PageDonation", 'String'>
   readonly pageCuid: Prisma.FieldRef<"PageDonation", 'String'>
   readonly donorFirstName: Prisma.FieldRef<"PageDonation", 'String'>

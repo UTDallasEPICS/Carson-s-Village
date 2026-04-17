@@ -7,7 +7,7 @@ const runtime = useRuntimeConfig()
 
 const sesClient = new SESv2Client({ region: "us-east-2" });
 const transporter = nodemailer.createTransport({
-  SES: { sesClient, aws: { SendEmailCommand } },
+  SES: { sesClient, SendEmailCommand },
 });
 
 export const auth = betterAuth({

@@ -25,21 +25,21 @@ export type AggregateCC_Token = {
 }
 
 export type CC_TokenMinAggregateOutputType = {
-  cuid: string | null
+  id: string | null
   token: string | null
   refresh_token: string | null
   date: Date | null
 }
 
 export type CC_TokenMaxAggregateOutputType = {
-  cuid: string | null
+  id: string | null
   token: string | null
   refresh_token: string | null
   date: Date | null
 }
 
 export type CC_TokenCountAggregateOutputType = {
-  cuid: number
+  id: number
   token: number
   refresh_token: number
   date: number
@@ -48,21 +48,21 @@ export type CC_TokenCountAggregateOutputType = {
 
 
 export type CC_TokenMinAggregateInputType = {
-  cuid?: true
+  id?: true
   token?: true
   refresh_token?: true
   date?: true
 }
 
 export type CC_TokenMaxAggregateInputType = {
-  cuid?: true
+  id?: true
   token?: true
   refresh_token?: true
   date?: true
 }
 
 export type CC_TokenCountAggregateInputType = {
-  cuid?: true
+  id?: true
   token?: true
   refresh_token?: true
   date?: true
@@ -142,7 +142,7 @@ export type CC_TokenGroupByArgs<ExtArgs extends runtime.Types.Extensions.Interna
 }
 
 export type CC_TokenGroupByOutputType = {
-  cuid: string
+  id: string
   token: string
   refresh_token: string
   date: Date
@@ -170,31 +170,31 @@ export type CC_TokenWhereInput = {
   AND?: Prisma.CC_TokenWhereInput | Prisma.CC_TokenWhereInput[]
   OR?: Prisma.CC_TokenWhereInput[]
   NOT?: Prisma.CC_TokenWhereInput | Prisma.CC_TokenWhereInput[]
-  cuid?: Prisma.StringFilter<"CC_Token"> | string
+  id?: Prisma.StringFilter<"CC_Token"> | string
   token?: Prisma.StringFilter<"CC_Token"> | string
   refresh_token?: Prisma.StringFilter<"CC_Token"> | string
   date?: Prisma.DateTimeFilter<"CC_Token"> | Date | string
 }
 
 export type CC_TokenOrderByWithRelationInput = {
-  cuid?: Prisma.SortOrder
+  id?: Prisma.SortOrder
   token?: Prisma.SortOrder
   refresh_token?: Prisma.SortOrder
   date?: Prisma.SortOrder
 }
 
 export type CC_TokenWhereUniqueInput = Prisma.AtLeast<{
-  cuid?: string
+  id?: string
   AND?: Prisma.CC_TokenWhereInput | Prisma.CC_TokenWhereInput[]
   OR?: Prisma.CC_TokenWhereInput[]
   NOT?: Prisma.CC_TokenWhereInput | Prisma.CC_TokenWhereInput[]
   token?: Prisma.StringFilter<"CC_Token"> | string
   refresh_token?: Prisma.StringFilter<"CC_Token"> | string
   date?: Prisma.DateTimeFilter<"CC_Token"> | Date | string
-}, "cuid">
+}, "id">
 
 export type CC_TokenOrderByWithAggregationInput = {
-  cuid?: Prisma.SortOrder
+  id?: Prisma.SortOrder
   token?: Prisma.SortOrder
   refresh_token?: Prisma.SortOrder
   date?: Prisma.SortOrder
@@ -207,77 +207,77 @@ export type CC_TokenScalarWhereWithAggregatesInput = {
   AND?: Prisma.CC_TokenScalarWhereWithAggregatesInput | Prisma.CC_TokenScalarWhereWithAggregatesInput[]
   OR?: Prisma.CC_TokenScalarWhereWithAggregatesInput[]
   NOT?: Prisma.CC_TokenScalarWhereWithAggregatesInput | Prisma.CC_TokenScalarWhereWithAggregatesInput[]
-  cuid?: Prisma.StringWithAggregatesFilter<"CC_Token"> | string
+  id?: Prisma.StringWithAggregatesFilter<"CC_Token"> | string
   token?: Prisma.StringWithAggregatesFilter<"CC_Token"> | string
   refresh_token?: Prisma.StringWithAggregatesFilter<"CC_Token"> | string
   date?: Prisma.DateTimeWithAggregatesFilter<"CC_Token"> | Date | string
 }
 
 export type CC_TokenCreateInput = {
-  cuid?: string
+  id?: string
   token: string
   refresh_token: string
   date?: Date | string
 }
 
 export type CC_TokenUncheckedCreateInput = {
-  cuid?: string
+  id?: string
   token: string
   refresh_token: string
   date?: Date | string
 }
 
 export type CC_TokenUpdateInput = {
-  cuid?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.StringFieldUpdateOperationsInput | string
   token?: Prisma.StringFieldUpdateOperationsInput | string
   refresh_token?: Prisma.StringFieldUpdateOperationsInput | string
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type CC_TokenUncheckedUpdateInput = {
-  cuid?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.StringFieldUpdateOperationsInput | string
   token?: Prisma.StringFieldUpdateOperationsInput | string
   refresh_token?: Prisma.StringFieldUpdateOperationsInput | string
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type CC_TokenCreateManyInput = {
-  cuid?: string
+  id?: string
   token: string
   refresh_token: string
   date?: Date | string
 }
 
 export type CC_TokenUpdateManyMutationInput = {
-  cuid?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.StringFieldUpdateOperationsInput | string
   token?: Prisma.StringFieldUpdateOperationsInput | string
   refresh_token?: Prisma.StringFieldUpdateOperationsInput | string
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type CC_TokenUncheckedUpdateManyInput = {
-  cuid?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.StringFieldUpdateOperationsInput | string
   token?: Prisma.StringFieldUpdateOperationsInput | string
   refresh_token?: Prisma.StringFieldUpdateOperationsInput | string
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type CC_TokenCountOrderByAggregateInput = {
-  cuid?: Prisma.SortOrder
+  id?: Prisma.SortOrder
   token?: Prisma.SortOrder
   refresh_token?: Prisma.SortOrder
   date?: Prisma.SortOrder
 }
 
 export type CC_TokenMaxOrderByAggregateInput = {
-  cuid?: Prisma.SortOrder
+  id?: Prisma.SortOrder
   token?: Prisma.SortOrder
   refresh_token?: Prisma.SortOrder
   date?: Prisma.SortOrder
 }
 
 export type CC_TokenMinOrderByAggregateInput = {
-  cuid?: Prisma.SortOrder
+  id?: Prisma.SortOrder
   token?: Prisma.SortOrder
   refresh_token?: Prisma.SortOrder
   date?: Prisma.SortOrder
@@ -286,40 +286,40 @@ export type CC_TokenMinOrderByAggregateInput = {
 
 
 export type CC_TokenSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
-  cuid?: boolean
+  id?: boolean
   token?: boolean
   refresh_token?: boolean
   date?: boolean
 }, ExtArgs["result"]["cC_Token"]>
 
 export type CC_TokenSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
-  cuid?: boolean
+  id?: boolean
   token?: boolean
   refresh_token?: boolean
   date?: boolean
 }, ExtArgs["result"]["cC_Token"]>
 
 export type CC_TokenSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
-  cuid?: boolean
+  id?: boolean
   token?: boolean
   refresh_token?: boolean
   date?: boolean
 }, ExtArgs["result"]["cC_Token"]>
 
 export type CC_TokenSelectScalar = {
-  cuid?: boolean
+  id?: boolean
   token?: boolean
   refresh_token?: boolean
   date?: boolean
 }
 
-export type CC_TokenOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"cuid" | "token" | "refresh_token" | "date", ExtArgs["result"]["cC_Token"]>
+export type CC_TokenOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "token" | "refresh_token" | "date", ExtArgs["result"]["cC_Token"]>
 
 export type $CC_TokenPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "CC_Token"
   objects: {}
   scalars: runtime.Types.Extensions.GetPayloadResult<{
-    cuid: string
+    id: string
     token: string
     refresh_token: string
     date: Date
@@ -406,8 +406,8 @@ export interface CC_TokenDelegate<ExtArgs extends runtime.Types.Extensions.Inter
    * // Get first 10 CC_Tokens
    * const cC_Tokens = await prisma.cC_Token.findMany({ take: 10 })
    * 
-   * // Only select the `cuid`
-   * const cC_TokenWithCuidOnly = await prisma.cC_Token.findMany({ select: { cuid: true } })
+   * // Only select the `id`
+   * const cC_TokenWithIdOnly = await prisma.cC_Token.findMany({ select: { id: true } })
    * 
    */
   findMany<T extends CC_TokenFindManyArgs>(args?: Prisma.SelectSubset<T, CC_TokenFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CC_TokenPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
@@ -451,9 +451,9 @@ export interface CC_TokenDelegate<ExtArgs extends runtime.Types.Extensions.Inter
    *   ]
    * })
    * 
-   * // Create many CC_Tokens and only return the `cuid`
-   * const cC_TokenWithCuidOnly = await prisma.cC_Token.createManyAndReturn({
-   *   select: { cuid: true },
+   * // Create many CC_Tokens and only return the `id`
+   * const cC_TokenWithIdOnly = await prisma.cC_Token.createManyAndReturn({
+   *   select: { id: true },
    *   data: [
    *     // ... provide data here
    *   ]
@@ -542,9 +542,9 @@ export interface CC_TokenDelegate<ExtArgs extends runtime.Types.Extensions.Inter
    *   ]
    * })
    * 
-   * // Update zero or more CC_Tokens and only return the `cuid`
-   * const cC_TokenWithCuidOnly = await prisma.cC_Token.updateManyAndReturn({
-   *   select: { cuid: true },
+   * // Update zero or more CC_Tokens and only return the `id`
+   * const cC_TokenWithIdOnly = await prisma.cC_Token.updateManyAndReturn({
+   *   select: { id: true },
    *   where: {
    *     // ... provide filter here
    *   },
@@ -746,7 +746,7 @@ export interface Prisma__CC_TokenClient<T, Null = never, ExtArgs extends runtime
  * Fields of the CC_Token model
  */
 export interface CC_TokenFieldRefs {
-  readonly cuid: Prisma.FieldRef<"CC_Token", 'String'>
+  readonly id: Prisma.FieldRef<"CC_Token", 'String'>
   readonly token: Prisma.FieldRef<"CC_Token", 'String'>
   readonly refresh_token: Prisma.FieldRef<"CC_Token", 'String'>
   readonly date: Prisma.FieldRef<"CC_Token", 'DateTime'>

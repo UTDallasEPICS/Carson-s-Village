@@ -1,5 +1,5 @@
 import { createAuthClient } from 'better-auth/vue';
-import { inferAdditionalFields } from "better-auth/client/plugins";
+import { inferAdditionalFields, emailOTPClient } from "better-auth/client/plugins";
 import type { auth } from "~~/server/utils/auth";
 
 export const authClient = createAuthClient({
