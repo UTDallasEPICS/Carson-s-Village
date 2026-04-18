@@ -5,7 +5,6 @@ definePageMeta({
 
 const router = useRoute()
 const success = computed(() => router.query.success)
-//const fail = computed(() => router.query.fail)
 
 const successMessage = ref<string | null>(null);
 const failMessage = ref<string | null>(null);
@@ -15,7 +14,7 @@ const getAuthRequestUrl = () => {
 }
 
 const refreshToken = async() => {
-   const responce = await $fetch('/api/refresh_token', {
+   const response = await $fetch('/api/refresh_token', {
         method: "PUT"
     }).catch(error => {
         console.log(error)
@@ -23,7 +22,7 @@ const refreshToken = async() => {
         failMessage.value = 'No access token present'
     })
 
-    if(responce?.statusCode === 200) {
+    if(response?.statusCode === 200) {
         successMessage.value = 'Success! Constant Contacts Auth token was refreshed!';
     } else {
         failMessage.value = 'Cannot refresh token, no access token present'
@@ -33,17 +32,19 @@ const refreshToken = async() => {
 }
 
 const checkAccessToken = async() => {
-    // using $fetch instead of useFetch because we do not want to cache if the token exists or not
-    const tokenExists = await $fetch('/api/cc_access_token_exists', {
-            method: "GET"
-    })
+  // Add option so that browser does not cache result, and nuxt does not store payload of result on client
+  const { data: tokenExists } = await useFetch('/api/cc_access_token_exists', {
+    method: "GET",
+    cache: 'no-store',
+    getCachedData: (key) => null
+  })
 
-    if(tokenExists) {
-        successMessage.value = 'Success! Constant Contacts Auth token was created or is already present'
-    } else {
-        failMessage.value = 'No access token present'
-        successMessage.value = ''
-    }
+  if(tokenExists.value) {
+    successMessage.value = 'Success! Constant Contacts Auth token was created or is already present'
+  } else {
+    failMessage.value = 'No access token present'
+    successMessage.value = ''
+  }
 }
 
 await checkAccessToken();
