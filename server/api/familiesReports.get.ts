@@ -7,11 +7,11 @@ import type { User, Family, Page } from "@/types.d.ts"
 */
 
 export default defineEventHandler(async event => {
-  const session = await auth.api.getSession({
+  const { user } = await auth.api.getSession({
     headers: event.headers
   })
 
-  if (!session) {
+  if (!user) {
     throw createError({
       statusCode: 401,
       statusMessage: 'Unauthorized'
@@ -22,7 +22,7 @@ export default defineEventHandler(async event => {
   const start_date_date = start_date as Date
   const end_date_date = end_date as Date
 
-  if(session.role === "advocate"  || session.role === "admin") {
+  if(user.role === "advocate"  || user.role === "admin") {
     const [ count, count_date_ranged, all_families, paginated_pages, date_ranged_pages ] = await prisma.$transaction([
       prisma.page.count(),
       prisma.page.count({ 

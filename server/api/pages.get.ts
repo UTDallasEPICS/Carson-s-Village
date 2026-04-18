@@ -9,11 +9,11 @@ import type { Page } from '@/types.d.ts'
 const runtime = useRuntimeConfig()
 
 export default defineEventHandler(async event => {
-  const session = await auth.api.getSession({
+  const { user } = await auth.api.getSession({
     headers: event.headers
   })
 
-  if (!session) {
+  if (!user) {
     throw createError({
       statusCode: 401,
       statusMessage: 'Unauthorized'
@@ -22,7 +22,7 @@ export default defineEventHandler(async event => {
 
   const { searchQuery, page_number, isPageList, order, sortedColumn } = getQuery(event);
 
-  if((searchQuery as string) == "" && session.role == "admin" && (isPageList == 1) as boolean) { 
+  if((searchQuery as string) == "" && user.role == "admin" && (isPageList == 1) as boolean) { 
     const [count, pagesResult] = await prisma.$transaction([
       prisma.page.count(),
       prisma.page.findMany({

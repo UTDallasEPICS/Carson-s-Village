@@ -7,18 +7,18 @@
 export default defineEventHandler(async event => {
   const { page_number, order, sortedColumn } = getQuery(event);
 
-  const session = await auth.api.getSession({
+  const { user } = await auth.api.getSession({
     headers: event.headers
   })
 
-  if (!session) {
+  if (!user) {
     throw createError({
       statusCode: 401,
       statusMessage: 'Unauthorized'
     });
   }
   
-  if(session.role === 'advocate' || session.role === 'admin') {
+  if(user.role === 'advocate' || user.role === 'admin') {
     // Pagination via taking the absolute table page number with 12 records per page
     let orderBy = {};
     if (sortedColumn === 'family_name') {

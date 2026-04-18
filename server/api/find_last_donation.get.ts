@@ -5,11 +5,11 @@
 */
 
 export default defineEventHandler(async event => {
-  const session = await auth.api.getSession({
+  const { user } = await auth.api.getSession({
     headers: event.headers
   })
 
-  if (!session) {
+  if (!user) {
     throw createError({
       statusCode: 401,
       statusMessage: 'Unauthorized'
@@ -22,7 +22,7 @@ export default defineEventHandler(async event => {
       return ""
   }
 
-  if(session.role === "admin") {
+  if(user.role === "admin") {
     const queryRes = prisma.pageDonation.aggregate({
       _max: {
         donationDate: true

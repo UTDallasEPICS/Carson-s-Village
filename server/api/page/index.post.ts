@@ -8,11 +8,11 @@ import type { Image } from "@/types.d.ts"
 */
 
 export default defineEventHandler(async event => {
-  const session = await auth.api.getSession({
+  const { user } = await auth.api.getSession({
     headers: event.headers
   })
 
-  if (!session) {
+  if (!user) {
     throw createError({
       statusCode: 401,
       statusMessage: 'Unauthorized'
@@ -21,7 +21,7 @@ export default defineEventHandler(async event => {
   // extracting family id to connect the page to the authenticated user
   const {Images, Reply, PageDonations, userCuid, familyCuid, ...data} = await readBody(event)
 
-  if(session.role === "advocate" || session.role == 'admin'|| session.id === userCuid ) {
+  if(user.role === "advocate" || user.role == 'admin'|| user.id === userCuid ) {
     data.donation_goal = Math.trunc(data.donation_goal * 100);
     data.amount_raised = Math.trunc(data.amount_raised * 100);
     try {

@@ -10,18 +10,18 @@ import type { Page } from "@/types.d.ts"
 export default defineEventHandler(async event => {
   const body = await readBody(event);
 
-  const session = await auth.api.getSession({
+  const { user } = await auth.api.getSession({
     headers: event.headers
   })
 
-  if (!session) {
+  if (!user) {
     throw createError({
       statusCode: 401,
       statusMessage: 'Unauthorized'
     });
   }
   
-  if(session.role === "advocate" || session.role == "admin"  || session.role == 'family') {
+  if(user.role === "advocate" || user.role == "admin"  || user.role == 'family') {
     try {
       // Deletes an image from the database.
       const queryRes = await prisma.image.delete({

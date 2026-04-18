@@ -5,11 +5,11 @@
 
 const runtime = useRuntimeConfig()
 export default defineEventHandler(async event => {
-  const session = await auth.api.getSession({
+  const { user } = await auth.api.getSession({
     headers: event.headers
   })
 
-  if (!session) {
+  if (!user) {
     throw createError({
       statusCode: 401,
       statusMessage: 'Unauthorized'
@@ -33,10 +33,10 @@ export default defineEventHandler(async event => {
   const body = await readBody(event)
   const now = (new Date()).toISOString();
 
-  if(session.role === "advocate" || session.role === "admin") {
+  if(user.role === "advocate" || user.role === "admin") {
     try{
       // creates a new user entry in the user model/table.
-      if(body.user_role == "advocate" || (body.user_role == "admin" && session.role === "admin")) {
+      if(body.user_role == "advocate" || (body.user_role == "admin" && user.role === "admin")) {
         delete body.Pages
         delete body.AdvocateFamily
         const queryRes = await prisma.user.create({

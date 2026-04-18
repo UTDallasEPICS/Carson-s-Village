@@ -7,11 +7,11 @@ import type { Image } from "@/types.d.ts"
 */
 
 export default defineEventHandler(async event => {
-  const session = await auth.api.getSession({
+  const { user } = await auth.api.getSession({
     headers: event.headers
   })
 
-  if (!session) {
+  if (!user) {
     throw createError({
       statusCode: 401,
       statusMessage: 'Unauthorized'
@@ -21,7 +21,7 @@ export default defineEventHandler(async event => {
   //const userCuid = data.userCuid
   //delete data.userCuid;
   
-  if(session.role === "advocate" || session.role == "admin" || session.id == userCuid || session.familyId == familyCuid ) {
+  if(user.role === "advocate" || user.role == "admin" || user.id == userCuid || user.familyId == familyCuid ) {
     delete data.Family // Not sure why this is needed to fix an error
     try {
       // Removes comma parses the whole decimal number and converts it to cents to be stored in DB

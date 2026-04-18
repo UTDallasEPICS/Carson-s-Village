@@ -5,11 +5,11 @@
 */
 
 export default defineEventHandler(async event => {
-  const session = await auth.api.getSession({
+  const { user } = await auth.api.getSession({
     headers: event.headers
   })
 
-  if (!session) {
+  if (!user) {
     throw createError({
       statusCode: 401,
       statusMessage: 'Unauthorized'
@@ -22,7 +22,7 @@ export default defineEventHandler(async event => {
       return []
   }
 
-  if(session.role === "admin" && cuid === "") {
+  if(user.role === "admin" && cuid === "") {
     const [count, pagesResult] = await prisma.$transaction([
       prisma.page.count(),
       prisma.page.findMany({
@@ -45,13 +45,13 @@ export default defineEventHandler(async event => {
       }, 
       data:  pagesResult
     };
-  } else if(session.role === "advocate" && cuid === "") {
+  } else if(user.role === "advocate" && cuid === "") {
     const [count, pagesResult] = await prisma.$transaction([
       prisma.page.count({
         where: {
           Family: {
             AdvocateResponsible: {
-              id: session.id
+              id: user.id
             }
           },
         } 
@@ -62,7 +62,7 @@ export default defineEventHandler(async event => {
         where: {
           Family: {
             AdvocateResponsible: {
-              id: session.id
+              id: user.id
             }
           },
         },
@@ -83,7 +83,7 @@ export default defineEventHandler(async event => {
       }, 
       data:  pagesResult
     };
-} else if(session.role === "admin" && cuid !=="" || session.role === "advocate" && cuid !== ""  || session.id == cuid ||  session.familyId == cuid) {
+} else if(user.role === "admin" && cuid !=="" || user.role === "advocate" && cuid !== ""  || user.id == cuid ||  user.familyId == cuid) {
     const [count, pagesResult, pagesUnpaginated] = await prisma.$transaction([
       prisma.page.count({ 
         where: {

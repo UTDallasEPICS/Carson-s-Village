@@ -2,11 +2,11 @@ import { nanoid } from "nanoid"
 const runtime = useRuntimeConfig()
 
 export default defineEventHandler(async (event) => {
-  const session = await auth.api.getSession({
+  const { user } = await auth.api.getSession({
     headers: event.headers
   })
 
-  if (!session) {
+  if (!user) {
     throw createError({
       statusCode: 401,
       statusMessage: 'Unauthorized'
@@ -23,7 +23,7 @@ export default defineEventHandler(async (event) => {
   const contentUrl = "https://s3.us-east-2.amazonaws.com/" + runtime.AWS_S3_BUCKET_NAME + "/" + key;
 
   // only signed in users may upload
-  if(session.role == "admin" || session.role == "advocate" || session.role == "family") {
+  if(user.role == "admin" || user.role == "advocate" || user.role == "family") {
     try {
       // Creates a new entry in the database in the image model
       const image = await prisma.image.create({

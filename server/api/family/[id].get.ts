@@ -7,18 +7,18 @@
 export default defineEventHandler(async event => {
   const family_cuid = getRouterParam(event, 'id')
   
-  const session = await auth.api.getSession({
+  const { user } = await auth.api.getSession({
     headers: event.headers
   })
 
-  if (!session) {
+  if (!user) {
     throw createError({
       statusCode: 401,
       statusMessage: 'Unauthorized'
     });
   }
 
-  if(session.role == "advocate" || session.role == "admin" || session.familyId === family_cuid as string) {
+  if(user.role == "advocate" || user.role == "admin" || user.familyId === family_cuid as string) {
     const queryRes = await prisma.family.findFirst({
       where: {
         id: family_cuid as string
