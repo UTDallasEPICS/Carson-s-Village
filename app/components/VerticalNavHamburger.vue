@@ -1,17 +1,14 @@
 <script lang="ts" setup>
 import type { User, Page } from "@/types.d.ts"
 import { donationFormat, dateFormat } from '@/utils'
-//import searchOnEnter from '@/Search.vue'
-//import pageSearch from '@Search.vue'
+import { authClient } from '~/utils/auth-client';
+
+const { data } = await authClient.useSession(useFetch);
+const user = computed(() => data.value?.user )
 
 const props = defineProps<{ hamburgerOpen: boolean }>()
-const cvuser = useCookie<User>('cvuser');
-const cvtoken = useCookie('cvtoken');
-const isAdvocateAdmin = computed(() => cvuser.value?.user_role == "admin" || cvuser.value?.user_role == "advocate")
-const isAdmin = computed(() => cvuser.value?.user_role == "admin")
-const cuid = computed(() => cvuser.value?.cuid)
-const familyCuid = computed(() => cvuser.value?.familyCuid)
-const isLoggedIn = computed(() => cvuser.value)
+const isAdvocateAdmin = computed(() => user.value.role == "admin" || user.value.role == "advocate")
+const isAdmin = computed(() => user.value.role == "admin")
 const pages = ref<Page[]>([])
 const searchQuery = ref('');
 const route = useRoute()
@@ -28,8 +25,8 @@ const onEnter = async() => {
 
 <template lang="pug">
   .text-center.p-2.pt-32.pr-12(v-if="hamburgerOpen")
-    div.gap-2(v-if="isLoggedIn && toggle")
-      NavLinkButtonHamburger(:to="`/pageList/${cuid}/?fromUsers=0`" v-if="isAdvocateAdmin" :class="{'!text-black border-green-999 bg-white': route.path.includes('/page') || route.path.includes('/Page')}") 
+    div.gap-2(v-if="user && toggle")
+      NavLinkButtonHamburger(:to="`/pageList/${user.id}/?fromUsers=0`" v-if="isAdvocateAdmin" :class="{'!text-black border-green-999 bg-white': route.path.includes('/page') || route.path.includes('/Page')}") 
         p.uppercase.white.mb-2.w-max Pages
       .bar.mx-20(style="border-top: 0.5px solid #646464;")
       NavLinkButtonHamburger(to='/EditPage/0' :class="{'!text-black border-green-999 bg-white': route.path.includes('/EditPage')}") 

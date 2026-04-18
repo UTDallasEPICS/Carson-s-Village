@@ -1,15 +1,13 @@
 <script lang="ts" setup>
 import type { User, Page } from "@/types.d.ts"
 import { donationFormat, dateFormat } from '@/utils'
-//import searchOnEnter from '@/Search.vue'
-//import pageSearch from '@Search.vue'
-const cvuser = useCookie<User>('cvuser');
-const cvtoken = useCookie('cvtoken');
-const isAdvocateAdmin = computed(() => cvuser.value?.user_role == "admin" || cvuser.value?.user_role == "advocate")
-const isAdmin = computed(() => cvuser.value?.user_role == "admin")
-const cuid = computed(() => cvuser.value?.cuid)
-const familyCuid = computed(() => cvuser.value?.familyCuid)
-const isLoggedIn = computed(() => cvuser.value)
+import { authClient } from '~/utils/auth-client';
+
+const { data } = await authClient.useSession(useFetch);
+const user = computed(() => data.value?.user || null)
+
+const isAdvocateAdmin = computed(() => user.value?.role == "admin" || user.value?.role == "advocate")
+const isAdmin = computed(() => user.value?.role == "admin")
 const pages = ref<Page[]>([])
 const searchQuery = ref('');
 const route = useRoute()
@@ -27,10 +25,10 @@ const onEnter = async() => {
 
 <template lang="pug">
 div(class="text-center p-2 pt-32 pr-12 rounded-md border-grey-600 border-r")
-  div(class="gap-2" v-if="isLoggedIn && toggle")
-    NavLinkButtonVNav(:to="`/pageList/${cuid}/?fromUsers=0`" v-if="isAdvocateAdmin" :class="{'!text-black border-green-999 bg-white': route.path.includes('/page') || route.path.includes('/Page')}") 
+  div(class="gap-2" v-if="user && toggle")
+    NavLinkButtonVNav(v-if="isAdvocateAdmin" :to="`/pageList/${user?.id}/?fromUsers=0`" :class="{'!text-black border-green-999 bg-white': route.path.includes('/page') || route.path.includes('/Page')}") 
       p(class="uppercase white mb-2 w-max") Pages
-    NavLinkButtonVNav(:to="`/pageList/${familyCuid}/?fromUsers=0`" v-if="!isAdvocateAdmin" :class="{'!text-black border-green-999 bg-white': route.path.includes('/pageList')}")
+    NavLinkButtonVNav(v-if="!isAdvocateAdmin" :to="`/pageList/${user?.familyId}/?fromUsers=0`" :class="{'!text-black border-green-999 bg-white': route.path.includes('/pageList')}")
       p(class="uppercase white mb-2 w-max") Pages
     NavLinkButtonVNav(to='/EditPage/0' :class="{'!text-black border-green-999 bg-white': route.path.includes('/EditPage')}") 
       p(class="uppercase white mb-2 w-max") New page

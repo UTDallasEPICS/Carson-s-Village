@@ -1,16 +1,15 @@
 <script lang="ts" setup>
 import type { User, Page } from "@/types.d.ts"
 import { donationFormat, dateFormat } from '@/utils'
+import { authClient } from '~/utils/auth-client';
+
+const { data } = await authClient.useSession(useFetch);
+const user = computed(() => data.value?.user )
 
 const props = defineProps<{ hamburgerOpen: boolean }>()
 const emit = defineEmits(["hamburger"])
-const cvuser = useCookie<User>('cvuser');
-const cvtoken = useCookie('cvtoken');
-const isAdvocateAdmin = computed(() => cvuser.value?.user_role == "admin" || cvuser.value?.user_role == "advocate")
-const isAdmin = computed(() => cvuser.value?.user_role == "admin")
-const cuid = computed(() => cvuser.value?.cuid)
-const familyCuid = computed(() => cvuser.value?.familyCuid)
-const isLoggedIn = computed(() => cvuser.value)
+const isAdvocateAdmin = computed(() => user.value.role == "admin" || user.value.role == "advocate")
+const isAdmin = computed(() => user.value.role == "admin")
 const pages = ref<Page[]>([])
 const searchQuery = ref('');
 const route = useRoute()
@@ -27,19 +26,25 @@ const handleHamburgerClick = () => {
   emit('hamburger', !props.hamburgerOpen)
 }
 
+async function handleLogout() {
+  await authClient.signOut()
+
+  if (isNotSearch.value) await navigateTo('/Search/?search=')
+}
 </script>
 
 <template lang="pug">
 ClientOnly
   div(class="max-w-min mx-auto pt-3 flex items-center gap-2 mt-7 text-center")
-    div(class="max-w-min mx-auto flex items-center gap-2" v-if="isLoggedIn")
+    div(class="max-w-min mx-auto flex items-center gap-2" v-if="user")
       a(class="w-20 flex items-center px-2 py-2 text-sm font-medium rounded-md text-blue-999 cursor-pointer hover:text-black bg-white"
         target="blank"
         href="https://carsonsvillage.org"
       )
         img(class="w-20 h-14" src="/CVLogo.png")
-      a(class="flex items-center pt-5 px-2 py-2 text-sm font-medium rounded-md text-blue-999 cursor-pointer hover:text-black bg-white"
-        href="/api/logout"
+      div(
+        class="flex items-center pt-5 px-2 py-2 text-sm font-medium rounded-md text-blue-999 cursor-pointer hover:text-black bg-white"
+        @click.preventDefault="handleLogout"
       )
         p(class="uppercase white w-max font-bold text-orange-999") LOGOUT
       DropdownMenu(:has-submenus="true" :num-submenus="4"
