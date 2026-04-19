@@ -17,6 +17,7 @@ export default defineEventHandler(async event => {
   }
 
   const { family_cuid, page_number} = getQuery(event);
+
   if((family_cuid as string) == "0"  || family_cuid == undefined){
       return []
   }
@@ -40,8 +41,7 @@ export default defineEventHandler(async event => {
             include: {
               AdvocateResponsible: {
                 select: {
-                  first_name: true,
-                  last_name: true
+                  name: true
                 }
               }
             }
@@ -58,8 +58,7 @@ export default defineEventHandler(async event => {
             include: {
               AdvocateResponsible: {
                 select: {
-                  first_name: true,
-                  last_name: true
+                  name: true
                 }
               }
             }
