@@ -24,7 +24,7 @@ export default defineEventHandler(async event => {
     if (sortedColumn === 'family_name') {
       orderBy = { Family: { family_name: order || 'asc' }};
     } else {
-      orderBy = { [(sortedColumn as string) || 'last_name']: order || 'asc' };
+      orderBy = { [(sortedColumn as string) || 'name']: order || 'asc' };
     }
     const [ count, userData, unsortedUsers ] = await prisma.$transaction([
       prisma.user.count(),
