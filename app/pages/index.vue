@@ -12,13 +12,13 @@ definePageMeta({
   middleware: ["family-guard"]
 })
 
-import type { User } from '@/types.d.ts'
+import { authClient } from '~/utils/auth-client';
 
-const cvuser = useCookie<User>('cvuser');
-const cuid_data = computed(() => cvuser.value?.cuid)
-const cuid = cuid_data.value as string
-const isAdvocate = computed(() => cvuser.value?.user_role == "advocate")
-const isAdmin = computed(() => cvuser.value?.user_role == 'admin')
+const { data } = await authClient.useSession(useFetch);
+const user = computed(() => data.value?.user || null)
+
+const isAdvocate = computed(() => user.value?.role == "advocate")
+const isAdmin = computed(() => user.value?.role == 'admin')
 </script>
 
 <template lang="pug">
@@ -37,15 +37,15 @@ div(class=" container overflow-hidden mt-4 mx-auto")
   ) Family Profile  
   div(class="flex flex-col justify-start gap-6 sm:grid sm:gap-10 sm:grid-rows-3 sm:grid-cols-2 sm:my-12")
     TextGrayField(class="sm:mx-auto") Name:
-    TextGrayField {{ cvuser?.first_name }} {{ cvuser?.last_name }}
+    TextGrayField {{ user?.name }}
     TextGrayField(class="sm:mx-auto") Email:
-    TextGrayField {{ cvuser?.email }}
+    TextGrayField {{ user?.email }}
     TextGrayField(class="sm:mx-auto") Phone:
-    TextGrayField {{ cvuser?.phone }}
+    TextGrayField {{ user?.phone }}
 LinkButton(
   v-if="isAdmin || isAdvocate"
   class="sm:my-2 transition duration-300 bg-orange-999 hover:bg-green-600"
-  :to="`/EditUser/${cuid_data}`"
+  :to="`/EditUser/${user?.id}`"
 ) Edit Profile
 </template>
 
