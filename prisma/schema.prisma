@@ -81,7 +81,7 @@ model Verification {
 }
 
 model Family {
-  id                    String          @id 
+  id                    String          @id @default(uuid())
   family_name           String
   stripe_account_id     String?
   created_at            DateTime        @default(now())
@@ -97,7 +97,7 @@ model Family {
 }
 
 model Page {
-  id                    String           @id 
+  id                    String           @id @default(uuid()) 
   day_of_birth           DateTime?
   day_of_passing         DateTime?
   visitation_date        DateTime?
@@ -138,7 +138,7 @@ model Page {
 
 // Page donations only created when donation is confirmed successful
 model PageDonation {
-  id                  String         @id 
+  id                  String         @id @default(uuid())
   familyCuid          String         @map("family_cuid")
   pageCuid            String         @map("page_cuid")
   donorFirstName      String         @default("")
@@ -164,7 +164,7 @@ model CC_Token {
 }
 
 model Reply {
-  id          String    @id 
+  id          String    @id @default(uuid())
   pageCuid    String    @map("page_cuid")
   familyCuid  String    @map("family_cuid")
   reply       String    @default("")
@@ -178,7 +178,7 @@ model Reply {
 }
 
 model Image {
-  id        String  @id 
+  id        String  @id @default(uuid())
   url       String
   pageCuid  String?
 
