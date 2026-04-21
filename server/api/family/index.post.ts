@@ -4,6 +4,7 @@
 */
 
 const runtime = useRuntimeConfig()
+
 export default defineEventHandler(async event => {
   const { user } = await auth.api.getSession({
     headers: event.headers
@@ -16,27 +17,12 @@ export default defineEventHandler(async event => {
     });
   }
 
-  const EmailTemplates = new emailTemplates({
-    views: {
-      root: "./emails",
-    },
-    juice: true,
-    juiceResources: {
-      preserveImportant: true,
-      webResources: {
-        relativeTo: "./emails",
-      },
-    },
-  })
-
   const body = await readBody(event);
 
   const {
     family_name,
-    first_name,
+    name,
     email,
-    middle_name,
-    last_name,
     phone, 
     address 
   } = body
@@ -53,7 +39,7 @@ export default defineEventHandler(async event => {
           },
           FamilyMembers: {
             create: {
-              name: `${first_name ? first_name : ''}${middle_name ? middle_name : ' '}${last_name}`,
+              name,
               email,
               phone,
               address,
@@ -62,8 +48,7 @@ export default defineEventHandler(async event => {
         }
       })
 
-      // Refactor to use new login
-      await sendEmail(body.email, "invitation", "Invitation to Carson's village", ({...body, url: `${runtime.BASEURL}api/login`}))
+      await sendEmail(body.email, "invitation", "Invitation to Carson's village", ({...body, url: `${runtime.BASEURL}login`}))
       return queryRes
     } catch (e) {
       console.error(e)

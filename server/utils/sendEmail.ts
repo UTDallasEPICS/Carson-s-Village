@@ -1,6 +1,20 @@
 import { SESv2Client, SendEmailCommand } from "@aws-sdk/client-sesv2"
 const sesClient = new SESv2Client({ region: "us-east-2" });
 import emailTemplates from "email-templates"
+const EmailTemplates = new emailTemplates({
+  views: {
+    root: "./emails",
+  },
+  juice: true,
+  juiceResources: {
+    preserveImportant: true,
+    webResources: {
+      relativeTo: "./emails",
+    },
+  },
+})
+
+const runtime = useRuntimeConfig();
 
 export const sendEmail = async (to: string, template: string, subject: string, data: string) => {
   const { html, text } = await EmailTemplates.renderAll(template, data)

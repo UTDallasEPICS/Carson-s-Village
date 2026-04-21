@@ -561,7 +561,7 @@ export type PageScalarWhereWithAggregatesInput = {
 }
 
 export type PageCreateInput = {
-  id: string
+  id?: string
   day_of_birth?: Date | string | null
   day_of_passing?: Date | string | null
   visitation_date?: Date | string | null
@@ -595,7 +595,7 @@ export type PageCreateInput = {
 }
 
 export type PageUncheckedCreateInput = {
-  id: string
+  id?: string
   day_of_birth?: Date | string | null
   day_of_passing?: Date | string | null
   visitation_date?: Date | string | null
@@ -697,7 +697,7 @@ export type PageUncheckedUpdateInput = {
 }
 
 export type PageCreateManyInput = {
-  id: string
+  id?: string
   day_of_birth?: Date | string | null
   day_of_passing?: Date | string | null
   visitation_date?: Date | string | null
@@ -1053,7 +1053,7 @@ export type PageUpdateOneWithoutImagesNestedInput = {
 }
 
 export type PageCreateWithoutUserInput = {
-  id: string
+  id?: string
   day_of_birth?: Date | string | null
   day_of_passing?: Date | string | null
   visitation_date?: Date | string | null
@@ -1086,7 +1086,7 @@ export type PageCreateWithoutUserInput = {
 }
 
 export type PageUncheckedCreateWithoutUserInput = {
-  id: string
+  id?: string
   day_of_birth?: Date | string | null
   day_of_passing?: Date | string | null
   visitation_date?: Date | string | null
@@ -1178,7 +1178,7 @@ export type PageScalarWhereInput = {
 }
 
 export type PageCreateWithoutFamilyInput = {
-  id: string
+  id?: string
   day_of_birth?: Date | string | null
   day_of_passing?: Date | string | null
   visitation_date?: Date | string | null
@@ -1211,7 +1211,7 @@ export type PageCreateWithoutFamilyInput = {
 }
 
 export type PageUncheckedCreateWithoutFamilyInput = {
-  id: string
+  id?: string
   day_of_birth?: Date | string | null
   day_of_passing?: Date | string | null
   visitation_date?: Date | string | null
@@ -1269,7 +1269,7 @@ export type PageUpdateManyWithWhereWithoutFamilyInput = {
 }
 
 export type PageCreateWithoutPageDonationsInput = {
-  id: string
+  id?: string
   day_of_birth?: Date | string | null
   day_of_passing?: Date | string | null
   visitation_date?: Date | string | null
@@ -1302,7 +1302,7 @@ export type PageCreateWithoutPageDonationsInput = {
 }
 
 export type PageUncheckedCreateWithoutPageDonationsInput = {
-  id: string
+  id?: string
   day_of_birth?: Date | string | null
   day_of_passing?: Date | string | null
   visitation_date?: Date | string | null
@@ -1417,7 +1417,7 @@ export type PageUncheckedUpdateWithoutPageDonationsInput = {
 }
 
 export type PageCreateWithoutReplyInput = {
-  id: string
+  id?: string
   day_of_birth?: Date | string | null
   day_of_passing?: Date | string | null
   visitation_date?: Date | string | null
@@ -1450,7 +1450,7 @@ export type PageCreateWithoutReplyInput = {
 }
 
 export type PageUncheckedCreateWithoutReplyInput = {
-  id: string
+  id?: string
   day_of_birth?: Date | string | null
   day_of_passing?: Date | string | null
   visitation_date?: Date | string | null
@@ -1565,7 +1565,7 @@ export type PageUncheckedUpdateWithoutReplyInput = {
 }
 
 export type PageCreateWithoutImagesInput = {
-  id: string
+  id?: string
   day_of_birth?: Date | string | null
   day_of_passing?: Date | string | null
   visitation_date?: Date | string | null
@@ -1598,7 +1598,7 @@ export type PageCreateWithoutImagesInput = {
 }
 
 export type PageUncheckedCreateWithoutImagesInput = {
-  id: string
+  id?: string
   day_of_birth?: Date | string | null
   day_of_passing?: Date | string | null
   visitation_date?: Date | string | null
@@ -1713,7 +1713,7 @@ export type PageUncheckedUpdateWithoutImagesInput = {
 }
 
 export type PageCreateManyUserInput = {
-  id: string
+  id?: string
   day_of_birth?: Date | string | null
   day_of_passing?: Date | string | null
   visitation_date?: Date | string | null
@@ -1839,7 +1839,7 @@ export type PageUncheckedUpdateManyWithoutUserInput = {
 }
 
 export type PageCreateManyFamilyInput = {
-  id: string
+  id?: string
   day_of_birth?: Date | string | null
   day_of_passing?: Date | string | null
   visitation_date?: Date | string | null

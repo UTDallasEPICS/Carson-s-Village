@@ -328,7 +328,7 @@ export type PageDonationScalarWhereWithAggregatesInput = {
 }
 
 export type PageDonationCreateInput = {
-  id: string
+  id?: string
   donorFirstName?: string
   donorLastName?: string
   donorEmail?: string
@@ -341,7 +341,7 @@ export type PageDonationCreateInput = {
 }
 
 export type PageDonationUncheckedCreateInput = {
-  id: string
+  id?: string
   familyCuid: string
   pageCuid: string
   donorFirstName?: string
@@ -380,7 +380,7 @@ export type PageDonationUncheckedUpdateInput = {
 }
 
 export type PageDonationCreateManyInput = {
-  id: string
+  id?: string
   familyCuid: string
   pageCuid: string
   donorFirstName?: string
@@ -558,7 +558,7 @@ export type PageDonationUncheckedUpdateManyWithoutPageNestedInput = {
 }
 
 export type PageDonationCreateWithoutFamilyInput = {
-  id: string
+  id?: string
   donorFirstName?: string
   donorLastName?: string
   donorEmail?: string
@@ -570,7 +570,7 @@ export type PageDonationCreateWithoutFamilyInput = {
 }
 
 export type PageDonationUncheckedCreateWithoutFamilyInput = {
-  id: string
+  id?: string
   pageCuid: string
   donorFirstName?: string
   donorLastName?: string
@@ -623,7 +623,7 @@ export type PageDonationScalarWhereInput = {
 }
 
 export type PageDonationCreateWithoutPageInput = {
-  id: string
+  id?: string
   donorFirstName?: string
   donorLastName?: string
   donorEmail?: string
@@ -635,7 +635,7 @@ export type PageDonationCreateWithoutPageInput = {
 }
 
 export type PageDonationUncheckedCreateWithoutPageInput = {
-  id: string
+  id?: string
   familyCuid: string
   donorFirstName?: string
   donorLastName?: string
@@ -672,7 +672,7 @@ export type PageDonationUpdateManyWithWhereWithoutPageInput = {
 }
 
 export type PageDonationCreateManyFamilyInput = {
-  id: string
+  id?: string
   pageCuid: string
   donorFirstName?: string
   donorLastName?: string
@@ -720,7 +720,7 @@ export type PageDonationUncheckedUpdateManyWithoutFamilyInput = {
 }
 
 export type PageDonationCreateManyPageInput = {
-  id: string
+  id?: string
   familyCuid: string
   donorFirstName?: string
   donorLastName?: string

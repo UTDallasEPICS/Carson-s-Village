@@ -256,7 +256,7 @@ export type ReplyScalarWhereWithAggregatesInput = {
 }
 
 export type ReplyCreateInput = {
-  id: string
+  id?: string
   reply?: string
   name?: string | null
   suspended?: boolean
@@ -266,7 +266,7 @@ export type ReplyCreateInput = {
 }
 
 export type ReplyUncheckedCreateInput = {
-  id: string
+  id?: string
   pageCuid: string
   familyCuid: string
   reply?: string
@@ -296,7 +296,7 @@ export type ReplyUncheckedUpdateInput = {
 }
 
 export type ReplyCreateManyInput = {
-  id: string
+  id?: string
   pageCuid: string
   familyCuid: string
   reply?: string
@@ -448,7 +448,7 @@ export type ReplyUncheckedUpdateManyWithoutPageNestedInput = {
 }
 
 export type ReplyCreateWithoutFamilyInput = {
-  id: string
+  id?: string
   reply?: string
   name?: string | null
   suspended?: boolean
@@ -457,7 +457,7 @@ export type ReplyCreateWithoutFamilyInput = {
 }
 
 export type ReplyUncheckedCreateWithoutFamilyInput = {
-  id: string
+  id?: string
   pageCuid: string
   reply?: string
   name?: string | null
@@ -504,7 +504,7 @@ export type ReplyScalarWhereInput = {
 }
 
 export type ReplyCreateWithoutPageInput = {
-  id: string
+  id?: string
   reply?: string
   name?: string | null
   suspended?: boolean
@@ -513,7 +513,7 @@ export type ReplyCreateWithoutPageInput = {
 }
 
 export type ReplyUncheckedCreateWithoutPageInput = {
-  id: string
+  id?: string
   familyCuid: string
   reply?: string
   name?: string | null
@@ -547,7 +547,7 @@ export type ReplyUpdateManyWithWhereWithoutPageInput = {
 }
 
 export type ReplyCreateManyFamilyInput = {
-  id: string
+  id?: string
   pageCuid: string
   reply?: string
   name?: string | null
@@ -583,7 +583,7 @@ export type ReplyUncheckedUpdateManyWithoutFamilyInput = {
 }
 
 export type ReplyCreateManyPageInput = {
-  id: string
+  id?: string
   familyCuid: string
   reply?: string
   name?: string | null

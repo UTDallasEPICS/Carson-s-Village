@@ -253,7 +253,7 @@ export type FamilyScalarWhereWithAggregatesInput = {
 }
 
 export type FamilyCreateInput = {
-  id: string
+  id?: string
   family_name: string
   stripe_account_id?: string | null
   created_at?: Date | string
@@ -266,7 +266,7 @@ export type FamilyCreateInput = {
 }
 
 export type FamilyUncheckedCreateInput = {
-  id: string
+  id?: string
   family_name: string
   stripe_account_id?: string | null
   created_at?: Date | string
@@ -305,7 +305,7 @@ export type FamilyUncheckedUpdateInput = {
 }
 
 export type FamilyCreateManyInput = {
-  id: string
+  id?: string
   family_name: string
   stripe_account_id?: string | null
   created_at?: Date | string
@@ -480,7 +480,7 @@ export type FamilyUpdateOneRequiredWithoutRepliesNestedInput = {
 }
 
 export type FamilyCreateWithoutFamilyMembersInput = {
-  id: string
+  id?: string
   family_name: string
   stripe_account_id?: string | null
   created_at?: Date | string
@@ -492,7 +492,7 @@ export type FamilyCreateWithoutFamilyMembersInput = {
 }
 
 export type FamilyUncheckedCreateWithoutFamilyMembersInput = {
-  id: string
+  id?: string
   family_name: string
   stripe_account_id?: string | null
   created_at?: Date | string
@@ -509,7 +509,7 @@ export type FamilyCreateOrConnectWithoutFamilyMembersInput = {
 }
 
 export type FamilyCreateWithoutAdvocateResponsibleInput = {
-  id: string
+  id?: string
   family_name: string
   stripe_account_id?: string | null
   created_at?: Date | string
@@ -521,7 +521,7 @@ export type FamilyCreateWithoutAdvocateResponsibleInput = {
 }
 
 export type FamilyUncheckedCreateWithoutAdvocateResponsibleInput = {
-  id: string
+  id?: string
   family_name: string
   stripe_account_id?: string | null
   created_at?: Date | string
@@ -605,7 +605,7 @@ export type FamilyScalarWhereInput = {
 }
 
 export type FamilyCreateWithoutPagesInput = {
-  id: string
+  id?: string
   family_name: string
   stripe_account_id?: string | null
   created_at?: Date | string
@@ -617,7 +617,7 @@ export type FamilyCreateWithoutPagesInput = {
 }
 
 export type FamilyUncheckedCreateWithoutPagesInput = {
-  id: string
+  id?: string
   family_name: string
   stripe_account_id?: string | null
   created_at?: Date | string
@@ -669,7 +669,7 @@ export type FamilyUncheckedUpdateWithoutPagesInput = {
 }
 
 export type FamilyCreateWithoutFamilyDonationsInput = {
-  id: string
+  id?: string
   family_name: string
   stripe_account_id?: string | null
   created_at?: Date | string
@@ -681,7 +681,7 @@ export type FamilyCreateWithoutFamilyDonationsInput = {
 }
 
 export type FamilyUncheckedCreateWithoutFamilyDonationsInput = {
-  id: string
+  id?: string
   family_name: string
   stripe_account_id?: string | null
   created_at?: Date | string
@@ -733,7 +733,7 @@ export type FamilyUncheckedUpdateWithoutFamilyDonationsInput = {
 }
 
 export type FamilyCreateWithoutRepliesInput = {
-  id: string
+  id?: string
   family_name: string
   stripe_account_id?: string | null
   created_at?: Date | string
@@ -745,7 +745,7 @@ export type FamilyCreateWithoutRepliesInput = {
 }
 
 export type FamilyUncheckedCreateWithoutRepliesInput = {
-  id: string
+  id?: string
   family_name: string
   stripe_account_id?: string | null
   created_at?: Date | string
@@ -797,7 +797,7 @@ export type FamilyUncheckedUpdateWithoutRepliesInput = {
 }
 
 export type FamilyCreateManyAdvocateResponsibleInput = {
-  id: string
+  id?: string
   family_name: string
   stripe_account_id?: string | null
   created_at?: Date | string

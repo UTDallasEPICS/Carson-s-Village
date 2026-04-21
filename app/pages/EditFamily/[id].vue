@@ -8,6 +8,9 @@
 *	Denotes functions specific to family creation  
 *	Located under "/EditFamily/"
 */
+definePageMeta({
+  middleware: ["family-guard"]
+})
 
 import type { User } from '@/types.d.ts'
 import type { Family } from '~~/prisma/generated/models';
@@ -18,56 +21,50 @@ import {
     ListboxOption,
 } from '@headlessui/vue'
 import { vElementSize } from '@vueuse/components'
+import { authClient } from '~/utils/auth-client';
 
-definePageMeta({
-  middleware: ["family-guard"]
-})
+const { data } = await authClient.useSession(useFetch);
+const user = computed(() => data.value?.user || null)
 
-const cvuser = useCookie<User>('cvuser')
-const bottomHeight = ref(0)
 const data_user = ref<User>({
-    cuid: "",
-    first_name: "",
-    last_name: "",
+    id: "",
+    name: "",
     email: "",
-    middle_name: "",
-    user_role: "family",
+    role: "family",
     phone: "",
     address: "",
     Pages: [],
     familyCuid: "",
     AdvocateFamily: []
-    //PageDonations: [],
-    //DonationPayouts: []
 })
 const userCuid = ref("")
 
 const router = useRoute()
-const cuid = computed(() => router.params.id as string);
-const currentUser = computed(() => data_all_users.value.all_family_users.find((({ cuid }: User) => cuid === userCuid.value )) || {})
-const isAuthorized = computed(() => { cvuser.value?.user_role as string == "advocate" || cvuser.value?.user_role == "admin"})
+const id = computed(() => router.params.id as string);
+const currentUser = computed(() => data_all_users.value.all_family_users.find((({ id }: User) => id === userCuid.value )) || {})
+const isAuthorized = computed(() => { user.value?.role == "advocate" || user.value?.role == "admin"})
 const errorInPage = ref(false);
 
 const { data: data_all_users } = await useFetch('/api/users', {
       method: 'GET',
-      query: { page_number: 0, sortedColumn: "first_name", order: "asc", familyCuid: cuid.value }, 
+      query: { page_number: 0, sortedColumn: "name", order: "asc", familyCuid: id.value }, 
       default() {
         return [] as any
       }
 })
 
-const { data: data_family } = await useFetch(`/api/family/${cuid.value}`, {
+const { data: data_family } = await useFetch(`/api/family/${id.value}`, {
       method: 'GET',
       default() {
         return {} as any
       }
 })
 
-// Method that creates a new family on the backend and adds the first user
+// Metat creates a new family on the backend and adds the first user
 const createFamily = async () => {
   if(isAuthorized){
     const result = await $fetch('/api/family', {
-      method: (cuid.value !== '0' ? 'PUT' : 'POST'),
+      method: (id.value !== '0' ? 'PUT' : 'POST'),
       body: ({family_name: data_family.value.family_name, ...data_user.value})
     })
 
@@ -100,17 +97,9 @@ CVContainer
             div(class="mx-9 sm:col-span-2 sm:mr-11")
                 CVInput(id="email" v-model='data_user.email' type="email" placeholder="(user defined)" required="required")
         div(class="py-4 grid sm:grid-cols-3")
-            CVLabel(for="first_name") First Name
+            CVLabel(for="first_name") Name
             div(class="mx-9 sm:col-span-2 sm:mr-11")
-                CVInput(id="first_name" v-model='data_user.first_name' placeholder="(user-defined)" required="required")
-        div(class="py-4 grid sm:grid-cols-3")
-            CVLabel(for="middle_name") Middle Name
-            div(class="mx-9 sm:col-span-2 sm:mr-11")
-                CVInput(id="middle_name" v-model='data_user.middle_name' placeholder="(user defined, optional)")
-        div(class="py-4 grid sm:grid-cols-3")
-            CVLabel(for="last_name") Last Name
-            div(class="mx-9 sm:col-span-2 sm:mr-11")
-                CVInput(id="last_name" v-model='data_user.last_name' placeholder="(user-defined)" required="required")
+                CVInput(id="first_name" v-model='data_user.name' placeholder="(user-defined)" required="required")
         div(class="py-4 grid sm:grid-cols-3")
             CVLabel(for="phone") Phone
             div(class="mx-9 sm:col-span-2 sm:mr-11")

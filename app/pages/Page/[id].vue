@@ -125,7 +125,6 @@ const profileImage = computed(() => imageData.value?.find((image: Image) =>
       ))
 
 const currentImage = ref(0)
-// TODO: setup auto cycle on a timer
 const nextImage = () => { 
     if(currentImage.value === imageData.value?.length - 1){
         currentImage.value = 0

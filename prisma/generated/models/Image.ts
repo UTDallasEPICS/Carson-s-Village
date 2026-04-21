@@ -206,13 +206,13 @@ export type ImageScalarWhereWithAggregatesInput = {
 }
 
 export type ImageCreateInput = {
-  id: string
+  id?: string
   url: string
   Page?: Prisma.PageCreateNestedOneWithoutImagesInput
 }
 
 export type ImageUncheckedCreateInput = {
-  id: string
+  id?: string
   url: string
   pageCuid?: string | null
 }
@@ -230,7 +230,7 @@ export type ImageUncheckedUpdateInput = {
 }
 
 export type ImageCreateManyInput = {
-  id: string
+  id?: string
   url: string
   pageCuid?: string | null
 }
@@ -322,12 +322,12 @@ export type ImageUncheckedUpdateManyWithoutPageNestedInput = {
 }
 
 export type ImageCreateWithoutPageInput = {
-  id: string
+  id?: string
   url: string
 }
 
 export type ImageUncheckedCreateWithoutPageInput = {
-  id: string
+  id?: string
   url: string
 }
 
@@ -366,7 +366,7 @@ export type ImageScalarWhereInput = {
 }
 
 export type ImageCreateManyPageInput = {
-  id: string
+  id?: string
   url: string
 }
 

@@ -45,8 +45,7 @@ export default defineEventHandler(async event => {
             }
           });
         
-          // TODO: Move this to better-auth login
-          await sendEmail(body.email, "invitation", "Invitation to Carson's village", ({...body, url: `${runtime.BASEURL}api/login`}))
+          await sendEmail(body.email, "invitation", "Invitation to Carson's village", ({...body, url: `${runtime.BASEURL}login`}))
           return { success: true, result: queryRes }
       } 
       else if (body.user_role == "family") {
@@ -71,8 +70,7 @@ export default defineEventHandler(async event => {
           }
         })
 
-        // TODO: Move this to better-auth
-        await sendEmail(body.email, "invitation", "Invitation to Carson's village", ({...body, url: `${runtime.BASEURL}api/login`}))
+        await sendEmail(body.email, "invitation", "Invitation to Carson's village", ({...body, url: `${runtime.BASEURL}login`}))
         return { success: true, result: queryRes }
       }
          
