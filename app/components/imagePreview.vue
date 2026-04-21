@@ -1,38 +1,13 @@
 <script lang="ts" setup>
 import { dateFormat, donationFormat } from '@/utils'
 import type { User, Page, Image } from '@/types.d.ts'
+import { authClient } from '~/utils/auth-client';
+
+const { data } = await authClient.useSession(useFetch);
+const user = computed(() => data.value?.user || null)
+
 const props = defineProps<{ images: Image[], pageCuid: string }>()
 const emit = defineEmits(["update:images"])
-type UserWithFamily = {
-    cuid: string
-    first_name: string,
-    last_name: string,
-    user_role: string,
-    email: string,
-    middle_name: string,
-    phone: string,
-    Pages: Page[],
-    Family: {
-        cuid: string,
-        family_name: string,
-        stripe_account_id: string,
-        created_at: string,
-        updated_at: string,
-        FamilyMembers: [],
-        FamilyDonationPayouts: [],
-        Pages: [],
-        AdvocateResponsible: User,
-        FamilyDonations: [],
-        advocateCuid: ""
-    }
-}
-const cvuser = useCookie<UserWithFamily>('cvuser')
-
-const emptyImage = ref<Image>({
-  cuid: "",
-  url: "",
-  pageCuid: ""
-})
 
 // Method to remove a single image
 const removeImage = async (image: Image) => {
@@ -42,9 +17,9 @@ const removeImage = async (image: Image) => {
       method: 'delete',
       body: (image as Image)
     });
-    let imagesTemp = props.images.filter((i: Image) => i.cuid != image.cuid)
+    let imagesTemp = props.images.filter((i: Image) => i.id != image.id)
    //todo: replace emit on "images" with this?
-    emit("update:images", props.images.filter((i: Image) => i.cuid != image.cuid));
+    emit("update:images", props.images.filter((i: Image) => i.id != image.id));
   }
 }
 
@@ -77,5 +52,3 @@ div(
                 div(class="form-horizontal absolute top-2.5 right-5")
                     button(class="bg-red-500 flex items-center justify-center leading-loose text-center text-white font-light absolute top-0 left-0 w-[30px] h-8 rounded-full pb-1" @click = "removeImage(image)") x
 </template>
-
-<style scoped></style>

@@ -5,7 +5,7 @@ div(class="group overflow-visible relative")
 </template>
     
 <script setup lang="ts">
-const props = defineProps<{ isEnd: Boolean }>();
+const props = defineProps<{ isEnd?: Boolean }>();
 const chevronColor = computed(() => {
     return props.isEnd ? "#566f81" : "#000000"
 })

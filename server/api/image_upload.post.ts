@@ -35,7 +35,7 @@ export default defineEventHandler(async (event) => {
       if(body.pageCuid != "0") {
         const queryRes = await prisma.image.update({
           where: {
-            id: image.cuid
+            id: image.id
           },
           data: {
             pageCuid: body.pageCuid
@@ -61,15 +61,4 @@ export default defineEventHandler(async (event) => {
       statusMessage: "Not authorized"
     })
   }
-    
-
- // } catch (err) { 
- //   console.error(err)
- //   alert("Error Uploading Image")
-    //event.status(500).send('Error uploading image')
-  //}
 })
-
-
-// everything about getting presign url is in integrations aws.ts
-// create url in aws.ts, import into route handler, route handler gets data out of body pass into getsign url, return result to front end*/

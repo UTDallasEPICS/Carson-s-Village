@@ -55,7 +55,7 @@ export default defineEventHandler(async event => {
         Images.map(async (image: Image) => 
           await prisma.image.update({
             where: {
-              id: image.cuid
+              id: image.id
             },
             data:{
               pageCuid: queryRes.id

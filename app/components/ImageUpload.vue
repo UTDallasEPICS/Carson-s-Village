@@ -14,14 +14,16 @@ type imageLinkTypes = {
 }
 
 const props = defineProps<{pageCuid: string}>()
+
 // uploads images using presigned url to S3 bucket
 const onFile = async (event: Event) => {
   const Files = event?.target?.files
   for(let i = 0 ; i < Files.length; i++){
     const file = Files[i];
+
     // Creates the presigned url and enters the image into the database
-    // todo: change to $fetch
     const imageDataObj = {
+      filename: file.name,
       contentLength: file.size, 
       contentType: file.type, 
       pageCuid: props.pageCuid
