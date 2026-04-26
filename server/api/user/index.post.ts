@@ -16,27 +16,12 @@ export default defineEventHandler(async event => {
   }
   const user = session.user
 
-  const EmailTemplates = new emailTemplates({
-    views: {
-      root: "./emails",
-    },
-    juice: true,
-    juiceResources: {
-      preserveImportant: true,
-      webResources: {
-        relativeTo: "./emails",
-      },
-    },
-  })
-
-
   const body = await readBody(event)
-  const now = (new Date()).toISOString();
 
   if(user.role === "advocate" || user.role === "admin") {
     try{
       // creates a new user entry in the user model/table.
-      if(body.user_role == "advocate" || (body.user_role == "admin" && user.role === "admin")) {
+      if(body.role === "advocate" || (body.role === "admin" && user.role === "admin")) {
         delete body.Pages
         delete body.AdvocateFamily
         const queryRes = await prisma.user.create({
@@ -48,7 +33,7 @@ export default defineEventHandler(async event => {
           await sendEmail(body.email, "invitation", "Invitation to Carson's village", ({...body, url: `${runtime.BASEURL}login`}))
           return { success: true, result: queryRes }
       } 
-      else if (body.user_role == "family") {
+      else if (body.role === "family") {
         delete body.Pages
         delete body.AdvocateFamily
 
@@ -59,12 +44,11 @@ export default defineEventHandler(async event => {
         })
 
         const queryRes = await prisma.family.update({
-          where: { id: body.familyCuid },
+          where: { id: body.familyId },
           data: {
-            updated_at: now,
             FamilyMembers: {
               connect: {
-                id: userRes.cuid
+                id: userRes.id
               }
             }, 
           }

@@ -17,7 +17,6 @@ export default defineEventHandler(async event => {
 
   const body = await readBody(event);
   
-  //delete body.pages
   if(user.role == "advocate"  || user.role === "admin") {
     // updates the user
     try { 
@@ -25,33 +24,29 @@ export default defineEventHandler(async event => {
       // todo: reinvite users who change their emails
       // todo: add security so that admins can change any user, advocates can change those that they are responsible for, and users should not be able to change their own email (or stuff breaks obviously).
       // todo: change api to use a more standard format. Here we specify the fields of the body instead of using ...body because ...body breaks here
-      if(body.user_role == 'family' && body.familyCuid !== '') {
+      if(body.role == 'family' && body.familyId !== '') {
         const queryRes = await prisma.user.update({
           where: {
-            id: body.cuid
+            id: body.id
           },
           data: {
             email: body.email,
-            name: `${body.first_name} ${body.middle_name} ${body.last_name}`,
+            name: body.name,
             role: 'family',
-            familyId: body.familyCuid || null,
+            familyId: body.familyId || null,
             phone: body.phone,
-            //...body
-    
           }  
             });
       } else {
         const queryRes = await prisma.user.update({
           where: {
-            id: body.cuid
+            id: body.id
           },
           data: {
             email: body.email,
-            name: `${body.first_name} ${body.middle_name} ${body.last_name}`,
-            role: body.user_role,
+            name: body.name,
+            role: body.role,
             phone: body.phone,
-            //...body
-
           }
         })
     }

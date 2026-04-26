@@ -8,86 +8,56 @@
 *	Denotes functions specific to user insertion  
 *	Located under "/EditUser/"
 */
+definePageMeta({
+  middleware: ['family-guard']
+})
 
 import type { User, Family } from '@/types.d.ts'
-//import { Family } from '@prisma/client';
 import {
     Listbox,
     ListboxButton,
     ListboxOptions,
     ListboxOption,
 } from '@headlessui/vue'
+import { authClient } from '~/utils/auth-client';
 
-definePageMeta({
-  middleware: ['family-guard']
-})
-
-const cvuser = useCookie<User>('cvuser')
-const data_user = ref<User>({
-    cuid: "",
-    first_name: "",
-    last_name: "",
-    email: "",
-    middle_name: "",
-    user_role: "family",
-    phone: "",
-    address: "",
-    Pages: [],
-    familyCuid: "",
-    AdvocateFamily: []
-    //PageDonations: [],
-    //DonationPayouts: []
-})
-
-const familyCuid = ref("") 
-const data_family = ref<Family>({
-cuid: "",
-stripe_account_id: "",
-created_at: "null",
-updated_at: new Date(),
-family_name: "",
-advocateCuid: cvuser.value.cuid,
-Pages: [],
-FamilyMembers: [],
-AdvocateResponsible: {
-cuid: '',
-first_name: '',
-last_name: '',
-user_role: '',
-email: '',
-middle_name: '',
-phone: '',
-Pages: [],
-familyCuid: '',
-address: '',
-AdvocateFamily: []
-},
-FamilyDonations: [],
-FamilyDonationPayouts: []
-})
+const { data } = await authClient.useSession(useFetch);
+const user = computed(() => data.value?.user || null)
 
 const data_all_families = ref<Family[]>([])
 const router = useRoute()
-const isAuthorized = computed(() => { cvuser.value?.user_role as string == "advocate" || cvuser.value?.user_role == "admin"})
-const isAdmin = computed(() => cvuser.value?.user_role as string == "admin")
-const cuid = computed(() => router.params.id as string);
-const disableCriteria = computed(() => !data_user.value?.email || !data_user.value?.first_name ||!data_user.value?.last_name || (addingFamily.value && !familyCuid.value))
+const isAuthorized = computed(() => { user.value?.role === "advocate" || user.value?.role === "admin"})
+const isAdmin = computed(() => user.value?.role === "admin")
+const id = computed(() => router.params.id as string);
 const errorInPage = ref(false);
 const errorToUser = ref("")
+
+const data_user = ref<User>({
+    id: id.value,
+    name: "",
+    email: "",
+    role: "family",
+    phone: "",
+    address: "",
+    familyId: "",
+    Pages: [],
+    AdvocateFamily: []
+})
+
+const disableCriteria = computed(() => !data_user.value?.email || !data_user.value?.name || (addingFamily.value && !data_user.value?.familyId))
 
 // Method that creates a new user on the database on the backend
 const save = async () => {
   if(isAuthorized){
     const data = await $fetch('/api/user', {
-      method: (cuid.value as string) !== "0" ? 'PUT' : 'POST',
-      body: ({ ...data_user.value, familyCuid: familyCuid.value, cuid: cuid.value as string })
-
+      method: (id.value as string) !== "0" ? 'PUT' : 'POST',
+      body: ({ ...data_user.value })
     }).catch((error) => {
         errorInPage.value = true 
-        console.log(error.data.message);
+        console.error(error.data.message);
         errorToUser.value = error.data.message
     });
-    console.log(data)
+
     if(data?.success){
         errorInPage.value = false;
         errorToUser.value = ""
@@ -97,7 +67,7 @@ const save = async () => {
 
 }
 
-const currentFamily = computed(() => data_all_families.value?.find(({ cuid }: Family) => cuid == familyCuid.value) || {});
+const currentFamily = computed(() => data_all_families.value?.find(({ id }: Family) => id == data_user.value?.familyId) || {});
 
 // Method to populate the form when editing a pre-existing user
 const getData = async (cuid: string) => {
@@ -106,20 +76,19 @@ const getData = async (cuid: string) => {
       query: { cuid: cuid }
   })
   data_user.value = userData.value as unknown as User;
-  familyCuid.value = data_user.value.familyCuid as unknown as string
 }
 
 // boolean indicating that we need the family selection listbox 
-const addingFamily = computed(() => data_user.value.user_role == "family")
+const addingFamily = computed(() => data_user.value.role == "family")
+
 const getUsers = async () => {
   const { data: FamilyData } = await useFetch('/api/family', {
       method: 'GET',
   })
   data_all_families.value = FamilyData.value as unknown as Family[];
-  console.log(data_all_families.value);
 }
-if ((cuid.value as string) !== "0") {
-  await getData(cuid.value as string);
+if ((id.value as string) !== "0") {
+  await getData(id.value as string);
 }
 
 await getUsers()
@@ -136,14 +105,14 @@ CVContainer
         div(class="py-4 grid sm:grid-cols-3")
             CVLabel(for="user_role") User Role
             div(class="mx-9 sm:col-span-2 sm:mr-11")
-                select(id="user_role" v-model='data_user.user_role' class="rounded-md outline-0 border-box w-full p-2 bg-white border border-[#c4c4c4]") Select User Role
+                select(id="user_role" v-model='data_user.role' class="rounded-md outline-0 border-box w-full p-2 bg-white border border-[#c4c4c4]") Select User Role
                     option family
                     option advocate
                     option(v-if="isAdmin") admin
         div(v-if="addingFamily" class="py-4 grid sm:grid-cols-3")
             CVLabel(for="Family") Family
             div(class="mx-9 sm:col-span-2 sm:mr-11")
-                Listbox(id="Family" as='div' v-model="familyCuid" class="shadow-sm border border-1 rounded-lg")
+                Listbox(id="Family" as='div' v-model="data_user.familyId" class="shadow-sm border border-1 rounded-lg")
                     div(class="relative")
                         Transition(
                     leave-active-class='transition ease-in duration-100'
@@ -151,27 +120,19 @@ CVContainer
                     leave-to-class='opacity-0'
                 )
                             ListboxOptions(as='div' class='w-full absolute z-10 mt-10 bg-white shadow-lg max-h-60 rounded-md px-2 py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm' )
-                                ListboxOption(as='div' v-for="family in data_all_families" :key="family.cuid" :value="family.cuid" class="px-2 border border-grey-500 py-1 my-1") {{ family.family_name }}
-                    ListboxButton(class='text-left bg-white relative rounded-md pl-2 pr-10 py-2 sm:text-sm w-96') {{ familyCuid ? currentFamily.family_name : 'Select family to add the user to' }}
+                                ListboxOption(as='div' v-for="family in data_all_families" :key="family.id" :value="family.id" class="px-2 border border-grey-500 py-1 my-1") {{ family.family_name }}
+                    ListboxButton(class='text-left bg-white relative rounded-md pl-2 pr-10 py-2 sm:text-sm w-96') {{ data_user.familyId ? currentFamily.family_name : 'Select family to add the user to' }}
         div(class="information rounded-md mx-9 my-2 text-center sm:text-start text-white bg-blue-999")
             CVLegend User Information
         div(class="py-4 grid sm:grid-cols-3")
-            CVLabel Email
-            div(class="mx-9 sm:col-span-2 sm:mr-11")
+            CVLabel(for="email") Email
+            div(id="email" class="mx-9 sm:col-span-2 sm:mr-11")
                 CVInput(id="email" v-model='data_user.email' placeholder="(user defined)" required)
         
         div(class="py-4 grid sm:grid-cols-3")
-            CVLabel(for="first_name") First Name
+            CVLabel(for="first_name") Name
             div(class="mx-9 sm:col-span-2 sm:mr-11")
-                CVInput(id="first_name" type="text" v-model='data_user.first_name' placeholder="(user-defined" required="required")
-        div(class="py-4 grid sm:grid-cols-3")
-            CVLabel(for="middle_name") Middle Name
-            div(class="mx-9 sm:col-span-2 sm:mr-11")
-                CVInput(id="middle_name" type="text" v-model='data_user.middle_name' placeholder="(user defined, optional)")
-        div(class="py-4 grid sm:grid-cols-3")
-            CVLabel(for="last_name") Last Name
-            div(class="mx-9 sm:col-span-2 sm:mr-11")
-                CVInput(id="last_name" type="text" v-model='data_user.last_name' placeholder="(user-defined)" required="required")
+                CVInput(id="first_name" type="text" v-model='data_user.name' placeholder="(user-defined" required="required")
         div(class="py-4 grid sm:grid-cols-3")
             CVLabel(for="phone") Phone
             div(class="mx-9 sm:col-span-2 sm:mr-11")
