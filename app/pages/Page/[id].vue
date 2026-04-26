@@ -86,9 +86,8 @@ const currentComment = ref('')
 const isUser = computed(() => cvuser.value?.user_role == "admin" || cvuser.value?.user_role == "advocate" || cvuser.value?.user_role == "family")
 
 // Method to populate the page with data based on the cuid in the url
-const { data : pageDataDB } = await useFetch<Page>('/api/page', {
-    method: 'GET',
-    query: { cuid: id }
+const { data : pageDataDB } = await useFetch<Page>(`/api/page/${id}`, {
+  method: 'GET'
 })
 
 if(pageDataDB.value){

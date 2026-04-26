@@ -52,7 +52,7 @@ function SortCV(pages:any, OrderFields:string){
 
 // Method to populate search results for pages
 const pageSearch = async(searchQuery: string) => { 
-    const { data: pageData } = await useFetch<paginated_results>('/api/pages', {
+    const { data: pageData } = await useFetch<paginated_results>('/api/page/search', {
     method: 'GET',
     query: {searchQuery: searchQuery, page_number: currentPage.value, isPageList: 0, sortedColumn:OrderField.value, order:order.value},
     watch: [currentPage]

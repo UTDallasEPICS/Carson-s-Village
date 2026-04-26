@@ -26,9 +26,7 @@ const onEnter = async() => {
 <template lang="pug">
 div(class="text-center p-2 pt-32 pr-12 rounded-md border-grey-600 border-r")
   div(class="gap-2" v-if="user && toggle")
-    NavLinkButtonVNav(v-if="isAdvocateAdmin" :to="`/pageList/${user?.id}/?fromUsers=0`" :class="{'!text-black border-green-999 bg-white': route.path.includes('/page') || route.path.includes('/Page')}") 
-      p(class="uppercase white mb-2 w-max") Pages
-    NavLinkButtonVNav(v-if="!isAdvocateAdmin" :to="`/pageList/${user?.familyId}/?fromUsers=0`" :class="{'!text-black border-green-999 bg-white': route.path.includes('/pageList')}")
+    NavLinkButtonVNav(:to="`/PageList`" :class="{'!text-black border-green-999 bg-white': route.path.includes('/page') || route.path.includes('/Page')}") 
       p(class="uppercase white mb-2 w-max") Pages
     NavLinkButtonVNav(to='/EditPage/0' :class="{'!text-black border-green-999 bg-white': route.path.includes('/EditPage')}") 
       p(class="uppercase white mb-2 w-max") New page

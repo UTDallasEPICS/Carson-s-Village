@@ -7,16 +7,16 @@ import type { User, Family, Page } from "@/types.d.ts"
 */
 
 export default defineEventHandler(async event => {
-  const { user } = await auth.api.getSession({
+  const session = await auth.api.getSession({
     headers: event.headers
   })
-
-  if (!user) {
+  if (!session || !session.user) {
     throw createError({
       statusCode: 401,
       statusMessage: 'Unauthorized'
     });
   }
+  const user = session.user
 
   const { page_number, dimensions, start_date, end_date, date_field  } = getQuery(event)
   const start_date_date = start_date as Date

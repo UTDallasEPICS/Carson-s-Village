@@ -125,14 +125,9 @@ const save = async () => {
         body: ({ ...page.value })
       })
 
-      if (isAdvocate.value) {
-          errorInPage.value = false;
-          await navigateTo('/PageList/' + page.value.userCuid + '?fromUsers=1')
-      }
-      else {
-          errorInPage.value = false;
-          await navigateTo('/PageList/' + page.value.familyCuid + '?fromUsers=0')
-      }
+      // Set error to false and navigate to PageList displaying relevant pages for user
+      errorInPage.value = false;
+      await navigateTo('/PageList/' + page.value.userCuid + '?fetch=user')
     } catch(e){
         errorInPage.value = true;
         console.error("Failed to save changes to page:", e)
@@ -142,24 +137,23 @@ const currentFamily = computed(() => allFamilies.value?.find(({ id }: Family) =>
 
 // Method to populate the form when editing a pre-existing page
 const getData = async (id: string) => {
-    const { data: pageData } = await useFetch('/api/page', {
-        method: 'GET',
-        query: { cuid: id }
-    })
-    if (pageData.value) {
-        page.value = pageData.value as unknown as Page;
-        familyCuid.value = page.value.familyCuid
-    }
+  const { data: pageData } = await useFetch(`/api/page/${id}`, {
+    method: 'GET'
+  })
+  if (pageData.value) {
+    page.value = pageData.value as unknown as Page;
+    familyCuid.value = page.value.familyCuid
+  }
 
-    /* 
-    * Checking if donation_goal and conversly amount raised is of type number in order to prevent
-    * donation_goal and amount_raised from becoming NaN due to applying the donationFormat function to a string. 
-    */
-    if (typeof page.value.donation_goal === 'number') {
-        page.value.amount_raised = donationFormat(page.value.amount_raised as unknown as number).replace("$", "");
-        page.value.donation_goal = donationFormat(page.value.donation_goal as unknown as number).replace("$", "");
-    }
-    replies.value = page.value?.Reply
+  /* 
+  * Checking if donation_goal and conversly amount raised is of type number in order to prevent
+  * donation_goal and amount_raised from becoming NaN due to applying the donationFormat function to a string. 
+  */
+  if (typeof page.value.donation_goal === 'number') {
+    page.value.amount_raised = donationFormat(page.value.amount_raised as unknown as number).replace("$", "");
+    page.value.donation_goal = donationFormat(page.value.donation_goal as unknown as number).replace("$", "");
+  }
+  replies.value = page.value?.Reply
 }
 
 // Watcher for updating profile image when data.Images is updated

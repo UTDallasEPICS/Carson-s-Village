@@ -8,16 +8,17 @@ import type { Image } from "@/types.d.ts"
 */
 
 export default defineEventHandler(async event => {
-  const { user } = await auth.api.getSession({
+  const session = await auth.api.getSession({
     headers: event.headers
   })
-
-  if (!user) {
+  if (!session || !session.user) {
     throw createError({
       statusCode: 401,
       statusMessage: 'Unauthorized'
     });
   }
+  const user = session.user
+
   // extracting family id to connect the page to the authenticated user
   const {Images, Reply, PageDonations, userCuid, familyCuid, ...data} = await readBody(event)
 

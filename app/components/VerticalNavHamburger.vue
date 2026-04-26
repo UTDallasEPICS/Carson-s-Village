@@ -26,22 +26,22 @@ const onEnter = async() => {
 <template lang="pug">
   .text-center.p-2.pt-32.pr-12(v-if="hamburgerOpen")
     div.gap-2(v-if="user && toggle")
-      NavLinkButtonHamburger(:to="`/pageList/${user.id}/?fromUsers=0`" v-if="isAdvocateAdmin" :class="{'!text-black border-green-999 bg-white': route.path.includes('/page') || route.path.includes('/Page')}") 
+      NavLinkButtonHamburger(v-if="isAdvocateAdmin" :to="`/PageList`" :class="{'!text-black border-green-999 bg-white': route.path.includes('/page') || route.path.includes('/Page')}") 
         p.uppercase.white.mb-2.w-max Pages
       .bar.mx-20(style="border-top: 0.5px solid #646464;")
       NavLinkButtonHamburger(to='/EditPage/0' :class="{'!text-black border-green-999 bg-white': route.path.includes('/EditPage')}") 
         p.uppercase.white.mb-2.w-max New page
       .bar.mx-20(style="border-top: 0.5px solid #646464;")
-      NavLinkButtonHamburger( v-if="isAdvocateAdmin" to='/Users' :class="{'!text-black border-green-999 bg-white': route.path.includes('/Users')}") 
+      NavLinkButtonHamburger(v-if="isAdvocateAdmin" to='/Users' :class="{'!text-black border-green-999 bg-white': route.path.includes('/Users')}") 
         p.uppercase.white.mb-2.w-max Users
       .bar.mx-20(style="border-top: 0.5px solid #646464;")
-      NavLinkButtonHamburger( v-if="isAdvocateAdmin" to='/EmailList' :class="{'!text-black border-green-999 bg-white': route.path.includes('/EmailList')}") 
+      NavLinkButtonHamburger(v-if="isAdvocateAdmin" to='/EmailList' :class="{'!text-black border-green-999 bg-white': route.path.includes('/EmailList')}") 
         p.uppercase.white.mb-2.w-max Email List
       .bar.mx-20(style="border-top: 0.5px solid #646464;")
-      NavLinkButtonHamburger( v-if="isAdvocateAdmin" to='/EditUser/0' :class="{'!text-black border-green-999 bg-white': route.path.includes('/EditUser')}") 
+      NavLinkButtonHamburger(v-if="isAdvocateAdmin" to='/EditUser/0' :class="{'!text-black border-green-999 bg-white': route.path.includes('/EditUser')}") 
         p.uppercase.white.mb-2.w-max Invite user
       .bar.mx-20(style="border-top: 0.5px solid #646464;")
-      NavLinkButtonHamburger( v-if="isAdvocateAdmin" to='/EditFamily' :class="{'!text-black border-green-999 bg-white': route.path.includes('/EditFamily')}") 
+      NavLinkButtonHamburger(v-if="isAdvocateAdmin" to='/EditFamily' :class="{'!text-black border-green-999 bg-white': route.path.includes('/EditFamily')}") 
         p.uppercase.white.mb-2.w-max Edit Family
       .bar.mx-20(style="border-top: 0.5px solid #646464;")
       NavLinkButtonHamburger(to="/" :class="{'!text-black border-green-999 bg-white': route.path == '/'}") 

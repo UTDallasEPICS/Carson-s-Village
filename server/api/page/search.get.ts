@@ -9,16 +9,16 @@ import type { Page } from '@/types.d.ts'
 const runtime = useRuntimeConfig()
 
 export default defineEventHandler(async event => {
-  const { user } = await auth.api.getSession({
+  const session = await auth.api.getSession({
     headers: event.headers
   })
-
-  if (!user) {
+  if (!session || !session.user) {
     throw createError({
       statusCode: 401,
       statusMessage: 'Unauthorized'
     });
   }
+  const user = session.user
 
   const { searchQuery, page_number, isPageList, order, sortedColumn } = getQuery(event);
 

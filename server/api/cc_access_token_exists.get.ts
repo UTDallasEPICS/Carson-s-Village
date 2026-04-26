@@ -1,15 +1,14 @@
 export default defineEventHandler(async event => {
-
-  const { user } = await auth.api.getSession({
+  const session = await auth.api.getSession({
     headers: event.headers
   })
-
-  if (!user) {
+  if (!session || !session.user) {
     throw createError({
       statusCode: 401,
       statusMessage: 'Unauthorized'
     });
   }
+  const user = session.user
 
   if(user.role === "admin") {
     const accessTokenCount = await prisma.CC_Token.count()

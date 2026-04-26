@@ -7,16 +7,16 @@ const stripeSecretKey = runtime.STRIPE_SECRET;
 // After the family has submitted all of their details to Stripe, their Carson's Village pages will be active.
 
 export default defineEventHandler(async event => {
-  const { user } = await auth.api.getSession({
+  const session = await auth.api.getSession({
     headers: event.headers
   })
-
-  if (!user) {
+  if (!session || !session.user) {
     throw createError({
       statusCode: 401,
       statusMessage: 'Unauthorized'
     });
   }
+  const user = session.user
 
   const { stripe_account_id } = getQuery(event)
   const stripe = new Stripe(runtime.STRIPE_SECRET)

@@ -147,7 +147,7 @@ div(class="container bg-white mx-auto mt-1 max-w-[1100px]")
                 td
                     LinkButton(
                       class="sm:my-2 transition duration-300 bg-orange-999 hover:bg-green-600 whitespace-nowrap flex flex-row py-[14px] px-[24px] gap-[10px]"  
-                      :to="`/pageList/${item.id}?fromUsers=1`"
+                      :to="`/PageList/${item.id}?fetch=user`"
                     ) View
     div(class="border rounded-b-xl border-[#5aadc2] container mx-auto w-full max-w-[1100px] bg-[#5aadc2] h-[50px]")
 div(class="mb-9 py-7 flex flex-wrap gap-2 place-content-center")
