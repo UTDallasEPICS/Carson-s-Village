@@ -9,90 +9,83 @@
 *	Located under "/Page/"
 */
 
-
 import type { User, Page, PageDonation, Image, Reply, Family} from '@/types.d.ts'
 import { dateFormat, donationFormat } from '@/utils'
+import { authClient } from '~/utils/auth-client';
+
+const { data } = await authClient.useSession(useFetch);
+const user = computed(() => data.value?.user || null)
 
 const pageData = ref<Page>({
-    cuid: "",
-    userCuid: "",
-    familyCuid: "",
-    page_first_name: "",
-    page_last_name: "",
-    day_of_birth: null,
-    day_of_passing: null,
-    visitation_date: null,
-
-    visitation_location: "",
-    visitation_address: "",
-    visitation_description: "",
-    funeral_date: "",
-    funeral_description: "",
-    funeral_location: "",
-    funeral_address: "",
-    obituary: "",
-    deadline: "",
-    donation_goal: 0,
-    amount_raised: 0,
-    amount_distributed: 0,
-    profileImageCuid: "",
-    Images: [],
-    status: "active",
-    donation_status: "in progress",
-    duration: "",
-    start_date: null,
-    goal_met_date: null,
-    last_donation_date: null,
-    PageDonations: [],
-    Reply: [],
-    Family: {
-      cuid: "",
-      family_name: "",
-      stripe_account_id: "",
-      created_at: null,
-      updated_at: null,
-      FamilyMembers: [],
-      FamilyDonationPayouts: [],
+  id: "",
+  day_of_birth: null,
+  day_of_passing: null,
+  visitation_date: null,
+  visitation_location: "",
+  visitation_address: "",
+  visitation_description: "",
+  funeral_date: "",
+  funeral_description: "",
+  funeral_location: "",
+  funeral_address: "",
+  obituary: "",
+  donation_goal: 0,
+  donation_description: "",
+  amount_raised: 0,
+  deadline: "",
+  userCuid: "",
+  amount_distributed: 0,
+  profileImageCuid: "",
+  familyCuid: "",
+  status: "active",
+  donation_status: "in progress",
+  duration: "",
+  start_date: null,
+  goal_met_date: null,
+  page_first_name: "",
+  page_last_name: "",
+  last_donation_date: null,
+  PageDonations: [],
+  Reply: [],
+  Images: [],
+  Family: {
+    id: "",
+    family_name: "",
+    stripe_account_id: "",
+    created_at: null,
+    updated_at: null,
+    advocateCuid: "",
+    FamilyMembers: [],
+    FamilyDonationPayouts: [],
+    Pages: [],
+    AdvocateResponsible: {
+      id: '',
+      name: '',
+      role: '',
+      email: '',
+      phone: '',
+      address: '',
+      familyId: '',
       Pages: [],
-      AdvocateResponsible: {
-          cuid: '',
-          first_name: '',
-          last_name: '',
-          user_role: '',
-          email: '',
-          middle_name: '',
-          phone: '',
-          address: '',
-          Pages: [],
-          familyCuid: ''
-      },
-      FamilyDonations: [],
-      advocateCuid: ""
-    } 
+    },
+    FamilyDonations: [],
+  } 
 });
 
-const feeRecovery = ref(false)
-const userCuid = ref("0")
 const displayDonationPopup = ref(false)
-const profileImageLink = ref("")
-const family_cuid = ref("0")
 const router = useRoute();
-const id = computed(() => router.params.id);
-const pageCuid = id.value as string
-const cvuser = useCookie<Page>('cvuser')
-const stripeLink_ref = ref("")
+const pageId = computed(() => router.params.id);
 const commentModalOpen = ref(false)
 const currentComment = ref('')
-const isUser = computed(() => cvuser.value?.user_role == "admin" || cvuser.value?.user_role == "advocate" || cvuser.value?.user_role == "family")
+const isAdminAdvocate = computed(() => user.value?.role === "admin" || user.value?.role === "advocated");
 
 // Method to populate the page with data based on the cuid in the url
-const { data : pageDataDB } = await useFetch<Page>(`/api/page/${id}`, {
+const { data : pageDataDB } = await useFetch<Page>(`/api/page/${pageId.value}`, {
   method: 'GET'
 })
 
 if(pageDataDB.value){
-    pageData.value = pageDataDB.value as unknown as Page;
-    userCuid.value = pageData.value.userCuid
+  pageData.value = pageDataDB.value as unknown as Page;
 }
 
 const isActive = computed(() => pageDataDB.value?.status.toLowerCase() == "active")
@@ -114,29 +107,31 @@ const shareMail = () => {
 }
 
 const familyCuid = computed(() => pageDataDB.value?.familyCuid)
-const donated_percentage = computed<Number>(() => (((pageDataDB.value?.amount_raised as number) / (pageDataDB.value?.donation_goal as number )) * 100).toFixed(1));
+const donated_percentage = computed<Number>(() => 
+  (((pageDataDB.value?.amount_raised as number) / (pageDataDB.value?.donation_goal as number )) * 100).toFixed(1)
+);
 const donation_goal_provided = computed(() => pageDataDB.value?.donation_goal as number > 0)
 const comments = computed(() => pageDataDB.value?.PageDonations)
 const replies = computed(() => pageDataDB.value?.Reply)
 const imageData = computed(() => pageDataDB.value?.Images || [])
 const profileImage = computed(() => imageData.value?.find((image: Image) => 
-          image.cuid === pageDataDB.value?.profileImageCuid
-      ))
+  image.cuid === pageDataDB.value?.profileImageCuid
+))
 
 const currentImage = ref(0)
 const nextImage = () => { 
-    if(currentImage.value === imageData.value?.length - 1){
-        currentImage.value = 0
-    } else {
-        currentImage.value++
-    } 
+  if(currentImage.value === imageData.value?.length - 1){
+    currentImage.value = 0
+  } else {
+    currentImage.value++
+  } 
 }
 const prevImage = () => {
-    if(currentImage.value === 0){
-        currentImage.value = imageData.value?.length - 1
-    } else {
-        currentImage.value--
-    }
+  if(currentImage.value === 0){
+    currentImage.value = imageData.value?.length - 1
+  } else {
+    currentImage.value--
+  }
 }
 
 const previewImage = ref("")
@@ -155,7 +150,7 @@ const setImageAutoSlide = () => {
 
 // Recieves emitted reply from CVReplies System to update replies in real time
 const displayReply = async (reply: Reply) => {
-    pageDataDB.value?.Reply.push(reply)
+  pageDataDB.value?.Reply.push(reply)
 }
 
 const exitCommentPopup = () => {
@@ -165,8 +160,6 @@ const openCommentPopup = (comment: string) => {
   commentModalOpen.value = !commentModalOpen.value; 
   currentComment.value = comment;
 }
-console.log(pageDataDB.value?.visitation_description)
-console.log(pageDataDB.value?.funeral_date)
 
 setImageAutoSlide()
 </script>
@@ -180,18 +173,24 @@ DonationEntryPopup(
   :donation_goal_provided="donation_goal_provided"
   :donated_percentage="donated_percentage"
   :isActive="isActive"
-  :pageCuid="pageCuid"
+  :pageCuid="pageId"
   :familyCuid="familyCuid"
 )  
-div(v-if="commentModalOpen" @click.self="commentModalOpen=false" class="flex items-center justify-center z-10 fixed top-0 bottom-0 left-0 right-0 bg-black/70")
+
+div(
+  v-if="commentModalOpen"
+  @click.self="commentModalOpen=false"
+  class="flex items-center justify-center z-10 fixed top-0 bottom-0 left-0 right-0 bg-black/70"
+)
   div(class="mx-auto flex p-2 bg-white w-1/2 h-1/2")
     CommentPopup(@ExitComment="exitCommentPopup" :comment="currentComment")  
+
 // the header overlay with image and name
 div(
-  v-if="isUser"
+  v-if="isAdminAdvocate"
   class="flex gap-2 justify-center cols-2 pl-6 pr-6"
 )
-    a(class="mr-2 mt-1 p-2 px-9 pt-3 pb-3 bg-orange-999 transition duration-300 hover:bg-green-600 rounded-[100px] h-[50px] text-white font-bold") Archive
+  a(class="mr-2 mt-1 p-2 px-9 pt-3 pb-3 bg-orange-999 transition duration-300 hover:bg-green-600 rounded-[100px] h-[50px] text-white font-bold") Archive
 div(class="mt-2 min-h-24 text-white uppercase w-full bg-cover bg-center" style="background-image: url('https://carsonsvillage.org/wp-content/uploads/2018/11/iStock-862083112-BW.jpg');") 
   div(class="h-full py-8 self-center w-full text-center flex flex-col bg-teal-500/80") 
     p(class="my-auto font-bold text-5xl") {{ pageDataDB.page_first_name + " " + pageDataDB.page_last_name }}
@@ -273,7 +272,7 @@ div(class="py-4 grid gap-1 text-left")
         div(class="flex justify-between gap-5")
           div(class="text-xl font-bold") Amount Donated
           div(class="text-xl font-bold text-green-600") {{ donationFormat(comment.amount) }}
-  CVReplySystem(:pageCuid="id" :familyCuid="familyCuid" :replies="replies" @displayReply="displayReply")
+  CVReplySystem(:pageCuid="pageId" :familyCuid="familyCuid" :replies="replies" @displayReply="displayReply")
   div(v-if="replies?.length" class="py-4 grid row-span-3 gap-2")
     div(v-for="(reply,i) in replies.filter(item => !item.suspended)" :key="i" class="p-2 bg-white rounded-lg mb-2 shadow-md pb-4") 
       div(class="flex justify-between gap-5 pd-4")

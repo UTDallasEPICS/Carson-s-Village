@@ -28,6 +28,7 @@ export default defineEventHandler(async event => {
   });
   
   if (!page) {
+    console.error(`Unable to retrieve Page ID ${pageId}`)
     throw createError({
       statusCode: 500,
       statusMessage: `Unable to retrieve Page ID ${pageId}`
