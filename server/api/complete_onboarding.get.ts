@@ -32,11 +32,8 @@ export default defineEventHandler(async event => {
         status: 'active'
       } 
     })
-  } else {
-    await sendRedirect(event, '/')
-    return false
   }
-  await sendRedirect(event, '/')
-  return true
+
+  return await sendRedirect(event, '/')
   
 })

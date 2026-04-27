@@ -44,7 +44,7 @@ export default defineEventHandler(async event => {
         refresh_token: respBody.refresh_token,
       }
     })
-    await sendRedirect(event, `/EmailList`)
+    return await sendRedirect(event, `/EmailList`)
   }
   else {
     throw createError({

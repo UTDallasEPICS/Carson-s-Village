@@ -15,7 +15,7 @@ export default defineEventHandler(async event => {
   if (user.role === "admin")  {
     const removeToken = await prisma.CC_Token.deleteMany()
 
-    await sendRedirect(event, authRequestUrl())
+    return await sendRedirect(event, authRequestUrl())
   }
   else {
     throw createError({
