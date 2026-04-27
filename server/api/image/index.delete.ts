@@ -26,7 +26,7 @@ export default defineEventHandler(async event => {
       // Deletes an image from the database.
       const queryRes = await prisma.image.delete({
         where: {
-          id: body.cuid as string
+          id: body.id as string
         }
       });
     } catch (e: any) {

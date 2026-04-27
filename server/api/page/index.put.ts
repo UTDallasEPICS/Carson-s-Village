@@ -34,7 +34,7 @@ export default defineEventHandler(async event => {
       // updates a pre-existing page
       const queryRes = await prisma.page.update({
         where: {
-          id: data.cuid
+          id: data.id
         },
         data: {
           ...data
@@ -44,7 +44,7 @@ export default defineEventHandler(async event => {
       console.error(e);
       throw createError({
         statusCode: 500,
-        statusMessage: `Failed to update page ${data.cuid}`
+        statusMessage: `Failed to update page ${data.id}`
       });
     }
   } else {

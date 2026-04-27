@@ -17,7 +17,7 @@ export default defineEventHandler(async event => {
       
     const page = await prisma.page.findFirst({
       where: {
-        cuid: body.pageCuid
+        id: body.pageCuid
       },
       include: {
         Family: {
