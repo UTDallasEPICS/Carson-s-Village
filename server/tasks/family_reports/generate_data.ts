@@ -31,7 +31,7 @@ export default defineTask({
 
         await prisma.page.update({
           where: { 
-            cuid: page?.cuid as string
+            id: page?.id as string
           },
           data: {
             donation_status: donation_status,
