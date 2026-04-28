@@ -5,7 +5,7 @@ const stripe = new Stripe(runtime.STRIPE_SECRET)
 
 export default defineEventHandler(async (event) => {
   
-  const rawBody = readRawBody(event);
+  const rawBody = await readRawBody(event);
   const signature = getHeader(event, 'stripe-signature')
   const stripeEvent = await getStripeEvent(rawBody, signature, stripe);
   if (!stripeEvent) {
