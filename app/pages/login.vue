@@ -45,9 +45,11 @@ async function handleVerifyOtp() {
 
     // Handle onboarding to stripe if necessary after login
     try {
-      await $fetch('api/stripe/create_account', {
+      const redirectUrl = await $fetch('api/stripe/create_account', {
         method: 'GET'
       })
+
+      window.location.href = redirectUrl
     } catch (e: any) {
       console.error("An error occured while onboarding user to stripe:", e)
       await navigateTo("/")

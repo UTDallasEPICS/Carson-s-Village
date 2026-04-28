@@ -32,7 +32,12 @@ export default defineEventHandler(async event => {
         id: user.id 
       },
       include: {
-        Family: true
+        Family: {
+          select: {
+            stripe_account_id: true,
+            Pages: true
+          }
+        }
       }
     });
     if (!dbUser || !dbUser.Family) {
@@ -45,10 +50,10 @@ export default defineEventHandler(async event => {
 
     try {
       // If stripe account already onboarded, then just redirect to landing page
-      if (!!dbUser.Family.stripe_account_id) {
-        return await sendRedirect(event, '/');
+      if (!!dbUser.Family.stripe_account_id && dbUser.Family.Pages?.[0].status !== "Family Stripe Account needs onboarding") {
+        return '/';
       }
-      else if(dbUser.Family.stripe_account_id == undefined && process.env.NODE_ENV == "production") {
+      else if(!dbUser.Family.stripe_account_id && process.env.NODE_ENV === "production") {
         const newStripeAccount = await stripe.accounts.create({
             capabilities: {
               card_payments: { requested: true },
@@ -103,11 +108,11 @@ export default defineEventHandler(async event => {
               return_url: `${runtime.BASEURL}api/complete_onboarding?stripe_account_id=${stripeAccountId}`,
               type: 'account_onboarding',
           });
-          return await sendRedirect(event, accountLink.url);
+          return accountLink.url;
         }
       } 
       // Create a dummy test account on dev servers
-      else if (dbUser.Family.stripe_account_id == undefined && process.env.NODE_ENV != "production") {
+      else if (!dbUser.Family.stripe_account_id && process.env.NODE_ENV != "production") {
         const newTestStripeAccount = await stripe.accounts.create({
           type: 'custom',
           country: 'US',
@@ -158,7 +163,9 @@ export default defineEventHandler(async event => {
             data: { status: 'Active' },
           }),
         ]);
-        return await sendRedirect(event, '/')
+
+        console.log("[Stripe] Test Stripe account created")
+        return '/';
       }
     } catch (e) {
       console.error('Something went wrong in stripe account onboarding:\n', e) 

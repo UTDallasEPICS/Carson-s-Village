@@ -51,7 +51,7 @@ export default defineEventHandler(async event => {
       await sendEmail(body.email, "invitation", "Invitation to Carson's village", ({...body, url: `${runtime.BASEURL}login`}))
       return queryRes
     } catch (e) {
-      console.error(e)
+      console.error("An error occured while trying to create family:\n", e)
       throw createError({
         statusCode: 500,
         statusMessage: 'Something went wrong',
