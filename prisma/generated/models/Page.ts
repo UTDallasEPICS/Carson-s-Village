@@ -39,7 +39,7 @@ export type PageSumAggregateOutputType = {
 }
 
 export type PageMinAggregateOutputType = {
-  cuid: string | null
+  id: string | null
   day_of_birth: Date | null
   day_of_passing: Date | null
   visitation_date: Date | null
@@ -70,7 +70,7 @@ export type PageMinAggregateOutputType = {
 }
 
 export type PageMaxAggregateOutputType = {
-  cuid: string | null
+  id: string | null
   day_of_birth: Date | null
   day_of_passing: Date | null
   visitation_date: Date | null
@@ -101,7 +101,7 @@ export type PageMaxAggregateOutputType = {
 }
 
 export type PageCountAggregateOutputType = {
-  cuid: number
+  id: number
   day_of_birth: number
   day_of_passing: number
   visitation_date: number
@@ -146,7 +146,7 @@ export type PageSumAggregateInputType = {
 }
 
 export type PageMinAggregateInputType = {
-  cuid?: true
+  id?: true
   day_of_birth?: true
   day_of_passing?: true
   visitation_date?: true
@@ -177,7 +177,7 @@ export type PageMinAggregateInputType = {
 }
 
 export type PageMaxAggregateInputType = {
-  cuid?: true
+  id?: true
   day_of_birth?: true
   day_of_passing?: true
   visitation_date?: true
@@ -208,7 +208,7 @@ export type PageMaxAggregateInputType = {
 }
 
 export type PageCountAggregateInputType = {
-  cuid?: true
+  id?: true
   day_of_birth?: true
   day_of_passing?: true
   visitation_date?: true
@@ -326,7 +326,7 @@ export type PageGroupByArgs<ExtArgs extends runtime.Types.Extensions.InternalArg
 }
 
 export type PageGroupByOutputType = {
-  cuid: string
+  id: string
   day_of_birth: Date | null
   day_of_passing: Date | null
   visitation_date: Date | null
@@ -380,7 +380,7 @@ export type PageWhereInput = {
   AND?: Prisma.PageWhereInput | Prisma.PageWhereInput[]
   OR?: Prisma.PageWhereInput[]
   NOT?: Prisma.PageWhereInput | Prisma.PageWhereInput[]
-  cuid?: Prisma.StringFilter<"Page"> | string
+  id?: Prisma.StringFilter<"Page"> | string
   day_of_birth?: Prisma.DateTimeNullableFilter<"Page"> | Date | string | null
   day_of_passing?: Prisma.DateTimeNullableFilter<"Page"> | Date | string | null
   visitation_date?: Prisma.DateTimeNullableFilter<"Page"> | Date | string | null
@@ -416,7 +416,7 @@ export type PageWhereInput = {
 }
 
 export type PageOrderByWithRelationInput = {
-  cuid?: Prisma.SortOrder
+  id?: Prisma.SortOrder
   day_of_birth?: Prisma.SortOrderInput | Prisma.SortOrder
   day_of_passing?: Prisma.SortOrderInput | Prisma.SortOrder
   visitation_date?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -452,7 +452,7 @@ export type PageOrderByWithRelationInput = {
 }
 
 export type PageWhereUniqueInput = Prisma.AtLeast<{
-  cuid?: string
+  id?: string
   AND?: Prisma.PageWhereInput | Prisma.PageWhereInput[]
   OR?: Prisma.PageWhereInput[]
   NOT?: Prisma.PageWhereInput | Prisma.PageWhereInput[]
@@ -488,10 +488,10 @@ export type PageWhereUniqueInput = Prisma.AtLeast<{
   Reply?: Prisma.ReplyListRelationFilter
   Images?: Prisma.ImageListRelationFilter
   PageDonations?: Prisma.PageDonationListRelationFilter
-}, "cuid">
+}, "id">
 
 export type PageOrderByWithAggregationInput = {
-  cuid?: Prisma.SortOrder
+  id?: Prisma.SortOrder
   day_of_birth?: Prisma.SortOrderInput | Prisma.SortOrder
   day_of_passing?: Prisma.SortOrderInput | Prisma.SortOrder
   visitation_date?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -530,7 +530,7 @@ export type PageScalarWhereWithAggregatesInput = {
   AND?: Prisma.PageScalarWhereWithAggregatesInput | Prisma.PageScalarWhereWithAggregatesInput[]
   OR?: Prisma.PageScalarWhereWithAggregatesInput[]
   NOT?: Prisma.PageScalarWhereWithAggregatesInput | Prisma.PageScalarWhereWithAggregatesInput[]
-  cuid?: Prisma.StringWithAggregatesFilter<"Page"> | string
+  id?: Prisma.StringWithAggregatesFilter<"Page"> | string
   day_of_birth?: Prisma.DateTimeNullableWithAggregatesFilter<"Page"> | Date | string | null
   day_of_passing?: Prisma.DateTimeNullableWithAggregatesFilter<"Page"> | Date | string | null
   visitation_date?: Prisma.DateTimeNullableWithAggregatesFilter<"Page"> | Date | string | null
@@ -561,7 +561,7 @@ export type PageScalarWhereWithAggregatesInput = {
 }
 
 export type PageCreateInput = {
-  cuid?: string
+  id?: string
   day_of_birth?: Date | string | null
   day_of_passing?: Date | string | null
   visitation_date?: Date | string | null
@@ -595,7 +595,7 @@ export type PageCreateInput = {
 }
 
 export type PageUncheckedCreateInput = {
-  cuid?: string
+  id?: string
   day_of_birth?: Date | string | null
   day_of_passing?: Date | string | null
   visitation_date?: Date | string | null
@@ -629,7 +629,7 @@ export type PageUncheckedCreateInput = {
 }
 
 export type PageUpdateInput = {
-  cuid?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.StringFieldUpdateOperationsInput | string
   day_of_birth?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   day_of_passing?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   visitation_date?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -663,7 +663,7 @@ export type PageUpdateInput = {
 }
 
 export type PageUncheckedUpdateInput = {
-  cuid?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.StringFieldUpdateOperationsInput | string
   day_of_birth?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   day_of_passing?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   visitation_date?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -697,7 +697,7 @@ export type PageUncheckedUpdateInput = {
 }
 
 export type PageCreateManyInput = {
-  cuid?: string
+  id?: string
   day_of_birth?: Date | string | null
   day_of_passing?: Date | string | null
   visitation_date?: Date | string | null
@@ -728,7 +728,7 @@ export type PageCreateManyInput = {
 }
 
 export type PageUpdateManyMutationInput = {
-  cuid?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.StringFieldUpdateOperationsInput | string
   day_of_birth?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   day_of_passing?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   visitation_date?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -757,7 +757,7 @@ export type PageUpdateManyMutationInput = {
 }
 
 export type PageUncheckedUpdateManyInput = {
-  cuid?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.StringFieldUpdateOperationsInput | string
   day_of_birth?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   day_of_passing?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   visitation_date?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -798,7 +798,7 @@ export type PageOrderByRelationAggregateInput = {
 }
 
 export type PageCountOrderByAggregateInput = {
-  cuid?: Prisma.SortOrder
+  id?: Prisma.SortOrder
   day_of_birth?: Prisma.SortOrder
   day_of_passing?: Prisma.SortOrder
   visitation_date?: Prisma.SortOrder
@@ -835,7 +835,7 @@ export type PageAvgOrderByAggregateInput = {
 }
 
 export type PageMaxOrderByAggregateInput = {
-  cuid?: Prisma.SortOrder
+  id?: Prisma.SortOrder
   day_of_birth?: Prisma.SortOrder
   day_of_passing?: Prisma.SortOrder
   visitation_date?: Prisma.SortOrder
@@ -866,7 +866,7 @@ export type PageMaxOrderByAggregateInput = {
 }
 
 export type PageMinOrderByAggregateInput = {
-  cuid?: Prisma.SortOrder
+  id?: Prisma.SortOrder
   day_of_birth?: Prisma.SortOrder
   day_of_passing?: Prisma.SortOrder
   visitation_date?: Prisma.SortOrder
@@ -996,6 +996,10 @@ export type PageUncheckedUpdateManyWithoutFamilyNestedInput = {
   deleteMany?: Prisma.PageScalarWhereInput | Prisma.PageScalarWhereInput[]
 }
 
+export type NullableDateTimeFieldUpdateOperationsInput = {
+  set?: Date | string | null
+}
+
 export type IntFieldUpdateOperationsInput = {
   set?: number
   increment?: number
@@ -1049,7 +1053,7 @@ export type PageUpdateOneWithoutImagesNestedInput = {
 }
 
 export type PageCreateWithoutUserInput = {
-  cuid?: string
+  id?: string
   day_of_birth?: Date | string | null
   day_of_passing?: Date | string | null
   visitation_date?: Date | string | null
@@ -1082,7 +1086,7 @@ export type PageCreateWithoutUserInput = {
 }
 
 export type PageUncheckedCreateWithoutUserInput = {
-  cuid?: string
+  id?: string
   day_of_birth?: Date | string | null
   day_of_passing?: Date | string | null
   visitation_date?: Date | string | null
@@ -1143,7 +1147,7 @@ export type PageScalarWhereInput = {
   AND?: Prisma.PageScalarWhereInput | Prisma.PageScalarWhereInput[]
   OR?: Prisma.PageScalarWhereInput[]
   NOT?: Prisma.PageScalarWhereInput | Prisma.PageScalarWhereInput[]
-  cuid?: Prisma.StringFilter<"Page"> | string
+  id?: Prisma.StringFilter<"Page"> | string
   day_of_birth?: Prisma.DateTimeNullableFilter<"Page"> | Date | string | null
   day_of_passing?: Prisma.DateTimeNullableFilter<"Page"> | Date | string | null
   visitation_date?: Prisma.DateTimeNullableFilter<"Page"> | Date | string | null
@@ -1174,7 +1178,7 @@ export type PageScalarWhereInput = {
 }
 
 export type PageCreateWithoutFamilyInput = {
-  cuid?: string
+  id?: string
   day_of_birth?: Date | string | null
   day_of_passing?: Date | string | null
   visitation_date?: Date | string | null
@@ -1207,7 +1211,7 @@ export type PageCreateWithoutFamilyInput = {
 }
 
 export type PageUncheckedCreateWithoutFamilyInput = {
-  cuid?: string
+  id?: string
   day_of_birth?: Date | string | null
   day_of_passing?: Date | string | null
   visitation_date?: Date | string | null
@@ -1265,7 +1269,7 @@ export type PageUpdateManyWithWhereWithoutFamilyInput = {
 }
 
 export type PageCreateWithoutPageDonationsInput = {
-  cuid?: string
+  id?: string
   day_of_birth?: Date | string | null
   day_of_passing?: Date | string | null
   visitation_date?: Date | string | null
@@ -1298,7 +1302,7 @@ export type PageCreateWithoutPageDonationsInput = {
 }
 
 export type PageUncheckedCreateWithoutPageDonationsInput = {
-  cuid?: string
+  id?: string
   day_of_birth?: Date | string | null
   day_of_passing?: Date | string | null
   visitation_date?: Date | string | null
@@ -1347,7 +1351,7 @@ export type PageUpdateToOneWithWhereWithoutPageDonationsInput = {
 }
 
 export type PageUpdateWithoutPageDonationsInput = {
-  cuid?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.StringFieldUpdateOperationsInput | string
   day_of_birth?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   day_of_passing?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   visitation_date?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1380,7 +1384,7 @@ export type PageUpdateWithoutPageDonationsInput = {
 }
 
 export type PageUncheckedUpdateWithoutPageDonationsInput = {
-  cuid?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.StringFieldUpdateOperationsInput | string
   day_of_birth?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   day_of_passing?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   visitation_date?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1413,7 +1417,7 @@ export type PageUncheckedUpdateWithoutPageDonationsInput = {
 }
 
 export type PageCreateWithoutReplyInput = {
-  cuid?: string
+  id?: string
   day_of_birth?: Date | string | null
   day_of_passing?: Date | string | null
   visitation_date?: Date | string | null
@@ -1446,7 +1450,7 @@ export type PageCreateWithoutReplyInput = {
 }
 
 export type PageUncheckedCreateWithoutReplyInput = {
-  cuid?: string
+  id?: string
   day_of_birth?: Date | string | null
   day_of_passing?: Date | string | null
   visitation_date?: Date | string | null
@@ -1495,7 +1499,7 @@ export type PageUpdateToOneWithWhereWithoutReplyInput = {
 }
 
 export type PageUpdateWithoutReplyInput = {
-  cuid?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.StringFieldUpdateOperationsInput | string
   day_of_birth?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   day_of_passing?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   visitation_date?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1528,7 +1532,7 @@ export type PageUpdateWithoutReplyInput = {
 }
 
 export type PageUncheckedUpdateWithoutReplyInput = {
-  cuid?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.StringFieldUpdateOperationsInput | string
   day_of_birth?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   day_of_passing?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   visitation_date?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1561,7 +1565,7 @@ export type PageUncheckedUpdateWithoutReplyInput = {
 }
 
 export type PageCreateWithoutImagesInput = {
-  cuid?: string
+  id?: string
   day_of_birth?: Date | string | null
   day_of_passing?: Date | string | null
   visitation_date?: Date | string | null
@@ -1594,7 +1598,7 @@ export type PageCreateWithoutImagesInput = {
 }
 
 export type PageUncheckedCreateWithoutImagesInput = {
-  cuid?: string
+  id?: string
   day_of_birth?: Date | string | null
   day_of_passing?: Date | string | null
   visitation_date?: Date | string | null
@@ -1643,7 +1647,7 @@ export type PageUpdateToOneWithWhereWithoutImagesInput = {
 }
 
 export type PageUpdateWithoutImagesInput = {
-  cuid?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.StringFieldUpdateOperationsInput | string
   day_of_birth?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   day_of_passing?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   visitation_date?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1676,7 +1680,7 @@ export type PageUpdateWithoutImagesInput = {
 }
 
 export type PageUncheckedUpdateWithoutImagesInput = {
-  cuid?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.StringFieldUpdateOperationsInput | string
   day_of_birth?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   day_of_passing?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   visitation_date?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1709,7 +1713,7 @@ export type PageUncheckedUpdateWithoutImagesInput = {
 }
 
 export type PageCreateManyUserInput = {
-  cuid?: string
+  id?: string
   day_of_birth?: Date | string | null
   day_of_passing?: Date | string | null
   visitation_date?: Date | string | null
@@ -1739,7 +1743,7 @@ export type PageCreateManyUserInput = {
 }
 
 export type PageUpdateWithoutUserInput = {
-  cuid?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.StringFieldUpdateOperationsInput | string
   day_of_birth?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   day_of_passing?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   visitation_date?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1772,7 +1776,7 @@ export type PageUpdateWithoutUserInput = {
 }
 
 export type PageUncheckedUpdateWithoutUserInput = {
-  cuid?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.StringFieldUpdateOperationsInput | string
   day_of_birth?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   day_of_passing?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   visitation_date?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1805,7 +1809,7 @@ export type PageUncheckedUpdateWithoutUserInput = {
 }
 
 export type PageUncheckedUpdateManyWithoutUserInput = {
-  cuid?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.StringFieldUpdateOperationsInput | string
   day_of_birth?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   day_of_passing?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   visitation_date?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1835,7 +1839,7 @@ export type PageUncheckedUpdateManyWithoutUserInput = {
 }
 
 export type PageCreateManyFamilyInput = {
-  cuid?: string
+  id?: string
   day_of_birth?: Date | string | null
   day_of_passing?: Date | string | null
   visitation_date?: Date | string | null
@@ -1865,7 +1869,7 @@ export type PageCreateManyFamilyInput = {
 }
 
 export type PageUpdateWithoutFamilyInput = {
-  cuid?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.StringFieldUpdateOperationsInput | string
   day_of_birth?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   day_of_passing?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   visitation_date?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1898,7 +1902,7 @@ export type PageUpdateWithoutFamilyInput = {
 }
 
 export type PageUncheckedUpdateWithoutFamilyInput = {
-  cuid?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.StringFieldUpdateOperationsInput | string
   day_of_birth?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   day_of_passing?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   visitation_date?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1931,7 +1935,7 @@ export type PageUncheckedUpdateWithoutFamilyInput = {
 }
 
 export type PageUncheckedUpdateManyWithoutFamilyInput = {
-  cuid?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.StringFieldUpdateOperationsInput | string
   day_of_birth?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   day_of_passing?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   visitation_date?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2010,7 +2014,7 @@ export type PageCountOutputTypeCountPageDonationsArgs<ExtArgs extends runtime.Ty
 
 
 export type PageSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
-  cuid?: boolean
+  id?: boolean
   day_of_birth?: boolean
   day_of_passing?: boolean
   visitation_date?: boolean
@@ -2047,7 +2051,7 @@ export type PageSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
 }, ExtArgs["result"]["page"]>
 
 export type PageSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
-  cuid?: boolean
+  id?: boolean
   day_of_birth?: boolean
   day_of_passing?: boolean
   visitation_date?: boolean
@@ -2080,7 +2084,7 @@ export type PageSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
 }, ExtArgs["result"]["page"]>
 
 export type PageSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
-  cuid?: boolean
+  id?: boolean
   day_of_birth?: boolean
   day_of_passing?: boolean
   visitation_date?: boolean
@@ -2113,7 +2117,7 @@ export type PageSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
 }, ExtArgs["result"]["page"]>
 
 export type PageSelectScalar = {
-  cuid?: boolean
+  id?: boolean
   day_of_birth?: boolean
   day_of_passing?: boolean
   visitation_date?: boolean
@@ -2143,7 +2147,7 @@ export type PageSelectScalar = {
   last_donation_date?: boolean
 }
 
-export type PageOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"cuid" | "day_of_birth" | "day_of_passing" | "visitation_date" | "visitation_location" | "visitation_address" | "visitation_description" | "funeral_date" | "funeral_location" | "funeral_description" | "funeral_address" | "obituary" | "donation_goal" | "donation_description" | "amount_raised" | "deadline" | "userCuid" | "amount_distributed" | "profileImageCuid" | "familyCuid" | "status" | "donation_status" | "duration" | "start_date" | "goal_met_date" | "page_first_name" | "page_last_name" | "last_donation_date", ExtArgs["result"]["page"]>
+export type PageOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "day_of_birth" | "day_of_passing" | "visitation_date" | "visitation_location" | "visitation_address" | "visitation_description" | "funeral_date" | "funeral_location" | "funeral_description" | "funeral_address" | "obituary" | "donation_goal" | "donation_description" | "amount_raised" | "deadline" | "userCuid" | "amount_distributed" | "profileImageCuid" | "familyCuid" | "status" | "donation_status" | "duration" | "start_date" | "goal_met_date" | "page_first_name" | "page_last_name" | "last_donation_date", ExtArgs["result"]["page"]>
 export type PageInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   Family?: boolean | Prisma.Page$FamilyArgs<ExtArgs>
   User?: boolean | Prisma.UserDefaultArgs<ExtArgs>
@@ -2171,7 +2175,7 @@ export type $PagePayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     PageDonations: Prisma.$PageDonationPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
-    cuid: string
+    id: string
     day_of_birth: Date | null
     day_of_passing: Date | null
     visitation_date: Date | null
@@ -2282,8 +2286,8 @@ export interface PageDelegate<ExtArgs extends runtime.Types.Extensions.InternalA
    * // Get first 10 Pages
    * const pages = await prisma.page.findMany({ take: 10 })
    * 
-   * // Only select the `cuid`
-   * const pageWithCuidOnly = await prisma.page.findMany({ select: { cuid: true } })
+   * // Only select the `id`
+   * const pageWithIdOnly = await prisma.page.findMany({ select: { id: true } })
    * 
    */
   findMany<T extends PageFindManyArgs>(args?: Prisma.SelectSubset<T, PageFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
@@ -2327,9 +2331,9 @@ export interface PageDelegate<ExtArgs extends runtime.Types.Extensions.InternalA
    *   ]
    * })
    * 
-   * // Create many Pages and only return the `cuid`
-   * const pageWithCuidOnly = await prisma.page.createManyAndReturn({
-   *   select: { cuid: true },
+   * // Create many Pages and only return the `id`
+   * const pageWithIdOnly = await prisma.page.createManyAndReturn({
+   *   select: { id: true },
    *   data: [
    *     // ... provide data here
    *   ]
@@ -2418,9 +2422,9 @@ export interface PageDelegate<ExtArgs extends runtime.Types.Extensions.InternalA
    *   ]
    * })
    * 
-   * // Update zero or more Pages and only return the `cuid`
-   * const pageWithCuidOnly = await prisma.page.updateManyAndReturn({
-   *   select: { cuid: true },
+   * // Update zero or more Pages and only return the `id`
+   * const pageWithIdOnly = await prisma.page.updateManyAndReturn({
+   *   select: { id: true },
    *   where: {
    *     // ... provide filter here
    *   },
@@ -2627,7 +2631,7 @@ export interface Prisma__PageClient<T, Null = never, ExtArgs extends runtime.Typ
  * Fields of the Page model
  */
 export interface PageFieldRefs {
-  readonly cuid: Prisma.FieldRef<"Page", 'String'>
+  readonly id: Prisma.FieldRef<"Page", 'String'>
   readonly day_of_birth: Prisma.FieldRef<"Page", 'DateTime'>
   readonly day_of_passing: Prisma.FieldRef<"Page", 'DateTime'>
   readonly visitation_date: Prisma.FieldRef<"Page", 'DateTime'>

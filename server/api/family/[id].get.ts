@@ -1,5 +1,3 @@
-import {loginRedirectUrl} from "../auth0"
-
 /*
 *	/Family
 *	function:	GET
@@ -7,29 +5,45 @@ import {loginRedirectUrl} from "../auth0"
 */
 
 export default defineEventHandler(async event => {
+  const session = await auth.api.getSession({
+    headers: event.headers
+  })
+  if (!session || !session.user) {
+    throw createError({
+      statusCode: 401,
+      statusMessage: 'Unauthorized'
+    });
+  }
+  const user = session.user
+
   const family_cuid = getRouterParam(event, 'id')
-  if( event.context.user?.user_role == "advocate" || event.context.user?.user_role == "admin" || event.context.user?.familyCuid === family_cuid as string){
+
+  if(user.role == "advocate" || user.role == "admin" || user.familyId === family_cuid as string) {
     const queryRes = await prisma.family.findFirst({
-        where: { cuid: family_cuid as string },
+      where: {
+        id: family_cuid as string
+      },
       include: {
         Pages: true,
         FamilyMembers: true,
         AdvocateResponsible: true
+      }
+    });
+    if (!queryRes) {
+      return {
+        family_name: "",
+        advocateCuid: "",
+        created_at: "",
+        updated_at: "",
+        familyCuid: "",
+        FamilyDonations: [],
+      } as any
     }
-  });
-  if (!queryRes) {
-    return {
-      family_name: "",
-      advocateCuid: "",
-      created_at: "",
-      updated_at: "",
-      familyCuid: "",
-      FamilyDonationPayouts: [],
-      FamilyDonations: [],
-    } as any
-  }
-  return queryRes;
+    return queryRes;
   } else {
-    return await sendRedirect(event, loginRedirectUrl());
+    throw createError({
+      statusCode: 401,
+      statusMessage: 'Unauthorized'
+    });
   }
 })

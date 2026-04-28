@@ -1,51 +1,4 @@
-/*import {
-  Family as PFamily,
-  User as PUser,
-  Page as PPage,
-  Image as PImage,
-  PageDonation as PPageDonation,
-  DonationPayout as PDonationPayout, 
-  DonationToPage as PDonationToPage, 
-  FamilyToPage as PFamilyToPage,
-  UserToFamily as PUserToFamily,
-  UserToPage as PUserToPage,
-  ImageToPage as PImage
-} from '@/prisma/client';
-import { DonationPayout } from '@prisma/client';
-
-export type Family = PFamily & {
-  Pages?: FamilyToPage;
-  FamilyMembers?: UserToFamily[];
-  PageDonations?: PageDonation[];
-  DonationPayout?: DonationPayout[];
-}
-
-export type User = PUser & {
-  Pages?: UserToPage;
-  PageDonations?: PageDonation[];
-  DonationPayout?: DonationPayout[];
-};
-
-export type Page = PPage & {
-  Pages?: UserToPage;
-  PageDonations?: PageDonation[];
-  DonationPayout?: DonationPayout[];
-};
-
-export type Image = PImage & {
-  Pages?: ImageToPage;
-};
-
-export type PageDonation = PPageDonation & {
-  Pages?: DonationToPage;
-}
-
-export type DonationPayout = PDonationPayout & {
-  Pages?: PayoutToPage;
-};
-*/
 import { PrismaClient,  } from "~~/prisma/generated/client";
-import type { DonationPayout } from "~~/prisma/generated/models";
 
 declare module 'h3' {
   interface H3EventContext {
@@ -103,63 +56,46 @@ export type Family = {
   FamilyMembers: User[];
   AdvocateResponsible: User;
   FamilyDonations: PageDonation[];
-  FamilyDonationPayouts: DonationPayout[];
 }
 
 export type User = {
-    cuid: string,
-    first_name: string,
-    last_name: string,
-    user_role: string,
-    email: string,
-    address: string,
-    middle_name: string,
-    phone: string,
-    Pages: Page[],
-    familyCuid: string,
-    AdvocateFamily: User[]     
-    //PageDonations: PageDonation[]
-    //DonationPayouts: DonationPayout[]  
+  id: string,
+  name: string
+  email: string,
+  emailVerified: boolean,
+  image?: string,
+  createdAt: Date,
+  updatedAt: Date,
+  role: 'admin' | 'advocate' | 'family',
+  address: string,
+  phone: string,
+  Pages: Page[],
+  familyId: string,
+  AdvocateFamily: User[]     
 }
 
 export type PageDonation = {
-  cuid: string,  
-  userCuid: string,
-  familyCuid: String,  
-  pageCuid: string,  
-  success: boolean, 
-  transaction_id: string,  
-  amount: number,
+  id: string,
+  familyCuid: string,
+  pageCuid: string,
   donorFirstName: string,
   donorLastName: string,
   donorEmail: string,
-  isAnonymous: boolean,
   comments: string,
-  Page: Page,
-  donationDate: Date | string | null
-  //User: User
-}
-
-
-export type donation_payout = {
-    cuid: string,
-    transaction_id: string,
-    userCuid: string
-    amount_to_record: number,
-    transaction_recording_date: Date | string | null,
-    familyCuid: string,
-    page: Page
+  donationInitiated: Date,
+  donationProcessed: Date,
+  amount: int
 }
 
 export type Image = {
-  cuid: string
+  id: string
   url: string
   pageCuid: string
   //Page: Page
 }
 
 export type Reply = {
-  cuid: string,
+  id: string,
   pageCuid: string
   familyCuid: string
   name: string

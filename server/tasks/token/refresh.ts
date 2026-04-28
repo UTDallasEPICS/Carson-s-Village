@@ -13,7 +13,7 @@ export default defineTask({
       if(refreshTokenCount !== 0) {
         const tokens = await prisma.CC_Token.findFirst({
           where: {
-            cuid: "0"
+            id: "0"
           }
         })
         
@@ -46,7 +46,7 @@ export default defineTask({
 
       const addToken = await prisma.CC_Token.upsert({
         where: {
-          cuid: "0"
+          id: "0"
         },
         update: {
           token: respBody.access_token,

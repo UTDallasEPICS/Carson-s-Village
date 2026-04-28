@@ -2,13 +2,12 @@ const runtime = useRuntimeConfig()
 const endpointSecret = runtime.STRIPE_WEBHOOK_SECRET
 
 export default async function getStripeEvent(
-  event: H3Event,
+  rawBody: String,
+  signature: String,
   stripe: Stripe
 ): Stripe.Event | null {
-  const sig = getHeader(event, 'stripe-signature');
-
   try {
-    return stripe.webhooks.constructEvent(event.context.rawBody, sig, endpointSecret);
+    return stripe.webhooks.constructEvent(rawBody, signature, endpointSecret);
   } catch (err: any) {
     console.error('Error occured while constructing stripe event:\n', err);
     return null

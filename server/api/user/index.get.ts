@@ -1,5 +1,3 @@
-import {loginRedirectUrl} from "../auth0"
-
 /*
 *	/EditUser/cuid
 *	function:	GET
@@ -7,20 +5,37 @@ import {loginRedirectUrl} from "../auth0"
 */
 
 export default defineEventHandler(async event => {
+  const session = await auth.api.getSession({
+    headers: event.headers
+  })
+  if (!session || !session.user) {
+    throw createError({
+      statusCode: 401,
+      statusMessage: 'Unauthorized'
+    });
+  }
+  const user = session.user
+
   const { cuid } = getQuery(event);
   if( (cuid as string) == "0" || cuid == undefined){
     return []
   }
+
   // retrieves a single user
-  if(event.context.user?.user_role === "advocate" || event.context.user?.user_role === "admin") {
+  if(user.role === "advocate" || user.role === "admin") {
     const queryRes = await prisma.user.findFirst({
-      where: { cuid: (cuid as string) },
+      where: {
+        id: (cuid as string)
+      },
       include: {
         AdvocateFamily: true
       }
     });
     return queryRes;
   } else {
-    return await sendRedirect(event, loginRedirectUrl());
+    throw createError({
+      statusCode: 401,
+      statusMessage: 'Unauthorized'
+    });
   }
 })

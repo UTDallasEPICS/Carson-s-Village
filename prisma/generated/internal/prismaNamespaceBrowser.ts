@@ -52,6 +52,9 @@ export const AnyNull = runtime.AnyNull
 
 export const ModelName = {
   User: 'User',
+  Session: 'Session',
+  Account: 'Account',
+  Verification: 'Verification',
   Family: 'Family',
   Page: 'Page',
   PageDonation: 'PageDonation',
@@ -74,22 +77,70 @@ export type TransactionIsolationLevel = (typeof TransactionIsolationLevel)[keyof
 
 
 export const UserScalarFieldEnum = {
-  cuid: 'cuid',
+  id: 'id',
+  name: 'name',
   email: 'email',
-  user_role: 'user_role',
-  first_name: 'first_name',
-  middle_name: 'middle_name',
-  last_name: 'last_name',
+  emailVerified: 'emailVerified',
+  image: 'image',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  role: 'role',
+  familyId: 'familyId',
   phone: 'phone',
-  address: 'address',
-  familyCuid: 'familyCuid'
+  address: 'address'
 } as const
 
 export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
 
 
+export const SessionScalarFieldEnum = {
+  id: 'id',
+  token: 'token',
+  userId: 'userId',
+  ipAddress: 'ipAddress',
+  userAgent: 'userAgent',
+  expiresAt: 'expiresAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type SessionScalarFieldEnum = (typeof SessionScalarFieldEnum)[keyof typeof SessionScalarFieldEnum]
+
+
+export const AccountScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  type: 'type',
+  provider: 'provider',
+  providerAccountId: 'providerAccountId',
+  refresh_token: 'refresh_token',
+  access_token: 'access_token',
+  expires_at: 'expires_at',
+  token_type: 'token_type',
+  scope: 'scope',
+  id_token: 'id_token',
+  session_state: 'session_state',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type AccountScalarFieldEnum = (typeof AccountScalarFieldEnum)[keyof typeof AccountScalarFieldEnum]
+
+
+export const VerificationScalarFieldEnum = {
+  id: 'id',
+  identifier: 'identifier',
+  value: 'value',
+  expiresAt: 'expiresAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type VerificationScalarFieldEnum = (typeof VerificationScalarFieldEnum)[keyof typeof VerificationScalarFieldEnum]
+
+
 export const FamilyScalarFieldEnum = {
-  cuid: 'cuid',
+  id: 'id',
   family_name: 'family_name',
   stripe_account_id: 'stripe_account_id',
   created_at: 'created_at',
@@ -101,7 +152,7 @@ export type FamilyScalarFieldEnum = (typeof FamilyScalarFieldEnum)[keyof typeof 
 
 
 export const PageScalarFieldEnum = {
-  cuid: 'cuid',
+  id: 'id',
   day_of_birth: 'day_of_birth',
   day_of_passing: 'day_of_passing',
   visitation_date: 'visitation_date',
@@ -135,7 +186,7 @@ export type PageScalarFieldEnum = (typeof PageScalarFieldEnum)[keyof typeof Page
 
 
 export const PageDonationScalarFieldEnum = {
-  cuid: 'cuid',
+  id: 'id',
   familyCuid: 'familyCuid',
   pageCuid: 'pageCuid',
   donorFirstName: 'donorFirstName',
@@ -151,7 +202,7 @@ export type PageDonationScalarFieldEnum = (typeof PageDonationScalarFieldEnum)[k
 
 
 export const CC_TokenScalarFieldEnum = {
-  cuid: 'cuid',
+  id: 'id',
   token: 'token',
   refresh_token: 'refresh_token',
   date: 'date'
@@ -161,7 +212,7 @@ export type CC_TokenScalarFieldEnum = (typeof CC_TokenScalarFieldEnum)[keyof typ
 
 
 export const ReplyScalarFieldEnum = {
-  cuid: 'cuid',
+  id: 'id',
   pageCuid: 'pageCuid',
   familyCuid: 'familyCuid',
   reply: 'reply',
@@ -174,7 +225,7 @@ export type ReplyScalarFieldEnum = (typeof ReplyScalarFieldEnum)[keyof typeof Re
 
 
 export const ImageScalarFieldEnum = {
-  cuid: 'cuid',
+  id: 'id',
   url: 'url',
   pageCuid: 'pageCuid'
 } as const
