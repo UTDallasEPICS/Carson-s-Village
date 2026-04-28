@@ -1,5 +1,9 @@
 <script lang="ts" setup>
 import type { Page, PageDonation, User } from '@/types.d.ts'
+import { authClient } from '~/utils/auth-client';
+
+const { data } = await authClient.useSession(useFetch);
+const user = computed(() => data.value?.user || null)
 
 const props = defineProps({
     pageCuid: {
@@ -12,7 +16,6 @@ const props = defineProps({
     }
 })
 
-const cvuser = useCookie<User>('cvuser');
 
 const feeRecovery = ref(false)
 const anonymous = ref(false)
@@ -25,7 +28,7 @@ const donationData = ref<PageDonation>({
     familyCuid: props.familyCuid,
     donorFirstName: "",
     donorLastName: "",
-    donorEmail: cvuser.value?.email ?? "",
+    donorEmail: user.value?.email ?? "",
     comments: "",
     donationDate: null,
     Page: ref<Page[]>([]).value[0],

@@ -11,15 +11,18 @@
 
 import type { Page, User } from '@/types.d.ts'
 import { ChevronUpIcon, ChevronDownIcon, ChevronUpDownIcon } from '@heroicons/vue/24/solid'
+import { authClient } from '~/utils/auth-client';
+
+const { data } = await authClient.useSession(useFetch);
+const user = computed(() => data.value?.user || null)
 
 const currentPage = ref(0)
 const lastPage = ref(0)
 const pages = ref<Page[]>([])
 
 const router = useRoute();
-const cvuser = useCookie<User>("cvuser")
 const toSearch = ref(false)
-const isLoggedIn = computed(() => cvuser.value?.cuid != undefined)
+const isLoggedIn = computed(() => !!user.value?.id )
 // We use the search query from the url from nav based searches, and we use the input field when on the search page.
 // to call /api/pages
 
