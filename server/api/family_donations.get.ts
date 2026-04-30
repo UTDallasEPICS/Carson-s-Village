@@ -1,5 +1,3 @@
-import {loginRedirectUrl} from "../api/auth0"
-
 /*
 *	/FamilyTransactionList
 *	function:	GET
@@ -7,23 +5,36 @@ import {loginRedirectUrl} from "../api/auth0"
 */
 
 export default defineEventHandler(async event => {
-    const { family_cuid } = getQuery(event);
-    if((family_cuid as string) == "0" || family_cuid == undefined) {
-        return []
-    }
-    if(event.context.user?.user_role === "admin") {
-      console.log(family_cuid)
-      const queryRes = await prisma.pageDonation.findMany({
-          where: {
-            familyCuid: family_cuid as string,
-            success: true
-          },
-          include: {
-            Page: true
-          }
+  const session = await auth.api.getSession({
+    headers: event.headers
+  })
+  if (!session || !session.user) {
+    throw createError({
+      statusCode: 401,
+      statusMessage: 'Unauthorized'
+    });
+  }
+  const user = session.user
+
+  const { family_cuid } = getQuery(event);
+  if((family_cuid as string) == "0" || family_cuid == undefined) {
+      return []
+  }
+
+  if(user.role === "admin") {
+    const queryRes = await prisma.pageDonation.findMany({
+      where: {
+        familyCuid: family_cuid as string,
+      },
+      include: {
+        Page: true
+      }
     });
     return queryRes;
   } else {
-    return await sendRedirect(event, loginRedirectUrl());
+    throw createError({
+      statusCode: 401,
+      statusMessage: 'Unauthorized'
+    });
   }
 })

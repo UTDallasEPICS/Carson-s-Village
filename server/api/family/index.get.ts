@@ -1,5 +1,3 @@
-import {loginRedirectUrl} from "../auth0"
-
 /*
 *	/Users
 *	function:	GET
@@ -7,8 +5,18 @@ import {loginRedirectUrl} from "../auth0"
 */
 
 export default defineEventHandler(async event => {
+  const session = await auth.api.getSession({
+    headers: event.headers
+  })
+  if (!session || !session.user) {
+    throw createError({
+      statusCode: 401,
+      statusMessage: 'Unauthorized'
+    });
+  }
+  const user = session.user
 
-  if(event.context.user?.user_role === "advocate" || event.context.user?.user_role === "admin") {
+  if(user.role === "advocate" || user.role === "admin") {
     const queryRes = await prisma.family.findMany({
       include: {
         Pages: true,
@@ -18,7 +26,7 @@ export default defineEventHandler(async event => {
     });
     return queryRes;
   } else {
-    createError({
+    throw createError({
       statusCode: 401, 
       statusMessage: "Unauthorized"
     }) 

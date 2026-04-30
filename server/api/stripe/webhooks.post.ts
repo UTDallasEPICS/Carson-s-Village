@@ -5,8 +5,9 @@ const stripe = new Stripe(runtime.STRIPE_SECRET)
 
 export default defineEventHandler(async (event) => {
   
-
-  const stripeEvent = await getStripeEvent(event, stripe);
+  const rawBody = await readRawBody(event);
+  const signature = getHeader(event, 'stripe-signature')
+  const stripeEvent = await getStripeEvent(rawBody, signature, stripe);
   if (!stripeEvent) {
     throw createError({
       statusCode: 400,
@@ -40,7 +41,7 @@ export default defineEventHandler(async (event) => {
           amount: netAmount
         }
       });
-      donationCuid = donation.cuid;
+      donationCuid = donation.id;
 
       // Handle email newsletter subscriptions, metadata only stores strings
       if (metadata.isSubscribing === "true") {
@@ -54,7 +55,7 @@ export default defineEventHandler(async (event) => {
       // find and update page
       const page = await prisma.page.findFirst({
         where: {
-          cuid: metadata.target_pageCuid
+          id: metadata.target_pageCuid
         }
       });
       if (!page) {
@@ -69,7 +70,7 @@ export default defineEventHandler(async (event) => {
       
       const pageUpdate = await prisma.page.update({
         where: {
-          cuid: page.cuid
+          id: page.id
         },
         data: {
           amount_raised: { increment: netAmount },
@@ -84,7 +85,7 @@ export default defineEventHandler(async (event) => {
       // Delete donation in database if it exists
       if (donationCuid) {
         const deletion = await prisma.pageDonation.delete({
-          where: { cuid: donationCuid }
+          where: { id: donationCuid }
         });
       }
 
@@ -107,7 +108,7 @@ type args = {email: string, first_name: string, last_name: string};
 async function subscribeToEmailList({email, first_name, last_name}: args) {
   const token = await prisma?.CC_Token.findUnique({
     where: {
-        cuid: "0"
+      id: "0"
     }
   })
 

@@ -1,4 +1,3 @@
-
 /*
 *	/EditPage/cuid or /Page/cuid
 *	function:	GET
@@ -6,39 +5,115 @@
 */
 
 export default defineEventHandler(async event => {
-  const { cuid } = getQuery(event);
-
-  if( (cuid as string) == "0" || cuid == undefined){
+  const session = await auth.api.getSession({
+    headers: event.headers
+  })
+  if (!session || !session.user) {
     throw createError({
-      statusCode: 400,
-      statusMessage: `Page ${cuid} is not allowed`
+      statusCode: 401,
+      statusMessage: 'Unauthorized'
     });
   }
+  const user = session.user
 
-  const queryRes = await prisma.page.findFirst({
-    where: {
-      cuid : cuid as string
-    },
-    include: {
-      Images: true,
-      PageDonations: {
-        orderBy: {
-          donationInitiated: 'desc'
-        },
-      },
-      Reply: {
-        orderBy: {
-          date: 'desc'
+  const { page_number } = getQuery(event);
+
+  if (user.role === 'admin') {
+    const [count, results] = await prisma.$transaction([
+      prisma.page.count(),
+      prisma.page.findMany({
+        skip: page_number as number * 12,
+        take: 12,
+        include: {
+          User: true,
+          Family: {
+            include: {
+              AdvocateResponsible: true
+            }
+          }
         }
-      }
-    }
-  });
-  if (!queryRes) {
+      })
+    ])
+
+    return {
+      pageCount: count,
+      pages: results
+    };
+  }
+  else if (user.role === 'advocate') {
+    const [count, results] = await prisma.$transaction([
+      prisma.page.count({
+        where: {
+          Family: {
+            AdvocateResponsible: {
+              id: user.id
+            }
+          }
+        }
+      }),
+      prisma.page.findMany({
+        where: {
+          Family: {
+            AdvocateResponsible: {
+              id: user.id
+            }
+          }
+        },
+        skip: page_number as number * 12,
+        take: 12,
+        include: {
+          User: true,
+          Family: {
+            include: {
+              AdvocateResponsible: true
+            }
+          }
+        }
+      })
+    ])
+
+    return {
+      pageCount: count,
+      pages: results
+    };
+  }
+  else if (user.role === 'family') {
+    const [count, results] = await prisma.$transaction([
+      prisma.page.count({
+        where: {
+          familyCuid: user.familyId
+        }
+      }),
+      prisma.page.findMany({
+        where: {
+          familyCuid: user.familyId
+        },
+        skip: page_number as number * 12,
+        take: 12,
+        include: {
+          User: true,
+          Family: {
+            include: {
+              AdvocateResponsible: true
+            }
+          }
+        }
+      })
+    ])
+
+    return {
+      pageCount: count,
+      pages: results
+    };
+  }
+  else {
     throw createError({
-      statusCode: 404,
-      statusMessage: `Could not find Page ${cuid}`
+      statusCode: 401,
+      statusMessage: 'Unauthorized'
     });
   }
-
-  return queryRes;
+  throw createError({
+    statusCode: 500,
+    statusMessage: 'Something went wrong'
+  });
 })

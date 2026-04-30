@@ -3,39 +3,44 @@
 *	  submit updated family details to database
 */
 const runtime = useRuntimeConfig()
-export default defineEventHandler(async event => {
 
-const body = await readBody(event);
-  const { familyCuid, family_name,
-    first_name,
-    email,
-    middle_name,
-    last_name,
-    phone, address, existingUser } = body
-console.log(body)
-if(event.context.user?.user_role === "advocate" || event.context.user?.user_role === "admin") {
+export default defineEventHandler(async event => {
+  const session = await auth.api.getSession({
+    headers: event.headers
+  })
+  if (!session || !session.user) {
+    throw createError({
+      statusCode: 401,
+      statusMessage: 'Unauthorized'
+    });
+  }
+  const user = session.user
+
+  const body = await readBody(event);
+  const { family_name, familyCuid } = body
+
+  if(user.role === "advocate" || user.role === "admin") {
     try {
-        const queryRes = await prisma.family.update({
-          where: {
-            cuid: familyCuid as string
-          },
-          data: {
-            family_name: family_name,
-            //AdvocateResponsible: {
-            //  connect: { cuid: event.context.user?.cuid }
-            //},
-            updated_at: new Date(),
-            //FamilyMembers: {
-            //  connect: {
-            //    cuid: cuid
-            //  }
-            //}
+      const queryRes = await prisma.family.update({
+        where: {
+          id: familyCuid as string
+        },
+        data: {
+          family_name: family_name,
         }
       })
       return queryRes
     } catch (e) {
-      console.log(e)
+      throw createError({
+        statusCode: 500,
+        statusMessage: `Failed to update family ${familyCuid}`
+      });
     }
   }
-    return false
+  else {
+    throw createError({
+      statusCode: 401,
+      statusMessage: 'Unauthorized'
+    });
+  }
 })

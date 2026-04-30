@@ -21,7 +21,7 @@ jobs:
       - name: configure aws credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: arn:aws:iam::654654236858:role/GithubActions
+          role-to-assume: ${{ secrets.ACTIONS_ROLE_ARN }}
           role-session-name: GitHub_to_AWS_via_FederatedOIDC
           aws-region: us-east-2
 
@@ -32,9 +32,13 @@ jobs:
       - name: Build and Push Docker image
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry}}
-          REPOSITORY: carsons-village
+          REPOSITORY: ${{ vars.REPOSITORY }}
           IMAGE_TAG: ${{ github.sha}}
           DATABASE_URL: "file:./dev.db"
+          CLUSTER_NAME: ${{ secrets.CLUSTER_NAME }}
+          SERVICE_NAME: ${{ vars.REPOSITORY }}-prod-service
         run: |
           docker build --output type=image,push=true --platform linux/arm64 -t $ECR_REGISTRY/$REPOSITORY:$IMAGE_TAG .
           docker build --output type=image,push=true --platform linux/arm64 -t $ECR_REGISTRY/$REPOSITORY:prod .
+          aws ecs update-service --cluster $CLUSTER_NAME --service $SERVICE_NAME --force-new-deployment --output text --query "service.serviceName" >/dev/null
+          echo "The container will update now"

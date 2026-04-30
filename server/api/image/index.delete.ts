@@ -1,4 +1,3 @@
-import {loginRedirectUrl} from "../auth0"
 import type { Page } from "@/types.d.ts"
 
 /*
@@ -9,25 +8,37 @@ import type { Page } from "@/types.d.ts"
 */
 
 export default defineEventHandler(async event => {
-  const body = await readBody(event);
-
-  const pageFound = event.context.user?.Family?.Pages?.find((page:Page) => page.cuid == body.pageCuid) || undefined
-try {
-  if(event.context.user?.user_role === "advocate" || event.context.user?.user_role == "admin"  || event.context.user?.user_role == 'family' && body.pageCuid == null || pageFound) {
-    // Deletes an image from the database.
-    const queryRes = await prisma.image.delete({
-      where: {
-          cuid: body.cuid as string
-        }
-        }
-    );
-
-    return true; 
-  } else {
-    return await sendRedirect(event, loginRedirectUrl());
+  const session = await auth.api.getSession({
+    headers: event.headers
+  })
+  if (!session || !session.user) {
+    throw createError({
+      statusCode: 401,
+      statusMessage: 'Unauthorized'
+    });
   }
-  } catch(e){
-    console.log(e)
-  return false;
-  } 
+  const user = session.user
+
+  const body = await readBody(event);
+  
+  if(user.role === "advocate" || user.role == "admin"  || user.role == 'family') {
+    try {
+      // Deletes an image from the database.
+      const queryRes = await prisma.image.delete({
+        where: {
+          id: body.id as string
+        }
+      });
+    } catch (e: any) {
+      throw createError({
+        statusCode: 500,
+        statusMessage: `Failed to delete image ${body.cuid}`
+      });
+    }
+  } else {
+    throw createError({
+      statusCode: 401,
+      statusMessage: 'Unauthorized'
+    });
+  }
 });

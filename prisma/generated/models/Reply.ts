@@ -25,7 +25,7 @@ export type AggregateReply = {
 }
 
 export type ReplyMinAggregateOutputType = {
-  cuid: string | null
+  id: string | null
   pageCuid: string | null
   familyCuid: string | null
   reply: string | null
@@ -35,7 +35,7 @@ export type ReplyMinAggregateOutputType = {
 }
 
 export type ReplyMaxAggregateOutputType = {
-  cuid: string | null
+  id: string | null
   pageCuid: string | null
   familyCuid: string | null
   reply: string | null
@@ -45,7 +45,7 @@ export type ReplyMaxAggregateOutputType = {
 }
 
 export type ReplyCountAggregateOutputType = {
-  cuid: number
+  id: number
   pageCuid: number
   familyCuid: number
   reply: number
@@ -57,7 +57,7 @@ export type ReplyCountAggregateOutputType = {
 
 
 export type ReplyMinAggregateInputType = {
-  cuid?: true
+  id?: true
   pageCuid?: true
   familyCuid?: true
   reply?: true
@@ -67,7 +67,7 @@ export type ReplyMinAggregateInputType = {
 }
 
 export type ReplyMaxAggregateInputType = {
-  cuid?: true
+  id?: true
   pageCuid?: true
   familyCuid?: true
   reply?: true
@@ -77,7 +77,7 @@ export type ReplyMaxAggregateInputType = {
 }
 
 export type ReplyCountAggregateInputType = {
-  cuid?: true
+  id?: true
   pageCuid?: true
   familyCuid?: true
   reply?: true
@@ -160,7 +160,7 @@ export type ReplyGroupByArgs<ExtArgs extends runtime.Types.Extensions.InternalAr
 }
 
 export type ReplyGroupByOutputType = {
-  cuid: string
+  id: string
   pageCuid: string
   familyCuid: string
   reply: string
@@ -191,7 +191,7 @@ export type ReplyWhereInput = {
   AND?: Prisma.ReplyWhereInput | Prisma.ReplyWhereInput[]
   OR?: Prisma.ReplyWhereInput[]
   NOT?: Prisma.ReplyWhereInput | Prisma.ReplyWhereInput[]
-  cuid?: Prisma.StringFilter<"Reply"> | string
+  id?: Prisma.StringFilter<"Reply"> | string
   pageCuid?: Prisma.StringFilter<"Reply"> | string
   familyCuid?: Prisma.StringFilter<"Reply"> | string
   reply?: Prisma.StringFilter<"Reply"> | string
@@ -199,10 +199,11 @@ export type ReplyWhereInput = {
   suspended?: Prisma.BoolFilter<"Reply"> | boolean
   date?: Prisma.DateTimeFilter<"Reply"> | Date | string
   Page?: Prisma.XOR<Prisma.PageScalarRelationFilter, Prisma.PageWhereInput>
+  Family?: Prisma.XOR<Prisma.FamilyScalarRelationFilter, Prisma.FamilyWhereInput>
 }
 
 export type ReplyOrderByWithRelationInput = {
-  cuid?: Prisma.SortOrder
+  id?: Prisma.SortOrder
   pageCuid?: Prisma.SortOrder
   familyCuid?: Prisma.SortOrder
   reply?: Prisma.SortOrder
@@ -210,10 +211,11 @@ export type ReplyOrderByWithRelationInput = {
   suspended?: Prisma.SortOrder
   date?: Prisma.SortOrder
   Page?: Prisma.PageOrderByWithRelationInput
+  Family?: Prisma.FamilyOrderByWithRelationInput
 }
 
 export type ReplyWhereUniqueInput = Prisma.AtLeast<{
-  cuid?: string
+  id?: string
   AND?: Prisma.ReplyWhereInput | Prisma.ReplyWhereInput[]
   OR?: Prisma.ReplyWhereInput[]
   NOT?: Prisma.ReplyWhereInput | Prisma.ReplyWhereInput[]
@@ -224,10 +226,11 @@ export type ReplyWhereUniqueInput = Prisma.AtLeast<{
   suspended?: Prisma.BoolFilter<"Reply"> | boolean
   date?: Prisma.DateTimeFilter<"Reply"> | Date | string
   Page?: Prisma.XOR<Prisma.PageScalarRelationFilter, Prisma.PageWhereInput>
-}, "cuid">
+  Family?: Prisma.XOR<Prisma.FamilyScalarRelationFilter, Prisma.FamilyWhereInput>
+}, "id">
 
 export type ReplyOrderByWithAggregationInput = {
-  cuid?: Prisma.SortOrder
+  id?: Prisma.SortOrder
   pageCuid?: Prisma.SortOrder
   familyCuid?: Prisma.SortOrder
   reply?: Prisma.SortOrder
@@ -243,7 +246,7 @@ export type ReplyScalarWhereWithAggregatesInput = {
   AND?: Prisma.ReplyScalarWhereWithAggregatesInput | Prisma.ReplyScalarWhereWithAggregatesInput[]
   OR?: Prisma.ReplyScalarWhereWithAggregatesInput[]
   NOT?: Prisma.ReplyScalarWhereWithAggregatesInput | Prisma.ReplyScalarWhereWithAggregatesInput[]
-  cuid?: Prisma.StringWithAggregatesFilter<"Reply"> | string
+  id?: Prisma.StringWithAggregatesFilter<"Reply"> | string
   pageCuid?: Prisma.StringWithAggregatesFilter<"Reply"> | string
   familyCuid?: Prisma.StringWithAggregatesFilter<"Reply"> | string
   reply?: Prisma.StringWithAggregatesFilter<"Reply"> | string
@@ -253,17 +256,17 @@ export type ReplyScalarWhereWithAggregatesInput = {
 }
 
 export type ReplyCreateInput = {
-  cuid?: string
-  familyCuid: string
+  id?: string
   reply?: string
   name?: string | null
   suspended?: boolean
   date?: Date | string
   Page: Prisma.PageCreateNestedOneWithoutReplyInput
+  Family: Prisma.FamilyCreateNestedOneWithoutRepliesInput
 }
 
 export type ReplyUncheckedCreateInput = {
-  cuid?: string
+  id?: string
   pageCuid: string
   familyCuid: string
   reply?: string
@@ -273,17 +276,17 @@ export type ReplyUncheckedCreateInput = {
 }
 
 export type ReplyUpdateInput = {
-  cuid?: Prisma.StringFieldUpdateOperationsInput | string
-  familyCuid?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.StringFieldUpdateOperationsInput | string
   reply?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   suspended?: Prisma.BoolFieldUpdateOperationsInput | boolean
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   Page?: Prisma.PageUpdateOneRequiredWithoutReplyNestedInput
+  Family?: Prisma.FamilyUpdateOneRequiredWithoutRepliesNestedInput
 }
 
 export type ReplyUncheckedUpdateInput = {
-  cuid?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.StringFieldUpdateOperationsInput | string
   pageCuid?: Prisma.StringFieldUpdateOperationsInput | string
   familyCuid?: Prisma.StringFieldUpdateOperationsInput | string
   reply?: Prisma.StringFieldUpdateOperationsInput | string
@@ -293,7 +296,7 @@ export type ReplyUncheckedUpdateInput = {
 }
 
 export type ReplyCreateManyInput = {
-  cuid?: string
+  id?: string
   pageCuid: string
   familyCuid: string
   reply?: string
@@ -303,8 +306,7 @@ export type ReplyCreateManyInput = {
 }
 
 export type ReplyUpdateManyMutationInput = {
-  cuid?: Prisma.StringFieldUpdateOperationsInput | string
-  familyCuid?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.StringFieldUpdateOperationsInput | string
   reply?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   suspended?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -312,7 +314,7 @@ export type ReplyUpdateManyMutationInput = {
 }
 
 export type ReplyUncheckedUpdateManyInput = {
-  cuid?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.StringFieldUpdateOperationsInput | string
   pageCuid?: Prisma.StringFieldUpdateOperationsInput | string
   familyCuid?: Prisma.StringFieldUpdateOperationsInput | string
   reply?: Prisma.StringFieldUpdateOperationsInput | string
@@ -332,7 +334,7 @@ export type ReplyOrderByRelationAggregateInput = {
 }
 
 export type ReplyCountOrderByAggregateInput = {
-  cuid?: Prisma.SortOrder
+  id?: Prisma.SortOrder
   pageCuid?: Prisma.SortOrder
   familyCuid?: Prisma.SortOrder
   reply?: Prisma.SortOrder
@@ -342,7 +344,7 @@ export type ReplyCountOrderByAggregateInput = {
 }
 
 export type ReplyMaxOrderByAggregateInput = {
-  cuid?: Prisma.SortOrder
+  id?: Prisma.SortOrder
   pageCuid?: Prisma.SortOrder
   familyCuid?: Prisma.SortOrder
   reply?: Prisma.SortOrder
@@ -352,13 +354,55 @@ export type ReplyMaxOrderByAggregateInput = {
 }
 
 export type ReplyMinOrderByAggregateInput = {
-  cuid?: Prisma.SortOrder
+  id?: Prisma.SortOrder
   pageCuid?: Prisma.SortOrder
   familyCuid?: Prisma.SortOrder
   reply?: Prisma.SortOrder
   name?: Prisma.SortOrder
   suspended?: Prisma.SortOrder
   date?: Prisma.SortOrder
+}
+
+export type ReplyCreateNestedManyWithoutFamilyInput = {
+  create?: Prisma.XOR<Prisma.ReplyCreateWithoutFamilyInput, Prisma.ReplyUncheckedCreateWithoutFamilyInput> | Prisma.ReplyCreateWithoutFamilyInput[] | Prisma.ReplyUncheckedCreateWithoutFamilyInput[]
+  connectOrCreate?: Prisma.ReplyCreateOrConnectWithoutFamilyInput | Prisma.ReplyCreateOrConnectWithoutFamilyInput[]
+  createMany?: Prisma.ReplyCreateManyFamilyInputEnvelope
+  connect?: Prisma.ReplyWhereUniqueInput | Prisma.ReplyWhereUniqueInput[]
+}
+
+export type ReplyUncheckedCreateNestedManyWithoutFamilyInput = {
+  create?: Prisma.XOR<Prisma.ReplyCreateWithoutFamilyInput, Prisma.ReplyUncheckedCreateWithoutFamilyInput> | Prisma.ReplyCreateWithoutFamilyInput[] | Prisma.ReplyUncheckedCreateWithoutFamilyInput[]
+  connectOrCreate?: Prisma.ReplyCreateOrConnectWithoutFamilyInput | Prisma.ReplyCreateOrConnectWithoutFamilyInput[]
+  createMany?: Prisma.ReplyCreateManyFamilyInputEnvelope
+  connect?: Prisma.ReplyWhereUniqueInput | Prisma.ReplyWhereUniqueInput[]
+}
+
+export type ReplyUpdateManyWithoutFamilyNestedInput = {
+  create?: Prisma.XOR<Prisma.ReplyCreateWithoutFamilyInput, Prisma.ReplyUncheckedCreateWithoutFamilyInput> | Prisma.ReplyCreateWithoutFamilyInput[] | Prisma.ReplyUncheckedCreateWithoutFamilyInput[]
+  connectOrCreate?: Prisma.ReplyCreateOrConnectWithoutFamilyInput | Prisma.ReplyCreateOrConnectWithoutFamilyInput[]
+  upsert?: Prisma.ReplyUpsertWithWhereUniqueWithoutFamilyInput | Prisma.ReplyUpsertWithWhereUniqueWithoutFamilyInput[]
+  createMany?: Prisma.ReplyCreateManyFamilyInputEnvelope
+  set?: Prisma.ReplyWhereUniqueInput | Prisma.ReplyWhereUniqueInput[]
+  disconnect?: Prisma.ReplyWhereUniqueInput | Prisma.ReplyWhereUniqueInput[]
+  delete?: Prisma.ReplyWhereUniqueInput | Prisma.ReplyWhereUniqueInput[]
+  connect?: Prisma.ReplyWhereUniqueInput | Prisma.ReplyWhereUniqueInput[]
+  update?: Prisma.ReplyUpdateWithWhereUniqueWithoutFamilyInput | Prisma.ReplyUpdateWithWhereUniqueWithoutFamilyInput[]
+  updateMany?: Prisma.ReplyUpdateManyWithWhereWithoutFamilyInput | Prisma.ReplyUpdateManyWithWhereWithoutFamilyInput[]
+  deleteMany?: Prisma.ReplyScalarWhereInput | Prisma.ReplyScalarWhereInput[]
+}
+
+export type ReplyUncheckedUpdateManyWithoutFamilyNestedInput = {
+  create?: Prisma.XOR<Prisma.ReplyCreateWithoutFamilyInput, Prisma.ReplyUncheckedCreateWithoutFamilyInput> | Prisma.ReplyCreateWithoutFamilyInput[] | Prisma.ReplyUncheckedCreateWithoutFamilyInput[]
+  connectOrCreate?: Prisma.ReplyCreateOrConnectWithoutFamilyInput | Prisma.ReplyCreateOrConnectWithoutFamilyInput[]
+  upsert?: Prisma.ReplyUpsertWithWhereUniqueWithoutFamilyInput | Prisma.ReplyUpsertWithWhereUniqueWithoutFamilyInput[]
+  createMany?: Prisma.ReplyCreateManyFamilyInputEnvelope
+  set?: Prisma.ReplyWhereUniqueInput | Prisma.ReplyWhereUniqueInput[]
+  disconnect?: Prisma.ReplyWhereUniqueInput | Prisma.ReplyWhereUniqueInput[]
+  delete?: Prisma.ReplyWhereUniqueInput | Prisma.ReplyWhereUniqueInput[]
+  connect?: Prisma.ReplyWhereUniqueInput | Prisma.ReplyWhereUniqueInput[]
+  update?: Prisma.ReplyUpdateWithWhereUniqueWithoutFamilyInput | Prisma.ReplyUpdateWithWhereUniqueWithoutFamilyInput[]
+  updateMany?: Prisma.ReplyUpdateManyWithWhereWithoutFamilyInput | Prisma.ReplyUpdateManyWithWhereWithoutFamilyInput[]
+  deleteMany?: Prisma.ReplyScalarWhereInput | Prisma.ReplyScalarWhereInput[]
 }
 
 export type ReplyCreateNestedManyWithoutPageInput = {
@@ -403,21 +447,73 @@ export type ReplyUncheckedUpdateManyWithoutPageNestedInput = {
   deleteMany?: Prisma.ReplyScalarWhereInput | Prisma.ReplyScalarWhereInput[]
 }
 
-export type BoolFieldUpdateOperationsInput = {
-  set?: boolean
+export type ReplyCreateWithoutFamilyInput = {
+  id?: string
+  reply?: string
+  name?: string | null
+  suspended?: boolean
+  date?: Date | string
+  Page: Prisma.PageCreateNestedOneWithoutReplyInput
 }
 
-export type ReplyCreateWithoutPageInput = {
-  cuid?: string
-  familyCuid: string
+export type ReplyUncheckedCreateWithoutFamilyInput = {
+  id?: string
+  pageCuid: string
   reply?: string
   name?: string | null
   suspended?: boolean
   date?: Date | string
 }
 
+export type ReplyCreateOrConnectWithoutFamilyInput = {
+  where: Prisma.ReplyWhereUniqueInput
+  create: Prisma.XOR<Prisma.ReplyCreateWithoutFamilyInput, Prisma.ReplyUncheckedCreateWithoutFamilyInput>
+}
+
+export type ReplyCreateManyFamilyInputEnvelope = {
+  data: Prisma.ReplyCreateManyFamilyInput | Prisma.ReplyCreateManyFamilyInput[]
+}
+
+export type ReplyUpsertWithWhereUniqueWithoutFamilyInput = {
+  where: Prisma.ReplyWhereUniqueInput
+  update: Prisma.XOR<Prisma.ReplyUpdateWithoutFamilyInput, Prisma.ReplyUncheckedUpdateWithoutFamilyInput>
+  create: Prisma.XOR<Prisma.ReplyCreateWithoutFamilyInput, Prisma.ReplyUncheckedCreateWithoutFamilyInput>
+}
+
+export type ReplyUpdateWithWhereUniqueWithoutFamilyInput = {
+  where: Prisma.ReplyWhereUniqueInput
+  data: Prisma.XOR<Prisma.ReplyUpdateWithoutFamilyInput, Prisma.ReplyUncheckedUpdateWithoutFamilyInput>
+}
+
+export type ReplyUpdateManyWithWhereWithoutFamilyInput = {
+  where: Prisma.ReplyScalarWhereInput
+  data: Prisma.XOR<Prisma.ReplyUpdateManyMutationInput, Prisma.ReplyUncheckedUpdateManyWithoutFamilyInput>
+}
+
+export type ReplyScalarWhereInput = {
+  AND?: Prisma.ReplyScalarWhereInput | Prisma.ReplyScalarWhereInput[]
+  OR?: Prisma.ReplyScalarWhereInput[]
+  NOT?: Prisma.ReplyScalarWhereInput | Prisma.ReplyScalarWhereInput[]
+  id?: Prisma.StringFilter<"Reply"> | string
+  pageCuid?: Prisma.StringFilter<"Reply"> | string
+  familyCuid?: Prisma.StringFilter<"Reply"> | string
+  reply?: Prisma.StringFilter<"Reply"> | string
+  name?: Prisma.StringNullableFilter<"Reply"> | string | null
+  suspended?: Prisma.BoolFilter<"Reply"> | boolean
+  date?: Prisma.DateTimeFilter<"Reply"> | Date | string
+}
+
+export type ReplyCreateWithoutPageInput = {
+  id?: string
+  reply?: string
+  name?: string | null
+  suspended?: boolean
+  date?: Date | string
+  Family: Prisma.FamilyCreateNestedOneWithoutRepliesInput
+}
+
 export type ReplyUncheckedCreateWithoutPageInput = {
-  cuid?: string
+  id?: string
   familyCuid: string
   reply?: string
   name?: string | null
@@ -450,21 +546,44 @@ export type ReplyUpdateManyWithWhereWithoutPageInput = {
   data: Prisma.XOR<Prisma.ReplyUpdateManyMutationInput, Prisma.ReplyUncheckedUpdateManyWithoutPageInput>
 }
 
-export type ReplyScalarWhereInput = {
-  AND?: Prisma.ReplyScalarWhereInput | Prisma.ReplyScalarWhereInput[]
-  OR?: Prisma.ReplyScalarWhereInput[]
-  NOT?: Prisma.ReplyScalarWhereInput | Prisma.ReplyScalarWhereInput[]
-  cuid?: Prisma.StringFilter<"Reply"> | string
-  pageCuid?: Prisma.StringFilter<"Reply"> | string
-  familyCuid?: Prisma.StringFilter<"Reply"> | string
-  reply?: Prisma.StringFilter<"Reply"> | string
-  name?: Prisma.StringNullableFilter<"Reply"> | string | null
-  suspended?: Prisma.BoolFilter<"Reply"> | boolean
-  date?: Prisma.DateTimeFilter<"Reply"> | Date | string
+export type ReplyCreateManyFamilyInput = {
+  id?: string
+  pageCuid: string
+  reply?: string
+  name?: string | null
+  suspended?: boolean
+  date?: Date | string
+}
+
+export type ReplyUpdateWithoutFamilyInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  reply?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  suspended?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  Page?: Prisma.PageUpdateOneRequiredWithoutReplyNestedInput
+}
+
+export type ReplyUncheckedUpdateWithoutFamilyInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  pageCuid?: Prisma.StringFieldUpdateOperationsInput | string
+  reply?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  suspended?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type ReplyUncheckedUpdateManyWithoutFamilyInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  pageCuid?: Prisma.StringFieldUpdateOperationsInput | string
+  reply?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  suspended?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type ReplyCreateManyPageInput = {
-  cuid?: string
+  id?: string
   familyCuid: string
   reply?: string
   name?: string | null
@@ -473,16 +592,16 @@ export type ReplyCreateManyPageInput = {
 }
 
 export type ReplyUpdateWithoutPageInput = {
-  cuid?: Prisma.StringFieldUpdateOperationsInput | string
-  familyCuid?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.StringFieldUpdateOperationsInput | string
   reply?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   suspended?: Prisma.BoolFieldUpdateOperationsInput | boolean
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  Family?: Prisma.FamilyUpdateOneRequiredWithoutRepliesNestedInput
 }
 
 export type ReplyUncheckedUpdateWithoutPageInput = {
-  cuid?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.StringFieldUpdateOperationsInput | string
   familyCuid?: Prisma.StringFieldUpdateOperationsInput | string
   reply?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -491,7 +610,7 @@ export type ReplyUncheckedUpdateWithoutPageInput = {
 }
 
 export type ReplyUncheckedUpdateManyWithoutPageInput = {
-  cuid?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.StringFieldUpdateOperationsInput | string
   familyCuid?: Prisma.StringFieldUpdateOperationsInput | string
   reply?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -502,7 +621,7 @@ export type ReplyUncheckedUpdateManyWithoutPageInput = {
 
 
 export type ReplySelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
-  cuid?: boolean
+  id?: boolean
   pageCuid?: boolean
   familyCuid?: boolean
   reply?: boolean
@@ -510,10 +629,11 @@ export type ReplySelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   suspended?: boolean
   date?: boolean
   Page?: boolean | Prisma.PageDefaultArgs<ExtArgs>
+  Family?: boolean | Prisma.FamilyDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["reply"]>
 
 export type ReplySelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
-  cuid?: boolean
+  id?: boolean
   pageCuid?: boolean
   familyCuid?: boolean
   reply?: boolean
@@ -521,10 +641,11 @@ export type ReplySelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   suspended?: boolean
   date?: boolean
   Page?: boolean | Prisma.PageDefaultArgs<ExtArgs>
+  Family?: boolean | Prisma.FamilyDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["reply"]>
 
 export type ReplySelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
-  cuid?: boolean
+  id?: boolean
   pageCuid?: boolean
   familyCuid?: boolean
   reply?: boolean
@@ -532,10 +653,11 @@ export type ReplySelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   suspended?: boolean
   date?: boolean
   Page?: boolean | Prisma.PageDefaultArgs<ExtArgs>
+  Family?: boolean | Prisma.FamilyDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["reply"]>
 
 export type ReplySelectScalar = {
-  cuid?: boolean
+  id?: boolean
   pageCuid?: boolean
   familyCuid?: boolean
   reply?: boolean
@@ -544,24 +666,28 @@ export type ReplySelectScalar = {
   date?: boolean
 }
 
-export type ReplyOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"cuid" | "pageCuid" | "familyCuid" | "reply" | "name" | "suspended" | "date", ExtArgs["result"]["reply"]>
+export type ReplyOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "pageCuid" | "familyCuid" | "reply" | "name" | "suspended" | "date", ExtArgs["result"]["reply"]>
 export type ReplyInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   Page?: boolean | Prisma.PageDefaultArgs<ExtArgs>
+  Family?: boolean | Prisma.FamilyDefaultArgs<ExtArgs>
 }
 export type ReplyIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   Page?: boolean | Prisma.PageDefaultArgs<ExtArgs>
+  Family?: boolean | Prisma.FamilyDefaultArgs<ExtArgs>
 }
 export type ReplyIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   Page?: boolean | Prisma.PageDefaultArgs<ExtArgs>
+  Family?: boolean | Prisma.FamilyDefaultArgs<ExtArgs>
 }
 
 export type $ReplyPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Reply"
   objects: {
     Page: Prisma.$PagePayload<ExtArgs>
+    Family: Prisma.$FamilyPayload<ExtArgs>
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
-    cuid: string
+    id: string
     pageCuid: string
     familyCuid: string
     reply: string
@@ -651,8 +777,8 @@ export interface ReplyDelegate<ExtArgs extends runtime.Types.Extensions.Internal
    * // Get first 10 Replies
    * const replies = await prisma.reply.findMany({ take: 10 })
    * 
-   * // Only select the `cuid`
-   * const replyWithCuidOnly = await prisma.reply.findMany({ select: { cuid: true } })
+   * // Only select the `id`
+   * const replyWithIdOnly = await prisma.reply.findMany({ select: { id: true } })
    * 
    */
   findMany<T extends ReplyFindManyArgs>(args?: Prisma.SelectSubset<T, ReplyFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ReplyPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
@@ -696,9 +822,9 @@ export interface ReplyDelegate<ExtArgs extends runtime.Types.Extensions.Internal
    *   ]
    * })
    * 
-   * // Create many Replies and only return the `cuid`
-   * const replyWithCuidOnly = await prisma.reply.createManyAndReturn({
-   *   select: { cuid: true },
+   * // Create many Replies and only return the `id`
+   * const replyWithIdOnly = await prisma.reply.createManyAndReturn({
+   *   select: { id: true },
    *   data: [
    *     // ... provide data here
    *   ]
@@ -787,9 +913,9 @@ export interface ReplyDelegate<ExtArgs extends runtime.Types.Extensions.Internal
    *   ]
    * })
    * 
-   * // Update zero or more Replies and only return the `cuid`
-   * const replyWithCuidOnly = await prisma.reply.updateManyAndReturn({
-   *   select: { cuid: true },
+   * // Update zero or more Replies and only return the `id`
+   * const replyWithIdOnly = await prisma.reply.updateManyAndReturn({
+   *   select: { id: true },
    *   where: {
    *     // ... provide filter here
    *   },
@@ -963,6 +1089,7 @@ readonly fields: ReplyFieldRefs;
 export interface Prisma__ReplyClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   Page<T extends Prisma.PageDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.PageDefaultArgs<ExtArgs>>): Prisma.Prisma__PageClient<runtime.Types.Result.GetResult<Prisma.$PagePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  Family<T extends Prisma.FamilyDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.FamilyDefaultArgs<ExtArgs>>): Prisma.Prisma__FamilyClient<runtime.Types.Result.GetResult<Prisma.$FamilyPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -992,7 +1119,7 @@ export interface Prisma__ReplyClient<T, Null = never, ExtArgs extends runtime.Ty
  * Fields of the Reply model
  */
 export interface ReplyFieldRefs {
-  readonly cuid: Prisma.FieldRef<"Reply", 'String'>
+  readonly id: Prisma.FieldRef<"Reply", 'String'>
   readonly pageCuid: Prisma.FieldRef<"Reply", 'String'>
   readonly familyCuid: Prisma.FieldRef<"Reply", 'String'>
   readonly reply: Prisma.FieldRef<"Reply", 'String'>

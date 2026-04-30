@@ -25,7 +25,7 @@ export type AggregateFamily = {
 }
 
 export type FamilyMinAggregateOutputType = {
-  cuid: string | null
+  id: string | null
   family_name: string | null
   stripe_account_id: string | null
   created_at: Date | null
@@ -34,7 +34,7 @@ export type FamilyMinAggregateOutputType = {
 }
 
 export type FamilyMaxAggregateOutputType = {
-  cuid: string | null
+  id: string | null
   family_name: string | null
   stripe_account_id: string | null
   created_at: Date | null
@@ -43,7 +43,7 @@ export type FamilyMaxAggregateOutputType = {
 }
 
 export type FamilyCountAggregateOutputType = {
-  cuid: number
+  id: number
   family_name: number
   stripe_account_id: number
   created_at: number
@@ -54,7 +54,7 @@ export type FamilyCountAggregateOutputType = {
 
 
 export type FamilyMinAggregateInputType = {
-  cuid?: true
+  id?: true
   family_name?: true
   stripe_account_id?: true
   created_at?: true
@@ -63,7 +63,7 @@ export type FamilyMinAggregateInputType = {
 }
 
 export type FamilyMaxAggregateInputType = {
-  cuid?: true
+  id?: true
   family_name?: true
   stripe_account_id?: true
   created_at?: true
@@ -72,7 +72,7 @@ export type FamilyMaxAggregateInputType = {
 }
 
 export type FamilyCountAggregateInputType = {
-  cuid?: true
+  id?: true
   family_name?: true
   stripe_account_id?: true
   created_at?: true
@@ -154,11 +154,11 @@ export type FamilyGroupByArgs<ExtArgs extends runtime.Types.Extensions.InternalA
 }
 
 export type FamilyGroupByOutputType = {
-  cuid: string
+  id: string
   family_name: string
   stripe_account_id: string | null
   created_at: Date
-  updated_at: Date | null
+  updated_at: Date
   advocateCuid: string
   _count: FamilyCountAggregateOutputType | null
   _min: FamilyMinAggregateOutputType | null
@@ -184,53 +184,56 @@ export type FamilyWhereInput = {
   AND?: Prisma.FamilyWhereInput | Prisma.FamilyWhereInput[]
   OR?: Prisma.FamilyWhereInput[]
   NOT?: Prisma.FamilyWhereInput | Prisma.FamilyWhereInput[]
-  cuid?: Prisma.StringFilter<"Family"> | string
+  id?: Prisma.StringFilter<"Family"> | string
   family_name?: Prisma.StringFilter<"Family"> | string
   stripe_account_id?: Prisma.StringNullableFilter<"Family"> | string | null
   created_at?: Prisma.DateTimeFilter<"Family"> | Date | string
-  updated_at?: Prisma.DateTimeNullableFilter<"Family"> | Date | string | null
+  updated_at?: Prisma.DateTimeFilter<"Family"> | Date | string
   advocateCuid?: Prisma.StringFilter<"Family"> | string
   FamilyMembers?: Prisma.UserListRelationFilter
   AdvocateResponsible?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   FamilyDonations?: Prisma.PageDonationListRelationFilter
   Pages?: Prisma.PageListRelationFilter
+  Replies?: Prisma.ReplyListRelationFilter
 }
 
 export type FamilyOrderByWithRelationInput = {
-  cuid?: Prisma.SortOrder
+  id?: Prisma.SortOrder
   family_name?: Prisma.SortOrder
   stripe_account_id?: Prisma.SortOrderInput | Prisma.SortOrder
   created_at?: Prisma.SortOrder
-  updated_at?: Prisma.SortOrderInput | Prisma.SortOrder
+  updated_at?: Prisma.SortOrder
   advocateCuid?: Prisma.SortOrder
   FamilyMembers?: Prisma.UserOrderByRelationAggregateInput
   AdvocateResponsible?: Prisma.UserOrderByWithRelationInput
   FamilyDonations?: Prisma.PageDonationOrderByRelationAggregateInput
   Pages?: Prisma.PageOrderByRelationAggregateInput
+  Replies?: Prisma.ReplyOrderByRelationAggregateInput
 }
 
 export type FamilyWhereUniqueInput = Prisma.AtLeast<{
-  cuid?: string
+  id?: string
   AND?: Prisma.FamilyWhereInput | Prisma.FamilyWhereInput[]
   OR?: Prisma.FamilyWhereInput[]
   NOT?: Prisma.FamilyWhereInput | Prisma.FamilyWhereInput[]
   family_name?: Prisma.StringFilter<"Family"> | string
   stripe_account_id?: Prisma.StringNullableFilter<"Family"> | string | null
   created_at?: Prisma.DateTimeFilter<"Family"> | Date | string
-  updated_at?: Prisma.DateTimeNullableFilter<"Family"> | Date | string | null
+  updated_at?: Prisma.DateTimeFilter<"Family"> | Date | string
   advocateCuid?: Prisma.StringFilter<"Family"> | string
   FamilyMembers?: Prisma.UserListRelationFilter
   AdvocateResponsible?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   FamilyDonations?: Prisma.PageDonationListRelationFilter
   Pages?: Prisma.PageListRelationFilter
-}, "cuid">
+  Replies?: Prisma.ReplyListRelationFilter
+}, "id">
 
 export type FamilyOrderByWithAggregationInput = {
-  cuid?: Prisma.SortOrder
+  id?: Prisma.SortOrder
   family_name?: Prisma.SortOrder
   stripe_account_id?: Prisma.SortOrderInput | Prisma.SortOrder
   created_at?: Prisma.SortOrder
-  updated_at?: Prisma.SortOrderInput | Prisma.SortOrder
+  updated_at?: Prisma.SortOrder
   advocateCuid?: Prisma.SortOrder
   _count?: Prisma.FamilyCountOrderByAggregateInput
   _max?: Prisma.FamilyMaxOrderByAggregateInput
@@ -241,85 +244,89 @@ export type FamilyScalarWhereWithAggregatesInput = {
   AND?: Prisma.FamilyScalarWhereWithAggregatesInput | Prisma.FamilyScalarWhereWithAggregatesInput[]
   OR?: Prisma.FamilyScalarWhereWithAggregatesInput[]
   NOT?: Prisma.FamilyScalarWhereWithAggregatesInput | Prisma.FamilyScalarWhereWithAggregatesInput[]
-  cuid?: Prisma.StringWithAggregatesFilter<"Family"> | string
+  id?: Prisma.StringWithAggregatesFilter<"Family"> | string
   family_name?: Prisma.StringWithAggregatesFilter<"Family"> | string
   stripe_account_id?: Prisma.StringNullableWithAggregatesFilter<"Family"> | string | null
   created_at?: Prisma.DateTimeWithAggregatesFilter<"Family"> | Date | string
-  updated_at?: Prisma.DateTimeNullableWithAggregatesFilter<"Family"> | Date | string | null
+  updated_at?: Prisma.DateTimeWithAggregatesFilter<"Family"> | Date | string
   advocateCuid?: Prisma.StringWithAggregatesFilter<"Family"> | string
 }
 
 export type FamilyCreateInput = {
-  cuid?: string
+  id?: string
   family_name: string
   stripe_account_id?: string | null
-  created_at: Date | string
-  updated_at?: Date | string | null
+  created_at?: Date | string
+  updated_at?: Date | string
   FamilyMembers?: Prisma.UserCreateNestedManyWithoutFamilyInput
   AdvocateResponsible: Prisma.UserCreateNestedOneWithoutAdvocateFamilyInput
   FamilyDonations?: Prisma.PageDonationCreateNestedManyWithoutFamilyInput
   Pages?: Prisma.PageCreateNestedManyWithoutFamilyInput
+  Replies?: Prisma.ReplyCreateNestedManyWithoutFamilyInput
 }
 
 export type FamilyUncheckedCreateInput = {
-  cuid?: string
+  id?: string
   family_name: string
   stripe_account_id?: string | null
-  created_at: Date | string
-  updated_at?: Date | string | null
+  created_at?: Date | string
+  updated_at?: Date | string
   advocateCuid: string
   FamilyMembers?: Prisma.UserUncheckedCreateNestedManyWithoutFamilyInput
   FamilyDonations?: Prisma.PageDonationUncheckedCreateNestedManyWithoutFamilyInput
   Pages?: Prisma.PageUncheckedCreateNestedManyWithoutFamilyInput
+  Replies?: Prisma.ReplyUncheckedCreateNestedManyWithoutFamilyInput
 }
 
 export type FamilyUpdateInput = {
-  cuid?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.StringFieldUpdateOperationsInput | string
   family_name?: Prisma.StringFieldUpdateOperationsInput | string
   stripe_account_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updated_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   FamilyMembers?: Prisma.UserUpdateManyWithoutFamilyNestedInput
   AdvocateResponsible?: Prisma.UserUpdateOneRequiredWithoutAdvocateFamilyNestedInput
   FamilyDonations?: Prisma.PageDonationUpdateManyWithoutFamilyNestedInput
   Pages?: Prisma.PageUpdateManyWithoutFamilyNestedInput
+  Replies?: Prisma.ReplyUpdateManyWithoutFamilyNestedInput
 }
 
 export type FamilyUncheckedUpdateInput = {
-  cuid?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.StringFieldUpdateOperationsInput | string
   family_name?: Prisma.StringFieldUpdateOperationsInput | string
   stripe_account_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updated_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   advocateCuid?: Prisma.StringFieldUpdateOperationsInput | string
   FamilyMembers?: Prisma.UserUncheckedUpdateManyWithoutFamilyNestedInput
   FamilyDonations?: Prisma.PageDonationUncheckedUpdateManyWithoutFamilyNestedInput
   Pages?: Prisma.PageUncheckedUpdateManyWithoutFamilyNestedInput
+  Replies?: Prisma.ReplyUncheckedUpdateManyWithoutFamilyNestedInput
 }
 
 export type FamilyCreateManyInput = {
-  cuid?: string
+  id?: string
   family_name: string
   stripe_account_id?: string | null
-  created_at: Date | string
-  updated_at?: Date | string | null
+  created_at?: Date | string
+  updated_at?: Date | string
   advocateCuid: string
 }
 
 export type FamilyUpdateManyMutationInput = {
-  cuid?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.StringFieldUpdateOperationsInput | string
   family_name?: Prisma.StringFieldUpdateOperationsInput | string
   stripe_account_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updated_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type FamilyUncheckedUpdateManyInput = {
-  cuid?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.StringFieldUpdateOperationsInput | string
   family_name?: Prisma.StringFieldUpdateOperationsInput | string
   stripe_account_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updated_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   advocateCuid?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
@@ -339,7 +346,7 @@ export type FamilyOrderByRelationAggregateInput = {
 }
 
 export type FamilyCountOrderByAggregateInput = {
-  cuid?: Prisma.SortOrder
+  id?: Prisma.SortOrder
   family_name?: Prisma.SortOrder
   stripe_account_id?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
@@ -348,7 +355,7 @@ export type FamilyCountOrderByAggregateInput = {
 }
 
 export type FamilyMaxOrderByAggregateInput = {
-  cuid?: Prisma.SortOrder
+  id?: Prisma.SortOrder
   family_name?: Prisma.SortOrder
   stripe_account_id?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
@@ -357,7 +364,7 @@ export type FamilyMaxOrderByAggregateInput = {
 }
 
 export type FamilyMinOrderByAggregateInput = {
-  cuid?: Prisma.SortOrder
+  id?: Prisma.SortOrder
   family_name?: Prisma.SortOrder
   stripe_account_id?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
@@ -428,14 +435,6 @@ export type FamilyUncheckedUpdateManyWithoutAdvocateResponsibleNestedInput = {
   deleteMany?: Prisma.FamilyScalarWhereInput | Prisma.FamilyScalarWhereInput[]
 }
 
-export type DateTimeFieldUpdateOperationsInput = {
-  set?: Date | string
-}
-
-export type NullableDateTimeFieldUpdateOperationsInput = {
-  set?: Date | string | null
-}
-
 export type FamilyCreateNestedOneWithoutPagesInput = {
   create?: Prisma.XOR<Prisma.FamilyCreateWithoutPagesInput, Prisma.FamilyUncheckedCreateWithoutPagesInput>
   connectOrCreate?: Prisma.FamilyCreateOrConnectWithoutPagesInput
@@ -466,26 +465,42 @@ export type FamilyUpdateOneRequiredWithoutFamilyDonationsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.FamilyUpdateToOneWithWhereWithoutFamilyDonationsInput, Prisma.FamilyUpdateWithoutFamilyDonationsInput>, Prisma.FamilyUncheckedUpdateWithoutFamilyDonationsInput>
 }
 
+export type FamilyCreateNestedOneWithoutRepliesInput = {
+  create?: Prisma.XOR<Prisma.FamilyCreateWithoutRepliesInput, Prisma.FamilyUncheckedCreateWithoutRepliesInput>
+  connectOrCreate?: Prisma.FamilyCreateOrConnectWithoutRepliesInput
+  connect?: Prisma.FamilyWhereUniqueInput
+}
+
+export type FamilyUpdateOneRequiredWithoutRepliesNestedInput = {
+  create?: Prisma.XOR<Prisma.FamilyCreateWithoutRepliesInput, Prisma.FamilyUncheckedCreateWithoutRepliesInput>
+  connectOrCreate?: Prisma.FamilyCreateOrConnectWithoutRepliesInput
+  upsert?: Prisma.FamilyUpsertWithoutRepliesInput
+  connect?: Prisma.FamilyWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.FamilyUpdateToOneWithWhereWithoutRepliesInput, Prisma.FamilyUpdateWithoutRepliesInput>, Prisma.FamilyUncheckedUpdateWithoutRepliesInput>
+}
+
 export type FamilyCreateWithoutFamilyMembersInput = {
-  cuid?: string
+  id?: string
   family_name: string
   stripe_account_id?: string | null
-  created_at: Date | string
-  updated_at?: Date | string | null
+  created_at?: Date | string
+  updated_at?: Date | string
   AdvocateResponsible: Prisma.UserCreateNestedOneWithoutAdvocateFamilyInput
   FamilyDonations?: Prisma.PageDonationCreateNestedManyWithoutFamilyInput
   Pages?: Prisma.PageCreateNestedManyWithoutFamilyInput
+  Replies?: Prisma.ReplyCreateNestedManyWithoutFamilyInput
 }
 
 export type FamilyUncheckedCreateWithoutFamilyMembersInput = {
-  cuid?: string
+  id?: string
   family_name: string
   stripe_account_id?: string | null
-  created_at: Date | string
-  updated_at?: Date | string | null
+  created_at?: Date | string
+  updated_at?: Date | string
   advocateCuid: string
   FamilyDonations?: Prisma.PageDonationUncheckedCreateNestedManyWithoutFamilyInput
   Pages?: Prisma.PageUncheckedCreateNestedManyWithoutFamilyInput
+  Replies?: Prisma.ReplyUncheckedCreateNestedManyWithoutFamilyInput
 }
 
 export type FamilyCreateOrConnectWithoutFamilyMembersInput = {
@@ -494,25 +509,27 @@ export type FamilyCreateOrConnectWithoutFamilyMembersInput = {
 }
 
 export type FamilyCreateWithoutAdvocateResponsibleInput = {
-  cuid?: string
+  id?: string
   family_name: string
   stripe_account_id?: string | null
-  created_at: Date | string
-  updated_at?: Date | string | null
+  created_at?: Date | string
+  updated_at?: Date | string
   FamilyMembers?: Prisma.UserCreateNestedManyWithoutFamilyInput
   FamilyDonations?: Prisma.PageDonationCreateNestedManyWithoutFamilyInput
   Pages?: Prisma.PageCreateNestedManyWithoutFamilyInput
+  Replies?: Prisma.ReplyCreateNestedManyWithoutFamilyInput
 }
 
 export type FamilyUncheckedCreateWithoutAdvocateResponsibleInput = {
-  cuid?: string
+  id?: string
   family_name: string
   stripe_account_id?: string | null
-  created_at: Date | string
-  updated_at?: Date | string | null
+  created_at?: Date | string
+  updated_at?: Date | string
   FamilyMembers?: Prisma.UserUncheckedCreateNestedManyWithoutFamilyInput
   FamilyDonations?: Prisma.PageDonationUncheckedCreateNestedManyWithoutFamilyInput
   Pages?: Prisma.PageUncheckedCreateNestedManyWithoutFamilyInput
+  Replies?: Prisma.ReplyUncheckedCreateNestedManyWithoutFamilyInput
 }
 
 export type FamilyCreateOrConnectWithoutAdvocateResponsibleInput = {
@@ -536,25 +553,27 @@ export type FamilyUpdateToOneWithWhereWithoutFamilyMembersInput = {
 }
 
 export type FamilyUpdateWithoutFamilyMembersInput = {
-  cuid?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.StringFieldUpdateOperationsInput | string
   family_name?: Prisma.StringFieldUpdateOperationsInput | string
   stripe_account_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updated_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   AdvocateResponsible?: Prisma.UserUpdateOneRequiredWithoutAdvocateFamilyNestedInput
   FamilyDonations?: Prisma.PageDonationUpdateManyWithoutFamilyNestedInput
   Pages?: Prisma.PageUpdateManyWithoutFamilyNestedInput
+  Replies?: Prisma.ReplyUpdateManyWithoutFamilyNestedInput
 }
 
 export type FamilyUncheckedUpdateWithoutFamilyMembersInput = {
-  cuid?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.StringFieldUpdateOperationsInput | string
   family_name?: Prisma.StringFieldUpdateOperationsInput | string
   stripe_account_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updated_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   advocateCuid?: Prisma.StringFieldUpdateOperationsInput | string
   FamilyDonations?: Prisma.PageDonationUncheckedUpdateManyWithoutFamilyNestedInput
   Pages?: Prisma.PageUncheckedUpdateManyWithoutFamilyNestedInput
+  Replies?: Prisma.ReplyUncheckedUpdateManyWithoutFamilyNestedInput
 }
 
 export type FamilyUpsertWithWhereUniqueWithoutAdvocateResponsibleInput = {
@@ -577,34 +596,36 @@ export type FamilyScalarWhereInput = {
   AND?: Prisma.FamilyScalarWhereInput | Prisma.FamilyScalarWhereInput[]
   OR?: Prisma.FamilyScalarWhereInput[]
   NOT?: Prisma.FamilyScalarWhereInput | Prisma.FamilyScalarWhereInput[]
-  cuid?: Prisma.StringFilter<"Family"> | string
+  id?: Prisma.StringFilter<"Family"> | string
   family_name?: Prisma.StringFilter<"Family"> | string
   stripe_account_id?: Prisma.StringNullableFilter<"Family"> | string | null
   created_at?: Prisma.DateTimeFilter<"Family"> | Date | string
-  updated_at?: Prisma.DateTimeNullableFilter<"Family"> | Date | string | null
+  updated_at?: Prisma.DateTimeFilter<"Family"> | Date | string
   advocateCuid?: Prisma.StringFilter<"Family"> | string
 }
 
 export type FamilyCreateWithoutPagesInput = {
-  cuid?: string
+  id?: string
   family_name: string
   stripe_account_id?: string | null
-  created_at: Date | string
-  updated_at?: Date | string | null
+  created_at?: Date | string
+  updated_at?: Date | string
   FamilyMembers?: Prisma.UserCreateNestedManyWithoutFamilyInput
   AdvocateResponsible: Prisma.UserCreateNestedOneWithoutAdvocateFamilyInput
   FamilyDonations?: Prisma.PageDonationCreateNestedManyWithoutFamilyInput
+  Replies?: Prisma.ReplyCreateNestedManyWithoutFamilyInput
 }
 
 export type FamilyUncheckedCreateWithoutPagesInput = {
-  cuid?: string
+  id?: string
   family_name: string
   stripe_account_id?: string | null
-  created_at: Date | string
-  updated_at?: Date | string | null
+  created_at?: Date | string
+  updated_at?: Date | string
   advocateCuid: string
   FamilyMembers?: Prisma.UserUncheckedCreateNestedManyWithoutFamilyInput
   FamilyDonations?: Prisma.PageDonationUncheckedCreateNestedManyWithoutFamilyInput
+  Replies?: Prisma.ReplyUncheckedCreateNestedManyWithoutFamilyInput
 }
 
 export type FamilyCreateOrConnectWithoutPagesInput = {
@@ -624,47 +645,51 @@ export type FamilyUpdateToOneWithWhereWithoutPagesInput = {
 }
 
 export type FamilyUpdateWithoutPagesInput = {
-  cuid?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.StringFieldUpdateOperationsInput | string
   family_name?: Prisma.StringFieldUpdateOperationsInput | string
   stripe_account_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updated_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   FamilyMembers?: Prisma.UserUpdateManyWithoutFamilyNestedInput
   AdvocateResponsible?: Prisma.UserUpdateOneRequiredWithoutAdvocateFamilyNestedInput
   FamilyDonations?: Prisma.PageDonationUpdateManyWithoutFamilyNestedInput
+  Replies?: Prisma.ReplyUpdateManyWithoutFamilyNestedInput
 }
 
 export type FamilyUncheckedUpdateWithoutPagesInput = {
-  cuid?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.StringFieldUpdateOperationsInput | string
   family_name?: Prisma.StringFieldUpdateOperationsInput | string
   stripe_account_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updated_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   advocateCuid?: Prisma.StringFieldUpdateOperationsInput | string
   FamilyMembers?: Prisma.UserUncheckedUpdateManyWithoutFamilyNestedInput
   FamilyDonations?: Prisma.PageDonationUncheckedUpdateManyWithoutFamilyNestedInput
+  Replies?: Prisma.ReplyUncheckedUpdateManyWithoutFamilyNestedInput
 }
 
 export type FamilyCreateWithoutFamilyDonationsInput = {
-  cuid?: string
+  id?: string
   family_name: string
   stripe_account_id?: string | null
-  created_at: Date | string
-  updated_at?: Date | string | null
+  created_at?: Date | string
+  updated_at?: Date | string
   FamilyMembers?: Prisma.UserCreateNestedManyWithoutFamilyInput
   AdvocateResponsible: Prisma.UserCreateNestedOneWithoutAdvocateFamilyInput
   Pages?: Prisma.PageCreateNestedManyWithoutFamilyInput
+  Replies?: Prisma.ReplyCreateNestedManyWithoutFamilyInput
 }
 
 export type FamilyUncheckedCreateWithoutFamilyDonationsInput = {
-  cuid?: string
+  id?: string
   family_name: string
   stripe_account_id?: string | null
-  created_at: Date | string
-  updated_at?: Date | string | null
+  created_at?: Date | string
+  updated_at?: Date | string
   advocateCuid: string
   FamilyMembers?: Prisma.UserUncheckedCreateNestedManyWithoutFamilyInput
   Pages?: Prisma.PageUncheckedCreateNestedManyWithoutFamilyInput
+  Replies?: Prisma.ReplyUncheckedCreateNestedManyWithoutFamilyInput
 }
 
 export type FamilyCreateOrConnectWithoutFamilyDonationsInput = {
@@ -684,63 +709,131 @@ export type FamilyUpdateToOneWithWhereWithoutFamilyDonationsInput = {
 }
 
 export type FamilyUpdateWithoutFamilyDonationsInput = {
-  cuid?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.StringFieldUpdateOperationsInput | string
   family_name?: Prisma.StringFieldUpdateOperationsInput | string
   stripe_account_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updated_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   FamilyMembers?: Prisma.UserUpdateManyWithoutFamilyNestedInput
   AdvocateResponsible?: Prisma.UserUpdateOneRequiredWithoutAdvocateFamilyNestedInput
   Pages?: Prisma.PageUpdateManyWithoutFamilyNestedInput
+  Replies?: Prisma.ReplyUpdateManyWithoutFamilyNestedInput
 }
 
 export type FamilyUncheckedUpdateWithoutFamilyDonationsInput = {
-  cuid?: Prisma.StringFieldUpdateOperationsInput | string
+  id?: Prisma.StringFieldUpdateOperationsInput | string
   family_name?: Prisma.StringFieldUpdateOperationsInput | string
   stripe_account_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updated_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   advocateCuid?: Prisma.StringFieldUpdateOperationsInput | string
   FamilyMembers?: Prisma.UserUncheckedUpdateManyWithoutFamilyNestedInput
   Pages?: Prisma.PageUncheckedUpdateManyWithoutFamilyNestedInput
+  Replies?: Prisma.ReplyUncheckedUpdateManyWithoutFamilyNestedInput
 }
 
-export type FamilyCreateManyAdvocateResponsibleInput = {
-  cuid?: string
+export type FamilyCreateWithoutRepliesInput = {
+  id?: string
   family_name: string
   stripe_account_id?: string | null
-  created_at: Date | string
-  updated_at?: Date | string | null
+  created_at?: Date | string
+  updated_at?: Date | string
+  FamilyMembers?: Prisma.UserCreateNestedManyWithoutFamilyInput
+  AdvocateResponsible: Prisma.UserCreateNestedOneWithoutAdvocateFamilyInput
+  FamilyDonations?: Prisma.PageDonationCreateNestedManyWithoutFamilyInput
+  Pages?: Prisma.PageCreateNestedManyWithoutFamilyInput
 }
 
-export type FamilyUpdateWithoutAdvocateResponsibleInput = {
-  cuid?: Prisma.StringFieldUpdateOperationsInput | string
+export type FamilyUncheckedCreateWithoutRepliesInput = {
+  id?: string
+  family_name: string
+  stripe_account_id?: string | null
+  created_at?: Date | string
+  updated_at?: Date | string
+  advocateCuid: string
+  FamilyMembers?: Prisma.UserUncheckedCreateNestedManyWithoutFamilyInput
+  FamilyDonations?: Prisma.PageDonationUncheckedCreateNestedManyWithoutFamilyInput
+  Pages?: Prisma.PageUncheckedCreateNestedManyWithoutFamilyInput
+}
+
+export type FamilyCreateOrConnectWithoutRepliesInput = {
+  where: Prisma.FamilyWhereUniqueInput
+  create: Prisma.XOR<Prisma.FamilyCreateWithoutRepliesInput, Prisma.FamilyUncheckedCreateWithoutRepliesInput>
+}
+
+export type FamilyUpsertWithoutRepliesInput = {
+  update: Prisma.XOR<Prisma.FamilyUpdateWithoutRepliesInput, Prisma.FamilyUncheckedUpdateWithoutRepliesInput>
+  create: Prisma.XOR<Prisma.FamilyCreateWithoutRepliesInput, Prisma.FamilyUncheckedCreateWithoutRepliesInput>
+  where?: Prisma.FamilyWhereInput
+}
+
+export type FamilyUpdateToOneWithWhereWithoutRepliesInput = {
+  where?: Prisma.FamilyWhereInput
+  data: Prisma.XOR<Prisma.FamilyUpdateWithoutRepliesInput, Prisma.FamilyUncheckedUpdateWithoutRepliesInput>
+}
+
+export type FamilyUpdateWithoutRepliesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
   family_name?: Prisma.StringFieldUpdateOperationsInput | string
   stripe_account_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updated_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   FamilyMembers?: Prisma.UserUpdateManyWithoutFamilyNestedInput
+  AdvocateResponsible?: Prisma.UserUpdateOneRequiredWithoutAdvocateFamilyNestedInput
   FamilyDonations?: Prisma.PageDonationUpdateManyWithoutFamilyNestedInput
   Pages?: Prisma.PageUpdateManyWithoutFamilyNestedInput
 }
 
-export type FamilyUncheckedUpdateWithoutAdvocateResponsibleInput = {
-  cuid?: Prisma.StringFieldUpdateOperationsInput | string
+export type FamilyUncheckedUpdateWithoutRepliesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
   family_name?: Prisma.StringFieldUpdateOperationsInput | string
   stripe_account_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updated_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  advocateCuid?: Prisma.StringFieldUpdateOperationsInput | string
   FamilyMembers?: Prisma.UserUncheckedUpdateManyWithoutFamilyNestedInput
   FamilyDonations?: Prisma.PageDonationUncheckedUpdateManyWithoutFamilyNestedInput
   Pages?: Prisma.PageUncheckedUpdateManyWithoutFamilyNestedInput
 }
 
-export type FamilyUncheckedUpdateManyWithoutAdvocateResponsibleInput = {
-  cuid?: Prisma.StringFieldUpdateOperationsInput | string
+export type FamilyCreateManyAdvocateResponsibleInput = {
+  id?: string
+  family_name: string
+  stripe_account_id?: string | null
+  created_at?: Date | string
+  updated_at?: Date | string
+}
+
+export type FamilyUpdateWithoutAdvocateResponsibleInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
   family_name?: Prisma.StringFieldUpdateOperationsInput | string
   stripe_account_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updated_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  FamilyMembers?: Prisma.UserUpdateManyWithoutFamilyNestedInput
+  FamilyDonations?: Prisma.PageDonationUpdateManyWithoutFamilyNestedInput
+  Pages?: Prisma.PageUpdateManyWithoutFamilyNestedInput
+  Replies?: Prisma.ReplyUpdateManyWithoutFamilyNestedInput
+}
+
+export type FamilyUncheckedUpdateWithoutAdvocateResponsibleInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  family_name?: Prisma.StringFieldUpdateOperationsInput | string
+  stripe_account_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  FamilyMembers?: Prisma.UserUncheckedUpdateManyWithoutFamilyNestedInput
+  FamilyDonations?: Prisma.PageDonationUncheckedUpdateManyWithoutFamilyNestedInput
+  Pages?: Prisma.PageUncheckedUpdateManyWithoutFamilyNestedInput
+  Replies?: Prisma.ReplyUncheckedUpdateManyWithoutFamilyNestedInput
+}
+
+export type FamilyUncheckedUpdateManyWithoutAdvocateResponsibleInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  family_name?: Prisma.StringFieldUpdateOperationsInput | string
+  stripe_account_id?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 
@@ -752,12 +845,14 @@ export type FamilyCountOutputType = {
   FamilyMembers: number
   FamilyDonations: number
   Pages: number
+  Replies: number
 }
 
 export type FamilyCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   FamilyMembers?: boolean | FamilyCountOutputTypeCountFamilyMembersArgs
   FamilyDonations?: boolean | FamilyCountOutputTypeCountFamilyDonationsArgs
   Pages?: boolean | FamilyCountOutputTypeCountPagesArgs
+  Replies?: boolean | FamilyCountOutputTypeCountRepliesArgs
 }
 
 /**
@@ -791,9 +886,16 @@ export type FamilyCountOutputTypeCountPagesArgs<ExtArgs extends runtime.Types.Ex
   where?: Prisma.PageWhereInput
 }
 
+/**
+ * FamilyCountOutputType without action
+ */
+export type FamilyCountOutputTypeCountRepliesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.ReplyWhereInput
+}
+
 
 export type FamilySelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
-  cuid?: boolean
+  id?: boolean
   family_name?: boolean
   stripe_account_id?: boolean
   created_at?: boolean
@@ -803,11 +905,12 @@ export type FamilySelect<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   AdvocateResponsible?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   FamilyDonations?: boolean | Prisma.Family$FamilyDonationsArgs<ExtArgs>
   Pages?: boolean | Prisma.Family$PagesArgs<ExtArgs>
+  Replies?: boolean | Prisma.Family$RepliesArgs<ExtArgs>
   _count?: boolean | Prisma.FamilyCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["family"]>
 
 export type FamilySelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
-  cuid?: boolean
+  id?: boolean
   family_name?: boolean
   stripe_account_id?: boolean
   created_at?: boolean
@@ -817,7 +920,7 @@ export type FamilySelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extens
 }, ExtArgs["result"]["family"]>
 
 export type FamilySelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
-  cuid?: boolean
+  id?: boolean
   family_name?: boolean
   stripe_account_id?: boolean
   created_at?: boolean
@@ -827,7 +930,7 @@ export type FamilySelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extens
 }, ExtArgs["result"]["family"]>
 
 export type FamilySelectScalar = {
-  cuid?: boolean
+  id?: boolean
   family_name?: boolean
   stripe_account_id?: boolean
   created_at?: boolean
@@ -835,12 +938,13 @@ export type FamilySelectScalar = {
   advocateCuid?: boolean
 }
 
-export type FamilyOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"cuid" | "family_name" | "stripe_account_id" | "created_at" | "updated_at" | "advocateCuid", ExtArgs["result"]["family"]>
+export type FamilyOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "family_name" | "stripe_account_id" | "created_at" | "updated_at" | "advocateCuid", ExtArgs["result"]["family"]>
 export type FamilyInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   FamilyMembers?: boolean | Prisma.Family$FamilyMembersArgs<ExtArgs>
   AdvocateResponsible?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   FamilyDonations?: boolean | Prisma.Family$FamilyDonationsArgs<ExtArgs>
   Pages?: boolean | Prisma.Family$PagesArgs<ExtArgs>
+  Replies?: boolean | Prisma.Family$RepliesArgs<ExtArgs>
   _count?: boolean | Prisma.FamilyCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type FamilyIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -857,13 +961,14 @@ export type $FamilyPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs
     AdvocateResponsible: Prisma.$UserPayload<ExtArgs>
     FamilyDonations: Prisma.$PageDonationPayload<ExtArgs>[]
     Pages: Prisma.$PagePayload<ExtArgs>[]
+    Replies: Prisma.$ReplyPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
-    cuid: string
+    id: string
     family_name: string
     stripe_account_id: string | null
     created_at: Date
-    updated_at: Date | null
+    updated_at: Date
     advocateCuid: string
   }, ExtArgs["result"]["family"]>
   composites: {}
@@ -948,8 +1053,8 @@ export interface FamilyDelegate<ExtArgs extends runtime.Types.Extensions.Interna
    * // Get first 10 Families
    * const families = await prisma.family.findMany({ take: 10 })
    * 
-   * // Only select the `cuid`
-   * const familyWithCuidOnly = await prisma.family.findMany({ select: { cuid: true } })
+   * // Only select the `id`
+   * const familyWithIdOnly = await prisma.family.findMany({ select: { id: true } })
    * 
    */
   findMany<T extends FamilyFindManyArgs>(args?: Prisma.SelectSubset<T, FamilyFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$FamilyPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
@@ -993,9 +1098,9 @@ export interface FamilyDelegate<ExtArgs extends runtime.Types.Extensions.Interna
    *   ]
    * })
    * 
-   * // Create many Families and only return the `cuid`
-   * const familyWithCuidOnly = await prisma.family.createManyAndReturn({
-   *   select: { cuid: true },
+   * // Create many Families and only return the `id`
+   * const familyWithIdOnly = await prisma.family.createManyAndReturn({
+   *   select: { id: true },
    *   data: [
    *     // ... provide data here
    *   ]
@@ -1084,9 +1189,9 @@ export interface FamilyDelegate<ExtArgs extends runtime.Types.Extensions.Interna
    *   ]
    * })
    * 
-   * // Update zero or more Families and only return the `cuid`
-   * const familyWithCuidOnly = await prisma.family.updateManyAndReturn({
-   *   select: { cuid: true },
+   * // Update zero or more Families and only return the `id`
+   * const familyWithIdOnly = await prisma.family.updateManyAndReturn({
+   *   select: { id: true },
    *   where: {
    *     // ... provide filter here
    *   },
@@ -1263,6 +1368,7 @@ export interface Prisma__FamilyClient<T, Null = never, ExtArgs extends runtime.T
   AdvocateResponsible<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   FamilyDonations<T extends Prisma.Family$FamilyDonationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Family$FamilyDonationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PageDonationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   Pages<T extends Prisma.Family$PagesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Family$PagesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  Replies<T extends Prisma.Family$RepliesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Family$RepliesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ReplyPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1292,7 +1398,7 @@ export interface Prisma__FamilyClient<T, Null = never, ExtArgs extends runtime.T
  * Fields of the Family model
  */
 export interface FamilyFieldRefs {
-  readonly cuid: Prisma.FieldRef<"Family", 'String'>
+  readonly id: Prisma.FieldRef<"Family", 'String'>
   readonly family_name: Prisma.FieldRef<"Family", 'String'>
   readonly stripe_account_id: Prisma.FieldRef<"Family", 'String'>
   readonly created_at: Prisma.FieldRef<"Family", 'DateTime'>
@@ -1766,6 +1872,30 @@ export type Family$PagesArgs<ExtArgs extends runtime.Types.Extensions.InternalAr
   take?: number
   skip?: number
   distinct?: Prisma.PageScalarFieldEnum | Prisma.PageScalarFieldEnum[]
+}
+
+/**
+ * Family.Replies
+ */
+export type Family$RepliesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Reply
+   */
+  select?: Prisma.ReplySelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Reply
+   */
+  omit?: Prisma.ReplyOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ReplyInclude<ExtArgs> | null
+  where?: Prisma.ReplyWhereInput
+  orderBy?: Prisma.ReplyOrderByWithRelationInput | Prisma.ReplyOrderByWithRelationInput[]
+  cursor?: Prisma.ReplyWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.ReplyScalarFieldEnum | Prisma.ReplyScalarFieldEnum[]
 }
 
 /**
