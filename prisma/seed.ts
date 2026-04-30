@@ -1,4 +1,11 @@
-import { prisma } from '../server/utils/prisma';
+import { PrismaBetterSqlite3 } from "@prisma/adapter-better-sqlite3"
+import { PrismaClient } from "./generated/client"
+
+const connectionString = `${process.env.DATABASE_URL}`
+
+const adapter = new PrismaBetterSqlite3({ url: connectionString })
+
+const prisma = new PrismaClient({ adapter })
 
 async function main() {
   const adminuser = await prisma.user.create({
