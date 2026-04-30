@@ -6,7 +6,7 @@ ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
 RUN npm i -g pnpm
 
-RUN pnpm i --frozen-lockfile
+RUN pnpm i --frozen-lockfile --shamefully-hoist
 RUN pnpm prisma generate
 RUN pnpm run build
 
