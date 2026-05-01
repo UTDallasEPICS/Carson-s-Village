@@ -39,6 +39,7 @@ export const auth = betterAuth({
           html: `<p>Your OTP code is: <strong>${otp}</strong></p>`,
         })
       },
+      disableSignUp: true,
     }),
   ],
 })

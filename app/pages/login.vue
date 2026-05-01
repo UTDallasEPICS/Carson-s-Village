@@ -12,8 +12,7 @@ async function handleRequestOtp() {
   try {
     const { data, error } = await authClient.emailOtp.sendVerificationOtp({
       email: email.value,
-      type: 'sign-in',
-      disableSignUp: true
+      type: 'sign-in'
     })
     if (error) {
       loading.value = false
@@ -35,8 +34,7 @@ async function handleVerifyOtp() {
 
     const { data, error } = await authClient.signIn.emailOtp({
       email: email.value,
-      otp: otp.value,
-      disableSignUp: true
+      otp: otp.value
     })
     if (error) {
       loginError.value = 'Invalid or expired code. Please check and try again.'
