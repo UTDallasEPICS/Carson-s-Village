@@ -13,6 +13,7 @@ export default defineEventHandler(async event => {
       id: pageId
     },
     include: {
+      Family: true,
       Images: true,
       PageDonations: {
         orderBy: {
