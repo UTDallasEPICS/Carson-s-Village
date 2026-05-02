@@ -64,6 +64,9 @@ export default defineEventHandler(async event => {
           })
         )
       )
+
+      return { pageId: queryRes.id }
+
     } catch(e) {
       console.error(e);
       throw createError({
