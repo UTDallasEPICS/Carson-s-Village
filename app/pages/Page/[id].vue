@@ -16,78 +16,19 @@ import { authClient } from '~/utils/auth-client';
 const { data } = await authClient.useSession(useFetch);
 const user = computed(() => data.value?.user || null)
 
-const pageData = ref<Page>({
-  id: "",
-  day_of_birth: null,
-  day_of_passing: null,
-  visitation_date: null,
-  visitation_location: "",
-  visitation_address: "",
-  visitation_description: "",
-  funeral_date: "",
-  funeral_description: "",
-  funeral_location: "",
-  funeral_address: "",
-  obituary: "",
-  donation_goal: 0,
-  donation_description: "",
-  amount_raised: 0,
-  deadline: "",
-  userCuid: "",
-  amount_distributed: 0,
-  profileImageCuid: "",
-  familyCuid: "",
-  status: "active",
-  donation_status: "in progress",
-  duration: "",
-  start_date: null,
-  goal_met_date: null,
-  page_first_name: "",
-  page_last_name: "",
-  last_donation_date: null,
-  PageDonations: [],
-  Reply: [],
-  Images: [],
-  Family: {
-    id: "",
-    family_name: "",
-    stripe_account_id: "",
-    created_at: null,
-    updated_at: null,
-    advocateCuid: "",
-    FamilyMembers: [],
-    FamilyDonationPayouts: [],
-    Pages: [],
-    AdvocateResponsible: {
-      id: '',
-      name: '',
-      role: '',
-      email: '',
-      phone: '',
-      address: '',
-      familyId: '',
-      Pages: [],
-    },
-    FamilyDonations: [],
-  } 
-});
-
 const displayDonationPopup = ref(false)
 const router = useRoute();
 const pageId = computed(() => router.params.id);
 const commentModalOpen = ref(false)
 const currentComment = ref('')
-const isAdminAdvocate = computed(() => user.value?.role === "admin" || user.value?.role === "advocated");
 
 // Method to populate the page with data based on the cuid in the url
-const { data : pageDataDB } = await useFetch<Page>(`/api/page/${pageId.value}`, {
+const { data : pageDataDB, refresh: pageRefresh } = await useFetch<Page>(`/api/page/${pageId.value}`, {
   method: 'GET'
 })
 
-if(pageDataDB.value){
-  pageData.value = pageDataDB.value as unknown as Page;
-}
-
+const isAdminAdvocate = computed(() => user.value?.role === "admin" || pageDataDB.value?.Family.advocateCuid === user.value?.id);
+const isFamilyMember = computed(() => user.value?.familyId === pageDataDB.value?.familyCuid)
 const isActive = computed(() => pageDataDB.value?.status.toLowerCase() == "active")
 
 // todo: Set as pop up?
@@ -115,8 +56,54 @@ const comments = computed(() => pageDataDB.value?.PageDonations)
 const replies = computed(() => pageDataDB.value?.Reply)
 const imageData = computed(() => pageDataDB.value?.Images || [])
 const profileImage = computed(() => imageData.value?.find((image: Image) => 
-  image.cuid === pageDataDB.value?.profileImageCuid
+  image.id === pageDataDB.value?.profileImageCuid
 ))
+
+// Handles archiving of pages
+async function handleArchive() {
+  if (isActive.value && (isAdminAdvocate.value || isFamilyMember.value)) {
+    const confirmation = confirm('Are you sure you want to deactivate this page?');
+    if (confirmation) {
+      try {
+        await $fetch('/api/page', {
+          method: "PUT",
+          body: {
+            id: pageId.value,
+            userCuid: pageDataDB.value?.userCuid,
+            familyCuid: pageDataDB.value?.familyCuid,
+            status: 'inactive'
+          }
+        })
+      } catch (err) {
+        console.log(`Failed to deactivate page ${pageId.value}:`, err)
+      }
+
+      // Refetch page info after status change
+      pageRefresh()
+    }
+  } 
+  else if (!isActive.value && (isAdminAdvocate.value || isFamilyMember.value)) {
+    const confirmation = confirm('Are you sure you want to reactivate this page?')
+    if (confirmation) {
+      try {
+        await $fetch('/api/page', {
+          method: "PUT",
+          body: {
+            id: pageId.value,
+            userCuid: pageDataDB.value?.userCuid,
+            familyCuid: pageDataDB.value?.familyCuid,
+            status: 'active'
+          }
+        })
+      } catch (err) {
+        console.log(`Failed to reactivate page ${pageId.value}:`, err)
+      }
+
+      // Refetch page info after status change
+      pageRefresh()
+    }
+  }
+}
 
 const currentImage = ref(0)
 const nextImage = () => { 
@@ -168,8 +155,8 @@ setImageAutoSlide()
 // donation popup
 DonationEntryPopup(
   v-model:displayDonationPopup="displayDonationPopup"
-  :amount_raised="pageDataDB.amount_raised"
-  :donation_goal="pageDataDB.donation_goal" 
+  :amount_raised="pageDataDB?.amount_raised"
+  :donation_goal="pageDataDB?.donation_goal" 
   :donation_goal_provided="donation_goal_provided"
   :donated_percentage="donated_percentage"
   :isActive="isActive"
@@ -185,12 +172,18 @@ div(
   div(class="mx-auto flex p-2 bg-white w-1/2 h-1/2")
     CommentPopup(@ExitComment="exitCommentPopup" :comment="currentComment")  
 
-// the header overlay with image and name
+// Archive button
 div(
-  v-if="isAdminAdvocate"
+  v-if="isAdminAdvocate || isFamilyMember"
   class="flex gap-2 justify-center cols-2 pl-6 pr-6"
 )
-  a(class="mr-2 mt-1 p-2 px-9 pt-3 pb-3 bg-orange-999 transition duration-300 hover:bg-green-600 rounded-[100px] h-[50px] text-white font-bold") Archive
+  button(
+    type="button"
+    class="mr-2 mt-1 p-2 px-9 pt-3 pb-3 bg-orange-999 transition duration-300 hover:bg-green-600 rounded-[100px] h-[50px] text-white font-bold"
+    @click.prevent="handleArchive()"
+  ) {{ isActive ? "Archive" : "Reactivate" }}
+
+// the header overlay with image and name
 div(class="mt-2 min-h-24 text-white uppercase w-full bg-cover bg-center" style="background-image: url('https://carsonsvillage.org/wp-content/uploads/2018/11/iStock-862083112-BW.jpg');") 
   div(class="h-full py-8 self-center w-full text-center flex flex-col bg-teal-500/80") 
     p(class="my-auto font-bold text-5xl") {{ pageDataDB.page_first_name + " " + pageDataDB.page_last_name }}

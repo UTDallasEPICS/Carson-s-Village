@@ -19,7 +19,7 @@ export default defineEventHandler(async event => {
   const user = session.user
 
   const { Images, Reply, PageDonations, userCuid, familyCuid, Family, ...data } = await readBody(event)
-  
+
   if(user.role === "advocate" || user.role == "admin" || user.id == userCuid || user.familyId == familyCuid ) {
     delete data.Family // Not sure why this is needed to fix an error
     try {
