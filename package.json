@@ -34,7 +34,7 @@
     "@prisma/client": "^7.7.0",
     "@suadelabs/vue3-multiselect": "^1.0.2",
     "@tensorflow-models/toxicity": "^1.2.2",
-    "@vuepic/vue-datepicker": "^5.4.0",
+    "@vuepic/vue-datepicker": "^12.1.0",
     "@vueuse/components": "^13.1.0",
     "autoprefixer": "^10.4.19",
     "better-auth": "^1.6.3",

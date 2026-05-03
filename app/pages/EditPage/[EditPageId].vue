@@ -14,6 +14,7 @@ definePageMeta({
 })
 
 import { dateFormat, donationFormat } from '@/utils'
+import { VueDatePicker } from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css';
 import { ChevronDownIcon, ChevronLeftIcon } from '@heroicons/vue/24/solid'
 import { vElementSize } from '@vueuse/components'
@@ -86,6 +87,25 @@ const page = ref<Page>({
         FamilyDonations: [],
         advocateCuid: ""
     } 
+})
+
+// Adapter that ensures VueDatePicker in range mode updates day_of_birth and day_of_passing when updated by user
+const dateRange = computed({
+  get() {
+    if (page.value.day_of_birth && page.value.day_of_passing) {
+      return [page.value.day_of_birth, page.value.day_of_passing]
+    }
+    return null
+  },
+  set(newValue) {
+    if (newValue && newValue[0] && newValue[1]) {
+      page.value.day_of_birth = newValue[0]
+      page.value.day_of_passing = newValue[1]
+    } else {
+      page.value.day_of_birth = null
+      page.value.day_of_passing = null
+    }
+  }
 })
 
 const isAdvocate = computed(() => user.value?.role == "advocate" || user.value?.role == "admin")
@@ -196,6 +216,7 @@ const onResize = ({ width, height }: { width: number, height: number }) => {
         profileImgHeight.value = 40
     }
 }
+
 </script>
 
 <template lang="pug">
@@ -265,14 +286,18 @@ description="Here, you select from photos you uploaded to show up at the top of 
                             CVChevronDown(v-else class="inline-block size-4 h-2 max-w-8 h-4 text-gray-500 z-3")
                             
                           
+        // Day of Birth - Day of Passing
         div(class="py-4 grid sm:grid-cols-3") 
-            CVLabel(for="day_of_birth") Day of Birth
+            CVLabel(for="birth-passing") Dates of Life
             div(class="mx-9 sm:col-span-2 sm:mr-11")
-                CVDatepicker(id="day_of_birth" v-model='page.day_of_birth')
-        div(class="py-4 grid sm:grid-cols-3") 
-            CVLabel(for="day_of_passing") Day of Passing 
-            div(class="mx-9 sm:col-span-2 sm:mr-11")
-                CVDatepicker(id="day_of_birth" v-model='page.day_of_passing')
+                VueDatePicker(
+                  id="birth-passing"
+                  class="rounded-md p-2"
+                  auto-apply
+                  v-model="dateRange"
+                  :range={ partialRange: false }
+                )
+
         div(class="information rounded-md mx-9 my-2 text-center sm:text-start text-white bg-blue-999")
             CVLegend Visitation Information 
         div(class="py-4 grid sm:grid-cols-3") 

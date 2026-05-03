@@ -192,7 +192,7 @@ div(class="grid grid-cols-1 sm:grid-cols-2 justify-center px-2")
   div(class="col-span-2")
     div(class="flex flex-col gap-5 px-4 mx-auto mt-8 w-3/4 sm:px-16")
       img(v-if="profileImage?.url" :src="`${profileImage?.url}`" class="mx-auto w-[122px] h-[122px] rounded-[8px]")
-      div(class="text-gray-dark mx-auto w-max font-poppins text-md") {{ dateFormat(pageDataDB.day_of_birth, true) + ((pageDataDB.day_of_birth || pageDataDB.day_of_passing) ? ' - ' : '') + dateFormat(pageDataDB.day_of_passing, true) }} 
+      div(class="text-gray-dark mx-auto w-max font-poppins text-md") {{(pageDataDB.day_of_birth && pageDataDB.day_of_passing) ?  dateFormat(pageDataDB.day_of_birth, true) + ' - ' + dateFormat(pageDataDB.day_of_passing, true) : '' }} 
   div(class="col-span-1 justify-self-end pr-5 pt-5")
     div(v-if="imageData.length != 0" class="relative w-96 p-1")
       button(@click="prevImage" class="absolute left-4 top-64 bg-black text-white opacity-70 w-[46px] h-[46px] rounded-full items-center justify-center leading-loose text-center text-white") &#60;

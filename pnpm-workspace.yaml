@@ -11,3 +11,4 @@ onlyBuiltDependencies:
   - esbuild
   - prisma
   - unrs-resolver
+  - vue-demi
