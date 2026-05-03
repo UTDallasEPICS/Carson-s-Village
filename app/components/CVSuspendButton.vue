@@ -8,7 +8,7 @@ const props = defineProps<{
 const emit = defineEmits(["update:suspend"]) // define event emitted by component
 
 const pushSuspend = async () => { 
-    const suspendSuccess = await $fetch(`/api/replies_suspend`, {
+    const suspendSuccess = await $fetch(`/api/reply/suspend`, {
       method: 'PUT',
       body: ({ 
         replyData: props.rep ,
@@ -20,7 +20,7 @@ const pushSuspend = async () => {
 }
 
 const pushUnsuspend = async () => {
-  const unsuspendSuccess = await $fetch(`/api/replies_suspend`, {  
+  const unsuspendSuccess = await $fetch(`/api/reply/suspend`, {  
     method: 'PUT',
     body: ({ 
       replyData: props.rep ,

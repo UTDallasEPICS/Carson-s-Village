@@ -53,11 +53,16 @@ const donated_percentage = computed<Number>(() =>
 );
 const donation_goal_provided = computed(() => pageDataDB.value?.donation_goal as number > 0)
 const comments = computed(() => pageDataDB.value?.PageDonations)
-const replies = computed(() => pageDataDB.value?.Reply)
 const imageData = computed(() => pageDataDB.value?.Images || [])
 const profileImage = computed(() => imageData.value?.find((image: Image) => 
   image.id === pageDataDB.value?.profileImageCuid
 ))
+
+// Fetch replies separately so they can be refreshed easily
+const { data: replies, refresh: replyRefresh, error: replyFetchError} = useFetch(`/api/reply/${pageId.value}`, {
+  method: 'GET',
+  default: () => []
+})
 
 // Handles archiving of pages
 async function handleArchive() {
@@ -133,11 +138,6 @@ const closePreview = () => {
 const setImageAutoSlide = () => {
   nextImage()
   setTimeout(setImageAutoSlide, 5000)
-}
-
-// Recieves emitted reply from CVReplies System to update replies in real time
-const displayReply = async (reply: Reply) => {
-  pageDataDB.value?.Reply.push(reply)
 }
 
 const exitCommentPopup = () => {
@@ -265,7 +265,7 @@ div(class="py-4 grid gap-1 text-left")
         div(class="flex justify-between gap-5")
           div(class="text-xl font-bold") Amount Donated
           div(class="text-xl font-bold text-green-600") {{ donationFormat(comment.amount) }}
-  CVReplySystem(:pageCuid="pageId" :familyCuid="familyCuid" :replies="replies" @displayReply="displayReply")
+  CVReplySystem(:pageCuid="pageId" :familyCuid="familyCuid" :replies="replies" @displayReply="replyRefresh")
   div(v-if="replies?.length" class="py-4 grid row-span-3 gap-2")
     div(v-for="(reply,i) in replies.filter(item => !item.suspended)" :key="i" class="p-2 bg-white rounded-lg mb-2 shadow-md pb-4") 
       div(class="flex justify-between gap-5 pd-4")

@@ -28,7 +28,7 @@ const successMessage = ref("");
 const errorMessage = ref("");
 const submitComment = async () => {
   try {
-    const response = await $fetch('/api/replies', {
+    const response = await $fetch('/api/reply', {
       method: 'POST',
       body: {
         ...replyData.value,
