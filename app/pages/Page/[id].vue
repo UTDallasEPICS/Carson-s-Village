@@ -186,13 +186,13 @@ div(
 // the header overlay with image and name
 div(class="mt-2 min-h-24 text-white uppercase w-full bg-cover bg-center" style="background-image: url('https://carsonsvillage.org/wp-content/uploads/2018/11/iStock-862083112-BW.jpg');") 
   div(class="h-full py-8 self-center w-full text-center flex flex-col bg-teal-500/80") 
-    p(class="my-auto font-bold text-5xl") {{ pageDataDB.page_first_name + " " + pageDataDB.page_last_name }}
+    p(class="my-auto font-bold text-5xl") {{ pageDataDB?.page_first_name + " " + pageDataDB?.page_last_name }}
 
 div(class="grid grid-cols-1 sm:grid-cols-2 justify-center px-2")
   div(class="col-span-2")
     div(class="flex flex-col gap-5 px-4 mx-auto mt-8 w-3/4 sm:px-16")
       img(v-if="profileImage?.url" :src="`${profileImage?.url}`" class="mx-auto w-[122px] h-[122px] rounded-[8px]")
-      div(class="text-gray-dark mx-auto w-max font-poppins text-md") {{(pageDataDB.day_of_birth && pageDataDB.day_of_passing) ?  dateFormat(pageDataDB.day_of_birth, true) + ' - ' + dateFormat(pageDataDB.day_of_passing, true) : '' }} 
+      div(class="text-gray-dark mx-auto w-max font-poppins text-md") {{(pageDataDB?.day_of_birth && pageDataDB?.day_of_passing) ?  dateFormat(pageDataDB?.day_of_birth, true) + ' - ' + dateFormat(pageDataDB?.day_of_passing, true) : '' }} 
   div(class="col-span-1 justify-self-end pr-5 pt-5")
     div(v-if="imageData.length != 0" class="relative w-96 p-1")
       button(@click="prevImage" class="absolute left-4 top-64 bg-black text-white opacity-70 w-[46px] h-[46px] rounded-full items-center justify-center leading-loose text-center text-white") &#60;
@@ -203,43 +203,43 @@ div(class="grid grid-cols-1 sm:grid-cols-2 justify-center px-2")
         span(@click="closePreview" class="absolute cursor-pointer top-[15px] right-[35px] text-[30px] transition duration-300 text-gray-400 hover:text-white focus:text-white cursor-pointer") &times;
   // services list
   div(class="col-span-1 sm:grid-cols-2 pt-5 pl-5 pr-15")
-        div(v-if="pageDataDB.visitation_date" class="flex flex-col pb-5 pr-15")
+        div(v-if="pageDataDB?.visitation_date" class="flex flex-col pb-5 pr-15")
           div(class="text-gray-dark font-poppins text-3xl text-left font-bold leading-10 justify-start text-shadow-[3px_3px_4px_rgba(0,0,0,0.25)]") Visitation
           div(class="flex row gap-2 pt-2")
             div(class="font-outfit flex-col font-bold") {{ "Date:" }}
-            div(class="font-outfit") {{ longDateFormat(pageDataDB.visitation_date) }}
+            div(class="font-outfit") {{ longDateFormat(pageDataDB?.visitation_date) }}
           div(class="flex row gap-2")
             div(class="font-outfit font-bold") {{ "Time:" }}
-            div(class="font-outfit gap-y-5") {{ longDateFormat(pageDataDB.visitation_date, true) }}
+            div(class="font-outfit gap-y-5") {{ longDateFormat(pageDataDB?.visitation_date, true) }}
           div(class="flex row gap-2")
             div(class="font-outfit font-bold") {{ "Location:" }}
-            div(class="font-outfit whitespace-normal") {{ pageDataDB.visitation_location ? pageDataDB.visitation_location : "TBD" }}
+            div(class="font-outfit whitespace-normal") {{ pageDataDB?.visitation_location ? pageDataDB?.visitation_location : "TBD" }}
           div(class="flex row gap-2")
-            div(class="font-outfit gap-y-5") {{ pageDataDB.visitation_address }}
+            div(class="font-outfit gap-y-5") {{ pageDataDB?.visitation_address }}
           div(class="flex row gap-2 pr-10") 
             div(class="font-outfit font-bold") {{ "Description:" }}
-            div(class="font-outfit whitespace-normal") {{ pageDataDB.visitation_description }}
+            div(class="font-outfit whitespace-normal") {{ pageDataDB?.visitation_description }}
             
         div(v-else class="flex flex-col pb-5 pr-15")
           div(class="text-gray-dark font-poppins text-3xl text-left font-bold leading-9 text-shadow-[3px_3px_4px_rgba(0,0,0,0.25)]") Visitation
           div(class="flex row gap-2")
             div(class="font-outfit") {{ "There is no visitation information available at this time." }}
-        div(v-if="pageDataDB.funeral_date" class="flex flex-col pb-5 pr-15")
+        div(v-if="pageDataDB?.funeral_date" class="flex flex-col pb-5 pr-15")
             div(class="text-gray-dark font-poppins text-3xl text-left font-bold leading-9 text-shadow-[3px_3px_4px_rgba(0,0,0,0.25)]") Funeral Service
             div(class="flex row gap-2")
               div(class="font-outfit font-bold") {{ "Date:" }}
-              div(class="font-outfit gap-2") {{ longDateFormat(pageDataDB.funeral_date) }}
+              div(class="font-outfit gap-2") {{ longDateFormat(pageDataDB?.funeral_date) }}
             div(class="flex row gap-2")
               div(class="font-outfit font-bold") {{ "Time:" }}
-              div(class="font-outfit gap-y-5") {{ longDateFormat(pageDataDB.funeral_date, true) }}
+              div(class="font-outfit gap-y-5") {{ longDateFormat(pageDataDB?.funeral_date, true) }}
             div(class="flex row gap-2")
               div(class="font-outfit font-bold") {{ "Location:" }}
-              div(class="font-outfit whitespace-normal") {{ pageDataDB.funeral_location }}
+              div(class="font-outfit whitespace-normal") {{ pageDataDB?.funeral_location }}
             div(class="flex row gap-2")
-              div(class="font-outfit whitespace-normal") {{ pageDataDB.funeral_address }}
+              div(class="font-outfit whitespace-normal") {{ pageDataDB?.funeral_address }}
             div(class="flex row gap-2 pr-10") 
               div(class="font-outfit font-bold") {{ "Description:" }}
-              div(class="font-outfit") {{ pageDataDB.funeral_description }}
+              div(class="font-outfit") {{ pageDataDB?.funeral_description }}
 
         div(v-else class="flex flex-col pb-5")
             div(class="text-gray-dark font-poppins text-3xl text-left font-bold leading-9 text-shadow-[3px_3px_4px_rgba(0,0,0,0.25)]") Funeral Service
@@ -252,7 +252,7 @@ div(class="grid grid-cols-1 sm:grid-cols-2 justify-center px-2")
               ActionButton(name='submit' @click="displayDonationPopup=true" class="mx-auto text-md transition duration-300 bg-orange-999 hover:bg-green-600") DONATE NOW
   div(class="col-span-2")
     div(class="mx-9 sm:col-span-1 sm:mr-11")
-        div(id="obituary" class="px-10 py-4 text-[#6E6E6E] font-medium text-lg leading-7 tracking-[-0.078px] break-words") {{ pageDataDB.obituary }}
+        div(id="obituary" class="px-10 py-4 text-[#6E6E6E] font-medium text-lg leading-7 tracking-[-0.078px] break-words") {{ pageDataDB?.obituary }}
 
 div(class="py-4 grid gap-1 text-left")
   div(v-if="comments?.length" class="py-4 grid gap-4 w-full justify-center grid-cols-[repeat(3,30rem)]")

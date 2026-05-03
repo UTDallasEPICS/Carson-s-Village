@@ -25,27 +25,36 @@ const clearSuccessMessage = () => {
 }
 
 const successMessage = ref("");
+const errorMessage = ref("");
 const submitComment = async () => {
-    const response = await $fetch('/api/replies', {  // look at nuxt documentation for $fetch
+  try {
+    const response = await $fetch('/api/replies', {
       method: 'POST',
       body: {
-        pageCuid: props.pageCuid,
-        familyCuid: props.familyCuid,
-        replyData,
+        ...replyData.value,
       },
     });
     
     if (response) {
-        replyData.value.pageCuid = props.pageCuid;
-        replyData.value.familyCuid = props.familyCuid;
-        replyData.value.date = response.date
-        emit('displayReply', {...replyData.value });
-        
-        //successMessage.value = "Comment submitted successfully!"; // Set success message
-        //clearSuccessMessage()
-        setTimeout(clearSuccessMessage, 800);
-    }
-    
+      replyData.value.pageCuid = props.pageCuid;
+      replyData.value.familyCuid = props.familyCuid;
+      replyData.value.date = response.date
+      emit('displayReply', {...replyData.value });
+      
+      successMessage.value = "Comment submitted successfully"
+      setTimeout(clearSuccessMessage, 800);
+    } else {
+      console.error("Failed to submit comment:", err)
+      errorMessage.value = "Couldn't submit comment"
+
+      setTimeout(() => {errorMessage.value = ""}, 2000)
+    } 
+  } catch (err) {
+    console.error("Failed to submit comment:", err)
+    errorMessage.value = "Couldn't submit comment"
+
+    setTimeout(() => {errorMessage.value = ""}, 2000)
+  }
 };
 
 </script>
@@ -60,7 +69,8 @@ div(class="comment-system flex flex-col items-center sm:mx-4 sm:w-full sm:py-2")
           CVInput(id="name" name='name' v-model="replyData.name" placeholder='Name' class="font-normal w-2/3" )     
       div(class="ml-4 pt-6 pr-5 flex items-center justify-center mt-6")
           ActionButton(class="mx-auto text-md transition duration-300 bg-orange-999 hover:bg-green-600" @click="submitComment") Submit
-      div(v-if="successMessage" class="mt-4 text-green-500") {{ successMessage }}
+      div(v-if="successMessage && !errorMessage" class="mt-4 text-green-500") {{ successMessage }}
+      div(v-if="errorMessage && !successMessage" class="mt-4 text-red-500") {{ errorMessage }}
 
 </template>
 
