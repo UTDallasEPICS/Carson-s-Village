@@ -29,7 +29,6 @@ export default defineEventHandler(async event => {
       }
       if(typeof data.amount_raised == 'string') {
         data.amount_raised = Math.trunc(parseFloat(data.amount_raised.replace(",","")) * 100);
-        console.log("amount raised after removing formating ", data.amount_raised)
       }
       // updates a pre-existing page
       const queryRes = await prisma.page.update({
