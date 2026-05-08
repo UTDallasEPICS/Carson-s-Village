@@ -30,16 +30,23 @@ const user = computed(() => data.value?.user || null)
 const currentFamilyPageNumber = ref(0)
 const isAdmin = computed(() => user.value?.role === "admin")
 const isAdvocate = computed(() => user.value?.role === "advocate")
-const { data: Families } = await useFetch<Family[]>('/api/family', {
+const isFamily = computed(() => user.value?.role === "family")
+
+const familyFetch = isFamily.value ? `/api/family/${user.value?.familyId}` : '/api/family';
+const { data: Families } = await useFetch<Family[]>(familyFetch, {
     method: 'GET',
-    default() {
-      return [] as any
-    }, 
+    default: () => [],
+
+    // If 'api/family/:id is fetched, wrap inside array for consistency between apis
+    transform: (input) => {
+      return Array.isArray(input) ? input : [input];
+    }
 });
 
-const currentFamily = computed(() => Families.value?.find(({ id }: Family) => id == currentFamilyCuid.value) || {})
 const currentFamilyCuid = ref<string>("")
 currentFamilyCuid.value = Families.value?.[0]?.id || "0"
+
+const currentFamily = computed(() => Families.value?.find(({ id }: Family) => id == currentFamilyCuid.value) || {})
 
 const { data: familyData } = await useFetch('/api/family_pages', {
   method: 'GET',
@@ -86,7 +93,7 @@ const totalRemaining = computed(() => totalPageDonations.value - totalDistribute
 </script>
 
 <template lang="pug">
-div(v-if="isAdmin" class="px-10")   
+div(class="px-10")   
   TitleComp(class="border-black border") Family Transaction List
   div(class="flex flex-wrap w-full justify-center gap-5 mt-10")
     // these two list boxes can be a distinct reusable component
