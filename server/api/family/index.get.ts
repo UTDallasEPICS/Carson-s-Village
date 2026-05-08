@@ -37,6 +37,7 @@ export default defineEventHandler(async event => {
         AdvocateResponsible: true
       }
     });
+    return queryRes
   } else {
     throw createError({
       statusCode: 401, 

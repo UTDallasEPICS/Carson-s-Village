@@ -28,8 +28,6 @@ const { data } = await authClient.useSession(useFetch);
 const user = computed(() => data.value?.user || null)
 
 const currentFamilyPageNumber = ref(0)
-const isAdmin = computed(() => user.value?.role === "admin")
-const isAdvocate = computed(() => user.value?.role === "advocate")
 const isFamily = computed(() => user.value?.role === "family")
 
 const familyFetch = isFamily.value ? `/api/family/${user.value?.familyId}` : '/api/family';
@@ -46,7 +44,7 @@ const { data: Families } = await useFetch<Family[]>(familyFetch, {
 const currentFamilyCuid = ref<string>("")
 currentFamilyCuid.value = Families.value?.[0]?.id || "0"
 
-const currentFamily = computed(() => Families.value?.find(({ id }: Family) => id == currentFamilyCuid.value) || {})
+const currentFamily = computed(() => Families.value?.find((family: Family) => family?.id == currentFamilyCuid.value) || {})
 
 const { data: familyData } = await useFetch('/api/family_pages', {
   method: 'GET',
@@ -59,7 +57,7 @@ const { data: familyData } = await useFetch('/api/family_pages', {
 
 const familyPagesLength = computed(() => familyData.value?.Pagination?.total)
 const currentPageCuid = ref<string>("");
-const currentPage = computed(() => familyData.value?.raw_data?.find(({ id }: Page) => id == currentPageCuid.value) || {});
+const currentPage = computed(() => familyData.value?.raw_data?.find((page: Page) => page?.id == currentPageCuid.value) || {});
 watchEffect(() => currentPageCuid.value = familyData.value?.raw_data?.[0]?.id || "");  
 
 const { data: donations } = await useFetch<PageDonation[]>('/api/family_donations', {
@@ -154,13 +152,17 @@ div(class="px-10")
   table(class="mt-5 w-full")
       thead
           tr(class="text-white")
-              th(class="px-8 bg-[#5aadc2] rounded-tl-3xl w-1/2 overflow-hidden") Page Name
+              th(class="px-8 bg-[#5aadc2] rounded-tl-3xl w-1/2 overflow-hidden") Name
+              th(class="px-8 bg-[#5aadc2]") Email
+              th(class="px-8 bg-[#5aadc2]") Donated
               th(class="px-8 w-1/2 rounded-tr-3xl bg-[#5aadc2]") Amount
           tr(v-for="(item, i) in donations" 
               :key="i" 
               :class="{'bg-gray-200': (i+1) % 2}"
           )
-              td(class="font-poppins text-gray-dark font-bold text-center")  {{ item.Page.page_first_name + " " + item.Page.page_last_name }}
+              td(class="font-poppins text-gray-dark font-bold text-center")  {{ !item.donorLastName ? `${item.donorFirstName}` : `${item.donorFirstName} ${item.donorLastName}` }}
+              td(class="font-poppins text-gray-dark font-bold text-center")  {{ item.donorEmail }}
+              td(class="font-poppins text-gray-dark font-bold text-center")  {{ dateFormat(item.donationInitiated) }}
               td(class="font-poppins text-gray-dark font-bold text-center")  {{ donationFormat(item.amount) }}
 div(class="pb-10")
 </template>
