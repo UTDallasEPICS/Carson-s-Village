@@ -42,7 +42,7 @@ div(class="text-center p-2 pt-32 pr-12 rounded-md border-grey-600 border-r")
       p(class="uppercase white mb-2 w-max") Families
     NavLinkButtonVNav(to="/" :class="{'!text-black border-green-999 bg-white': route.path == '/'}") 
       p(class="uppercase white mb-2 w-max") Profile
-    NavLinkButtonVNav(v-if="isAdmin" to='/FamilyTransactionList' :class="{'!text-black border-green-999 bg-white': route.path == '/FamilyTransactionList'}") 
+    NavLinkButtonVNav(to='/Donations' :class="{'!text-black border-green-999 bg-white': route.path == '/Donations'}") 
       p(class="uppercase white mb-2 w-max") Donations
     NavLinkButtonVNav(v-if="isAdvocateAdmin" to='/FamilyReports' :class="{'!text-black border-green-999 bg-white': route.path == '/FamilyReports'}")
       p(class="uppercase white mb-2 w-max") Family Reports

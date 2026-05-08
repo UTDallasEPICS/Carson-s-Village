@@ -19,9 +19,6 @@
   const familyPages = ref<Partial<Page[]>>([])
   const familiesRaw = ref<Family[]>([])
   const currentPage = ref(0);
-  const filedownloadlink = ref("")
-  const dataset = ref("")
-  const downloadName = ref("")
   const totalLength = ref(0)
   const tableToggle = ref(false)
   const start_date = ref(new Date("1/01/2023"))
@@ -149,18 +146,20 @@
 
 
   // creates download link to csv of family reports table
+  const filedownloadlink = ref("")
+  const dataset = ref("")
+  const downloadName = ref("")
   const createCsvDownloadLink = (csv: string) => {
       const csvFile = new File([csv], "file", {
       type: "text/csv" } )
+
       // unique filename based on current time
       const filename = "family_report_" + formatReportDate(dateFormat(new Date().toString(), true).replaceAll("/", "-")) + ".csv"
-      console.log(filename)
-      //if(typeof window !== undefined) {
+
       filedownloadlink.value = window.URL.createObjectURL(csvFile);
-      //}
       dataset.value = ["text/csv", filename, filedownloadlink.value].join(':');
       downloadName.value = filename
-    }
+  }
   
   // loads family report data from the families database table and joins and creates a download link for the file
   // Additionally, if the user presses display date ranged, the UI table filters by a cirtain date range specified by start_date and end_date on the date_field

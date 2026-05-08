@@ -47,7 +47,7 @@ const onEnter = async() => {
       NavLinkButtonHamburger(to="/" :class="{'!text-black border-green-999 bg-white': route.path == '/'}") 
         p.uppercase.white.mb-2.w-max Profile
       .bar.mx-20(style="border-top: 0.5px solid #646464;")
-      NavLinkButtonHamburger(v-if="isAdmin" to='/FamilyTransactionList' :class="{'!text-black border-green-999 bg-white': route.path == '/FamilyTransactionList'}") 
+      NavLinkButtonHamburger(to='/Donations' :class="{'!text-black border-green-999 bg-white': route.path == '/Donations'}") 
         p.uppercase.white.mb-2.w-max Donations
       .bar.mx-20(style="border-top: 0.5px solid #646464;")
       NavLinkButtonHamburger(v-if="isAdvocateAdmin" to='/FamilyReports' :class="{'!text-black border-green-999 bg-white': route.path == '/FamilyReports'}")

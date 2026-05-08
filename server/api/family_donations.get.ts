@@ -21,7 +21,19 @@ export default defineEventHandler(async event => {
       return []
   }
 
-  if(user.role === "admin") {
+  const family = await prisma.family.findUnique({
+    where: {
+      id: family_cuid
+    }
+  })
+  if (!family) {
+    throw createError({
+      statusCode: 404,
+      statusMessage: `Family ID ${family_cuid} does not exist`
+    })
+  }
+
+  if(user.role === "admin" || user.role === "advocate" && family.advocateCuid === user.id || user.familyId === family_cuid) {
     const queryRes = await prisma.pageDonation.findMany({
       where: {
         familyCuid: family_cuid as string,
