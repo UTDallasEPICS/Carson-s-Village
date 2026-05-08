@@ -16,7 +16,7 @@ export default defineEventHandler(async event => {
   }
   const user = session.user
 
-  if(user.role === "advocate" || user.role === "admin") {
+  if(user.role === "admin") {
     const queryRes = await prisma.family.findMany({
       include: {
         Pages: true,
@@ -25,6 +25,18 @@ export default defineEventHandler(async event => {
       }
     });
     return queryRes;
+  } 
+  else if (user.role === "advocate") {
+    const queryRes = await prisma.family.findMany({
+      where: {
+        advocateCuid: user.id
+      },
+      include: {
+        Pages: true,
+        FamilyMembers: true,
+        AdvocateResponsible: true
+      }
+    });
   } else {
     throw createError({
       statusCode: 401, 
