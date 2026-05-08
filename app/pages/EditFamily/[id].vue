@@ -41,17 +41,8 @@ const userCuid = ref("")
 
 const router = useRoute()
 const id = computed(() => router.params.id as string);
-const currentUser = computed(() => data_all_users.value.all_family_users.find((({ id }: User) => id === userCuid.value )) || {})
 const isAuthorized = computed(() => { user.value?.role == "advocate" || user.value?.role == "admin"})
 const errorInPage = ref(false);
-
-const { data: data_all_users } = await useFetch('/api/users', {
-      method: 'GET',
-      query: { page_number: 0, sortedColumn: "name", order: "asc", familyCuid: id.value }, 
-      default() {
-        return [] as any
-      }
-})
 
 const { data: data_family } = await useFetch(`/api/family/${id.value}`, {
       method: 'GET',
