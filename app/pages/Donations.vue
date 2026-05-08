@@ -88,6 +88,65 @@ const prevPage = () => {
 const totalPageDonations = computed(() => donations.value?.reduce((acc: number, curr: PageDonation) => acc + curr.amount, 0) || 0);
 const totalDistributed = computed(() => familyData.value?.raw_data?.reduce((acc: number, curr: Page) => acc + (curr.amount_distributed as number), 0) || 0);
 const totalRemaining = computed(() => totalPageDonations.value - totalDistributed.value);
+
+// ------------------ CSV Download ------------------
+const filedownloadlink = ref("")
+const dataset = ref("")
+const downloadName = ref("")
+onMounted(() => {
+  const createCsvDownloadLink = (csv: string) => {
+      const csvFile = new File([csv], "file", {
+      type: "text/csv" } )
+
+      // unique filename based on current time
+      const filename = "donation_report_" + formatReportDate(dateFormat(new Date().toString(), true).replaceAll("/", "-")) + ".csv"
+
+      filedownloadlink.value = window.URL.createObjectURL(csvFile);
+      dataset.value = ["text/csv", filename, filedownloadlink.value].join(':');
+      downloadName.value = filename
+  }
+
+  watch(donations, (newDonations) => {
+    if (!newDonations || newDonations.length === 0) return
+
+    const headers = [
+      "ID", 
+      "Donor Name", 
+      "Email", 
+      "Amount ($)", 
+      "Date Processed", 
+      "Comments"
+    ]
+
+    // Map the data into rows
+    const rows = newDonations.map(donation => {
+      return [
+        donation.id,
+        `${donation.donorFirstName} ${donation.donorLastName}`.trim(),
+        donation.donorEmail,
+        (donation.amount / 100).toFixed(2), // Convert cents to dollars
+        new Date(donation.donationProcessed).toLocaleDateString(),
+        donation.comments
+      ].map(value => `"${String(value).replace(/"/g, '""')}"`) // Escape quotes and wrap in quotes
+       .join(",")
+    })
+
+    // Combine headers and rows and update link
+    const csvContent = [headers.join(","), ...rows].join("\n")
+    createCsvDownloadLink(csvContent)
+  }, { immediate: true })
+})
+
+// Formats report date to the format 'yyyy-mm-dd'
+function formatReportDate(date: string) {
+  const dates = date.split("-")
+  const month = dates[0]
+  const day = dates[1]
+  const year = dates[2]
+  const formatedMonth = parseInt(month) >= 10 ? month : 0 + "" + month
+  const formatedDay = parseInt(day) >= 10 ? day : 0 + "" + day
+  return year + "-" + formatedMonth + "-" + formatedDay 
+}
 </script>
 
 <template lang="pug">
@@ -148,21 +207,29 @@ div(class="px-10")
         p {{  currentFamilyPageNumber + 1}}
     div(class="px-2 mt-2")
         button(@click="nextPage") >
-  CVLegend(class="mt-10 ml-2") Family Donations
-  table(class="mt-5 w-full")
-      thead
-          tr(class="text-white")
-              th(class="px-8 bg-[#5aadc2] rounded-tl-3xl w-1/2 overflow-hidden") Name
-              th(class="px-8 bg-[#5aadc2]") Email
-              th(class="px-8 bg-[#5aadc2]") Donated
-              th(class="px-8 w-1/2 rounded-tr-3xl bg-[#5aadc2]") Amount
-          tr(v-for="(item, i) in donations" 
-              :key="i" 
-              :class="{'bg-gray-200': (i+1) % 2}"
-          )
-              td(class="font-poppins text-gray-dark font-bold text-center")  {{ !item.donorLastName ? `${item.donorFirstName}` : `${item.donorFirstName} ${item.donorLastName}` }}
-              td(class="font-poppins text-gray-dark font-bold text-center")  {{ item.donorEmail }}
-              td(class="font-poppins text-gray-dark font-bold text-center")  {{ dateFormat(item.donationInitiated) }}
-              td(class="font-poppins text-gray-dark font-bold text-center")  {{ donationFormat(item.amount) }}
+
+  div(class="flex flex-col")
+    CVLegend(class="mt-10 ml-2") Family Donations
+    table(class="mt-5 w-full")
+        thead
+            tr(class="text-white")
+                th(class="px-8 bg-[#5aadc2] rounded-tl-3xl w-1/2 overflow-hidden") Name
+                th(class="px-8 bg-[#5aadc2]") Email
+                th(class="px-8 bg-[#5aadc2]") Donated
+                th(class="px-8 w-1/2 rounded-tr-3xl bg-[#5aadc2]") Amount
+            tr(v-for="(item, i) in donations" 
+                :key="i" 
+                :class="{'bg-gray-200': (i+1) % 2}"
+            )
+                td(class="font-poppins text-gray-dark font-bold text-center")  {{ !item.donorLastName ? `${item.donorFirstName}` : `${item.donorFirstName} ${item.donorLastName}` }}
+                td(class="font-poppins text-gray-dark font-bold text-center")  {{ item.donorEmail }}
+                td(class="font-poppins text-gray-dark font-bold text-center")  {{ dateFormat(item.donationInitiated) }}
+                td(class="font-poppins text-gray-dark font-bold text-center")  {{ donationFormat(item.amount) }}
+    a(
+      class="transition h-[50px] w-[140px] text-white font-bold rounded-[100px] duration-300 bg-orange-999 hover:bg-green-600 mr-9 mt-16 p-6 px-6 pr-6 pt-3 pb-3 cursor-pointer bg-orange-999" 
+      :href="filedownloadlink"
+      :download="downloadName" 
+      :dataset.downloadurl="dataset"
+    ) Download
 div(class="pb-10")
 </template>
