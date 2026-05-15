@@ -66,9 +66,7 @@ div(
       div(v-if="props.donation_goal_provided" class="text-md text-center ml-4 my-3 sm:text-xl sm:my-6 tracking-[0.35px] font-semibold text-[#646464]") {{ donationFormat(props.amount_raised)  + " raised of " +  donationFormat(props.donation_goal) + " goal" }}
       div(class="py-4")
       div(v-if="props.donation_goal_provided" class="progress-bar overflow-hidden ml-4 h-7 rounded-full bg-[#b5b5b5]")
-          //CVProgress(v-if="donated_percentage >= 100" modelBarWidth="100") {{ donated_percentage  + "%" }}
           CVProgress(:modelBarWidth="donated_percentage" class="text-xl") {{ donated_percentage  + "%" }}
-          //CVProgress(v-else style="text-align:center;" modelBarWidth="0")  {{ donated_percentage   + "%" }}
       div(class="p-3 rounded bg-gray-50")
           h1(class="ml-4 pt-9 text-2xl text-gray-dark sm:text-3xl font-semibold tracking-[0.35px]") Donor Information
       DonationEntry(
