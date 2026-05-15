@@ -1,5 +1,5 @@
 # Build container
-FROM node:current-alpine AS builder
+FROM node:lts-alpine AS builder
 COPY . ./
 
 ENV PNPM_HOME="/pnpm"
@@ -11,7 +11,7 @@ RUN pnpm prisma generate
 RUN pnpm run build
 
 # Deployment container
-FROM node:current-alpine AS deployment
+FROM node:lts-alpine AS deployment
 
 # Copy stuff from build container to ensure we have prisma and everything it needs
 COPY --from=builder /.output /
@@ -22,7 +22,7 @@ COPY --from=builder /prisma /prisma
 COPY --from=builder /node_modules /node_modules
 COPY --from=builder /emails /emails
 
-RUN npm i -g pnpm
+RUN npm i -g pnpm@10
 COPY ./entrypoint.sh /entrypoint.sh
 
 # Esnure we can actually run the entrypoint script
