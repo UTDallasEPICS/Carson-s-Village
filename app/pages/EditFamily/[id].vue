@@ -82,7 +82,7 @@ CVContainer
             div(class="mx-9 sm:col-span-2 sm:mr-11")
                 CVInput(id="family_name" v-model='data_family.family_name' placeholder="(user defined)" required="required")
         div(class="information rounded-md mx-9 my-2 text-center sm:text-start text-white bg-blue-999")
-             CVLegend First User Information
+             CVLegend New User Information
         div(class="py-4 grid sm:grid-cols-3")
             CVLabel(for="email") Email
             div(class="mx-9 sm:col-span-2 sm:mr-11")

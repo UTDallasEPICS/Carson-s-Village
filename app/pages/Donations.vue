@@ -151,7 +151,6 @@ function formatReportDate(date: string) {
 
 <template lang="pug">
 div(class="px-10")   
-  TitleComp(class="border-black border") Family Transaction List
   div(class="flex flex-wrap w-full justify-center gap-5 mt-10")
     // these two list boxes can be a distinct reusable component
     div(class="flex gap-5")
