@@ -151,9 +151,13 @@ function formatReportDate(date: string) {
 
 <template lang="pug">
 div(class="px-10")   
-  div(class="flex flex-wrap w-full justify-center gap-5 mt-10")
-    // these two list boxes can be a distinct reusable component
-    div(class="flex gap-5")
+
+  // ------ Pages Table --------------------------------------------------------------------------------------------------
+
+  div(class="flex mb-5 justify-between items-end")
+    CVLegend(class="mt-10 pl-2") Family Pages
+
+    div(class="flex gap-5 pr-5")
       p(class="self-center") Family
       Listbox(as='div' v-model="currentFamilyCuid" class="shadow-sm border border-1 rounded-lg")
         div(class="relative")
@@ -165,21 +169,7 @@ div(class="px-10")
             ListboxOptions(as='div' class='w-full absolute z-10 mt-10 bg-white shadow-lg max-h-60 rounded-md px-2 py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm' )
               ListboxOption(as='div' v-for="Family in Families" :key="Family.id" :value="Family.id" class="px-2 border border-grey-500 py-1 my-1") {{ Family.family_name }}
         ListboxButton(class='text-left bg-white relative rounded-md pl-2 pr-10 py-2 sm:text-sm w-96') {{ currentFamilyCuid ? currentFamily.family_name : 'Select Family' }}
-    
-    div(class="flex gap-5")
-      p(class="self-center") Page
-      Listbox(as='div' v-model="currentPageCuid" class="shadow-sm border border-1 rounded-lg")
-        div(class="relative")
-          Transition(
-            leave-active-class='transition ease-in duration-100'
-            leave-from-class='opacity-100'
-            leave-to-class='opacity-0'
-          )
-            ListboxOptions(as='div' class='w-full absolute z-10 mt-10 bg-white shadow-lg max-h-60 rounded-md px-2 py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm' )
-              ListboxOption(as='div' v-for="page in familyData.raw_data" :key="page.id" :value="page.id" class="px-2 border border-grey-500 py-1 my-1") {{ page.page_first_name + " "  + page.page_last_name }} | {{ donationFormat(page?.amount_raised - page?.amount_distributed) }}
-        ListboxButton(class='text-left bg-white relative rounded-md pl-2 pr-10 py-2 sm:text-sm w-96') {{ currentPageCuid ? (currentPage.page_first_name || currentPage.page_last_name) : 'Select Page' }}
-  
-  CVLegend(class="mt-10 ml-2") Family Pages
+     
   table(class="mt-5 w-full")
       thead
           tr(class="text-white")
@@ -199,7 +189,7 @@ div(class="px-10")
               td(class="font-poppins text-gray-dark font-bold text-center")  {{ item?.donation_status}}
               td(class="font-poppins text-gray-dark font-bold text-center")  {{ donationFormat(item.amount_raised) }}
               td(class="font-poppins text-gray-dark font-bold text-center")  {{ donationFormat(item.amount_raised - item.amount_distributed) }}
-  div(class="mb-9 py-7 flex flex-wrap gap-2 place-content-center")
+  div(class="mb-5 flex flex-wrap gap-2 place-content-center")
     div(class="px-2 mt-2")
         button(@click="prevPage") &lt
     div(class="px-2 mt-2")
@@ -207,28 +197,46 @@ div(class="px-10")
     div(class="px-2 mt-2")
         button(@click="nextPage") >
 
-  div(class="flex flex-col")
+  // ------ Donations Table --------------------------------------------------------------------------------------------------
+
+  div(class="flex mb-5 justify-between items-end")
     CVLegend(class="mt-10 ml-2") Family Donations
-    table(class="mt-5 w-full")
-        thead
-            tr(class="text-white")
-                th(class="px-8 bg-[#5aadc2] rounded-tl-3xl w-1/2 overflow-hidden") Name
-                th(class="px-8 bg-[#5aadc2]") Email
-                th(class="px-8 bg-[#5aadc2]") Donated
-                th(class="px-8 w-1/2 rounded-tr-3xl bg-[#5aadc2]") Amount
-            tr(v-for="(item, i) in donations" 
-                :key="i" 
-                :class="{'bg-gray-200': (i+1) % 2}"
-            )
-                td(class="font-poppins text-gray-dark font-bold text-center")  {{ !item.donorLastName ? `${item.donorFirstName}` : `${item.donorFirstName} ${item.donorLastName}` }}
-                td(class="font-poppins text-gray-dark font-bold text-center")  {{ item.donorEmail }}
-                td(class="font-poppins text-gray-dark font-bold text-center")  {{ dateFormat(item.donationInitiated) }}
-                td(class="font-poppins text-gray-dark font-bold text-center")  {{ donationFormat(item.amount) }}
-    a(
-      class="transition h-[50px] w-[140px] text-white font-bold rounded-[100px] duration-300 bg-orange-999 hover:bg-green-600 mr-9 mt-16 p-6 px-6 pr-6 pt-3 pb-3 cursor-pointer bg-orange-999" 
-      :href="filedownloadlink"
-      :download="downloadName" 
-      :dataset.downloadurl="dataset"
-    ) Download
+
+    div(class="flex gap-5 pr-5")
+      p(class="self-center") Page
+      Listbox(as='div' v-model="currentPageCuid" class="shadow-sm border border-1 rounded-lg")
+        div(class="relative")
+          Transition(
+            leave-active-class='transition ease-in duration-100'
+            leave-from-class='opacity-100'
+            leave-to-class='opacity-0'
+          )
+            ListboxOptions(as='div' class='w-full absolute z-10 mt-10 bg-white shadow-lg max-h-60 rounded-md px-2 py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm' )
+              ListboxOption(as='div' v-for="page in familyData.raw_data" :key="page.id" :value="page.id" class="px-2 border border-grey-500 py-1 my-1") {{ page.page_first_name + " "  + page.page_last_name }} | {{ donationFormat(page?.amount_raised - page?.amount_distributed) }}
+        ListboxButton(class='text-left bg-white relative rounded-md pl-2 pr-10 py-2 sm:text-sm w-96') {{ currentPageCuid ? (currentPage.page_first_name || currentPage.page_last_name) : 'Select Page' }}
+
+  table(class="my-5 w-full")
+      thead
+          tr(class="text-white")
+              th(class="px-8 bg-[#5aadc2] rounded-tl-3xl w-1/2 overflow-hidden") Name
+              th(class="px-8 bg-[#5aadc2]") Page Name
+              th(class="px-8 bg-[#5aadc2]") Email
+              th(class="px-8 bg-[#5aadc2]") Donated
+              th(class="px-8 w-1/2 rounded-tr-3xl bg-[#5aadc2]") Amount
+          tr(v-for="(item, i) in donations" 
+              :key="i" 
+              :class="{'bg-gray-200': (i+1) % 2}"
+          )
+              td(class="font-poppins text-gray-dark font-bold text-center")  {{ !item.donorLastName ? `${item.donorFirstName}` : `${item.donorFirstName} ${item.donorLastName}` }}
+              td(class="font-poppins text-gray-dark font-bold text-center")  {{ currentPage?.page_first_name + " " + currentPage?.page_last_name }}
+              td(class="font-poppins text-gray-dark font-bold text-center")  {{ item.donorEmail }}
+              td(class="font-poppins text-gray-dark font-bold text-center")  {{ dateFormat(item.donationInitiated) }}
+              td(class="font-poppins text-gray-dark font-bold text-center")  {{ donationFormat(item.amount) }}
+  a(
+    class="transition h-[50px] w-[140px] text-white font-bold rounded-[100px] duration-300 bg-orange-999 hover:bg-green-600 mr-9 mt-16 p-6 px-6 pr-6 pt-3 pb-3 cursor-pointer bg-orange-999" 
+    :href="filedownloadlink"
+    :download="downloadName" 
+    :dataset.downloadurl="dataset"
+  ) Download
 div(class="pb-10")
 </template>
