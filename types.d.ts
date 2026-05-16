@@ -9,6 +9,13 @@ declare module 'h3' {
   }
 }
 
+interface DropdownItem {
+  id: string,
+  value: string,
+  optionDisplay: string,
+  selectionDisplay: string
+}
+
 // TODO: import types from prisma, export them with relations added
 export type Page = {
     page_first_name: string,
