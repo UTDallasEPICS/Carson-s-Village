@@ -46,7 +46,7 @@ currentFamilyCuid.value = Families.value?.[0]?.id || "0"
 
 const currentFamily = computed(() => Families.value?.find((family: Family) => family?.id == currentFamilyCuid.value) || {})
 
-const { data: familyData } = await useFetch('/api/family_pages', {
+const { data: familyPages } = await useFetch('/api/family_pages', {
   method: 'GET',
   query: { family_cuid: currentFamilyCuid, page_number: currentFamilyPageNumber},
   watch: [currentFamilyCuid, currentFamilyPageNumber],
@@ -55,11 +55,11 @@ const { data: familyData } = await useFetch('/api/family_pages', {
   },
 });
 
-const familyPagesLength = computed(() => familyData.value?.Pagination?.total)
-const currentPageCuid = ref<string>("");
-const currentPage = computed(() => familyData.value?.raw_data?.find((page: Page) => page?.id == currentPageCuid.value) || {});
-watchEffect(() => currentPageCuid.value = familyData.value?.raw_data?.[0]?.id || "");  
+const familyPagesLength = computed(() => familyPages.value?.Pagination?.total);
+const currentPageCuid = ref("0");   // Initialize to "0" so default page filter is for all pages
+const currentPage = computed(() => familyPages.value?.raw_data?.find((page: Page) => page?.id == currentPageCuid.value) || {});
 
+// ------------------ Donations ---------------------
 const { data: donations } = await useFetch<PageDonation[]>('/api/family_donations', {
   method: 'GET',
   query: { family_cuid: currentFamilyCuid },
@@ -69,6 +69,38 @@ const { data: donations } = await useFetch<PageDonation[]>('/api/family_donation
   },
 });
 
+// Interface to simplify rendering of page dropdown filter on donations table
+interface pageDonationsItem {
+  id: string;
+  name: string;
+  itemDisplay: string;
+};
+const pageDonationsList = computed<pageDonationsItem[]>(() => {
+  const pageItems = familyPages.value?.raw_data.map((page: Page) => {
+    return {
+      id: page.id,
+      name: page.page_first_name || page.page_last_name,
+      itemDisplay: `${page.page_first_name}${page.page_last_name ? " " + page.page_last_name : ""} | ${donationFormat(page.amount_raised - page.amount_distributed)}`
+    } as pageDonationsItem
+  })
+
+  // Return formatted donation items with special item for no filtering
+  return [
+    {id: "0", name: "All", itemDisplay: "All"},
+    ...pageItems
+  ]
+})
+const currentPageDonationItem = computed<pageDonationsItem>(() => pageDonationsList.value.find((item: pageDonationsItem) => item.id === currentPageCuid.value))
+
+const pageDonations = computed(() => {
+  if (currentPageCuid.value === "0") {
+    return donations.value
+  } else {
+    return donations.value.filter((donation: PageDonation) => donation.pageCuid === currentPageCuid.value) || [] as PageDonation[]
+  }
+})
+
+// ------------------ Family Pagination -------------
 watch(currentFamilyCuid, () => {
   currentFamilyPageNumber.value = 0
 })
@@ -84,10 +116,6 @@ const prevPage = () => {
       currentFamilyPageNumber.value--
   } 
 }
-
-const totalPageDonations = computed(() => donations.value?.reduce((acc: number, curr: PageDonation) => acc + curr.amount, 0) || 0);
-const totalDistributed = computed(() => familyData.value?.raw_data?.reduce((acc: number, curr: Page) => acc + (curr.amount_distributed as number), 0) || 0);
-const totalRemaining = computed(() => totalPageDonations.value - totalDistributed.value);
 
 // ------------------ CSV Download ------------------
 const filedownloadlink = ref("")
@@ -179,7 +207,7 @@ div(class="px-10")
               th(class="px-8 bg-[#5aadc2]") Goal Met
               th(class="px-8 bg-[#5aadc2]") Raised
               th(class="font-poppins font-bold rounded-tr-3xl bg-[#5aadc2] w-[33.33%]") Remaining
-          tr(v-for="(item, i) in familyData.data" 
+          tr(v-for="(item, i) in familyPages.data" 
               :key="i" 
               :class="{'bg-gray-200': (i+1) % 2}"
           )
@@ -212,8 +240,8 @@ div(class="px-10")
             leave-to-class='opacity-0'
           )
             ListboxOptions(as='div' class='w-full absolute z-10 mt-10 bg-white shadow-lg max-h-60 rounded-md px-2 py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm' )
-              ListboxOption(as='div' v-for="page in familyData.raw_data" :key="page.id" :value="page.id" class="px-2 border border-grey-500 py-1 my-1") {{ page.page_first_name + " "  + page.page_last_name }} | {{ donationFormat(page?.amount_raised - page?.amount_distributed) }}
-        ListboxButton(class='text-left bg-white relative rounded-md pl-2 pr-10 py-2 sm:text-sm w-96') {{ currentPageCuid ? (currentPage.page_first_name || currentPage.page_last_name) : 'Select Page' }}
+              ListboxOption(as='div' v-for="pageItem in pageDonationsList" :key="pageItem.id" :value="pageItem.id" class="px-2 border border-grey-500 py-1 my-1") {{ pageItem.itemDisplay}}
+        ListboxButton(class='text-left bg-white relative rounded-md pl-2 pr-10 py-2 sm:text-sm w-96') {{ currentPageDonationItem.name }}
 
   table(class="my-5 w-full")
       thead
@@ -223,12 +251,12 @@ div(class="px-10")
               th(class="px-8 bg-[#5aadc2]") Email
               th(class="px-8 bg-[#5aadc2]") Donated
               th(class="px-8 w-1/2 rounded-tr-3xl bg-[#5aadc2]") Amount
-          tr(v-for="(item, i) in donations" 
+          tr(v-for="(item, i) in pageDonations" 
               :key="i" 
               :class="{'bg-gray-200': (i+1) % 2}"
           )
               td(class="font-poppins text-gray-dark font-bold text-center")  {{ !item.donorLastName ? `${item.donorFirstName}` : `${item.donorFirstName} ${item.donorLastName}` }}
-              td(class="font-poppins text-gray-dark font-bold text-center")  {{ currentPage?.page_first_name + " " + currentPage?.page_last_name }}
+              td(class="font-poppins text-gray-dark font-bold text-center")  {{ item.Page?.page_first_name + " " + item.Page?.page_last_name }}
               td(class="font-poppins text-gray-dark font-bold text-center")  {{ item.donorEmail }}
               td(class="font-poppins text-gray-dark font-bold text-center")  {{ dateFormat(item.donationInitiated) }}
               td(class="font-poppins text-gray-dark font-bold text-center")  {{ donationFormat(item.amount) }}
