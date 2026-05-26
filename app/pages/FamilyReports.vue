@@ -20,7 +20,7 @@
   const familiesRaw = ref<Family[]>([])
   const currentPage = ref(0);
   const totalLength = ref(0)
-  const tableToggle = ref(false)
+  const pageFilter = ref('active')
   const start_date = ref(new Date("1/01/2023"))
   const end_date = ref(new Date())
   const endDate = new Date();
@@ -321,10 +321,15 @@ div
         :download="downloadName" 
         :dataset.downloadurl="dataset"
       ) Download
-      button(
-        class="transition h-[50px] text-white font-bold rounded-[100px] duration-300 bg-orange-999 hover:bg-green-600 mr-2 mt-1 p-2 px-9 pt-3 pb-3 cursor-pointer bg-orange-999"
-        @click="tableToggle = !tableToggle"
-      ) {{ !tableToggle ? "archive" : "all pages" }}
+      div(class="relative inline-block mr-2 mt-1")
+        select(
+          class="transition h-[50px] text-white font-bold rounded-[100px] duration-300 bg-orange-999 hover:bg-green-600 p-2 pl-9 pr-12 pt-3 pb-3 cursor-pointer bg-orange-999 text-center appearance-none"
+          v-model="pageFilter"
+        )
+          option(value="active") Active
+          option(value="archived") Archived
+          option(value="all") All Pages
+        ChevronDownIcon(class="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-white pointer-events-none")
       table(class="mt-[1.25rem] w-full border-spacing-[0] border-collapse" v-if="isAdminAdvocate")
           thead(style="color: white;")
               tr
@@ -342,8 +347,7 @@ div
                   th(style="padding: 1rem; background-color: #6eabbf; width: 7%") Status
                   th(style="padding: 1rem; background-color: #6eabbf; border-radius: 0 60px 0 0; width: 9%;") Toggle Status
           tbody
-              //only show active pages on toggle
-              tr(v-for="(page, i) in (!tableToggle ? families : families.filter(page => page.status === 'active'))" 
+              tr(v-for="(page, i) in (pageFilter === 'all' ? families : families.filter(page => pageFilter === 'active' ? page.status === 'active' : page.status !== 'active'))" 
               :class="{'bg-gray-200': (i+1) % 2}" :key="listOfTagsLen") 
                   td(style="text-align: center;") {{ page.page_first_name + " " + page.page_last_name }}
                   td(style="text-align: center;") {{ page.Family.AdvocateResponsible ? (page.Family?.AdvocateResponsible?.first_name  + " " + page.Family?.AdvocateResponsible?.last_name) : "No Advocate Assigned"}}
