@@ -21,12 +21,13 @@ import {
     ListboxOptions,
     ListboxOption,
 } from '@headlessui/vue'
+import { ChevronDownIcon } from '@heroicons/vue/24/solid'
 import { authClient } from '~/utils/auth-client';
 
 const { data } = await authClient.useSession(useFetch);
 const user = computed(() => data.value?.user || null)
 
-const tableToggle = ref(false)
+const pageFilter = ref('active')
 
 const route = useRoute()
 const id = computed(() => route.params.id || null);
@@ -161,7 +162,16 @@ await getDataAdminAdvocate()
 
 <template lang ="pug">
   
-button(type="button" class="ml-4 my-4 text-white px-4 py-2 rounded-full w-32 transition duration-300 bg-orange-999 hover:bg-green-600" @click="tableToggle = !tableToggle") {{ tableToggle ? "all pages" : "archive"}}
+div(class="relative inline-block ml-4 my-4")
+  select(
+    class="transition h-[50px] text-white font-bold rounded-[100px] duration-300 bg-orange-999 hover:bg-green-600 p-2 pl-9 pr-12 pt-3 pb-3 cursor-pointer bg-orange-999 text-center appearance-none"
+    v-model="pageFilter"
+  )
+    option(value="active") Active
+    option(value="archived") Archived
+    option(value="all") All Pages
+  svg(class="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white pointer-events-none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor")
+    path(fill-rule="evenodd" d="M12.53 16.28a.75.75 0 0 1-1.06 0l-7.5-7.5a.75.75 0 0 1 1.06-1.06L12 14.69l6.97-6.97a.75.75 0 1 1 1.06 1.06l-7.5 7.5Z" clip-rule="evenodd")
 div(v-if="(isAdmin || isAdvocate) && pageFetchQuery === 'family'" class="py-4 grid sm:grid-cols-3")
     CVLabel Current Family
     div(class="mx-9 sm:col-span-2 sm:mr-11")
@@ -191,7 +201,7 @@ div(class="mx-auto mt-1 sm:w-[1200px]")
         th(class="font-poppins font-bold bg-blue-999 text-white rounded-tr-3xl w-[25%]") {{ "Family Page" }}
 
     tbody 
-      tr(v-for="(item, i) in ( tableToggle ? pages.filter(item => item.status == 'active') : pages)" :class="{'bg-gray-200': (i + 1) % 2}")
+      tr(v-for="(item, i) in (pageFilter === 'all' ? pages : pages.filter(item => pageFilter === 'active' ? item.status === 'active' : item.status !== 'active'))" :class="{'bg-gray-200': (i + 1) % 2}")
         td.font-poppins.text-gray-dark.font-bold.text-center {{ item.page_first_name + " " + item.page_last_name }}
         td.font-poppins.text-gray-dark.font-bold.text-center {{ item.User?.name }}
         td.font-poppins.text-gray-dark.font-bold.text-center {{ item.Family?.AdvocateResponsible ? (item.Family?.AdvocateResponsible?.first_name + " " + item.Family?.AdvocateResponsible?.last_name) : 'No Advocate assigned'}}
