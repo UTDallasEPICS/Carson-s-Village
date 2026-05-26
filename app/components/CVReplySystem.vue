@@ -7,6 +7,7 @@ const props = defineProps<{
     pageCuid: string
     familyCuid: string
     replies: Reply[]
+    isActive: boolean
 }>()
 
 const replyData = ref<Partial<Reply>>({
@@ -60,7 +61,7 @@ const submitComment = async () => {
 </script>
 
 <template lang="pug">
-div(class="comment-system flex flex-col items-center sm:mx-4 sm:w-full sm:py-2")
+div(v-if="isActive" class="comment-system flex flex-col items-center sm:mx-4 sm:w-full sm:py-2")
 
       h2(class="text-center mt-4 mb-6 font-bold") Leave a Message
       div(class="flex justify-center w-2/3")
@@ -71,6 +72,7 @@ div(class="comment-system flex flex-col items-center sm:mx-4 sm:w-full sm:py-2")
           ActionButton(class="mx-auto text-md transition duration-300 bg-orange-999 hover:bg-green-600" @click="submitComment") Submit
       div(v-if="successMessage && !errorMessage" class="mt-4 text-green-500") {{ successMessage }}
       div(v-if="errorMessage && !successMessage" class="mt-4 text-red-500") {{ errorMessage }}
+div(v-else class="text-center text-gray-500 mt-4 py-6") This page is archived. New comments are disabled.
 
 </template>
 

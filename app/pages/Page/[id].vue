@@ -265,7 +265,7 @@ div(class="py-4 grid gap-1 text-left")
         div(class="flex justify-between gap-5")
           div(class="text-xl font-bold") Amount Donated
           div(class="text-xl font-bold text-green-600") {{ donationFormat(comment.amount) }}
-  CVReplySystem(:pageCuid="pageId" :familyCuid="familyCuid" :replies="replies" @displayReply="replyRefresh")
+  CVReplySystem(:pageCuid="pageId" :familyCuid="familyCuid" :replies="replies" :isActive="isActive" @displayReply="replyRefresh")
   div(v-if="replies?.length" class="py-4 grid row-span-3 gap-2")
     div(v-for="(reply,i) in replies.filter(item => !item.suspended)" :key="i" class="p-2 bg-white rounded-lg mb-2 shadow-md pb-4") 
       div(class="flex justify-between gap-5 pd-4")
