@@ -2,7 +2,6 @@
 *	  function:	PUT
 *	  submit updated family details to database
 */
-const runtime = useRuntimeConfig()
 
 export default defineEventHandler(async event => {
   const session = await auth.api.getSession({
@@ -17,23 +16,28 @@ export default defineEventHandler(async event => {
   const user = session.user
 
   const body = await readBody(event);
-  const { family_name, familyCuid } = body
+  const { family_name, familyCuid, advocateCuid } = body
 
   if(user.role === "advocate" || user.role === "admin") {
     try {
-      const queryRes = await prisma.family.update({
+      const result = await prisma.family.update({
         where: {
           id: familyCuid as string
         },
         data: {
           family_name: family_name,
+          advocateCuid: advocateCuid
         }
-      })
-      return queryRes
-    } catch (e) {
+      });
+
+      return result;
+    } catch (e: any) {
+      console.error(`Failed to update family ${familyCuid}:`, e)
       throw createError({
         statusCode: 500,
-        statusMessage: `Failed to update family ${familyCuid}`
+        statusMessage: e?.message
+          ? `Failed to update family ${familyCuid}: ${e.message}`
+          : `Failed to update family ${familyCuid}`
       });
     }
   }
