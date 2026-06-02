@@ -10,7 +10,7 @@ const prisma = new PrismaClient({ adapter })
 async function main() {
   const adminuser = await prisma.user.upsert({
     where: {
-      email: 'caleb.f.beeson@npts.tech'
+      email: 'caleb.beeson@npts.tech'
     },
     update: {
       role: 'admin',
