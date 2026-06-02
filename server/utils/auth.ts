@@ -10,6 +10,13 @@ const transporter = nodemailer.createTransport({
   SES: { sesClient, SendEmailCommand },
 });
 
+async function assertUserCanSignIn(email: string) {
+  const user = await prisma.user.findUnique({ where: { email } })
+  if (user && !user.isActive) {
+    throw new Error('This account has been deactivated. Contact an administrator.')
+  }
+}
+
 export const auth = betterAuth({
   database: prismaAdapter(prisma, {
     provider: 'sqlite',
@@ -22,7 +29,7 @@ export const auth = betterAuth({
         defaultValue: 'family',
         input: false,
       },
-      
+
       // Attach familyId
       familyId: {
         type: 'string',
@@ -31,12 +38,34 @@ export const auth = betterAuth({
       // Attach phone number
       phone: {
         type: 'string',
-      }
-    }
+      },
+
+      isActive: {
+        type: 'boolean',
+        defaultValue: true,
+        input: false,
+      },
+    },
+  },
+  databaseHooks: {
+    session: {
+      create: {
+        before: async (session) => {
+          const user = await prisma.user.findUnique({
+            where: { id: session.userId },
+          })
+          if (user && !user.isActive) {
+            throw new Error('This account has been deactivated. Contact an administrator.')
+          }
+          return { data: session }
+        },
+      },
+    },
   },
   plugins: [
     emailOTP({
       async sendVerificationOTP({ email, otp, type }) {
+        await assertUserCanSignIn(email)
         await transporter.sendMail({
           from: runtime.EMAIL_SOURCE_ADDRESS,
           to: email,

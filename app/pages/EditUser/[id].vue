@@ -35,6 +35,7 @@ const errorInPage = ref(false);
 const errorToUser = ref("")
 const advocateErrorInPage = ref(false)
 const advocateErrorToUser = ref("")
+const isActive = ref(true)
 
 const data_user = ref<User>({
     id: id.value,
@@ -158,6 +159,41 @@ const assignSelectedFamily = async () => {
   selectedFamilyForAssignment.value = null
 }
 
+const deactivateUser = async () => {
+  if (!confirm('Deactivate this user? They will be unable to sign in.')) return
+  errorInPage.value = false
+  errorToUser.value = ''
+
+  try {
+    await $fetch('/api/user/deactivate', {
+      method: 'PUT',
+      body: { id: id.value },
+    })
+    isActive.value = false
+    await navigateTo('/Users')
+  } catch (error: any) {
+    errorInPage.value = true
+    errorToUser.value = error?.data?.statusMessage || error?.data?.message || 'Failed to deactivate user'
+  }
+}
+
+const reactivateUser = async () => {
+  if (!confirm('Reactivate this user? They will be able to sign in again.')) return
+  errorInPage.value = false
+  errorToUser.value = ''
+
+  try {
+    await $fetch('/api/user/reactivate', {
+      method: 'PUT',
+      body: { id: id.value },
+    })
+    isActive.value = true
+  } catch (error: any) {
+    errorInPage.value = true
+    errorToUser.value = error?.data?.statusMessage || error?.data?.message || 'Failed to reactivate user'
+  }
+}
+
 </script>
 
 <template lang="pug">
@@ -203,7 +239,23 @@ CVContainer
             div(class="mx-9 sm:col-span-2 sm:mr-11")
                 CVPhoneInput(id="phone" v-model='data_user.phone' placeholder="(user defined, optional)")
             div(class="py-2")
-                ActionButton(@click="save" :disabled="disableCriteria" class="transition duration-300 bg-orange-999 hover:bg-green-600 disabled:bg-orange-800 disabled:cursor-not-allowed") Save    
+                ActionButton(@click="save" :disabled="disableCriteria" class="transition duration-300 bg-orange-999 hover:bg-green-600 disabled:bg-orange-800 disabled:cursor-not-allowed") Save
+        div(v-if="isAdmin && id !== '0'" class="py-4 grid sm:grid-cols-3")
+            CVLabel Account Status
+            div(class="mx-9 sm:col-span-2 sm:mr-11 flex items-center gap-4")
+                span(class="font-poppins font-bold" :class="isActive ? 'text-green-700' : 'text-red-600'") {{ isActive ? 'Active' : 'Deactivated' }}
+                ActionButton(
+                  v-if="isActive"
+                  type="button"
+                  @click="deactivateUser"
+                  class="transition duration-300 bg-red-600 hover:bg-red-700"
+                ) Deactivate User
+                ActionButton(
+                  v-else
+                  type="button"
+                  @click="reactivateUser"
+                  class="transition duration-300 bg-green-600 hover:bg-green-700"
+                ) Reactivate User
         div(v-if="data_user.role === 'advocate' && isAdmin" class="information rounded-md mx-9 my-2 text-center sm:text-start text-white bg-blue-999")
             CVLegend Advocate Families
         div(v-if="data_user.role === 'advocate' && isAdmin" class="py-4 grid sm:grid-cols-3")
