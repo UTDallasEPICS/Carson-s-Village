@@ -26,6 +26,11 @@ export const auth = betterAuth({
       // Attach familyId
       familyId: {
         type: 'string',
+      },
+
+      // Attach phone number
+      phone: {
+        type: 'string',
       }
     }
   },
