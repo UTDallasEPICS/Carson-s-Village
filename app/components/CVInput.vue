@@ -1,20 +1,10 @@
 <script setup lang="ts">
+  const model = defineModel<string>()
   const props = defineProps<{ 
-    modelValue: string,
     id: string,
     required?: string,
     type?: string,
   }>()
-
-  const emit = defineEmits(["update:modelValue"])
-  const value = computed({
-    get(){
-      return props.modelValue
-    },
-    set(v: string){
-      emit("update:modelValue", v)
-    },
-  })
 </script>
 
 <template lang="pug">
@@ -23,7 +13,7 @@ input(
   :id="id" 
   :required="required" 
   :type="type" 
-  v-model="value"
+  v-model="model"
 )
 </template>
 

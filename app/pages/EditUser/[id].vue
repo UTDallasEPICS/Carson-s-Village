@@ -12,6 +12,7 @@ definePageMeta({
   middleware: ['family-guard']
 })
 
+import CVPhoneInput from '@/components/CVPhoneInput.vue';
 import type { User, Family } from '@/types.d.ts'
 import {
     Listbox,
@@ -136,7 +137,7 @@ CVContainer
         div(class="py-4 grid sm:grid-cols-3")
             CVLabel(for="phone") Phone
             div(class="mx-9 sm:col-span-2 sm:mr-11")
-                CVInput(id="phone" type="tel" v-model='data_user.phone' placeholder="(user defined, optional)")
+                CVPhoneInput(id="phone" v-model='data_user.phone' placeholder="(user defined, optional)")
             div(class="py-2")
                 ActionButton(@click="save" :disabled="disableCriteria" class="transition duration-300 bg-orange-999 hover:bg-green-600 disabled:bg-orange-800 disabled:cursor-not-allowed") Save    
         div(v-if="errorInPage" class="text-red-500")    

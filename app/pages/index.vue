@@ -12,6 +12,7 @@ definePageMeta({
   middleware: ["family-guard"]
 })
 
+import { formatPhoneForDisplay } from '~/utils/formatters';
 import { authClient } from '~/utils/auth-client';
 
 const { data } = await authClient.useSession(useFetch);
@@ -41,7 +42,7 @@ div(class=" container overflow-hidden mt-4 mx-auto")
     TextGrayField(class="sm:mx-auto") Email:
     TextGrayField {{ user?.email }}
     TextGrayField(class="sm:mx-auto") Phone:
-    TextGrayField {{ user?.phone }}
+    TextGrayField {{ formatPhoneForDisplay(user?.phone) }}
 LinkButton(
   v-if="isAdmin || isAdvocate"
   class="sm:my-2 transition duration-300 bg-orange-999 hover:bg-green-600"
