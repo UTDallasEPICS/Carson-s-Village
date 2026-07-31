@@ -86,11 +86,11 @@ model Family {
   stripe_account_id     String?
   created_at            DateTime        @default(now())
   updated_at            DateTime        @updatedAt
-  advocateCuid          String          @map("advocate_cuid")
+  advocateCuid          String?         @map("advocate_cuid")
 
   //RELATIONS
   FamilyMembers         User[]          @relation("family_member")
-  AdvocateResponsible   User            @relation("advocate_family", fields: [advocateCuid], references: [id])
+  AdvocateResponsible   User?           @relation("advocate_family", fields: [advocateCuid], references: [id])
   FamilyDonations       PageDonation[]
   Pages                 Page[]
   Replies               Reply[]

@@ -58,7 +58,7 @@ export type Family = {
   stripe_account_id: string | null;
   created_at: Date | string | null;
   updated_at: Date | string | null;
-  advocateCuid: string;
+  advocateCuid: string | null;
   Pages: Page[];
   FamilyMembers: User[];
   AdvocateResponsible: User;
