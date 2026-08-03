@@ -308,28 +308,32 @@ div
       label(class="sm:mt-0 mt-4 ml-10 text-md tracking-[0.35px]") Donation Goal
         div
           input(type='checkbox' v-model="display.donation_goal")
-    div(class="w-3/4 sm:px-16 flex flex-col gap-5 px-4 mx-auto mt-8")
-    br
-    div(class="gap-2 justify-center cols-2 pl-10 pr-6")
-      button(
-        class="transition h-[50px] text-white font-bold rounded-[125px] duration-300 bg-orange-999 hover:bg-green-600 mr-9 mt-1 p-6 px-6 pr-6 pt-3 pb-3 cursor-pointer bg-orange-999" 
-        @click="date_ranged=!date_ranged; currentPage=0; loadReports()"
-      ) {{ "Display In Date Range" }}
-      a(
-        class="transition h-[50px] text-white font-bold rounded-[100px] duration-300 bg-orange-999 hover:bg-green-600 mr-9 mt-1 p-6 px-6 pr-6 pt-3 pb-3 cursor-pointer bg-orange-999" 
-        :href="filedownloadlink"
-        :download="downloadName" 
-        :dataset.downloadurl="dataset"
-      ) Download
-      div(class="relative inline-block mr-2 mt-1")
-        select(
-          class="transition h-[50px] text-white font-bold rounded-[100px] duration-300 bg-orange-999 hover:bg-green-600 p-2 pl-9 pr-12 pt-3 pb-3 cursor-pointer bg-orange-999 text-center appearance-none"
-          v-model="pageFilter"
-        )
-          option(value="active") Active
-          option(value="archived") Archived
-          option(value="all") All Pages
-        ChevronDownIcon(class="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-white pointer-events-none")
+    div(class="gap-2 justify-center cols-2 mt-16 ml-10 mr-6")
+      div(class="flex justify-between")
+        div(class="flex items-end pl-3 gap-8 font-bold")
+          div(
+            :class="{'text-orange-999 underline underline-offset-2 decoration-2': pageFilter === 'active'}"
+            @click="pageFilter = 'active'"
+          ) Active
+          div(
+            :class="{'text-orange-999 underline underline-offset-2 decoration-2': pageFilter === 'archived'}"
+            @click="pageFilter = 'archived'"
+          ) Archived
+          div(
+            :class="{'text-orange-999 underline underline-offset-2 decoration-2': pageFilter === 'all'}"
+            @click="pageFilter = 'all'"
+          ) All
+        div(class="flex justify-end gap-8 mr-16")
+          button(
+            class="transition h-[50px] text-white font-bold rounded-[125px] duration-300 bg-orange-999 hover:bg-green-600 p-6 px-6 pr-6 pt-3 pb-3 cursor-pointer bg-orange-999" 
+            @click="date_ranged=!date_ranged; currentPage=0; loadReports()"
+          ) {{ "Display In Date Range" }}
+          a(
+            class="transition h-[50px] text-white font-bold rounded-[100px] duration-300 bg-orange-999 hover:bg-green-600 p-6 px-6 pr-6 pt-3 pb-3 cursor-pointer bg-orange-999" 
+            :href="filedownloadlink"
+            :download="downloadName" 
+            :dataset.downloadurl="dataset"
+          ) Download
       table(class="mt-[1.25rem] w-full border-spacing-[0] border-collapse" v-if="isAdminAdvocate")
           thead(style="color: white;")
               tr

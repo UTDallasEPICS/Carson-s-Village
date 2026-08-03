@@ -161,17 +161,20 @@ await getDataAdminAdvocate()
 </script>
 
 <template lang ="pug">
-  
-div(class="relative inline-block ml-4 my-4")
-  select(
-    class="transition h-[50px] text-white font-bold rounded-[100px] duration-300 bg-orange-999 hover:bg-green-600 p-2 pl-9 pr-12 pt-3 pb-3 cursor-pointer bg-orange-999 text-center appearance-none"
-    v-model="pageFilter"
-  )
-    option(value="active") Active
-    option(value="archived") Archived
-    option(value="all") All Pages
-  svg(class="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white pointer-events-none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor")
-    path(fill-rule="evenodd" d="M12.53 16.28a.75.75 0 0 1-1.06 0l-7.5-7.5a.75.75 0 0 1 1.06-1.06L12 14.69l6.97-6.97a.75.75 0 1 1 1.06 1.06l-7.5 7.5Z" clip-rule="evenodd")
+div(class="flex pl-3 gap-8 font-bold")
+  div(
+    :class="{'text-orange-999 underline underline-offset-2 decoration-2': pageFilter === 'active'}"
+    @click="pageFilter = 'active'"
+  ) Active
+  div(
+    :class="{'text-orange-999 underline underline-offset-2 decoration-2': pageFilter === 'archived'}"
+    @click="pageFilter = 'archived'"
+  ) Archived
+  div(
+    :class="{'text-orange-999 underline underline-offset-2 decoration-2': pageFilter === 'all'}"
+    @click="pageFilter = 'all'"
+  ) All
+
 div(v-if="(isAdmin || isAdvocate) && pageFetchQuery === 'family'" class="py-4 grid sm:grid-cols-3")
     CVLabel Current Family
     div(class="mx-9 sm:col-span-2 sm:mr-11")
