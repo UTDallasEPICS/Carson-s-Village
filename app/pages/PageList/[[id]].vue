@@ -21,12 +21,13 @@ import {
     ListboxOptions,
     ListboxOption,
 } from '@headlessui/vue'
+import { ChevronDownIcon } from '@heroicons/vue/24/solid'
 import { authClient } from '~/utils/auth-client';
 
 const { data } = await authClient.useSession(useFetch);
 const user = computed(() => data.value?.user || null)
 
-const tableToggle = ref(false)
+const pageFilter = ref('active')
 
 const route = useRoute()
 const id = computed(() => route.params.id || null);
@@ -160,8 +161,20 @@ await getDataAdminAdvocate()
 </script>
 
 <template lang ="pug">
-  
-button(type="button" class="ml-4 my-4 text-white px-4 py-2 rounded-full w-32 transition duration-300 bg-orange-999 hover:bg-green-600" @click="tableToggle = !tableToggle") {{ tableToggle ? "all pages" : "archive"}}
+div(class="flex pl-3 gap-8 font-bold")
+  div(
+    :class="{'text-orange-999 underline underline-offset-2 decoration-2': pageFilter === 'active'}"
+    @click="pageFilter = 'active'"
+  ) Active
+  div(
+    :class="{'text-orange-999 underline underline-offset-2 decoration-2': pageFilter === 'archived'}"
+    @click="pageFilter = 'archived'"
+  ) Archived
+  div(
+    :class="{'text-orange-999 underline underline-offset-2 decoration-2': pageFilter === 'all'}"
+    @click="pageFilter = 'all'"
+  ) All
+
 div(v-if="(isAdmin || isAdvocate) && pageFetchQuery === 'family'" class="py-4 grid sm:grid-cols-3")
     CVLabel Current Family
     div(class="mx-9 sm:col-span-2 sm:mr-11")
@@ -191,7 +204,7 @@ div(class="mx-auto mt-1 sm:w-[1200px]")
         th(class="font-poppins font-bold bg-blue-999 text-white rounded-tr-3xl w-[25%]") {{ "Family Page" }}
 
     tbody 
-      tr(v-for="(item, i) in ( tableToggle ? pages.filter(item => item.status == 'active') : pages)" :class="{'bg-gray-200': (i + 1) % 2}")
+      tr(v-for="(item, i) in (pageFilter === 'all' ? pages : pages.filter(item => pageFilter === 'active' ? item.status === 'active' : item.status !== 'active'))" :class="{'bg-gray-200': (i + 1) % 2}")
         td.font-poppins.text-gray-dark.font-bold.text-center {{ item.page_first_name + " " + item.page_last_name }}
         td.font-poppins.text-gray-dark.font-bold.text-center {{ item.User?.name }}
         td.font-poppins.text-gray-dark.font-bold.text-center {{ item.Family?.AdvocateResponsible ? (item.Family?.AdvocateResponsible?.first_name + " " + item.Family?.AdvocateResponsible?.last_name) : 'No Advocate assigned'}}

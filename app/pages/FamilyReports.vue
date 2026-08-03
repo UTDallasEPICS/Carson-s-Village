@@ -20,7 +20,7 @@
   const familiesRaw = ref<Family[]>([])
   const currentPage = ref(0);
   const totalLength = ref(0)
-  const tableToggle = ref(false)
+  const pageFilter = ref('active')
   const start_date = ref(new Date("1/01/2023"))
   const end_date = ref(new Date())
   const endDate = new Date();
@@ -308,23 +308,32 @@ div
       label(class="sm:mt-0 mt-4 ml-10 text-md tracking-[0.35px]") Donation Goal
         div
           input(type='checkbox' v-model="display.donation_goal")
-    div(class="w-3/4 sm:px-16 flex flex-col gap-5 px-4 mx-auto mt-8")
-    br
-    div(class="gap-2 justify-center cols-2 pl-10 pr-6")
-      button(
-        class="transition h-[50px] text-white font-bold rounded-[125px] duration-300 bg-orange-999 hover:bg-green-600 mr-9 mt-1 p-6 px-6 pr-6 pt-3 pb-3 cursor-pointer bg-orange-999" 
-        @click="date_ranged=!date_ranged; currentPage=0; loadReports()"
-      ) {{ "Display In Date Range" }}
-      a(
-        class="transition h-[50px] text-white font-bold rounded-[100px] duration-300 bg-orange-999 hover:bg-green-600 mr-9 mt-1 p-6 px-6 pr-6 pt-3 pb-3 cursor-pointer bg-orange-999" 
-        :href="filedownloadlink"
-        :download="downloadName" 
-        :dataset.downloadurl="dataset"
-      ) Download
-      button(
-        class="transition h-[50px] text-white font-bold rounded-[100px] duration-300 bg-orange-999 hover:bg-green-600 mr-2 mt-1 p-2 px-9 pt-3 pb-3 cursor-pointer bg-orange-999"
-        @click="tableToggle = !tableToggle"
-      ) {{ !tableToggle ? "archive" : "all pages" }}
+    div(class="gap-2 justify-center cols-2 mt-16 ml-10 mr-6")
+      div(class="flex justify-between")
+        div(class="flex items-end pl-3 gap-8 font-bold")
+          div(
+            :class="{'text-orange-999 underline underline-offset-2 decoration-2': pageFilter === 'active'}"
+            @click="pageFilter = 'active'"
+          ) Active
+          div(
+            :class="{'text-orange-999 underline underline-offset-2 decoration-2': pageFilter === 'archived'}"
+            @click="pageFilter = 'archived'"
+          ) Archived
+          div(
+            :class="{'text-orange-999 underline underline-offset-2 decoration-2': pageFilter === 'all'}"
+            @click="pageFilter = 'all'"
+          ) All
+        div(class="flex justify-end gap-8 mr-16")
+          button(
+            class="transition h-[50px] text-white font-bold rounded-[125px] duration-300 bg-orange-999 hover:bg-green-600 p-6 px-6 pr-6 pt-3 pb-3 cursor-pointer bg-orange-999" 
+            @click="date_ranged=!date_ranged; currentPage=0; loadReports()"
+          ) {{ "Display In Date Range" }}
+          a(
+            class="transition h-[50px] text-white font-bold rounded-[100px] duration-300 bg-orange-999 hover:bg-green-600 p-6 px-6 pr-6 pt-3 pb-3 cursor-pointer bg-orange-999" 
+            :href="filedownloadlink"
+            :download="downloadName" 
+            :dataset.downloadurl="dataset"
+          ) Download
       table(class="mt-[1.25rem] w-full border-spacing-[0] border-collapse" v-if="isAdminAdvocate")
           thead(style="color: white;")
               tr
@@ -342,8 +351,7 @@ div
                   th(style="padding: 1rem; background-color: #6eabbf; width: 7%") Status
                   th(style="padding: 1rem; background-color: #6eabbf; border-radius: 0 60px 0 0; width: 9%;") Toggle Status
           tbody
-              //only show active pages on toggle
-              tr(v-for="(page, i) in (!tableToggle ? families : families.filter(page => page.status === 'active'))" 
+              tr(v-for="(page, i) in (pageFilter === 'all' ? families : families.filter(page => pageFilter === 'active' ? page.status === 'active' : page.status !== 'active'))" 
               :class="{'bg-gray-200': (i+1) % 2}" :key="listOfTagsLen") 
                   td(style="text-align: center;") {{ page.page_first_name + " " + page.page_last_name }}
                   td(style="text-align: center;") {{ page.Family.AdvocateResponsible ? (page.Family?.AdvocateResponsible?.first_name  + " " + page.Family?.AdvocateResponsible?.last_name) : "No Advocate Assigned"}}
