@@ -69,7 +69,7 @@ div(v-if="isActive" class="comment-system flex flex-col items-center sm:mx-4 sm:
       div(class="field-row flex justify-center mt-4 w-2/3")
           CVInput(id="name" name='name' v-model="replyData.name" placeholder='Name' class="font-normal w-2/3" )     
       div(class="ml-4 pt-6 pr-5 flex items-center justify-center mt-6")
-          ActionButton(class="mx-auto text-md transition duration-300 bg-orange-999 hover:bg-green-600" @click="submitComment") Submit
+          ActionButton(text="Submit" class="mx-auto text-md transition duration-300 bg-orange-999 hover:bg-green-600" @click="submitComment")
       div(v-if="successMessage && !errorMessage" class="mt-4 text-green-500") {{ successMessage }}
       div(v-if="errorMessage && !successMessage" class="mt-4 text-red-500") {{ errorMessage }}
 div(v-else class="text-center text-gray-500 mt-4 py-6") This page is archived. New comments are disabled.

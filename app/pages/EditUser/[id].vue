@@ -170,7 +170,6 @@ const deactivateUser = async () => {
       body: { id: id.value },
     })
     isActive.value = false
-    await navigateTo('/Users')
   } catch (error: any) {
     errorInPage.value = true
     errorToUser.value = error?.data?.statusMessage || error?.data?.message || 'Failed to deactivate user'
@@ -238,24 +237,26 @@ CVContainer
             CVLabel(for="phone") Phone
             div(class="mx-9 sm:col-span-2 sm:mr-11")
                 CVPhoneInput(id="phone" v-model='data_user.phone' placeholder="(user defined, optional)")
-            div(class="py-2")
-                ActionButton(@click="save" :disabled="disableCriteria" class="transition duration-300 bg-orange-999 hover:bg-green-600 disabled:bg-orange-800 disabled:cursor-not-allowed") Save
         div(v-if="isAdmin && id !== '0'" class="py-4 grid sm:grid-cols-3")
             CVLabel Account Status
             div(class="mx-9 sm:col-span-2 sm:mr-11 flex items-center gap-4")
                 span(class="font-poppins font-bold" :class="isActive ? 'text-green-700' : 'text-red-600'") {{ isActive ? 'Active' : 'Deactivated' }}
-                ActionButton(
-                  v-if="isActive"
-                  type="button"
-                  @click="deactivateUser"
-                  class="transition duration-300 bg-red-600 hover:bg-red-700"
-                ) Deactivate User
-                ActionButton(
-                  v-else
-                  type="button"
-                  @click="reactivateUser"
-                  class="transition duration-300 bg-green-600 hover:bg-green-700"
-                ) Reactivate User
+        div(class="flex justify-between mx-10 py-2")
+            ActionButton(text="Save" @click="save" :disabled="disableCriteria" class="transition duration-300 bg-orange-999 hover:bg-green-600 disabled:bg-orange-800 disabled:cursor-not-allowed")
+            ActionButton(
+              v-if="isActive"
+              text="Deactivate User"
+              type="button"
+              @click="deactivateUser"
+              class="transition duration-300 bg-red-600 hover:bg-red-700"
+            )
+            ActionButton(
+              v-else
+              text="Reactivate User"
+              type="button"
+              @click="reactivateUser"
+              class="transition duration-300 bg-green-600 hover:bg-green-700"
+            )
         div(v-if="data_user.role === 'advocate' && isAdmin" class="information rounded-md mx-9 my-2 text-center sm:text-start text-white bg-blue-999")
             CVLegend Advocate Families
         div(v-if="data_user.role === 'advocate' && isAdmin" class="py-4 grid sm:grid-cols-3")
@@ -266,9 +267,10 @@ CVContainer
                     li(v-for="family in advocateFamilies" :key="getFamilyId(family)" class="flex items-center justify-between")
                         span {{ family.family_name }}
                         ActionButton(
+                          text="Remove"
                           class="ml-4 bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded text-xs"
                           @click="updateFamilyAdvocate(getFamilyId(family), null, family.family_name)"
-                        ) Remove
+                        )
         div(v-if="data_user.role === 'advocate' && isAdmin" class="py-4 grid sm:grid-cols-3")
             CVLabel Assign Family
             div(class="mx-9 sm:col-span-2 sm:mr-11")
@@ -287,11 +289,12 @@ CVContainer
                                   class="px-2 border border-grey-500 py-1 my-1"
                                 ) {{ family.family_name }}
                     ListboxButton(class='text-left bg-white relative rounded-md pl-2 pr-10 py-2 sm:text-sm w-96') {{ selectedFamilyForAssignment ? (unassignedFamilies.find(f => getFamilyId(f) === selectedFamilyForAssignment)?.family_name || 'Select family') : 'Select family to assign' }}
-                ActionButton(
-                  class="transition duration-300 bg-orange-999 hover:bg-green-600 disabled:bg-orange-800 disabled:cursor-not-allowed"
-                  :disabled="!selectedFamilyForAssignment"
-                  @click="assignSelectedFamily"
-                ) Assign Family    
+            ActionButton(
+              text="Assign Family"
+              class="mt-2 ml-10 transition duration-300 bg-orange-999 hover:bg-green-600 disabled:bg-orange-800 disabled:cursor-not-allowed"
+              :disabled="!selectedFamilyForAssignment"
+              @click="assignSelectedFamily"
+            )   
         div(v-if="advocateErrorInPage" class="text-red-500 mx-9")    
             CVLabel(for="advocate_error_label") Error updating advocate family assignment.
             br
