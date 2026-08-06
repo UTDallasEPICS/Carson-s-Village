@@ -365,7 +365,7 @@ description="Here, you select from photos you uploaded to show up at the top of 
                 CVSuspendButton(:suspend="reply.suspended" :rep="reply" @update:suspend="updateSuspendButton")
         div(class="ml-9 mb-9 py-7 flex flex-wrap gap-2")
             div(class="px-2 mt-2")
-                ActionButton(:disabled="disableCriteria" @click="save" class="sm:my-2 transition duration-300 bg-orange-999 hover:bg-green-600 disabled:bg-orange-800 disabled:cursor-not-allowed") Save
+                ActionButton(text="Save" :disabled="disableCriteria" @click="save" class="sm:my-2 transition duration-300 bg-orange-999 hover:bg-green-600 disabled:bg-orange-800 disabled:cursor-not-allowed")
             div(class="py-2 mt-2")
                 LinkButton(v-if="page.id != 0" :to="`/Page/${page.id}`" class="sm:my-2 transition duration-300 bg-orange-999 hover:bg-green-600") View Page
             div(class="p-2 pt-6 mt-2 sm:pt-2 sm:ml-auto sm:mr-6")

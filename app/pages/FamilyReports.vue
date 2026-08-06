@@ -367,7 +367,7 @@ div
                   td(style="text-align: center;" v-if="display.goal_date") {{ dateFormat(page.deadline)}}
                   td(style="text-align: center;") {{ page.status }}
                   td(style="text-align: center;")
-                    ActionButton(style="color: white; background-color: red;" @click="togglePageStatus(page)") {{ "X" }}
+                    ActionButton(text="X" style="color: white; background-color: red;" @click="togglePageStatus(page)")
 
 .mb-9.py-7.flex.flex-wrap.gap-2.place-content-center
   .col-md-10.px-2.mt-2

@@ -249,7 +249,7 @@ div(class="grid grid-cols-1 sm:grid-cols-2 justify-center px-2")
           div(class="text-gray-dark font-poppins text-3xl text-left font-bold leading-9 text-shadow-[3px_3px_4px_rgba(0,0,0,0.25)]") Donations
           div(class="text-gray-dark font-poppins text-1xl text-left font-bold leading-9 text-shadow-[3px_3px_4px_rgba(0,0,0,0.25)]") 
             div(class="ml-1 pt-9 pr-5 flex items-center justify-center")
-              ActionButton(name='submit' @click="displayDonationPopup=true" class="mx-auto text-md transition duration-300 bg-orange-999 hover:bg-green-600") DONATE NOW
+              ActionButton(text="DONATE NOW" name='submit' @click="displayDonationPopup=true" class="mx-auto text-md transition duration-300 bg-orange-999 hover:bg-green-600")
   div(class="col-span-2")
     div(class="mx-9 sm:col-span-1 sm:mr-11")
         div(id="obituary" class="px-10 py-4 text-[#6E6E6E] font-medium text-lg leading-7 tracking-[-0.078px] break-words") {{ pageDataDB?.obituary }}
