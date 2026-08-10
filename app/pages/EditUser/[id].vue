@@ -61,7 +61,11 @@ const unassignedFamilies = computed(() => {
 const selectedFamilyForAssignment = ref<string | null>(null)
 
 // Method that creates a new user on the database on the backend
-const save = async () => {
+const formRef = ref<InstanceType<typeof CVForm> | null>(null);
+function submitForm() {
+  formRef.value?.submit();
+}
+async function save() {
   if(isAuthorized.value){
     const data = await $fetch('/api/user', {
       method: (id.value as string) !== "0" ? 'PUT' : 'POST',
@@ -197,7 +201,7 @@ const reactivateUser = async () => {
 
 <template lang="pug">
 CVContainer
-    form(class="p-3 rounded bg-gray-50")
+    div(class="p-3 rounded bg-gray-50")
         TitleComp User Account Entry 
         br
         div(class="information rounded-md mx-9 my-2 text-center sm:text-start text-white bg-blue-999")
@@ -222,27 +226,33 @@ CVContainer
                             ListboxOptions(as='div' class='w-full absolute z-10 mt-10 bg-white shadow-lg max-h-60 rounded-md px-2 py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm' )
                                 ListboxOption(as='div' v-for="family in data_all_families" :key="family.id" :value="family.id" class="px-2 border border-grey-500 py-1 my-1") {{ family.family_name }}
                     ListboxButton(class='text-left bg-white relative rounded-md pl-2 pr-10 py-2 sm:text-sm w-96') {{ data_user.familyId ? currentFamily.family_name : 'Select family to add the user to' }}
+
+        // User Information
+
         div(class="information rounded-md mx-9 my-2 text-center sm:text-start text-white bg-blue-999")
             CVLegend User Information
-        div(class="py-4 grid sm:grid-cols-3")
-            CVLabel(for="email") Email
-            div(id="email" class="mx-9 sm:col-span-2 sm:mr-11")
-                CVInput(id="email" v-model='data_user.email' placeholder="(user defined)" required)
-        
-        div(class="py-4 grid sm:grid-cols-3")
-            CVLabel(for="first_name") Name
-            div(class="mx-9 sm:col-span-2 sm:mr-11")
-                CVInput(id="first_name" type="text" v-model='data_user.name' placeholder="(user-defined" required="required")
-        div(class="py-4 grid sm:grid-cols-3")
-            CVLabel(for="phone") Phone
-            div(class="mx-9 sm:col-span-2 sm:mr-11")
-                CVPhoneInput(id="phone" v-model='data_user.phone' placeholder="(user defined, optional)")
+
+        // Assign Families
+
+        CVForm(ref="formRef" @submit="save")
+          div(class="py-4 grid sm:grid-cols-3")
+              CVLabel(for="email") Email
+              div(id="email" class="mx-9 sm:col-span-2 sm:mr-11")
+                  CVEmailInput(id="email" v-model='data_user.email' placeholder="(user defined)" required)
+          div(class="py-4 grid sm:grid-cols-3")
+              CVLabel(for="first_name") Name
+              div(class="mx-9 sm:col-span-2 sm:mr-11")
+                  CVInput(id="first_name" type="text" v-model='data_user.name' placeholder="(user-defined" required="required")
+          div(class="py-4 grid sm:grid-cols-3")
+              CVLabel(for="phone") Phone
+              div(class="mx-9 sm:col-span-2 sm:mr-11")
+                  CVPhoneInput(id="phone" v-model='data_user.phone' placeholder="(user defined, optional)")
         div(v-if="isAdmin && id !== '0'" class="py-4 grid sm:grid-cols-3")
             CVLabel Account Status
             div(class="mx-9 sm:col-span-2 sm:mr-11 flex items-center gap-4")
-                span(class="font-poppins font-bold" :class="isActive ? 'text-green-700' : 'text-red-600'") {{ isActive ? 'Active' : 'Deactivated' }}
+                span(class="font-poppins mt-6 font-bold" :class="isActive ? 'text-green-700' : 'text-red-600'") {{ isActive ? 'Active' : 'Deactivated' }}
         div(class="flex justify-between mx-10 py-2")
-            ActionButton(text="Save" @click="save" :disabled="disableCriteria" class="transition duration-300 bg-orange-999 hover:bg-green-600 disabled:bg-orange-800 disabled:cursor-not-allowed")
+            ActionButton(text="Save" @click="submitForm" :disabled="disableCriteria" class="transition duration-300 bg-orange-999 hover:bg-green-600 disabled:bg-orange-800 disabled:cursor-not-allowed")
             ActionButton(
               v-if="isActive"
               text="Deactivate User"
