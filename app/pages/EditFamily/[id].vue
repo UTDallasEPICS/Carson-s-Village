@@ -178,7 +178,7 @@ CVContainer
             div(class="mx-9 sm:col-span-2 sm:mr-11")
                 CVPhoneInput(id="phone" v-model='data_user.phone' placeholder="(user defined, optional)")
             div(class="py-2")
-                ActionButton(@click="createFamily()" class="transition duration-300 bg-orange-999 hover:bg-green-600") Save    
+                ActionButton(text="Save" @click="createFamily()" class="transition duration-300 bg-orange-999 hover:bg-green-600")
         div(v-if="errorInPage" class="py-4 grid sm:grid-cols-3 text-red-500")
             CVLabel(for="error_label") Error Creating Family and First Family Member in the System.
 </template>

@@ -20,6 +20,8 @@ model User {
 
   phone           String   @default("")
   address         String   @default("")
+  isActive        Boolean  @default(true)
+  deactivatedAt   DateTime?
 
   //RELATIONS
   Family          Family?  @relation("family_member", fields: [familyId], references: [id])
@@ -87,6 +89,8 @@ model Family {
   created_at            DateTime        @default(now())
   updated_at            DateTime        @updatedAt
   advocateCuid          String?         @map("advocate_cuid")
+  isActive              Boolean         @default(true)
+  deactivatedAt         DateTime?
 
   //RELATIONS
   FamilyMembers         User[]          @relation("family_member")

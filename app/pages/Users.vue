@@ -26,14 +26,19 @@ type User2 = {
     email: string;
     address: string;
     phone: string;
+    isActive: boolean;
     Pages: Page[];
     Family: Family;
 }
 
 const users = ref<User2[]>([])
 const isAuthorized = computed(() => user.value?.role == "advocate" || user.value?.role == "admin")
+const isAdmin = computed(() => user.value?.role === "admin")
 const currentPage  = ref(0)
 const totalLength = ref(0)
+const showDeactivated = ref(false)
+const actionError = ref('')
+const headers = useRequestHeaders(['cookie'])
 
 //page sorting
 const order = ref('')
@@ -54,17 +59,60 @@ function SortCV(users:any, OrderFields:string){
 
 // Method that retrieves all the authenticated users on the website (advocates and family members)
 const getDataUsers = async () => {
-    const { data: usersData } = await useFetch('/api/users', {
+    if (!isAuthorized.value) return
+
+    const usersData = await $fetch('/api/users', {
         method: 'GET',
-        query: { page_number: currentPage, sortedColumn:OrderField.value, order:order.value }, 
-        watch: [currentPage]
+        query: {
+          page_number: currentPage.value,
+          sortedColumn: OrderField.value,
+          order: order.value,
+          status: showDeactivated.value ? 'inactive' : 'active',
+        },
+        headers,
     })
     if(OrderField.value) {
-        users.value = usersData.value?.userData as unknown as User2[];
+        users.value = usersData?.userData as unknown as User2[];
     } else {
-        users.value = usersData.value?.unsorted_data as unknown as User2[];
+        users.value = usersData?.unsorted_data as unknown as User2[];
     }
-    totalLength.value = usersData.value?.Pagination.total as unknown as number
+    totalLength.value = usersData?.Pagination.total as unknown as number
+}
+
+const toggleDeactivatedFilter = () => {
+  showDeactivated.value = !showDeactivated.value
+  currentPage.value = 0
+  getDataUsers()
+}
+
+const deactivateUser = async (userId: string) => {
+  actionError.value = ''
+  if (!confirm('Deactivate this user? They will be unable to sign in.')) return
+
+  try {
+    await $fetch('/api/user/deactivate', {
+      method: 'PUT',
+      body: { id: userId },
+    })
+    await getDataUsers()
+  } catch (error: any) {
+    actionError.value = error?.data?.statusMessage || error?.data?.message || 'Failed to deactivate user'
+  }
+}
+
+const reactivateUser = async (userId: string) => {
+  actionError.value = ''
+  if (!confirm('Reactivate this user? They will be able to sign in again.')) return
+
+  try {
+    await $fetch('/api/user/reactivate', {
+      method: 'PUT',
+      body: { id: userId },
+    })
+    await getDataUsers()
+  } catch (error: any) {
+    actionError.value = error?.data?.statusMessage || error?.data?.message || 'Failed to reactivate user'
+  }
 }
 
 const nextPage = () => { 
@@ -92,6 +140,13 @@ if( (isAuthorized.value as boolean) == true )
 
 <template lang = "pug">
 div(class="container bg-white mx-auto mt-1 max-w-[1100px]")
+    div(class="flex items-center gap-4 px-2 py-3")
+        button(
+          type="button"
+          class="text-white px-4 py-2 rounded-full transition duration-300 bg-orange-999 hover:bg-green-600"
+          @click="toggleDeactivatedFilter"
+        ) {{ showDeactivated ? "Show active users" : "Show deactivated users" }}
+        p(v-if="actionError" class="text-red-600 text-sm") {{ actionError }}
     table(class="table-auto border-separate border-spacing-0 rounded-t-xl border border-[#5aadc2] overflow-hidden")
         thead
             tr
@@ -129,10 +184,11 @@ div(class="container bg-white mx-auto mt-1 max-w-[1100px]")
                         ChevronUpDownIcon(class="h-6 inline-flex")
                 th(class="font-poppins font-bold w-[25%] bg-[#5aadc2] text-white") User Editor
                 th(class="font-poppins font-bold w-[25%] bg-[#5aadc2] text-white") User Pages
+                th(v-if="isAdmin" class="font-poppins font-bold w-[25%] bg-[#5aadc2] text-white") Status
         tbody
             tr(v-for="(item, i) in users" 
-                :key="i"
-                :class="{'bg-gray-200': (i+1) % 2}" 
+                :key="item.id"
+                :class="{'bg-gray-200': (i+1) % 2, 'opacity-60': !item.isActive}" 
             )
                 td(class="font-poppins text-gray-dark font-bold text-center") {{ item.name }}
                 td(class="font-poppins text-gray-dark font-bold text-center") {{ item.Family?.family_name }}
@@ -149,6 +205,19 @@ div(class="container bg-white mx-auto mt-1 max-w-[1100px]")
                       class="sm:my-2 transition duration-300 bg-orange-999 hover:bg-green-600 whitespace-nowrap flex flex-row py-[14px] px-[24px] gap-[10px]"  
                       :to="`/PageList/${item.id}?fetch=user`"
                     ) View
+                td(v-if="isAdmin")
+                    button(
+                      v-if="item.isActive"
+                      type="button"
+                      class="sm:my-2 transition duration-300 bg-red-600 hover:bg-red-700 text-white whitespace-nowrap flex flex-row py-[14px] px-[24px] gap-[10px] rounded-full"
+                      @click="deactivateUser(item.id)"
+                    ) Deactivate
+                    button(
+                      v-else
+                      type="button"
+                      class="sm:my-2 transition duration-300 bg-green-600 hover:bg-green-700 text-white whitespace-nowrap flex flex-row py-[14px] px-[24px] gap-[10px] rounded-full"
+                      @click="reactivateUser(item.id)"
+                    ) Reactivate
     div(class="border rounded-b-xl border-[#5aadc2] container mx-auto w-full max-w-[1100px] bg-[#5aadc2] h-[50px]")
 div(class="mb-9 py-7 flex flex-wrap gap-2 place-content-center")
     div(class="px-2 mt-2")
