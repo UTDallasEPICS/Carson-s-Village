@@ -17,9 +17,14 @@ function registerField(field: { validate: () => boolean }) {
   return () => registeredFields.delete(field);
 }
 
+function resetSubmitted() {
+  isSubmitted.value = false;
+}
+
 provide('cvFormContext', {
   isSubmitted,
   registerField,
+  resetSubmitted,
 });
 
 function handleSubmit() {

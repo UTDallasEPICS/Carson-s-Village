@@ -20,7 +20,15 @@ const props = withDefaults(
 const form = inject<{
   isSubmitted: Ref<boolean>;
   registerField: (field: { validate: () => boolean }) => () => void;
+  resetSubmitted: () => void;
 }>('cvFormContext', null);
+
+// Reset submitted value when new input so that errors don't appear when typing
+function onInput() {
+  if (form?.isSubmitted.value) {
+    form.resetSubmitted();
+  }
+}
 
 // Runs rules against current model value
 const validationError = computed(() => {
@@ -57,17 +65,18 @@ onUnmounted(() => {
 <template lang="pug">
 div(class="flex flex-col gap-1 w-full")
   span(
-    :style="{ visibility: displayError ? 'visible' : 'hidden' }"
-    class="text-red-500 text-xs font-medium"
+    class="text-red-500 text-xs font-medium h-4 leading-4"
+    :class="{ 'invisible': !displayError }"
     role="alert"
-  ) {{ displayError }}
+  ) {{ displayError || '\u00A0' }}
 
   input(
-    :class="[
-      'rounded-md outline-0 border-box w-full p-2 border-r-2 border',
+    :class=`[
+      'rounded-md outline-0 box-border w-full p-2 border-r-2 border',
       displayError ? '!border-red-500 ring-1 ring-red-500' : 'border-grey-600'
-    ]"
+    ]`
     v-model="model"
     v-bind="$attrs"
+    @input="onInput"
   )
 </template>

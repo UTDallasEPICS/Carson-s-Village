@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { formatPhoneWhileTyping } from '~/utils/formatters';
 import type { ValidationRule } from './CVInput.vue';
+import { formatPhoneWhileTyping } from '~/utils/formatters';
 
 const model = defineModel<string>();
 
@@ -13,26 +13,30 @@ const props = withDefaults(
   }
 );
 
-// Two-way binding: converts raw digits to formatted text for display and back
-const formattedValue = computed({
-  get() {
-    return formatPhoneWhileTyping(model.value || '');
-  },
-  set(v: string) {
-    const digits = v.replace(/\D/g, '');
-    model.value = digits;
-  },
+const formattedValue = computed(() => {
+  return formatPhoneWhileTyping(model.value || '');
 });
 
+function onInput(event: Event) {
+  const inputEl = event.target as HTMLInputElement;
+
+  // 1. Extract up to 10 raw digits
+  const digits = inputEl.value.replace(/\D/g, '').slice(0, 10);
+
+  // 2. Update model
+  model.value = digits;
+
+  // 3. Force the DOM input value to update immediately, wiping away non-digits
+  inputEl.value = formatPhoneWhileTyping(digits);
+}
+
 const validatePhone: ValidationRule = (val) => {
-  // Strip non-digits since CVInput receives the formatted string (e.g. "(123) 456-7890")
   const digits = (val || '').replace(/\D/g, '');
 
   if (props.required && digits.length === 0) {
     return 'Phone number is required.';
   }
 
-  // return true if not required and no value is passed
   if (digits.length === 0) {
     return true;
   }
@@ -46,8 +50,10 @@ const phoneRules = computed(() => [validatePhone]);
 <template lang="pug">
 CVInput(
   type="tel"
+  maxlength="14"
   :rules="phoneRules"
   v-model="formattedValue"
+  @input="onInput"
   v-bind="$attrs"
 )
 </template>
