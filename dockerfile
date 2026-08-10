@@ -15,8 +15,8 @@ RUN npm i -g pnpm
 RUN pnpm i --frozen-lockfile
 
 COPY . ./
-RUN pnpm run build
 RUN pnpm prisma generate
+RUN pnpm run build
 
 # Deployment container
 FROM node:lts-alpine AS deployment
