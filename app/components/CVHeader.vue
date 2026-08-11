@@ -35,7 +35,7 @@ async function handleLogout() {
 
 <template lang="pug">
 ClientOnly
-  div(class="max-w-min mx-auto pt-3 flex items-center gap-2 mt-7 text-center")
+  div(class="max-w-min mx-auto flex items-center gap-2 text-center")
     div(class="max-w-min mx-auto flex items-center gap-2" v-if="user")
       a(class="w-20 flex items-center px-2 py-2 text-sm font-medium rounded-md text-blue-999 cursor-pointer hover:text-black bg-white"
         target="blank"
