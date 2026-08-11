@@ -1,6 +1,7 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   devtools: { enabled: true },
+  /*  Disable Nitro tasks until Constant Contacts can be revisited
   nitro: {
     experimental: {
       tasks: true
@@ -12,6 +13,7 @@ export default defineNuxtConfig({
       '0 21 * * *': ['family_reports:generate_data'],
     }
   },
+  */
   runtimeConfig: {
     AUTH0_CLIENTID: '',
     AUTH0_SECRET: '',
