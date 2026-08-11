@@ -1,10 +1,10 @@
 <template lang="pug">
-Datepicker(class="rounded-md p-2" :id="id" type="Date" v-model="value" auto-apply)
+VueDatePicker(class="rounded-md p-2" :id="id" type="Date" v-model="value" auto-apply)
     slot
 </template>
         
 <script setup lang="ts">
-import Datepicker from '@vuepic/vue-datepicker';
+import { VueDatePicker } from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css';
 
 const props = defineProps<{

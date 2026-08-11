@@ -9,6 +9,13 @@ declare module 'h3' {
   }
 }
 
+interface DropdownItem {
+  id: string,
+  value: string,
+  optionDisplay: string,
+  selectionDisplay: string
+}
+
 // TODO: import types from prisma, export them with relations added
 export type Page = {
     page_first_name: string,
@@ -45,19 +52,6 @@ export type Page = {
     Reply: Reply[]
   }
 
-export type Family = {
-  cuid: string;
-  family_name: string;
-  stripe_account_id: string | null;
-  created_at: Date | string | null;
-  updated_at: Date | string | null;
-  advocateCuid: string;
-  Pages: Page[];
-  FamilyMembers: User[];
-  AdvocateResponsible: User;
-  FamilyDonations: PageDonation[];
-}
-
 export type User = {
   id: string,
   name: string
@@ -69,9 +63,26 @@ export type User = {
   role: 'admin' | 'advocate' | 'family',
   address: string,
   phone: string,
+  isActive: boolean,
+  deactivatedAt?: Date | null,
   Pages: Page[],
   familyId: string,
   AdvocateFamily: User[]     
+}
+
+export type Family = {
+  cuid: string;
+  family_name: string;
+  stripe_account_id: string | null;
+  created_at: Date | string | null;
+  updated_at: Date | string | null;
+  advocateCuid: string | null;
+  isActive: boolean;
+  deactivatedAt?: Date | string | null;
+  Pages: Page[];
+  FamilyMembers: User[];
+  AdvocateResponsible: User | null;
+  FamilyDonations: PageDonation[];
 }
 
 export type PageDonation = {

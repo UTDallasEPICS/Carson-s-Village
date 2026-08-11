@@ -5,19 +5,22 @@ const step = ref<'request'| 'verify'>('request')
 const email = ref('')
 const otp = ref('')
 const loginError = ref('')
+const requestError = ref('')
 const loading = ref(false)
 
 async function handleRequestOtp() {
   loading.value = true
+  requestError.value = ''
   try {
-    const { data, error } = await authClient.emailOtp.sendVerificationOtp({
+    const { error } = await authClient.emailOtp.sendVerificationOtp({
       email: email.value,
-      type: 'sign-in',
-      disableSignUp: true
+      type: 'sign-in'
     })
     if (error) {
-      loading.value = false
-      throw Error('Failed to send OTP');
+      requestError.value = error.message?.includes('deactivated')
+        ? 'This account has been deactivated. Contact an administrator.'
+        : 'Failed to send verification code. Please try again.'
+      throw Error(requestError.value)
     }
 
     step.value = 'verify'
@@ -33,13 +36,14 @@ async function handleVerifyOtp() {
   try {
     loginError.value = '';
 
-    const { data, error } = await authClient.signIn.emailOtp({
+    const { error } = await authClient.signIn.emailOtp({
       email: email.value,
-      otp: otp.value,
-      disableSignUp: true
+      otp: otp.value
     })
     if (error) {
-      loginError.value = 'Invalid or expired code. Please check and try again.'
+      loginError.value = error.message?.includes('deactivated')
+        ? 'This account has been deactivated. Contact an administrator.'
+        : 'Invalid or expired code. Please check and try again.'
       throw Error(loginError.value)
     }
 
@@ -98,6 +102,11 @@ div(class="min-h-screen flex items-center justify-center bg-gray-50 px-4 font-sa
         :disabled="loading"
         class="w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50"
       ) {{ loading ? 'Sending...' : 'Send Code' }}
+
+      div(
+        v-if="requestError"
+        class="text-red-600 text-sm font-medium text-center bg-red-50 p-2 rounded border border-red-200"
+      ) {{ requestError }}
 
     form(
       v-else 

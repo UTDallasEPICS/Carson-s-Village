@@ -14,6 +14,7 @@ definePageMeta({
 })
 
 import { dateFormat, donationFormat } from '@/utils'
+import { VueDatePicker } from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css';
 import { ChevronDownIcon, ChevronLeftIcon } from '@heroicons/vue/24/solid'
 import { vElementSize } from '@vueuse/components'
@@ -88,6 +89,25 @@ const page = ref<Page>({
     } 
 })
 
+// Adapter that ensures VueDatePicker in range mode updates day_of_birth and day_of_passing when updated by user
+const dateRange = computed({
+  get() {
+    if (page.value.day_of_birth && page.value.day_of_passing) {
+      return [page.value.day_of_birth, page.value.day_of_passing]
+    }
+    return null
+  },
+  set(newValue) {
+    if (newValue && newValue[0] && newValue[1]) {
+      page.value.day_of_birth = newValue[0]
+      page.value.day_of_passing = newValue[1]
+    } else {
+      page.value.day_of_birth = null
+      page.value.day_of_passing = null
+    }
+  }
+})
+
 const isAdvocate = computed(() => user.value?.role == "advocate" || user.value?.role == "admin")
 const replies = ref<Reply[]>([])
 const profile_image = ref("")
@@ -108,30 +128,33 @@ const allFamilies = computed<Family[]>(() => {
 
 // Method that saves form data to the database for a page that has 
 const save = async () => {
-    if(isAdvocate.value) {
-        page.value.familyCuid = familyCuid.value
-    } else {
-        page.value.familyCuid = user.value?.familyId as string
+  if(isAdvocate.value) {
+    page.value.familyCuid = familyCuid.value
+  } else {
+    page.value.familyCuid = user.value?.familyId as string
+  }
+
+  if(page.value.id === "0") {
+    page.value.start_date = new Date()
+  }
+
+  try {
+    const pageResults = await $fetch('/api/page', {
+      // Checks if there is a pre-existing page to edit or if to create a new page    
+      method: page.value.id !== "0" ? 'PUT' : 'POST',
+      body: ({ ...page.value })
+    })
+    if (!pageResults || !pageResults.pageId) {
+      throw Error(`Page ID not returned on ${page.value.id !== "0" ? 'PUT' : 'POST'} request`)
     }
 
-    if(page.value.id === "0") {
-        page.value.start_date = new Date()
-    }
-
-    try {
-      await $fetch('/api/page', {
-        // Checks if there is a pre-existing page to edit or if to create a new page    
-        method: page.value.id !== "0" ? 'PUT' : 'POST',
-        body: ({ ...page.value })
-      })
-
-      // Set error to false and navigate to PageList displaying relevant pages for user
-      errorInPage.value = false;
-      await navigateTo('/PageList/' + page.value.userCuid + '?fetch=user')
-    } catch(e){
-        errorInPage.value = true;
-        console.error("Failed to save changes to page:", e)
-    }
+    // Set error to false and navigate to page
+    errorInPage.value = false;
+    await navigateTo('/Page/' + pageResults.pageId)
+  } catch(e){
+    errorInPage.value = true;
+    console.error("Failed to save changes to page:", e)
+  }
 };
 const currentFamily = computed(() => allFamilies.value?.find(({ id }: Family) => id == familyCuid.value) || {});
 
@@ -193,6 +216,7 @@ const onResize = ({ width, height }: { width: number, height: number }) => {
         profileImgHeight.value = 40
     }
 }
+
 </script>
 
 <template lang="pug">
@@ -262,14 +286,18 @@ description="Here, you select from photos you uploaded to show up at the top of 
                             CVChevronDown(v-else class="inline-block size-4 h-2 max-w-8 h-4 text-gray-500 z-3")
                             
                           
+        // Day of Birth - Day of Passing
         div(class="py-4 grid sm:grid-cols-3") 
-            CVLabel(for="day_of_birth") Day of Birth
+            CVLabel(for="birth-passing") Dates of Life
             div(class="mx-9 sm:col-span-2 sm:mr-11")
-                CVDatepicker(id="day_of_birth" v-model='page.day_of_birth')
-        div(class="py-4 grid sm:grid-cols-3") 
-            CVLabel(for="day_of_passing") Day of Passing 
-            div(class="mx-9 sm:col-span-2 sm:mr-11")
-                CVDatepicker(id="day_of_birth" v-model='page.day_of_passing')
+                VueDatePicker(
+                  id="birth-passing"
+                  class="rounded-md p-2"
+                  auto-apply
+                  v-model="dateRange"
+                  :range={ partialRange: false }
+                )
+
         div(class="information rounded-md mx-9 my-2 text-center sm:text-start text-white bg-blue-999")
             CVLegend Visitation Information 
         div(class="py-4 grid sm:grid-cols-3") 
@@ -337,7 +365,7 @@ description="Here, you select from photos you uploaded to show up at the top of 
                 CVSuspendButton(:suspend="reply.suspended" :rep="reply" @update:suspend="updateSuspendButton")
         div(class="ml-9 mb-9 py-7 flex flex-wrap gap-2")
             div(class="px-2 mt-2")
-                ActionButton(:disabled="disableCriteria" @click="save" class="sm:my-2 transition duration-300 bg-orange-999 hover:bg-green-600 disabled:bg-orange-800 disabled:cursor-not-allowed") Save
+                ActionButton(text="Save" :disabled="disableCriteria" @click="save" class="sm:my-2 transition duration-300 bg-orange-999 hover:bg-green-600 disabled:bg-orange-800 disabled:cursor-not-allowed")
             div(class="py-2 mt-2")
                 LinkButton(v-if="page.id != 0" :to="`/Page/${page.id}`" class="sm:my-2 transition duration-300 bg-orange-999 hover:bg-green-600") View Page
             div(class="p-2 pt-6 mt-2 sm:pt-2 sm:ml-auto sm:mr-6")

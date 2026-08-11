@@ -16,7 +16,13 @@ export default defineEventHandler(async event => {
   }
   const user = session.user
 
-  const { page_number, order, sortedColumn } = getQuery(event);
+  const { page_number, order, sortedColumn, status } = getQuery(event);
+
+  const statusFilter = status === 'inactive'
+    ? { isActive: false }
+    : status === 'all'
+      ? {}
+      : { isActive: true };
   
   if(user.role === 'advocate' || user.role === 'admin') {
     // Pagination via taking the absolute table page number with 12 records per page
@@ -27,8 +33,9 @@ export default defineEventHandler(async event => {
       orderBy = { [(sortedColumn as string) || 'name']: order || 'asc' };
     }
     const [ count, userData, unsortedUsers ] = await prisma.$transaction([
-      prisma.user.count(),
+      prisma.user.count({ where: statusFilter }),
       prisma.user.findMany({
+        where: statusFilter,
         orderBy: orderBy,
         skip: page_number as number * 12,
         take: 12,
@@ -38,6 +45,7 @@ export default defineEventHandler(async event => {
         }
       }),
       prisma.user.findMany({
+        where: statusFilter,
         skip: page_number as number * 12,
         take: 12,
         include: {

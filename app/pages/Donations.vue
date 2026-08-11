@@ -1,0 +1,270 @@
+<script lang="ts" setup>
+
+/*  Ofek Shaltiel
+*	ECS 3200
+*	Carson's Village: Automated Family Page
+*	EditPage.vue 
+*	Allows the website administrator to see incoming and outgoing donations
+*	Located under "/FamilyTransactionList/"
+*/
+
+definePageMeta({
+  middleware: ["family-guard"]
+})
+
+import { dateFormat, donationFormat } from '@/utils'
+import '@vuepic/vue-datepicker/dist/main.css';
+import {
+    Listbox,
+    ListboxButton,
+    ListboxOptions,
+    ListboxOption,
+} from '@headlessui/vue'
+import type { User, Page, PageDonation, donation_payout, Family } from "@/types.d.ts"
+import { ChevronUpIcon, ChevronDownIcon, ChevronUpDownIcon } from '@heroicons/vue/24/solid'
+import { authClient } from '~/utils/auth-client';
+
+const { data } = await authClient.useSession(useFetch);
+const user = computed(() => data.value?.user || null)
+
+const currentFamilyPageNumber = ref(0)
+const isFamily = computed(() => user.value?.role === "family")
+
+const familyFetch = isFamily.value ? `/api/family/${user.value?.familyId}` : '/api/family';
+const { data: Families } = await useFetch<Family[]>(familyFetch, {
+    method: 'GET',
+    default: () => [],
+
+    // If 'api/family/:id is fetched, wrap inside array for consistency between apis
+    transform: (input) => {
+      return Array.isArray(input) ? input : [input];
+    }
+});
+
+const currentFamilyCuid = ref<string>("")
+currentFamilyCuid.value = Families.value?.[0]?.id || "0"
+
+const currentFamily = computed(() => Families.value?.find((family: Family) => family?.id == currentFamilyCuid.value) || {})
+
+const { data: familyPages } = await useFetch('/api/family_pages', {
+  method: 'GET',
+  query: { family_cuid: currentFamilyCuid, page_number: currentFamilyPageNumber},
+  watch: [currentFamilyCuid, currentFamilyPageNumber],
+  default() {
+    return [] as any;
+  },
+});
+
+const familyPagesLength = computed(() => familyPages.value?.Pagination?.total);
+const currentPageCuid = ref("0");   // Initialize to "0" so default page filter is for all pages
+const currentPage = computed(() => familyPages.value?.raw_data?.find((page: Page) => page?.id == currentPageCuid.value) || {});
+
+// ------------------ Donations ---------------------
+const { data: donations } = await useFetch<PageDonation[]>('/api/family_donations', {
+  method: 'GET',
+  query: { family_cuid: currentFamilyCuid },
+  watch: [currentFamilyCuid],
+  default() {
+    return [] as any;
+  },
+});
+
+// Interface to simplify rendering of page dropdown filter on donations table
+interface pageDonationsItem {
+  id: string;
+  name: string;
+  itemDisplay: string;
+};
+const pageDonationsList = computed<pageDonationsItem[]>(() => {
+  const pageItems = familyPages.value?.raw_data.map((page: Page) => {
+    return {
+      id: page.id,
+      name: page.page_first_name || page.page_last_name,
+      itemDisplay: `${page.page_first_name}${page.page_last_name ? " " + page.page_last_name : ""} | ${donationFormat(page.amount_raised - page.amount_distributed)}`
+    } as pageDonationsItem
+  })
+
+  // Return formatted donation items with special item for no filtering
+  return [
+    {id: "0", name: "All", itemDisplay: "All"},
+    ...pageItems
+  ]
+})
+const currentPageDonationItem = computed<pageDonationsItem>(() => pageDonationsList.value.find((item: pageDonationsItem) => item.id === currentPageCuid.value))
+
+const pageDonations = computed(() => {
+  if (currentPageCuid.value === "0") {
+    return donations.value
+  } else {
+    return donations.value.filter((donation: PageDonation) => donation.pageCuid === currentPageCuid.value) || [] as PageDonation[]
+  }
+})
+
+// ------------------ Family Pagination -------------
+watch(currentFamilyCuid, () => {
+  currentFamilyPageNumber.value = 0
+})
+
+const nextPage = () => { 
+  if(currentFamilyPageNumber.value < ((familyPagesLength.value / 12) - 1)){
+      currentFamilyPageNumber.value++
+  } 
+}
+
+const prevPage = () => {
+  if(currentFamilyPageNumber.value != 0){
+      currentFamilyPageNumber.value--
+  } 
+}
+
+// ------------------ CSV Download ------------------
+const filedownloadlink = ref("")
+const dataset = ref("")
+const downloadName = ref("")
+onMounted(() => {
+  const createCsvDownloadLink = (csv: string) => {
+      const csvFile = new File([csv], "file", {
+      type: "text/csv" } )
+
+      // unique filename based on current time
+      const filename = "donation_report_" + formatReportDate(dateFormat(new Date().toString(), true).replaceAll("/", "-")) + ".csv"
+
+      filedownloadlink.value = window.URL.createObjectURL(csvFile);
+      dataset.value = ["text/csv", filename, filedownloadlink.value].join(':');
+      downloadName.value = filename
+  }
+
+  watch(donations, (newDonations) => {
+    if (!newDonations || newDonations.length === 0) return
+
+    const headers = [
+      "ID", 
+      "Donor Name", 
+      "Email", 
+      "Amount ($)", 
+      "Date Processed", 
+      "Comments"
+    ]
+
+    // Map the data into rows
+    const rows = newDonations.map(donation => {
+      return [
+        donation.id,
+        `${donation.donorFirstName} ${donation.donorLastName}`.trim(),
+        donation.donorEmail,
+        (donation.amount / 100).toFixed(2), // Convert cents to dollars
+        new Date(donation.donationProcessed).toLocaleDateString(),
+        donation.comments
+      ].map(value => `"${String(value).replace(/"/g, '""')}"`) // Escape quotes and wrap in quotes
+       .join(",")
+    })
+
+    // Combine headers and rows and update link
+    const csvContent = [headers.join(","), ...rows].join("\n")
+    createCsvDownloadLink(csvContent)
+  }, { immediate: true })
+})
+
+// Formats report date to the format 'yyyy-mm-dd'
+function formatReportDate(date: string) {
+  const dates = date.split("-")
+  const month = dates[0]
+  const day = dates[1]
+  const year = dates[2]
+  const formatedMonth = parseInt(month) >= 10 ? month : 0 + "" + month
+  const formatedDay = parseInt(day) >= 10 ? day : 0 + "" + day
+  return year + "-" + formatedMonth + "-" + formatedDay 
+}
+</script>
+
+<template lang="pug">
+div(class="px-10")   
+
+  // ------ Pages Table --------------------------------------------------------------------------------------------------
+
+  div(class="flex mb-5 justify-between items-end")
+    CVLegend(class="mt-10 pl-2") Family Pages
+
+    div(class="flex gap-5 pr-5")
+      p(class="self-center") Family
+      Listbox(as='div' v-model="currentFamilyCuid" class="shadow-sm border border-1 rounded-lg")
+        div(class="relative")
+          Transition(
+            leave-active-class='transition ease-in duration-100'
+            leave-from-class='opacity-100'
+            leave-to-class='opacity-0'
+          )
+            ListboxOptions(as='div' class='w-full absolute z-10 mt-10 bg-white shadow-lg max-h-60 rounded-md px-2 py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm' )
+              ListboxOption(as='div' v-for="Family in Families" :key="Family.id" :value="Family.id" class="px-2 border border-grey-500 py-1 my-1") {{ Family.family_name }}
+        ListboxButton(class='text-left bg-white relative rounded-md pl-2 pr-10 py-2 sm:text-sm w-96') {{ currentFamilyCuid ? currentFamily.family_name : 'Select Family' }}
+     
+  table(class="mt-5 w-full")
+      thead
+          tr(class="text-white")
+              th(class="px-8 bg-[#5aadc2] rounded-tl-3xl w-[33.33%] overflow-hidden") Page Name
+              th(class="px-8 bg-[#5aadc2]") Start Date
+              th(class="px-8 bg-[#5aadc2]") Last Donation
+              th(class="px-8 bg-[#5aadc2]") Goal Met
+              th(class="px-8 bg-[#5aadc2]") Raised
+              th(class="font-poppins font-bold rounded-tr-3xl bg-[#5aadc2] w-[33.33%]") Remaining
+          tr(v-for="(item, i) in familyPages.data" 
+              :key="i" 
+              :class="{'bg-gray-200': (i+1) % 2}"
+          )
+              td(class="font-poppins text-gray-dark font-bold text-center")  {{ item?.page_first_name + " " + item?.page_last_name }}
+              td(class="font-poppins text-gray-dark font-bold text-center")  {{ dateFormat(item?.start_date) }}
+              td(class="font-poppins text-gray-dark font-bold text-center")  {{ item.last_donation_date ? dateFormat(item?.last_donation_date) : "No Donations" }}
+              td(class="font-poppins text-gray-dark font-bold text-center")  {{ item?.donation_status}}
+              td(class="font-poppins text-gray-dark font-bold text-center")  {{ donationFormat(item.amount_raised) }}
+              td(class="font-poppins text-gray-dark font-bold text-center")  {{ donationFormat(item.amount_raised - item.amount_distributed) }}
+  div(class="mb-5 flex flex-wrap gap-2 place-content-center")
+    div(class="px-2 mt-2")
+        button(@click="prevPage") &lt
+    div(class="px-2 mt-2")
+        p {{  currentFamilyPageNumber + 1}}
+    div(class="px-2 mt-2")
+        button(@click="nextPage") >
+
+  // ------ Donations Table --------------------------------------------------------------------------------------------------
+
+  div(class="flex mb-5 justify-between items-end")
+    CVLegend(class="mt-10 ml-2") Family Donations
+
+    div(class="flex gap-5 pr-5")
+      p(class="self-center") Page
+      Listbox(as='div' v-model="currentPageCuid" class="shadow-sm border border-1 rounded-lg")
+        div(class="relative")
+          Transition(
+            leave-active-class='transition ease-in duration-100'
+            leave-from-class='opacity-100'
+            leave-to-class='opacity-0'
+          )
+            ListboxOptions(as='div' class='w-full absolute z-10 mt-10 bg-white shadow-lg max-h-60 rounded-md px-2 py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm' )
+              ListboxOption(as='div' v-for="pageItem in pageDonationsList" :key="pageItem.id" :value="pageItem.id" class="px-2 border border-grey-500 py-1 my-1") {{ pageItem.itemDisplay}}
+        ListboxButton(class='text-left bg-white relative rounded-md pl-2 pr-10 py-2 sm:text-sm w-96') {{ currentPageDonationItem.name }}
+
+  table(class="my-5 w-full")
+      thead
+          tr(class="text-white")
+              th(class="px-8 bg-[#5aadc2] rounded-tl-3xl w-1/2 overflow-hidden") Name
+              th(class="px-8 bg-[#5aadc2]") Page Name
+              th(class="px-8 bg-[#5aadc2]") Email
+              th(class="px-8 bg-[#5aadc2]") Donated
+              th(class="px-8 w-1/2 rounded-tr-3xl bg-[#5aadc2]") Amount
+          tr(v-for="(item, i) in pageDonations" 
+              :key="i" 
+              :class="{'bg-gray-200': (i+1) % 2}"
+          )
+              td(class="font-poppins text-gray-dark font-bold text-center")  {{ !item.donorLastName ? `${item.donorFirstName}` : `${item.donorFirstName} ${item.donorLastName}` }}
+              td(class="font-poppins text-gray-dark font-bold text-center")  {{ item.Page?.page_first_name + " " + item.Page?.page_last_name }}
+              td(class="font-poppins text-gray-dark font-bold text-center")  {{ item.donorEmail }}
+              td(class="font-poppins text-gray-dark font-bold text-center")  {{ dateFormat(item.donationInitiated) }}
+              td(class="font-poppins text-gray-dark font-bold text-center")  {{ donationFormat(item.amount) }}
+  a(
+    class="transition h-[50px] w-[140px] text-white font-bold rounded-[100px] duration-300 bg-orange-999 hover:bg-green-600 mr-9 mt-16 p-6 px-6 pr-6 pt-3 pb-3 cursor-pointer bg-orange-999" 
+    :href="filedownloadlink"
+    :download="downloadName" 
+    :dataset.downloadurl="dataset"
+  ) Download
+div(class="pb-10")
+</template>
