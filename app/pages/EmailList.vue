@@ -50,12 +50,35 @@ const checkAccessToken = async() => {
 await checkAccessToken();
 </script>
 
-<template lang="pug">
-div(class="flex justify-center items-center")
-    div(v-if="successMessage" class="ml-4") {{ successMessage }}
-    div(v-if="failMessage" class="ml-4") {{ failMessage }}
-div(class="flex justify-center items-stretch")
-    button(type="button" @click="getAuthRequestUrl" class="type-button ml-4 my-4 bg-orange-999 text-white px-4 py-2 rounded-full w-32 grow-0 transition duration-300 hover:bg-green-600") Authorize
-    button(type="button" @click="refreshToken" class="type-button ml-4 my-4 bg-orange-999 text-white px-4 py-2 rounded-full w-32 grow-0 transition duration-300 hover:bg-green-600") Refresh Token
-
+<template>
+  <div class="flex justify-center items-center">
+    <div
+      v-if="successMessage"
+      class="ml-4"
+    >
+      {{ successMessage }}
+    </div>
+    <div
+      v-if="failMessage"
+      class="ml-4"
+    >
+      {{ failMessage }}
+    </div>
+  </div>
+  <div class="flex justify-center items-stretch">
+    <button
+      type="button"
+      class="type-button ml-4 my-4 bg-orange-999 text-white px-4 py-2 rounded-full w-32 grow-0 transition duration-300 hover:bg-green-600"
+      @click="getAuthRequestUrl"
+    >
+      Authorize
+    </button>
+    <button
+      type="button"
+      class="type-button ml-4 my-4 bg-orange-999 text-white px-4 py-2 rounded-full w-32 grow-0 transition duration-300 hover:bg-green-600"
+      @click="refreshToken"
+    >
+      Refresh Token
+    </button>
+  </div>
 </template>

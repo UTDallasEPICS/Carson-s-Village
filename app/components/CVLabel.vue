@@ -1,6 +1,10 @@
-<template lang="pug">
-label(class="ml-10 pt-6 whitespace-nowrap sm:ml-11 drop-shadow-[3px_3px_4px_rgba(0,0,0,0.25)]" :for="for")
-    slot
+<template>
+  <label
+    class="ml-10 pt-6 whitespace-nowrap sm:ml-11 drop-shadow-[3px_3px_4px_rgba(0,0,0,0.25)]"
+    :for="for"
+  >
+    <slot />
+  </label>
 </template>
         
 <script setup lang="ts">

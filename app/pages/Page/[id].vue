@@ -151,138 +151,351 @@ const openCommentPopup = (comment: string) => {
 setImageAutoSlide()
 </script>
 
-<template lang="pug">
-// donation popup
-DonationEntryPopup(
-  v-model:displayDonationPopup="displayDonationPopup"
-  :amount_raised="pageDataDB?.amount_raised"
-  :donation_goal="pageDataDB?.donation_goal" 
-  :donation_goal_provided="donation_goal_provided"
-  :donated_percentage="donated_percentage"
-  :isActive="isActive"
-  :pageCuid="pageId"
-  :familyCuid="familyCuid"
-)  
+<template>
+  <DonationEntryPopup
+    v-model:displayDonationPopup="displayDonationPopup"
+    :amount_raised="pageDataDB?.amount_raised"
+    :donation_goal="pageDataDB?.donation_goal"
+    :donation_goal_provided="donation_goal_provided"
+    :donated_percentage="donated_percentage"
+    :is-active="isActive"
+    :page-cuid="pageId"
+    :family-cuid="familyCuid"
+  />
+  <div
+    v-if="commentModalOpen"
+    class="flex items-center justify-center z-10 fixed top-0 bottom-0 left-0 right-0 bg-black/70"
+    @click.self="commentModalOpen=false"
+  >
+    <div class="mx-auto flex p-2 bg-white w-1/2 h-1/2">
+      <CommentPopup
+        :comment="currentComment"
+        @ExitComment="exitCommentPopup"
+      />
+    </div>
+  </div>
 
-div(
-  v-if="commentModalOpen"
-  @click.self="commentModalOpen=false"
-  class="flex items-center justify-center z-10 fixed top-0 bottom-0 left-0 right-0 bg-black/70"
-)
-  div(class="mx-auto flex p-2 bg-white w-1/2 h-1/2")
-    CommentPopup(@ExitComment="exitCommentPopup" :comment="currentComment")  
+  <!-- Archive button -->
+  <div
+    v-if="isAdminAdvocate || isFamilyMember"
+    class="flex gap-2 justify-center cols-2 pl-6 pr-6"
+  >
+    <button
+      type="button"
+      class="mr-2 mt-1 p-2 px-9 pt-3 pb-3 bg-orange-999 transition duration-300 hover:bg-green-600 rounded-[100px] h-[50px] text-white font-bold"
+      @click.prevent="handleArchive()"
+    >
+      {{ isActive ? "Archive" : "Reactivate" }}
+    </button>
+  </div>
 
-// Archive button
-div(
-  v-if="isAdminAdvocate || isFamilyMember"
-  class="flex gap-2 justify-center cols-2 pl-6 pr-6"
-)
-  button(
-    type="button"
-    class="mr-2 mt-1 p-2 px-9 pt-3 pb-3 bg-orange-999 transition duration-300 hover:bg-green-600 rounded-[100px] h-[50px] text-white font-bold"
-    @click.prevent="handleArchive()"
-  ) {{ isActive ? "Archive" : "Reactivate" }}
+  <!-- the header overlay with image and name -->
+  <div
+    class="mt-2 min-h-24 text-white uppercase w-full bg-cover bg-center"
+    style="background-image: url('https://carsonsvillage.org/wp-content/uploads/2018/11/iStock-862083112-BW.jpg');"
+  >
+    <div class="h-full py-8 self-center w-full text-center flex flex-col bg-teal-500/80">
+      <p class="my-auto font-bold text-5xl">
+        {{ pageDataDB?.page_first_name + " " + pageDataDB?.page_last_name }}
+      </p>
+    </div>
+  </div>
+  <div class="grid grid-cols-1 sm:grid-cols-2 justify-center px-2">
+    <div class="col-span-2">
+      <div class="flex flex-col gap-5 px-4 mx-auto mt-8 w-3/4 sm:px-16">
+        <img
+          v-if="profileImage?.url"
+          :src="`${profileImage?.url}`"
+          class="mx-auto w-[122px] h-[122px] rounded-[8px]"
+        >
+        <div class="text-gray-dark mx-auto w-max font-poppins text-md">
+          {{ (pageDataDB?.day_of_birth && pageDataDB?.day_of_passing) ? dateFormat(pageDataDB?.day_of_birth, true) + ' - ' + dateFormat(pageDataDB?.day_of_passing, true) : '' }}
+        </div>
+      </div>
+    </div>
+    <div class="col-span-1 justify-self-end pr-5 pt-5">
+      <div
+        v-if="imageData.length != 0"
+        class="relative w-96 p-1"
+      >
+        <button
+          class="absolute left-4 top-64 bg-black text-white opacity-70 w-[46px] h-[46px] rounded-full items-center justify-center leading-loose text-center text-white"
+          @click="prevImage"
+        >
+          &#60;
+        </button>
+        <button
+          class="absolute right-8 top-64 bg-black text-white opacity-70 w-[46px] h-[46px] rounded-full items-center justify-center leading-loose text-center text-white"
+          @click="nextImage"
+        >
+          &#62;
+        </button>
+        <img
+          :src="imageData[currentImage].url"
+          class="w-96 cursor-pointer z-[-1] object-cover"
+          @click="showPreview(profileImage)"
+        >
+        <div
+          v-if="previewImage"
+          class="w-full h-full overflow-auto block fixed left-0 top-0 z-[1000] bg-black/80"
+          @click.self="closePreview"
+        >
+          <img
+            v-for="(image, index) in imageData"
+            :key="index"
+            :src="image.url"
+            class="py-2 block max-w-[80%] max-h-[80%] m-auto"
+          >
+          <span
+            class="absolute cursor-pointer top-[15px] right-[35px] text-[30px] transition duration-300 text-gray-400 hover:text-white focus:text-white cursor-pointer"
+            @click="closePreview"
+          >&times;</span>
+        </div>
+      </div>
+    </div>
 
-// the header overlay with image and name
-div(class="mt-2 min-h-24 text-white uppercase w-full bg-cover bg-center" style="background-image: url('https://carsonsvillage.org/wp-content/uploads/2018/11/iStock-862083112-BW.jpg');") 
-  div(class="h-full py-8 self-center w-full text-center flex flex-col bg-teal-500/80") 
-    p(class="my-auto font-bold text-5xl") {{ pageDataDB?.page_first_name + " " + pageDataDB?.page_last_name }}
-
-div(class="grid grid-cols-1 sm:grid-cols-2 justify-center px-2")
-  div(class="col-span-2")
-    div(class="flex flex-col gap-5 px-4 mx-auto mt-8 w-3/4 sm:px-16")
-      img(v-if="profileImage?.url" :src="`${profileImage?.url}`" class="mx-auto w-[122px] h-[122px] rounded-[8px]")
-      div(class="text-gray-dark mx-auto w-max font-poppins text-md") {{(pageDataDB?.day_of_birth && pageDataDB?.day_of_passing) ?  dateFormat(pageDataDB?.day_of_birth, true) + ' - ' + dateFormat(pageDataDB?.day_of_passing, true) : '' }} 
-  div(class="col-span-1 justify-self-end pr-5 pt-5")
-    div(v-if="imageData.length != 0" class="relative w-96 p-1")
-      button(@click="prevImage" class="absolute left-4 top-64 bg-black text-white opacity-70 w-[46px] h-[46px] rounded-full items-center justify-center leading-loose text-center text-white") &#60;
-      button(@click="nextImage" class="absolute right-8 top-64 bg-black text-white opacity-70 w-[46px] h-[46px] rounded-full items-center justify-center leading-loose text-center text-white") &#62;
-      img(:src="imageData[currentImage].url" @click="showPreview(profileImage)" class="w-96 cursor-pointer z-[-1] object-cover")     
-      div(v-if="previewImage" @click.self="closePreview" class="w-full h-full overflow-auto block fixed left-0 top-0 z-[1000] bg-black/80")
-        img(v-for="(image, index) in imageData" :key="index" :src="image.url" class="py-2 block max-w-[80%] max-h-[80%] m-auto")
-        span(@click="closePreview" class="absolute cursor-pointer top-[15px] right-[35px] text-[30px] transition duration-300 text-gray-400 hover:text-white focus:text-white cursor-pointer") &times;
-  // services list
-  div(class="col-span-1 sm:grid-cols-2 pt-5 pl-5 pr-15")
-        div(v-if="pageDataDB?.visitation_date" class="flex flex-col pb-5 pr-15")
-          div(class="text-gray-dark font-poppins text-3xl text-left font-bold leading-10 justify-start text-shadow-[3px_3px_4px_rgba(0,0,0,0.25)]") Visitation
-          div(class="flex row gap-2 pt-2")
-            div(class="font-outfit flex-col font-bold") {{ "Date:" }}
-            div(class="font-outfit") {{ longDateFormat(pageDataDB?.visitation_date) }}
-          div(class="flex row gap-2")
-            div(class="font-outfit font-bold") {{ "Time:" }}
-            div(class="font-outfit gap-y-5") {{ longDateFormat(pageDataDB?.visitation_date, true) }}
-          div(class="flex row gap-2")
-            div(class="font-outfit font-bold") {{ "Location:" }}
-            div(class="font-outfit whitespace-normal") {{ pageDataDB?.visitation_location ? pageDataDB?.visitation_location : "TBD" }}
-          div(class="flex row gap-2")
-            div(class="font-outfit gap-y-5") {{ pageDataDB?.visitation_address }}
-          div(class="flex row gap-2 pr-10") 
-            div(class="font-outfit font-bold") {{ "Description:" }}
-            div(class="font-outfit whitespace-normal") {{ pageDataDB?.visitation_description }}
-            
-        div(v-else class="flex flex-col pb-5 pr-15")
-          div(class="text-gray-dark font-poppins text-3xl text-left font-bold leading-9 text-shadow-[3px_3px_4px_rgba(0,0,0,0.25)]") Visitation
-          div(class="flex row gap-2")
-            div(class="font-outfit") {{ "There is no visitation information available at this time." }}
-        div(v-if="pageDataDB?.funeral_date" class="flex flex-col pb-5 pr-15")
-            div(class="text-gray-dark font-poppins text-3xl text-left font-bold leading-9 text-shadow-[3px_3px_4px_rgba(0,0,0,0.25)]") Funeral Service
-            div(class="flex row gap-2")
-              div(class="font-outfit font-bold") {{ "Date:" }}
-              div(class="font-outfit gap-2") {{ longDateFormat(pageDataDB?.funeral_date) }}
-            div(class="flex row gap-2")
-              div(class="font-outfit font-bold") {{ "Time:" }}
-              div(class="font-outfit gap-y-5") {{ longDateFormat(pageDataDB?.funeral_date, true) }}
-            div(class="flex row gap-2")
-              div(class="font-outfit font-bold") {{ "Location:" }}
-              div(class="font-outfit whitespace-normal") {{ pageDataDB?.funeral_location }}
-            div(class="flex row gap-2")
-              div(class="font-outfit whitespace-normal") {{ pageDataDB?.funeral_address }}
-            div(class="flex row gap-2 pr-10") 
-              div(class="font-outfit font-bold") {{ "Description:" }}
-              div(class="font-outfit") {{ pageDataDB?.funeral_description }}
-
-        div(v-else class="flex flex-col pb-5")
-            div(class="text-gray-dark font-poppins text-3xl text-left font-bold leading-9 text-shadow-[3px_3px_4px_rgba(0,0,0,0.25)]") Funeral Service
-            div(class="flex row gap-2")
-              div(class="font-outfit gap-y-5") {{ "There is no funeral information avilable at this time" }}
-        div(class="flex flex-col pb-5")
-          div(class="text-gray-dark font-poppins text-3xl text-left font-bold leading-9 text-shadow-[3px_3px_4px_rgba(0,0,0,0.25)]") Donations
-          div(class="text-gray-dark font-poppins text-1xl text-left font-bold leading-9 text-shadow-[3px_3px_4px_rgba(0,0,0,0.25)]") 
-            div(class="ml-1 pt-9 pr-5 flex items-center justify-center")
-              ActionButton(text="DONATE NOW" name='submit' @click="displayDonationPopup=true" class="mx-auto text-md transition duration-300 bg-orange-999 hover:bg-green-600")
-  div(class="col-span-2")
-    div(class="mx-9 sm:col-span-1 sm:mr-11")
-        div(id="obituary" class="px-10 py-4 text-[#6E6E6E] font-medium text-lg leading-7 tracking-[-0.078px] break-words") {{ pageDataDB?.obituary }}
-
-div(class="py-4 grid gap-1 text-left")
-  div(v-if="comments?.length" class="py-4 grid gap-4 w-full justify-center grid-cols-[repeat(3,30rem)]")
-      div(v-for="(comment, i) in comments" :key="i" class="flex flex-col gap-4 h-full min-w-44 p-4 rounded-lg bg-white border-border-gray-300 shadow-md py-4 transition duration-300 hover:shadow-xl")
-        div(class="flex justify-between gap-5")
-          div(class="text-xl font-bold") {{ comment.donorFirstName }} {{ comment.donorLastName }}
-          div(class="text-xl font-bold") {{ dateFormat(comment.donationDate, true) }}
-        div(class="text-xl grow w-fit text-gray-600" :class="{'border-l-2 border-green-500 pl-3': comment.comments.length}") {{ comment.comments.length > 200 ? (comment.comments.substring(0, 200) + " ...") :  comment.comments.substring(0, 200) }}
-          span(v-if="comment.comments.length > 200" @click="openCommentPopup(comment.comments)" class="text-xl w-fit text-green-400 cursor-pointer") {{ " Read More" }}
-        div(class="flex justify-between gap-5")
-          div(class="text-xl font-bold") Amount Donated
-          div(class="text-xl font-bold text-green-600") {{ donationFormat(comment.amount) }}
-  CVReplySystem(:pageCuid="pageId" :familyCuid="familyCuid" :replies="replies" :isActive="isActive" @displayReply="replyRefresh")
-  div(v-if="replies?.length" class="py-4 grid row-span-3 gap-2")
-    div(v-for="(reply,i) in replies.filter(item => !item.suspended)" :key="i" class="p-2 bg-white rounded-lg mb-2 shadow-md pb-4") 
-      div(class="flex justify-between gap-5 pd-4")
-        div(class="ml-1 text-lg font-bold") {{reply.name}}
-        div(class="ml-1 text-lg") {{ dateFormat(reply.date) }}
-      div(class="ml-1 pt-3 pb-3 pl-5 border-l-2 border-green-500") {{reply.reply}}
-div(class="flex text-gray-500 font-bold justify-center items-center h-[100px]")
-  label SHARE THIS PAGE |&nbsp;
-  div
-    button(@click="shareFacebook")
-      img(src="/facebook-fa.png" class="w-[30px] h-[33px]") 
-  div
-    button(@click="shareXFormerlyKnownAsTwitter")
-        img(src="/twitter_fa.png" class="w-[30px] h-[29px]") 
-  div
-    button(@click="shareMail")
-        img(src="/mail_fa.png" class="w-[50px] h-[29px]") 
-  div
-    p {{ "" }}
+    <!-- services list -->
+    <div class="col-span-1 sm:grid-cols-2 pt-5 pl-5 pr-15">
+      <div
+        v-if="pageDataDB?.visitation_date"
+        class="flex flex-col pb-5 pr-15"
+      >
+        <div class="text-gray-dark font-poppins text-3xl text-left font-bold leading-10 justify-start text-shadow-[3px_3px_4px_rgba(0,0,0,0.25)]">
+          Visitation
+        </div>
+        <div class="flex row gap-2 pt-2">
+          <div class="font-outfit flex-col font-bold">
+            {{ "Date:" }}
+          </div>
+          <div class="font-outfit">
+            {{ longDateFormat(pageDataDB?.visitation_date) }}
+          </div>
+        </div>
+        <div class="flex row gap-2">
+          <div class="font-outfit font-bold">
+            {{ "Time:" }}
+          </div>
+          <div class="font-outfit gap-y-5">
+            {{ longDateFormat(pageDataDB?.visitation_date, true) }}
+          </div>
+        </div>
+        <div class="flex row gap-2">
+          <div class="font-outfit font-bold">
+            {{ "Location:" }}
+          </div>
+          <div class="font-outfit whitespace-normal">
+            {{ pageDataDB?.visitation_location ? pageDataDB?.visitation_location : "TBD" }}
+          </div>
+        </div>
+        <div class="flex row gap-2">
+          <div class="font-outfit gap-y-5">
+            {{ pageDataDB?.visitation_address }}
+          </div>
+        </div>
+        <div class="flex row gap-2 pr-10">
+          <div class="font-outfit font-bold">
+            {{ "Description:" }}
+          </div>
+          <div class="font-outfit whitespace-normal">
+            {{ pageDataDB?.visitation_description }}
+          </div>
+        </div>
+      </div>
+      <div
+        v-else
+        class="flex flex-col pb-5 pr-15"
+      >
+        <div class="text-gray-dark font-poppins text-3xl text-left font-bold leading-9 text-shadow-[3px_3px_4px_rgba(0,0,0,0.25)]">
+          Visitation
+        </div>
+        <div class="flex row gap-2">
+          <div class="font-outfit">
+            {{ "There is no visitation information available at this time." }}
+          </div>
+        </div>
+      </div>
+      <div
+        v-if="pageDataDB?.funeral_date"
+        class="flex flex-col pb-5 pr-15"
+      >
+        <div class="text-gray-dark font-poppins text-3xl text-left font-bold leading-9 text-shadow-[3px_3px_4px_rgba(0,0,0,0.25)]">
+          Funeral Service
+        </div>
+        <div class="flex row gap-2">
+          <div class="font-outfit font-bold">
+            {{ "Date:" }}
+          </div>
+          <div class="font-outfit gap-2">
+            {{ longDateFormat(pageDataDB?.funeral_date) }}
+          </div>
+        </div>
+        <div class="flex row gap-2">
+          <div class="font-outfit font-bold">
+            {{ "Time:" }}
+          </div>
+          <div class="font-outfit gap-y-5">
+            {{ longDateFormat(pageDataDB?.funeral_date, true) }}
+          </div>
+        </div>
+        <div class="flex row gap-2">
+          <div class="font-outfit font-bold">
+            {{ "Location:" }}
+          </div>
+          <div class="font-outfit whitespace-normal">
+            {{ pageDataDB?.funeral_location }}
+          </div>
+        </div>
+        <div class="flex row gap-2">
+          <div class="font-outfit whitespace-normal">
+            {{ pageDataDB?.funeral_address }}
+          </div>
+        </div>
+        <div class="flex row gap-2 pr-10">
+          <div class="font-outfit font-bold">
+            {{ "Description:" }}
+          </div>
+          <div class="font-outfit">
+            {{ pageDataDB?.funeral_description }}
+          </div>
+        </div>
+      </div>
+      <div
+        v-else
+        class="flex flex-col pb-5"
+      >
+        <div class="text-gray-dark font-poppins text-3xl text-left font-bold leading-9 text-shadow-[3px_3px_4px_rgba(0,0,0,0.25)]">
+          Funeral Service
+        </div>
+        <div class="flex row gap-2">
+          <div class="font-outfit gap-y-5">
+            {{ "There is no funeral information avilable at this time" }}
+          </div>
+        </div>
+      </div>
+      <div class="flex flex-col pb-5">
+        <div class="text-gray-dark font-poppins text-3xl text-left font-bold leading-9 text-shadow-[3px_3px_4px_rgba(0,0,0,0.25)]">
+          Donations
+        </div>
+        <div class="text-gray-dark font-poppins text-1xl text-left font-bold leading-9 text-shadow-[3px_3px_4px_rgba(0,0,0,0.25)]">
+          <div class="ml-1 pt-9 pr-5 flex items-center justify-center">
+            <ActionButton
+              text="DONATE NOW"
+              name="submit"
+              class="mx-auto text-md transition duration-300 bg-orange-999 hover:bg-green-600"
+              @click="displayDonationPopup=true"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-span-2">
+      <div class="mx-9 sm:col-span-1 sm:mr-11">
+        <div
+          id="obituary"
+          class="px-10 py-4 text-[#6E6E6E] font-medium text-lg leading-7 tracking-[-0.078px] break-words"
+        >
+          {{ pageDataDB?.obituary }}
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="py-4 grid gap-1 text-left">
+    <div
+      v-if="comments?.length"
+      class="py-4 grid gap-4 w-full justify-center grid-cols-[repeat(3,30rem)]"
+    >
+      <div
+        v-for="(comment, i) in comments"
+        :key="i"
+        class="flex flex-col gap-4 h-full min-w-44 p-4 rounded-lg bg-white border-border-gray-300 shadow-md py-4 transition duration-300 hover:shadow-xl"
+      >
+        <div class="flex justify-between gap-5">
+          <div class="text-xl font-bold">
+            {{ comment.donorFirstName }} {{ comment.donorLastName }}
+          </div>
+          <div class="text-xl font-bold">
+            {{ dateFormat(comment.donationDate, true) }}
+          </div>
+        </div>
+        <div
+          class="text-xl grow w-fit text-gray-600"
+          :class="{'border-l-2 border-green-500 pl-3': comment.comments.length}"
+        >
+          {{ comment.comments.length > 200 ? (comment.comments.substring(0, 200) + " ...") : comment.comments.substring(0, 200) }}
+          <span
+            v-if="comment.comments.length > 200"
+            class="text-xl w-fit text-green-400 cursor-pointer"
+            @click="openCommentPopup(comment.comments)"
+          >{{ " Read More" }}</span>
+        </div>
+        <div class="flex justify-between gap-5">
+          <div class="text-xl font-bold">
+            Amount Donated
+          </div>
+          <div class="text-xl font-bold text-green-600">
+            {{ donationFormat(comment.amount) }}
+          </div>
+        </div>
+      </div>
+    </div>
+    <CVReplySystem
+      :page-cuid="pageId"
+      :family-cuid="familyCuid"
+      :replies="replies"
+      :is-active="isActive"
+      @displayReply="replyRefresh"
+    />
+    <div
+      v-if="replies?.length"
+      class="py-4 grid row-span-3 gap-2"
+    >
+      <div
+        v-for="(reply,i) in replies.filter(item => !item.suspended)"
+        :key="i"
+        class="p-2 bg-white rounded-lg mb-2 shadow-md pb-4"
+      >
+        <div class="flex justify-between gap-5 pd-4">
+          <div class="ml-1 text-lg font-bold">
+            {{ reply.name }}
+          </div>
+          <div class="ml-1 text-lg">
+            {{ dateFormat(reply.date) }}
+          </div>
+        </div>
+        <div class="ml-1 pt-3 pb-3 pl-5 border-l-2 border-green-500">
+          {{ reply.reply }}
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="flex text-gray-500 font-bold justify-center items-center h-[100px]">
+    <label>SHARE THIS PAGE |&nbsp;</label>
+    <div>
+      <button @click="shareFacebook">
+        <img
+          src="/facebook-fa.png"
+          class="w-[30px] h-[33px]"
+        >
+      </button>
+    </div>
+    <div>
+      <button @click="shareXFormerlyKnownAsTwitter">
+        <img
+          src="/twitter_fa.png"
+          class="w-[30px] h-[29px]"
+        >
+      </button>
+    </div>
+    <div>
+      <button @click="shareMail">
+        <img
+          src="/mail_fa.png"
+          class="w-[50px] h-[29px]"
+        >
+      </button>
+    </div>
+    <div>
+      <p>{{ "" }}</p>
+    </div>
+  </div>
 </template>

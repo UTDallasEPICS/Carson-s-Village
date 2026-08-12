@@ -12,10 +12,10 @@ const value = computed({
 })
 </script>
 
-<template lang="pug">
-input(
-  class="rounded-md outline-0 border-box w-full p-2 border border-[#c4c4c4]" 
-  type="number" 
-  v-model="value"
-)
+<template>
+  <input
+    v-model="value"
+    class="rounded-md outline-0 border-box w-full p-2 border border-[#c4c4c4]"
+    type="number"
+  >
 </template>

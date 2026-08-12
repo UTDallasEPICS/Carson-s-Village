@@ -62,21 +62,21 @@ onUnmounted(() => {
 });
 </script>
 
-<template lang="pug">
-div(class="flex flex-col gap-1 w-full")
-  span(
-    class="text-red-500 text-xs font-medium h-4 leading-4"
-    :class="{ 'invisible': !displayError }"
-    role="alert"
-  ) {{ displayError || '\u00A0' }}
-
-  input(
-    :class=`[
-      'rounded-md outline-0 box-border w-full p-2 border-r-2 border',
-      displayError ? '!border-red-500 ring-1 ring-red-500' : 'border-grey-600'
-    ]`
-    v-model="model"
-    v-bind="$attrs"
-    @input="onInput"
-  )
+<template>
+  <div class="flex flex-col gap-1 w-full">
+    <span
+      class="text-red-500 text-xs font-medium h-4 leading-4"
+      :class="{ 'invisible': !displayError }"
+      role="alert"
+    >{{ displayError || '\u00A0' }}</span>
+    <input
+      v-model="model"
+      :class="[
+        'rounded-md outline-0 box-border w-full p-2 border-r-2 border',
+        displayError ? '!border-red-500 ring-1 ring-red-500' : 'border-grey-600'
+      ]"
+      v-bind="$attrs"
+      @input="onInput"
+    >
+  </div>
 </template>

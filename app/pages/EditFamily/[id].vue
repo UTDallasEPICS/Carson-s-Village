@@ -128,59 +128,133 @@ const createFamily = async () => {
 
 </script>
 
-<template lang="pug">
-CVContainer
-    form(class="p-3 rounded bg-gray-50")
-        TitleComp Family Creation
-        br
-        div(class="information rounded-md mx-9 my-2 text-center sm:text-start text-white bg-blue-999")
-            CVLegend Family Information
-        div(class="py-4 grid sm:grid-cols-3")
-            CVLabel(for="family_name") Family Name
-            div(class="mx-9 sm:col-span-2 sm:mr-11")
-                CVInput(id="family_name" v-model='data_family.family_name' placeholder="(user defined)" required="required")
-        div(v-if="id !== '0'" class="py-4 grid sm:grid-cols-3")
-            CVLabel(for="advocate") Advocate Responsible
-            div(class="mx-9 sm:col-span-2 sm:mr-11")
-                p(class="mb-2 text-sm text-gray-700") Current advocate: {{ currentAdvocateName }}
-                Listbox(id="advocate" as='div' v-model="selectedAdvocateId" class="shadow-sm border border-1 rounded-lg")
-                    div(class="relative")
-                        Transition(
-                          leave-active-class='transition ease-in duration-100'
-                          leave-from-class='opacity-100'
-                          leave-to-class='opacity-0'
-                        )
-                            ListboxOptions(as='div' class='w-full absolute z-10 mt-10 bg-white shadow-lg max-h-60 rounded-md px-2 py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm')
-                                ListboxOption(
-                                  key="no-advocate"
-                                  :value="null"
-                                  class="px-2 border border-grey-500 py-1 my-1"
-                                ) {{ !selectedAdvocateId ? "None" : "Remove Advocate" }}
-                                ListboxOption(
-                                  v-for="advocate in advocates"
-                                  :key="advocate.id"
-                                  :value="advocate.id"
-                                  class="px-2 border border-grey-500 py-1 my-1"
-                                ) {{ advocate.name }}
-                    ListboxButton(class='text-left bg-white relative rounded-md pl-2 pr-10 py-2 sm:text-sm w-96') {{ selectedAdvocateLabel }}
-        div(class="information rounded-md mx-9 my-2 text-center sm:text-start text-white bg-blue-999")
-             CVLegend New User Information
-        div(class="py-4 grid sm:grid-cols-3")
-            CVLabel(for="email") Email
-            div(class="mx-9 sm:col-span-2 sm:mr-11")
-                CVInput(id="email" v-model='data_user.email' type="email" placeholder="(user defined)" required="required")
-        div(class="py-4 grid sm:grid-cols-3")
-            CVLabel(for="first_name") Name
-            div(class="mx-9 sm:col-span-2 sm:mr-11")
-                CVInput(id="first_name" v-model='data_user.name' placeholder="(user-defined)" required="required")
-        div(class="py-4 grid sm:grid-cols-3")
-            CVLabel(for="phone") Phone
-            div(class="mx-9 sm:col-span-2 sm:mr-11")
-                CVPhoneInput(id="phone" v-model='data_user.phone' placeholder="(user defined, optional)")
-            div(class="py-2")
-                ActionButton(text="Save" @click="createFamily()" class="transition duration-300 bg-orange-999 hover:bg-green-600")
-        div(v-if="errorInPage" class="py-4 grid sm:grid-cols-3 text-red-500")
-            CVLabel(for="error_label") Error Creating Family and First Family Member in the System.
+<template>
+  <CVContainer>
+    <form class="p-3 rounded bg-gray-50">
+      <TitleComp>Family Creation</TitleComp>
+      <br>
+      <div class="information rounded-md mx-9 my-2 text-center sm:text-start text-white bg-blue-999">
+        <CVLegend>Family Information</CVLegend>
+      </div>
+      <div class="py-4 grid sm:grid-cols-3">
+        <CVLabel for="family_name">
+          Family Name
+        </CVLabel>
+        <div class="mx-9 sm:col-span-2 sm:mr-11">
+          <CVInput
+            id="family_name"
+            v-model="data_family.family_name"
+            placeholder="(user defined)"
+            required="required"
+          />
+        </div>
+      </div>
+      <div
+        v-if="id !== '0'"
+        class="py-4 grid sm:grid-cols-3"
+      >
+        <CVLabel for="advocate">
+          Advocate Responsible
+        </CVLabel>
+        <div class="mx-9 sm:col-span-2 sm:mr-11">
+          <p class="mb-2 text-sm text-gray-700">
+            Current advocate: {{ currentAdvocateName }}
+          </p>
+          <Listbox
+            id="advocate"
+            v-model="selectedAdvocateId"
+            as="div"
+            class="shadow-sm border border-1 rounded-lg"
+          >
+            <div class="relative">
+              <Transition
+                leave-active-class="transition ease-in duration-100"
+                leave-from-class="opacity-100"
+                leave-to-class="opacity-0"
+              />
+              <ListboxOptions as="div" class="w-full absolute z-10 mt-10 bg-white shadow-lg max-h-60 rounded-md px-2 py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm">
+                <ListboxOption
+                  key="no-advocate"
+                  :value="null"
+                  class="px-2 border border-grey-500 py-1 my-1"
+                >
+                  {{ !selectedAdvocateId ? "None" : "Remove Advocate" }}
+                </ListboxOption>
+                <ListboxOption
+                  v-for="advocate in advocates"
+                  :key="advocate.id"
+                  :value="advocate.id"
+                  class="px-2 border border-grey-500 py-1 my-1"
+                >
+                  {{ advocate.name }}
+                </ListboxOption>
+              </ListboxOptions>
+              <ListboxButton class="text-left bg-white relative rounded-md pl-2 pr-10 py-2 sm:text-sm w-96">
+                {{ selectedAdvocateLabel }}
+              </ListboxButton>
+            </div>
+          </Listbox>
+        </div>
+      </div>
+      <div class="information rounded-md mx-9 my-2 text-center sm:text-start text-white bg-blue-999">
+        <CVLegend>New User Information</CVLegend>
+      </div>
+      <div class="py-4 grid sm:grid-cols-3">
+        <CVLabel for="email">
+          Email
+        </CVLabel>
+        <div class="mx-9 sm:col-span-2 sm:mr-11">
+          <CVInput
+            id="email"
+            v-model="data_user.email"
+            type="email"
+            placeholder="(user defined)"
+            required="required"
+          />
+        </div>
+      </div>
+      <div class="py-4 grid sm:grid-cols-3">
+        <CVLabel for="first_name">
+          Name
+        </CVLabel>
+        <div class="mx-9 sm:col-span-2 sm:mr-11">
+          <CVInput
+            id="first_name"
+            v-model="data_user.name"
+            placeholder="(user-defined)"
+            required="required"
+          />
+        </div>
+      </div>
+      <div class="py-4 grid sm:grid-cols-3">
+        <CVLabel for="phone">
+          Phone
+        </CVLabel>
+        <div class="mx-9 sm:col-span-2 sm:mr-11">
+          <CVPhoneInput
+            id="phone"
+            v-model="data_user.phone"
+            placeholder="(user defined, optional)"
+          />
+        </div>
+        <div class="py-2">
+          <ActionButton
+            text="Save"
+            class="transition duration-300 bg-orange-999 hover:bg-green-600"
+            @click="createFamily()"
+          />
+        </div>
+      </div>
+      <div
+        v-if="errorInPage"
+        class="py-4 grid sm:grid-cols-3 text-red-500"
+      >
+        <CVLabel for="error_label">
+          Error Creating Family and First Family Member in the System.
+        </CVLabel>
+      </div>
+    </form>
+  </CVContainer>
 </template>
 
 <style scoped></style>

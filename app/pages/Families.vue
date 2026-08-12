@@ -78,40 +78,91 @@ const prevPage = () => {
 
 </script>
 
-<template lang = "pug">
-div(class="container bg-white mx-auto mt-1 w-11/12 sm:w-[1400px]")
-    table(class="table-auto")
-        thead
-            tr(class="text-white")
-                th(@click="SortCV(all_families, 'family_name')" class="font-poppins font-bold cursor-pointer p-2 bg-[#5aadc2] rounded-tl-3xl w-1/4 overflow-hidden")
-                    label Family Name &nbsp;
-                th(@click="SortCV(all_families, 'advocate_responsible')" class="font-poppins font-bold cursor-pointer w-[27.5%] bg-[#5aadc2]")
-                    label Advocate Responsible &nbsp;
-                th(@click="SortCV(all_families, '_count_family_members')" class="font-poppins font-bold cursor-pointer w-[15%] bg-[#5aadc2]")
-                    label Family Members &nbsp;
-                th(@click="SortCV(all_families, '_count_pages')" class="font-poppins font-bold cursor-pointer w-[15%] bg-[#5aadc2]")
-                    label Pages &nbsp;
-                th(@click="SortCV(all_families, 'stripe_account_id')" class="font-poppins font-bold cursor-pointer w-[12%] bg-[#5aadc2]")
-                    label Onboarded &nbsp;
-                th(class="font-poppins font-bold w-1/4 bg-[#5aadc2] rounded-tr-3xl") {{  "Editor" }}
-            tr(
-              v-for="(item, i) in all_families" 
-              :key="i"
-              :class="{'bg-gray-200': (i+1) % 2}" 
-            )
-                td(class="font-poppins text-gray-dark font-bold text-center") {{ item.family_name }}
-                td(class="font-poppins text-gray-dark font-bold text-center") {{ item?.AdvocateResponsible ? item?.AdvocateResponsible?.first_name + " " + item?.AdvocateResponsible?.last_name : "Not assigned"}}
-                td(class="font-poppins text-gray-dark font-bold text-center") {{ item.FamilyMembers.length }}
-                td(class="font-poppins text-gray-dark font-bold text-center") {{ item.Pages.length }}
-                td(class="font-poppins text-gray-dark font-bold text-center") {{ item.stripe_account_id ? 'Yes' : 'No' }}
-                td
-                    LinkButton(class="sm:my-2 transition duration-300 bg-orange-999 hover:bg-green-600 whitespace-nowrap flex flex-row py-[14px] px-[24px] gap-[10px]" :to="`/EditFamily/${item.id}`") Edit
-    div(class="container mx-auto w-auto sm:w-[1400px] bg-[#5aadc2] h-[50px] rounded-b-3xl")
-div(class="mb-9 py-7 flex flex-wrap gap-2 place-content-center")
-    div(class="px-2 mt-2")
-        button(@click="prevPage") &lt
-    div(class="px-2 mt-2")
-        p {{  currentPage + 1 }}
-    div(class="px-2 mt-2")
-        button(@click="nextPage") >
+<template>
+  <div class="container bg-white mx-auto mt-1 w-11/12 sm:w-[1400px]">
+    <table class="table-auto">
+      <thead>
+        <tr class="text-white">
+          <th
+            class="font-poppins font-bold cursor-pointer p-2 bg-[#5aadc2] rounded-tl-3xl w-1/4 overflow-hidden"
+            @click="SortCV(all_families, 'family_name')"
+          >
+            <label>Family Name &nbsp;</label>
+          </th>
+          <th
+            class="font-poppins font-bold cursor-pointer w-[27.5%] bg-[#5aadc2]"
+            @click="SortCV(all_families, 'advocate_responsible')"
+          >
+            <label>Advocate Responsible &nbsp;</label>
+          </th>
+          <th
+            class="font-poppins font-bold cursor-pointer w-[15%] bg-[#5aadc2]"
+            @click="SortCV(all_families, '_count_family_members')"
+          >
+            <label>Family Members &nbsp;</label>
+          </th>
+          <th
+            class="font-poppins font-bold cursor-pointer w-[15%] bg-[#5aadc2]"
+            @click="SortCV(all_families, '_count_pages')"
+          >
+            <label>Pages &nbsp;</label>
+          </th>
+          <th
+            class="font-poppins font-bold cursor-pointer w-[12%] bg-[#5aadc2]"
+            @click="SortCV(all_families, 'stripe_account_id')"
+          >
+            <label>Onboarded &nbsp;</label>
+          </th>
+          <th class="font-poppins font-bold w-1/4 bg-[#5aadc2] rounded-tr-3xl">
+            {{ "Editor" }}
+          </th>
+        </tr>
+        <tr
+          v-for="(item, i) in all_families"
+          :key="i"
+          :class="{'bg-gray-200': (i+1) % 2}"
+        >
+          <td class="font-poppins text-gray-dark font-bold text-center">
+            {{ item.family_name }}
+          </td>
+          <td class="font-poppins text-gray-dark font-bold text-center">
+            {{ item?.AdvocateResponsible ? item?.AdvocateResponsible?.first_name + " " + item?.AdvocateResponsible?.last_name : "Not assigned" }}
+          </td>
+          <td class="font-poppins text-gray-dark font-bold text-center">
+            {{ item.FamilyMembers.length }}
+          </td>
+          <td class="font-poppins text-gray-dark font-bold text-center">
+            {{ item.Pages.length }}
+          </td>
+          <td class="font-poppins text-gray-dark font-bold text-center">
+            {{ item.stripe_account_id ? 'Yes' : 'No' }}
+          </td>
+          <td>
+            <LinkButton
+              class="sm:my-2 transition duration-300 bg-orange-999 hover:bg-green-600 whitespace-nowrap flex flex-row py-[14px] px-[24px] gap-[10px]"
+              :to="`/EditFamily/${item.id}`"
+            >
+              Edit
+            </LinkButton>
+          </td>
+        </tr>
+      </thead>
+    </table>
+    <div class="container mx-auto w-auto sm:w-[1400px] bg-[#5aadc2] h-[50px] rounded-b-3xl" />
+  </div>
+  <div class="mb-9 py-7 flex flex-wrap gap-2 place-content-center">
+    <div class="px-2 mt-2">
+      <button @click="prevPage">
+        &lt;
+      </button>
+    </div>
+    <div class="px-2 mt-2">
+      <p>{{ currentPage + 1 }}</p>
+    </div>
+    <div class="px-2 mt-2">
+      <button @click="nextPage">
+        >
+      </button>
+    </div>
+  </div>
 </template>

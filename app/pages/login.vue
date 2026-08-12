@@ -73,74 +73,94 @@ function resetFlow() {
 }
 </script>
 
-<template lang="pug">
-div(class="min-h-screen flex items-center justify-center bg-gray-50 px-4 font-sans")
-  div(class="max-w-md w-full space-y-8 bg-white p-8 rounded-xl shadow-sm border border-gray-200")
-    div(class="text-center")
-      h2(class="text-3xl font-bold tracking-tight text-gray-900") 
-        | {{ step === 'request' ? 'Sign in' : 'Enter Code' }}
-      p(class="mt-2 text-sm text-gray-600")
-        | {{ step === 'request' ? 'We will send a one-time code to your email.' : `Sent to ${email}` }}
-
-    form(
-      v-if="step === 'request'" 
-      class="mt-8 space-y-6" 
-      @submit.prevent="handleRequestOtp"
-    )
-      div
-        label(for="email" class="block text-sm font-medium text-gray-700") Email address
-        input(
-          v-model="email"
-          id="email"
-          type="email"
-          required
-          class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-          placeholder="you@example.com"
-        )
-      button(
-        type="submit"
-        :disabled="loading"
-        class="w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50"
-      ) {{ loading ? 'Sending...' : 'Send Code' }}
-
-      div(
-        v-if="requestError"
-        class="text-red-600 text-sm font-medium text-center bg-red-50 p-2 rounded border border-red-200"
-      ) {{ requestError }}
-
-    form(
-      v-else 
-      class="mt-8 space-y-6" 
-      @submit.prevent="handleVerifyOtp"
-    )
-      div
-        label(for="otp" class="block text-sm font-medium text-gray-700") One-Time Code
-        input(
-          v-model="otp"
-          id="otp"
-          type="text"
-          maxlength="6"
-          required
-          class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm text-center tracking-widest font-mono text-lg"
-          placeholder="000000"
-        )
-
-      //- Failed Login Text for OTP
-
-      div(
-        v-if="loginError"
-        class="text-red-600 text-sm font-medium text-center bg-red-50 p-2 rounded border border-red-200"
-      ) {{ loginError }}
-
-      div(class="flex flex-col gap-3")
-        button(
+<template>
+  <div class="min-h-[90vh] flex items-center justify-center bg-gray-50 px-4 font-sans">
+    <div class="max-w-md w-full space-y-8 bg-white p-8 rounded-xl shadow-sm border border-gray-200">
+      <div class="text-center">
+        <h2 class="text-3xl font-bold tracking-tight text-gray-900">
+          {{ step === 'request' ? 'Sign in' : 'Enter Code' }}
+        </h2>
+        <p class="mt-2 text-sm text-gray-600">
+          {{ step === 'request' ? 'We will send a one-time code to your email.' : `Sent to ${email}` }}
+        </p>
+      </div>
+      <form
+        v-if="step === 'request'"
+        class="mt-8 space-y-6"
+        @submit.prevent="handleRequestOtp"
+      >
+        <div>
+          <label
+            for="email"
+            class="block text-sm font-medium text-gray-700"
+          >Email address</label>
+          <input
+            id="email"
+            v-model="email"
+            type="email"
+            required
+            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+            placeholder="you@example.com"
+          >
+        </div>
+        <button
           type="submit"
           :disabled="loading"
           class="w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50"
-        ) {{ loading ? 'Verifying...' : 'Verify & Login' }}
-      button(
+        >
+          {{ loading ? 'Sending...' : 'Send Code' }}
+        </button>
+        <div
+          v-if="requestError"
+          class="text-red-600 text-sm font-medium text-center bg-red-50 p-2 rounded border border-red-200"
+        >
+          {{ requestError }}
+        </div>
+      </form>
+      <form
+        v-else
+        class="mt-8 space-y-6"
+        @submit.prevent="handleVerifyOtp"
+      >
+        <div>
+          <label
+            for="otp"
+            class="block text-sm font-medium text-gray-700"
+          >One-Time Code</label>
+          <input
+            id="otp"
+            v-model="otp"
+            type="text"
+            maxlength="6"
+            required
+            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm text-center tracking-widest font-mono text-lg"
+            placeholder="000000"
+          >
+        </div>
+        <!-- Failed Login Text for OTP -->
+        <div
+          v-if="loginError"
+          class="text-red-600 text-sm font-medium text-center bg-red-50 p-2 rounded border border-red-200"
+        >
+          {{ loginError }}
+        </div>
+        <div class="flex flex-col gap-3">
+          <button
+            type="submit"
+            :disabled="loading"
+            class="w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50"
+          >
+            {{ loading ? 'Verifying...' : 'Verify & Login' }}
+          </button>
+        </div>
+        <button
           type="button"
           class="text-sm text-indigo-600 hover:text-indigo-500"
           @click="resetFlow"
-        ) Back to email
+        >
+          Back to email
+        </button>
+      </form>
+    </div>
+  </div>
 </template>

@@ -54,25 +54,53 @@ watch(() => props.displayDonationPopup, (isOpen) => {
 });
 </script>
 
-<template lang="pug">
-div(
-  v-if="props.displayDonationPopup"
-  @click.self="$emit('update:displayDonationPopup', false)"
-  class="flex z-10 items-center justify-center fixed inset-0 bg-black/70 p-4"
-)
-  div(class="container m-4 place-content-center font-poppins w-1/2 sm:m-auto sm:py-3 bg-white rounded-lg shadow-lg max-h-full overflow-y-auto")
-      div(class="relative")
-        button(class="absolute top-2.5 right-2.5 z-10 flex items-center justify-center text-gray-600 hover:text-gray-800 font-light text-2xl w-[60px] h-[60px] rounded-full" @click="$emit('update:displayDonationPopup', false)") x
-      div(v-if="props.donation_goal_provided" class="text-md text-center ml-4 my-3 sm:text-xl sm:my-6 tracking-[0.35px] font-semibold text-[#646464]") {{ donationFormat(props.amount_raised)  + " raised of " +  donationFormat(props.donation_goal) + " goal" }}
-      div(class="py-4")
-      div(v-if="props.donation_goal_provided" class="progress-bar overflow-hidden ml-4 h-7 rounded-full bg-[#b5b5b5]")
-          CVProgress(:modelBarWidth="donated_percentage" class="text-xl") {{ donated_percentage  + "%" }}
-      div(class="p-3 rounded bg-gray-50")
-          h1(class="ml-4 pt-9 text-2xl text-gray-dark sm:text-3xl font-semibold tracking-[0.35px]") Donor Information
-      DonationEntry(
+<template>
+  <div
+    v-if="props.displayDonationPopup"
+    class="flex z-10 items-center justify-center fixed inset-0 bg-black/70 p-4"
+    @click.self="$emit('update:displayDonationPopup', false)"
+  >
+    <div class="container m-4 place-content-center font-poppins w-1/2 sm:m-auto sm:py-3 bg-white rounded-lg shadow-lg max-h-full overflow-y-auto">
+      <div class="relative">
+        <button
+          class="absolute top-2.5 right-2.5 z-10 flex items-center justify-center text-gray-600 hover:text-gray-800 font-light text-2xl w-[60px] h-[60px] rounded-full"
+          @click="$emit('update:displayDonationPopup', false)"
+        >
+          x
+        </button>
+      </div>
+      <div
+        v-if="props.donation_goal_provided"
+        class="text-md text-center ml-4 my-3 sm:text-xl sm:my-6 tracking-[0.35px] font-semibold text-[#646464]"
+      >
+        {{ donationFormat(props.amount_raised) + " raised of " + donationFormat(props.donation_goal) + " goal" }}
+      </div>
+      <div class="py-4" />
+      <div
+        v-if="props.donation_goal_provided"
+        class="progress-bar overflow-hidden ml-4 h-7 rounded-full bg-[#b5b5b5]"
+      >
+        <CVProgress
+          :model-bar-width="donated_percentage"
+          class="text-xl"
+        >
+          {{ donated_percentage + "%" }}
+        </CVProgress>
+      </div>
+      <div class="p-3 rounded bg-gray-50">
+        <h1 class="ml-4 pt-9 text-2xl text-gray-dark sm:text-3xl font-semibold tracking-[0.35px]">
+          Donor Information
+        </h1>
+      </div>
+      <DonationEntry
         v-if="isActive"
-        :pageCuid="pageCuid"
-        :familyCuid="familyCuid"
-      )
-      img(v-else src="/InActiveDonationForm.png")   
+        :page-cuid="pageCuid"
+        :family-cuid="familyCuid"
+      />
+      <img
+        v-else
+        src="/InActiveDonationForm.png"
+      >
+    </div>
+  </div>
 </template>

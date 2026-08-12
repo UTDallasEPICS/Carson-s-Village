@@ -16,7 +16,6 @@
     "@types/email-templates": "^10.0.1",
     "@types/node": "^25.6.0",
     "@types/nodemailer": "^8.0.0",
-    "@vue/language-plugin-pug": "^2.0.7",
     "@prisma/adapter-better-sqlite3": "^7.7.0",
     "@prisma/client": "^7.7.0",
     "dotenv": "^17.4.2",
@@ -45,7 +44,6 @@
     "stripe": "^20.4.1",
     "tailwindcss": "^3.4.6",
     "vite": "^4.1.4",
-    "vite-plugin-pug": "^0.3.2",
     "vue": "^3.3.4",
     "vue-multiselect": "^3.1.0",
     "vue-router": "^4.1.6"

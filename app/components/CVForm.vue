@@ -47,11 +47,12 @@ defineExpose({
 });
 </script>
 
-<template lang="pug">
-form(
-  :id="props.id"
-  @submit.prevent="handleSubmit"
-  novalidate
-)
-  slot
+<template>
+  <form
+    :id="props.id"
+    novalidate
+    @submit.prevent="handleSubmit"
+  >
+    <slot />
+  </form>
 </template>

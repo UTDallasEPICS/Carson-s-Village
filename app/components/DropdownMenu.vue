@@ -1,82 +1,143 @@
-<template lang="pug">
-div(class="dropdown" @mouseleave="hideDropdown" @mouseover="showDropdown")
-    NuxtLink(class="items-center pt-5 px-2 py-2 text-sm font-medium rounded-md cursor-pointer relative no-border text-gray-999"
-      v-if="to && !submenus" 
-      class="buttonClasses" 
-      to="to" 
-      target="blank" 
+<template>
+  <div
+    class="dropdown"
+    @mouseleave="hideDropdown"
+    @mouseover="showDropdown"
+  >
+    <NuxtLink
+      v-if="to && !submenus"
+      class="items-center pt-5 px-2 py-2 text-sm font-medium rounded-md cursor-pointer relative no-border text-gray-999"
+      :class="buttonClasses"
+      to="to"
+      target="blank"
       active-class="active"
-    )
-      span(class="button-content")
-        slot
-        span(class="caret" v-if="hasSubmenus") ⌄
-      div(class="dropdown-content" :style="{ minWidth: dropdownMinWidth + 'px' }" v-if="isDropdownVisible")
-        template(v-for="(submenu, index) in submenus" :key="index")
-          NuxtLink(class="submenu-item"
-            v-if="submenu.to" 
-            :to="submenu.to" 
-            target="blank" 
-            @mouseover="highlightSubmenu(index)" 
+    >
+      <span class="button-content">
+        <slot />
+        <span
+          v-if="hasSubmenus"
+          class="caret"
+        >⌄</span>
+      </span>
+      <div
+        v-if="isDropdownVisible"
+        class="dropdown-content"
+        :style="{ minWidth: dropdownMinWidth + 'px' }"
+      >
+        <template
+          v-for="(submenu, index) in submenus"
+          :key="index"
+        >
+          <NuxtLink
+            v-if="submenu.to"
+            class="submenu-item"
+            :to="submenu.to"
+            target="blank"
+            @mouseover="highlightSubmenu(index)"
             @mouseleave="resetHighlight"
-          )
-            | {{ submenu.title }}
-          div(class="submenu-item"
-            v-else 
-            target="blank" 
-            @mouseover="highlightSubmenu(index)" 
+          >
+            {{ submenu.title }}
+          </NuxtLink>
+          <div
+            v-else
+            class="submenu-item"
+            target="blank"
+            @mouseover="highlightSubmenu(index)"
             @mouseleave="resetHighlight"
-          )
-            | {{ submenu.title }}
-            div(class="nested-dropdown-content"
-              v-if="submenu.submenus && submenu.submenus.length > 0" 
-              :style="{ minWidth: nestedDropdownMinWidth + 'px', left: '100%', top: '0' }" 
-              target="blank" 
-              @mouseover="showNestedDropdown(index)" 
+          >
+            {{ submenu.title }}
+            <div
+              v-if="submenu.submenus && submenu.submenus.length > 0"
+              class="nested-dropdown-content"
+              :style="{ minWidth: nestedDropdownMinWidth + 'px', left: '100%', top: '0' }"
+              target="blank"
+              @mouseover="showNestedDropdown(index)"
               @mouseleave="hideNestedDropdown(index)"
-            )
-              template(v-for="(nestedSubmenu, nestedIndex) in submenu.submenus" :key="nestedIndex")
-                NuxtLink(class="submenu-item" :to="nestedSubmenu.to")
-                  | {{ nestedSubmenu.title }}
-    div(class="items-center pt-5 px-2 py-2 text-sm font-medium rounded-md cursor-pointer relative no-border text-gray-999"
-      v-else 
-      :class="buttonClasses" 
-      target="blank" 
-      @mouseover="showDropdown" 
-      @mouseleave="hideDropdown"
-    )
-      span(class="button-content")
-        slot
-        span(class="caret" v-if="hasSubmenus") ⌄
-      div(class="dropdown-content" :style="{ minWidth: dropdownMinWidth + 'px' }" v-if="isDropdownVisible")
-        template(v-for="(submenu, index) in submenus" :key="index")
-          NuxtLink(class="submenu-item"
-            v-if="submenu.to" 
-            :to="submenu.to" 
-            target="blank" 
-            @mouseover="highlightSubmenu(index)" 
-            @mouseleave="resetHighlight"
-          )
-            | {{ submenu.title }}
-          div(class="submenu-item"
-            v-else 
-            target="blank" 
-            @mouseover="highlightSubmenu(index)" 
-            @mouseleave="resetHighlight"
-          )
-            | {{ submenu.title }}
-            div(class="nested-dropdown-content"
-              v-if="submenu.submenus && submenu.submenus.length > 0" 
-              :style="{ minWidth: nestedDropdownMinWidth + 'px', left: '100%', top: '0' }" 
-              target="blank" 
-              @mouseover="showNestedDropdown(index)" 
-              @mouseleave="hideNestedDropdown(index)"
-            )
-              template(v-for="(nestedSubmenu, nestedIndex) in submenu.submenus" :key="nestedIndex")
-                NuxtLink(class="submenu-item"
+            >
+              <template
+                v-for="(nestedSubmenu, nestedIndex) in submenu.submenus"
+                :key="nestedIndex"
+              >
+                <NuxtLink
+                  class="submenu-item"
                   :to="nestedSubmenu.to"
-                  target="blank" 
-                  )
-                  | {{ nestedSubmenu.title }}
+                >
+                  {{ nestedSubmenu.title }}
+                </NuxtLink>
+              </template>
+            </div>
+          </div>
+        </template>
+      </div>
+    </NuxtLink>
+    <div
+      v-else
+      class="items-center pt-5 px-2 py-2 text-sm font-medium rounded-md cursor-pointer relative no-border text-gray-999"
+      :class="buttonClasses"
+      target="blank"
+      @mouseover="showDropdown"
+      @mouseleave="hideDropdown"
+    >
+      <span class="button-content">
+        <slot />
+        <span
+          v-if="hasSubmenus"
+          class="caret"
+        >⌄</span>
+      </span>
+      <div
+        v-if="isDropdownVisible"
+        class="dropdown-content"
+        :style="{ minWidth: dropdownMinWidth + 'px' }"
+      >
+        <template
+          v-for="(submenu, index) in submenus"
+          :key="index"
+        >
+          <NuxtLink
+            v-if="submenu.to"
+            class="submenu-item"
+            :to="submenu.to"
+            target="blank"
+            @mouseover="highlightSubmenu(index)"
+            @mouseleave="resetHighlight"
+          >
+            {{ submenu.title }}
+          </NuxtLink>
+          <div
+            v-else
+            class="submenu-item"
+            target="blank"
+            @mouseover="highlightSubmenu(index)"
+            @mouseleave="resetHighlight"
+          >
+            {{ submenu.title }}
+            <div
+              v-if="submenu.submenus && submenu.submenus.length > 0"
+              class="nested-dropdown-content"
+              :style="{ minWidth: nestedDropdownMinWidth + 'px', left: '100%', top: '0' }"
+              target="blank"
+              @mouseover="showNestedDropdown(index)"
+              @mouseleave="hideNestedDropdown(index)"
+            >
+              <template
+                v-for="(nestedSubmenu, nestedIndex) in submenu.submenus"
+                :key="nestedIndex"
+              >
+                <NuxtLink
+                  class="submenu-item"
+                  :to="nestedSubmenu.to"
+                  target="blank"
+                >
+                  {{ nestedSubmenu.title }}
+                </NuxtLink>
+              </template>
+            </div>
+          </div>
+        </template>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script setup>
