@@ -32,12 +32,12 @@ const validateEmail: ValidationRule = (val) => {
 const emailRules = computed(() => [validateEmail]);
 </script>
 
-<template lang="pug">
-// Passes native attributes (placeholder, id, autocomplete, etc.) down to CVInput
-CVInput(
-  type="email"
-  :rules="emailRules"
-  v-model="model"
-  v-bind="$attrs"
-)
+<template>
+  <!-- Passes native attributes (placeholder, id, autocomplete, etc.) down to CVInput -->
+  <CVInput
+    v-model="model"
+    type="email"
+    :rules="emailRules"
+    v-bind="$attrs"
+  />
 </template>

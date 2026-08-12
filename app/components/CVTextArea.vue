@@ -15,8 +15,13 @@ const value = computed({
 })
 </script>
 
-<template lang="pug">
-textarea(class="rounded-md outline-0 border-box w-full p-2 border-grey-600 border-r-2 border" :id="id" v-model="value" type="text")
+<template>
+  <textarea
+    v-model="value"
+    class="rounded-md outline-0 border-box w-full p-2 border-grey-600 border-r-2 border"
+    :id="id"
+    type="text"
+  />
 </template>
 
 <style scoped>

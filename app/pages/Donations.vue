@@ -177,94 +177,198 @@ function formatReportDate(date: string) {
 }
 </script>
 
-<template lang="pug">
-div(class="px-10")   
+<template>
+  <div class="px-10">
+    <!-- Pages Table -->
+    <div class="flex mb-5 justify-between items-end">
+      <CVLegend class="mt-10 pl-2">
+        Family Pages
+      </CVLegend>
+      <div class="flex gap-5 pr-5">
+        <p class="self-center">
+          Family
+        </p>
+        <Listbox
+          v-model="currentFamilyCuid"
+          as="div"
+          class="shadow-sm border border-1 rounded-lg"
+        >
+          <div class="relative">
+            <Transition
+              leave-active-class="transition ease-in duration-100"
+              leave-from-class="opacity-100"
+              leave-to-class="opacity-0"
+            />
+            <ListboxOptions as="div" class="w-full absolute z-10 mt-10 bg-white shadow-lg max-h-60 rounded-md px-2 py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm">
+              <ListboxOption
+                v-for="Family in Families"
+                :key="Family.id"
+                :value="Family.id"
+                as="div"
+                class="px-2 border border-grey-500 py-1 my-1"
+              >
+                {{ Family.family_name }}
+              </ListboxOption>
+            </ListboxOptions>
+          </div>
+          <ListboxButton class="text-left bg-white relative rounded-md pl-2 pr-10 py-2 sm:text-sm w-96">
+            {{ currentFamilyCuid ? currentFamily.family_name : 'Select Family' }}
+          </ListboxButton>
+        </Listbox>
+      </div>
+    </div>
+    <table class="mt-5 w-full">
+      <thead>
+        <tr class="text-white">
+          <th class="px-8 bg-[#5aadc2] rounded-tl-3xl w-[33.33%] overflow-hidden">
+            Page Name
+          </th>
+          <th class="px-8 bg-[#5aadc2]">
+            Start Date
+          </th>
+          <th class="px-8 bg-[#5aadc2]">
+            Last Donation
+          </th>
+          <th class="px-8 bg-[#5aadc2]">
+            Goal Met
+          </th>
+          <th class="px-8 bg-[#5aadc2]">
+            Raised
+          </th>
+          <th class="font-poppins font-bold rounded-tr-3xl bg-[#5aadc2] w-[33.33%]">
+            Remaining
+          </th>
+        </tr>
+        <tr
+          v-for="(item, i) in familyPages.data"
+          :key="i"
+          :class="{'bg-gray-200': (i+1) % 2}"
+        >
+          <td class="font-poppins text-gray-dark font-bold text-center">
+            {{ item?.page_first_name + " " + item?.page_last_name }}
+          </td>
+          <td class="font-poppins text-gray-dark font-bold text-center">
+            {{ dateFormat(item?.start_date) }}
+          </td>
+          <td class="font-poppins text-gray-dark font-bold text-center">
+            {{ item.last_donation_date ? dateFormat(item?.last_donation_date) : "No Donations" }}
+          </td>
+          <td class="font-poppins text-gray-dark font-bold text-center">
+            {{ item?.donation_status }}
+          </td>
+          <td class="font-poppins text-gray-dark font-bold text-center">
+            {{ donationFormat(item.amount_raised) }}
+          </td>
+          <td class="font-poppins text-gray-dark font-bold text-center">
+            {{ donationFormat(item.amount_raised - item.amount_distributed) }}
+          </td>
+        </tr>
+      </thead>
+    </table>
+    <div class="mb-5 flex flex-wrap gap-2 place-content-center">
+      <div class="px-2 mt-2">
+        <button @click="prevPage">
+          &lt;
+        </button>
+      </div>
+      <div class="px-2 mt-2">
+        <p>{{ currentFamilyPageNumber + 1 }}</p>
+      </div>
+      <div class="px-2 mt-2">
+        <button @click="nextPage">
+          >
+        </button>
+      </div>
+    </div>
 
-  // ------ Pages Table --------------------------------------------------------------------------------------------------
-
-  div(class="flex mb-5 justify-between items-end")
-    CVLegend(class="mt-10 pl-2") Family Pages
-
-    div(class="flex gap-5 pr-5")
-      p(class="self-center") Family
-      Listbox(as='div' v-model="currentFamilyCuid" class="shadow-sm border border-1 rounded-lg")
-        div(class="relative")
-          Transition(
-            leave-active-class='transition ease-in duration-100'
-            leave-from-class='opacity-100'
-            leave-to-class='opacity-0'
-          )
-            ListboxOptions(as='div' class='w-full absolute z-10 mt-10 bg-white shadow-lg max-h-60 rounded-md px-2 py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm' )
-              ListboxOption(as='div' v-for="Family in Families" :key="Family.id" :value="Family.id" class="px-2 border border-grey-500 py-1 my-1") {{ Family.family_name }}
-        ListboxButton(class='text-left bg-white relative rounded-md pl-2 pr-10 py-2 sm:text-sm w-96') {{ currentFamilyCuid ? currentFamily.family_name : 'Select Family' }}
-     
-  table(class="mt-5 w-full")
-      thead
-          tr(class="text-white")
-              th(class="px-8 bg-[#5aadc2] rounded-tl-3xl w-[33.33%] overflow-hidden") Page Name
-              th(class="px-8 bg-[#5aadc2]") Start Date
-              th(class="px-8 bg-[#5aadc2]") Last Donation
-              th(class="px-8 bg-[#5aadc2]") Goal Met
-              th(class="px-8 bg-[#5aadc2]") Raised
-              th(class="font-poppins font-bold rounded-tr-3xl bg-[#5aadc2] w-[33.33%]") Remaining
-          tr(v-for="(item, i) in familyPages.data" 
-              :key="i" 
-              :class="{'bg-gray-200': (i+1) % 2}"
-          )
-              td(class="font-poppins text-gray-dark font-bold text-center")  {{ item?.page_first_name + " " + item?.page_last_name }}
-              td(class="font-poppins text-gray-dark font-bold text-center")  {{ dateFormat(item?.start_date) }}
-              td(class="font-poppins text-gray-dark font-bold text-center")  {{ item.last_donation_date ? dateFormat(item?.last_donation_date) : "No Donations" }}
-              td(class="font-poppins text-gray-dark font-bold text-center")  {{ item?.donation_status}}
-              td(class="font-poppins text-gray-dark font-bold text-center")  {{ donationFormat(item.amount_raised) }}
-              td(class="font-poppins text-gray-dark font-bold text-center")  {{ donationFormat(item.amount_raised - item.amount_distributed) }}
-  div(class="mb-5 flex flex-wrap gap-2 place-content-center")
-    div(class="px-2 mt-2")
-        button(@click="prevPage") &lt
-    div(class="px-2 mt-2")
-        p {{  currentFamilyPageNumber + 1}}
-    div(class="px-2 mt-2")
-        button(@click="nextPage") >
-
-  // ------ Donations Table --------------------------------------------------------------------------------------------------
-
-  div(class="flex mb-5 justify-between items-end")
-    CVLegend(class="mt-10 ml-2") Family Donations
-
-    div(class="flex gap-5 pr-5")
-      p(class="self-center") Page
-      Listbox(as='div' v-model="currentPageCuid" class="shadow-sm border border-1 rounded-lg")
-        div(class="relative")
-          Transition(
-            leave-active-class='transition ease-in duration-100'
-            leave-from-class='opacity-100'
-            leave-to-class='opacity-0'
-          )
-            ListboxOptions(as='div' class='w-full absolute z-10 mt-10 bg-white shadow-lg max-h-60 rounded-md px-2 py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm' )
-              ListboxOption(as='div' v-for="pageItem in pageDonationsList" :key="pageItem.id" :value="pageItem.id" class="px-2 border border-grey-500 py-1 my-1") {{ pageItem.itemDisplay}}
-        ListboxButton(class='text-left bg-white relative rounded-md pl-2 pr-10 py-2 sm:text-sm w-96') {{ currentPageDonationItem.name }}
-
-  table(class="my-5 w-full")
-      thead
-          tr(class="text-white")
-              th(class="px-8 bg-[#5aadc2] rounded-tl-3xl w-1/2 overflow-hidden") Name
-              th(class="px-8 bg-[#5aadc2]") Page Name
-              th(class="px-8 bg-[#5aadc2]") Email
-              th(class="px-8 bg-[#5aadc2]") Donated
-              th(class="px-8 w-1/2 rounded-tr-3xl bg-[#5aadc2]") Amount
-          tr(v-for="(item, i) in pageDonations" 
-              :key="i" 
-              :class="{'bg-gray-200': (i+1) % 2}"
-          )
-              td(class="font-poppins text-gray-dark font-bold text-center")  {{ !item.donorLastName ? `${item.donorFirstName}` : `${item.donorFirstName} ${item.donorLastName}` }}
-              td(class="font-poppins text-gray-dark font-bold text-center")  {{ item.Page?.page_first_name + " " + item.Page?.page_last_name }}
-              td(class="font-poppins text-gray-dark font-bold text-center")  {{ item.donorEmail }}
-              td(class="font-poppins text-gray-dark font-bold text-center")  {{ dateFormat(item.donationInitiated) }}
-              td(class="font-poppins text-gray-dark font-bold text-center")  {{ donationFormat(item.amount) }}
-  a(
-    class="transition h-[50px] w-[140px] text-white font-bold rounded-[100px] duration-300 bg-orange-999 hover:bg-green-600 mr-9 mt-16 p-6 px-6 pr-6 pt-3 pb-3 cursor-pointer bg-orange-999" 
-    :href="filedownloadlink"
-    :download="downloadName" 
-    :dataset.downloadurl="dataset"
-  ) Download
-div(class="pb-10")
+    <!-- Donations Table -->
+    <div class="flex mb-5 justify-between items-end">
+      <CVLegend class="mt-10 ml-2">
+        Family Donations
+      </CVLegend>
+      <div class="flex gap-5 pr-5">
+        <p class="self-center">
+          Page
+        </p>
+        <Listbox
+          v-model="currentPageCuid"
+          as="div"
+          class="shadow-sm border border-1 rounded-lg"
+        >
+          <div class="relative">
+            <Transition
+              leave-active-class="transition ease-in duration-100"
+              leave-from-class="opacity-100"
+              leave-to-class="opacity-0"
+            />
+            <ListboxOptions as="div" class="w-full absolute z-10 mt-10 bg-white shadow-lg max-h-60 rounded-md px-2 py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm">
+              <ListboxOption
+                v-for="pageItem in pageDonationsList"
+                :key="pageItem.id"
+                :value="pageItem.id"
+                as="div"
+                class="px-2 border border-grey-500 py-1 my-1"
+              >
+                {{ pageItem.itemDisplay }}
+              </ListboxOption>
+            </ListboxOptions>
+          </div>
+          <ListboxButton class="text-left bg-white relative rounded-md pl-2 pr-10 py-2 sm:text-sm w-96">
+            {{ currentPageDonationItem.name }}
+          </ListboxButton>
+        </Listbox>
+      </div>
+    </div>
+    <table class="my-5 w-full">
+      <thead>
+        <tr class="text-white">
+          <th class="px-8 bg-[#5aadc2] rounded-tl-3xl w-1/2 overflow-hidden">
+            Name
+          </th>
+          <th class="px-8 bg-[#5aadc2]">
+            Page Name
+          </th>
+          <th class="px-8 bg-[#5aadc2]">
+            Email
+          </th>
+          <th class="px-8 bg-[#5aadc2]">
+            Donated
+          </th>
+          <th class="px-8 w-1/2 rounded-tr-3xl bg-[#5aadc2]">
+            Amount
+          </th>
+        </tr>
+        <tr
+          v-for="(item, i) in pageDonations"
+          :key="i"
+          :class="{'bg-gray-200': (i+1) % 2}"
+        >
+          <td class="font-poppins text-gray-dark font-bold text-center">
+            {{ !item.donorLastName ? `${item.donorFirstName}` : `${item.donorFirstName} ${item.donorLastName}` }}
+          </td>
+          <td class="font-poppins text-gray-dark font-bold text-center">
+            {{ item.Page?.page_first_name + " " + item.Page?.page_last_name }}
+          </td>
+          <td class="font-poppins text-gray-dark font-bold text-center">
+            {{ item.donorEmail }}
+          </td>
+          <td class="font-poppins text-gray-dark font-bold text-center">
+            {{ dateFormat(item.donationInitiated) }}
+          </td>
+          <td class="font-poppins text-gray-dark font-bold text-center">
+            {{ donationFormat(item.amount) }}
+          </td>
+        </tr>
+      </thead>
+    </table>
+    <a
+      class="transition h-[50px] w-[140px] text-white font-bold rounded-[100px] duration-300 bg-orange-999 hover:bg-green-600 mr-9 mt-16 p-6 px-6 pr-6 pt-3 pb-3 cursor-pointer bg-orange-999"
+      :href="filedownloadlink"
+      :download="downloadName"
+      :dataset.downloadurl="dataset"
+    >
+      Download
+    </a>
+    <div class="pb-10" />
+  </div>
 </template>

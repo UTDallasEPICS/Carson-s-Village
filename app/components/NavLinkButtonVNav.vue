@@ -1,7 +1,13 @@
-<template lang="pug">
-NuxtLink(class='items-center text-sm font-medium rounded-md cursor-pointer no-border relative text-gray-999 hover:text-black transition duration-300 text-center overflow-visible' :to="to" active-class="active")
-  span(class="button-content")
-    slot
+<template>
+  <NuxtLink
+    class="items-center text-sm font-medium rounded-md cursor-pointer no-border relative text-gray-999 hover:text-black transition duration-300 text-center overflow-visible"
+    :to="to"
+    active-class="active"
+  >
+    <span class="button-content">
+      <slot />
+    </span>
+  </NuxtLink>
 </template>
         
 <script setup lang="ts">

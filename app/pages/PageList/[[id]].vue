@@ -160,75 +160,206 @@ const currentFamily = computed(() => data_families.value?.find(({ id }: Family) 
 await getDataAdminAdvocate()
 </script>
 
-<template lang ="pug">
-div(class="flex pl-3 gap-8 font-bold")
-  div(
-    :class="{'text-orange-999 underline underline-offset-2 decoration-2': pageFilter === 'active'}"
-    @click="pageFilter = 'active'"
-  ) Active
-  div(
-    :class="{'text-orange-999 underline underline-offset-2 decoration-2': pageFilter === 'archived'}"
-    @click="pageFilter = 'archived'"
-  ) Archived
-  div(
-    :class="{'text-orange-999 underline underline-offset-2 decoration-2': pageFilter === 'all'}"
-    @click="pageFilter = 'all'"
-  ) All
-
-div(v-if="(isAdmin || isAdvocate) && pageFetchQuery === 'family'" class="py-4 grid sm:grid-cols-3")
-    CVLabel Current Family
-    div(class="mx-9 sm:col-span-2 sm:mr-11")
-      Listbox(as='div' v-model="familyCuid" class="shadow-sm border border-1 rounded-lg")
-        div(class="relative")
-          Transition(
-                    leave-active-class='transition ease-in duration-100'
-                    leave-from-class='opacity-100'
-                    leave-to-class='opacity-0'
-                    )
-            ListboxOptions(as='div' class='w-full absolute z-10 mt-10 bg-white shadow-lg max-h-60 rounded-md px-2 py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm' )
-                ListboxOption(as='div' v-for="family in data_families" :key="family.id" :value="family.id" class="px-2 border border-grey-500 py-1 my-1") {{ family.family_name }}
-          ListboxButton(class='text-left bg-white relative rounded-md pl-2 pr-10 py-2 sm:text-sm w-96') {{ familyCuid ? currentFamily.family_name : 'Select family to view pages from' }}      
-div(class="mx-auto mt-1 sm:w-[1200px]")
-  table(class="table-auto")
-    thead
-      tr
-        th(class="font-poppins font-bold p-2 bg-blue-999 text-white overflow-hidden rounded-tl-3xl w-[20%]")  Page Name
-        th(class="font-poppins font-bold bg-blue-999 text-white w-[10%]") Creating User
-        th(class="font-poppins font-bold bg-blue-999 text-white w-[10%]") Advocate 
-        th(class="font-poppins font-bold bg-blue-999 text-white w-[10%]") Family 
-        th(class="font-poppins font-bold bg-blue-999 text-white w-[10%]") Total Donated
-        th(class="font-poppins font-bold bg-blue-999 text-white w-[20%]") Creation Date
-        th(class="font-poppins font-bold bg-blue-999 text-white w-[20%]") Donation Deadline
-        th(class="font-poppins font-bold bg-blue-999 text-white") Donation Goal
-        th(class="font-poppins font-bold bg-blue-999 text-white w-[15%]")  {{ "Page Editor" }}
-        th(class="font-poppins font-bold bg-blue-999 text-white rounded-tr-3xl w-[25%]") {{ "Family Page" }}
-
-    tbody 
-      tr(v-for="(item, i) in (pageFilter === 'all' ? pages : pages.filter(item => pageFilter === 'active' ? item.status === 'active' : item.status !== 'active'))" :class="{'bg-gray-200': (i + 1) % 2}")
-        td.font-poppins.text-gray-dark.font-bold.text-center {{ item.page_first_name + " " + item.page_last_name }}
-        td.font-poppins.text-gray-dark.font-bold.text-center {{ item.User?.name }}
-        td.font-poppins.text-gray-dark.font-bold.text-center {{ item.Family?.AdvocateResponsible ? (item.Family?.AdvocateResponsible?.first_name + " " + item.Family?.AdvocateResponsible?.last_name) : 'No Advocate assigned'}}
-        td.font-poppins.text-gray-dark.font-bold.text-center {{ item.Family?.family_name }}
-        td.font-poppins.text-gray-dark.font-bold.text-center {{ donationFormat(item.amount_raised) }}
-        td.font-poppins.text-gray-dark.font-bold.text-center {{ dateFormat(item.start_date) }}
-        td.font-poppins.text-gray-dark.font-bold.text-center {{ dateFormat(item.deadline) }}
-        td.font-poppins.text-gray-dark.font-bold.text-center {{ donationFormat(item.donation_goal) }}
-        td
-          LinkButton(class="sm:my-2 transition duration-300 bg-orange-999 hover:bg-green-600 whitespace-nowrap flex flex-row py-[14px] px-[24px] gap-[10px]" :to="`/EditPage/${item.id}`") Edit
-        td
-          LinkButton(class="sm:my-2 transition duration-300 bg-orange-999 hover:bg-green-600 whitespace-nowrap flex flex-row py-[14px] px-[24px] gap-[10px]" :to="`/Page/${item.id}`") View
-  div(class="w-full max-w-[1200px] h-[50px] rounded-b-3xl bg-blue-999")
-div(class="mb-9 py-7 flex flex-wrap gap-2 place-content-center")
-  div(class="px-2 mt-2")
-    CVChevronLeft(class="text-gray-200 size-4 h-2" :class="{'cursor-pointer size-4 h-2': currentPage !== 0 }" @click="prevPage" :isEnd="currentPage == 0")
-  div(class="px-2 mt-2")
-    div(class="flex")
-      p(v-if="currentPage > 1" @click="goToPage(0)" class="cursor-pointer text-gray-900") {{  1 + "..." }} &nbsp;
-      p(v-if="currentPage > 0" @click="goToPage(currentPage - 1)" class="cursor-pointer text-gray-900") {{  currentPage }} &nbsp;
-      p(class="cursor-pointer text-gray-900 font-bold") {{  currentPage + 1 }} &nbsp;
-      p(v-if="(pagesLength / 12 - currentPage) > 1" @click="goToPage(currentPage + 1 )" class="cursor-pointer text-gray-900") {{  currentPage + 2 }} &nbsp;
-      p(v-if="(pagesLength / 12 - currentPage) > 2" @click="goToPage(currentPage + 2)" class="cursor-pointer text-gray-900") {{  currentPage + 3 }} &nbsp;
-      p(v-if="(pagesLength / 12 - currentPage) > 3" @click="goToPage(Math.floor(pagesLength / 12))" class="cursor-pointer text-gray-900") {{  "..." + Math.ceil(pageLength / 12) }}
-  div(class="px-2 mt-2")
-      CVChevronRight(:isEnd="currentPage == Math.floor(pagesLength / 12)" :class="{'cursor-pointer': currentPage + 1 !== Math.ceil(pagesLength / 12)}" @click="nextPage" class="text-gray-900 size-4 h-2")
+<template>
+  <div class="flex pl-3 gap-8 font-bold">
+    <div
+      :class="{'text-orange-999 underline underline-offset-2 decoration-2': pageFilter === 'active'}"
+      @click="pageFilter = 'active'"
+    >
+      Active
+    </div>
+    <div
+      :class="{'text-orange-999 underline underline-offset-2 decoration-2': pageFilter === 'archived'}"
+      @click="pageFilter = 'archived'"
+    >
+      Archived
+    </div>
+    <div
+      :class="{'text-orange-999 underline underline-offset-2 decoration-2': pageFilter === 'all'}"
+      @click="pageFilter = 'all'"
+    >
+      All
+    </div>
+  </div>
+  <div
+    v-if="(isAdmin || isAdvocate) && pageFetchQuery === 'family'"
+    class="py-4 grid sm:grid-cols-3"
+  >
+    <CVLabel>Current Family</CVLabel>
+    <div class="mx-9 sm:col-span-2 sm:mr-11">
+      <Listbox
+        v-model="familyCuid"
+        as="div"
+        class="shadow-sm border border-1 rounded-lg"
+      >
+        <div class="relative">
+          <Transition
+            leave-active-class="transition ease-in duration-100"
+            leave-from-class="opacity-100"
+            leave-to-class="opacity-0"
+          />
+          <ListboxOptions as="div" class="w-full absolute z-10 mt-10 bg-white shadow-lg max-h-60 rounded-md px-2 py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm">
+            <ListboxOption
+              v-for="family in data_families"
+              :key="family.id"
+              :value="family.id"
+              as="div"
+              class="px-2 border border-grey-500 py-1 my-1"
+            >
+              {{ family.family_name }}
+            </ListboxOption>
+          </ListboxOptions>
+          <ListboxButton class="text-left bg-white relative rounded-md pl-2 pr-10 py-2 sm:text-sm w-96">
+            {{ familyCuid ? currentFamily.family_name : 'Select family to view pages from' }}
+          </ListboxButton>
+        </div>
+      </Listbox>
+    </div>
+  </div>
+  <div class="mx-auto mt-1 sm:w-[1200px]">
+    <table class="table-auto">
+      <thead>
+        <tr>
+          <th class="font-poppins font-bold p-2 bg-blue-999 text-white overflow-hidden rounded-tl-3xl w-[20%]">
+            Page Name
+          </th>
+          <th class="font-poppins font-bold bg-blue-999 text-white w-[10%]">
+            Creating User
+          </th>
+          <th class="font-poppins font-bold bg-blue-999 text-white w-[10%]">
+            Advocate
+          </th>
+          <th class="font-poppins font-bold bg-blue-999 text-white w-[10%]">
+            Family
+          </th>
+          <th class="font-poppins font-bold bg-blue-999 text-white w-[10%]">
+            Total Donated
+          </th>
+          <th class="font-poppins font-bold bg-blue-999 text-white w-[20%]">
+            Creation Date
+          </th>
+          <th class="font-poppins font-bold bg-blue-999 text-white w-[20%]">
+            Donation Deadline
+          </th>
+          <th class="font-poppins font-bold bg-blue-999 text-white">
+            Donation Goal
+          </th>
+          <th class="font-poppins font-bold bg-blue-999 text-white w-[15%]">
+            {{ "Page Editor" }}
+          </th>
+          <th class="font-poppins font-bold bg-blue-999 text-white rounded-tr-3xl w-[25%]">
+            {{ "Family Page" }}
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr
+          v-for="(item, i) in (pageFilter === 'all' ? pages : pages.filter(item => pageFilter === 'active' ? item.status === 'active' : item.status !== 'active'))"
+          :class="{'bg-gray-200': (i + 1) % 2}"
+        >
+          <td class="font-poppins text-gray-dark font-bold text-center">
+            {{ item.page_first_name + " " + item.page_last_name }}
+          </td>
+          <td class="font-poppins text-gray-dark font-bold text-center">
+            {{ item.User?.name }}
+          </td>
+          <td class="font-poppins text-gray-dark font-bold text-center">
+            {{ item.Family?.AdvocateResponsible ? (item.Family?.AdvocateResponsible?.first_name + " " + item.Family?.AdvocateResponsible?.last_name) : 'No Advocate assigned' }}
+          </td>
+          <td class="font-poppins text-gray-dark font-bold text-center">
+            {{ item.Family?.family_name }}
+          </td>
+          <td class="font-poppins text-gray-dark font-bold text-center">
+            {{ donationFormat(item.amount_raised) }}
+          </td>
+          <td class="font-poppins text-gray-dark font-bold text-center">
+            {{ dateFormat(item.start_date) }}
+          </td>
+          <td class="font-poppins text-gray-dark font-bold text-center">
+            {{ dateFormat(item.deadline) }}
+          </td>
+          <td class="font-poppins text-gray-dark font-bold text-center">
+            {{ donationFormat(item.donation_goal) }}
+          </td>
+          <td>
+            <LinkButton
+              class="sm:my-2 transition duration-300 bg-orange-999 hover:bg-green-600 whitespace-nowrap flex flex-row py-[14px] px-[24px] gap-[10px]"
+              :to="`/EditPage/${item.id}`"
+            >
+              Edit
+            </LinkButton>
+          </td>
+          <td>
+            <LinkButton
+              class="sm:my-2 transition duration-300 bg-orange-999 hover:bg-green-600 whitespace-nowrap flex flex-row py-[14px] px-[24px] gap-[10px]"
+              :to="`/Page/${item.id}`"
+            >
+              View
+            </LinkButton>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="w-full max-w-[1200px] h-[50px] rounded-b-3xl bg-blue-999" />
+  </div>
+  <div class="mb-9 py-7 flex flex-wrap gap-2 place-content-center">
+    <div class="px-2 mt-2">
+      <CVChevronLeft
+        class="text-gray-200 size-4 h-2"
+        :class="{'cursor-pointer size-4 h-2': currentPage !== 0 }"
+        :is-end="currentPage == 0"
+        @click="prevPage"
+      />
+    </div>
+    <div class="px-2 mt-2">
+      <div class="flex">
+        <p
+          v-if="currentPage > 1"
+          class="cursor-pointer text-gray-900"
+          @click="goToPage(0)"
+        >
+          {{ 1 + "..." }} &nbsp;
+        </p>
+        <p
+          v-if="currentPage > 0"
+          class="cursor-pointer text-gray-900"
+          @click="goToPage(currentPage - 1)"
+        >
+          {{ currentPage }} &nbsp;
+        </p>
+        <p class="cursor-pointer text-gray-900 font-bold">
+          {{ currentPage + 1 }} &nbsp;
+        </p>
+        <p
+          v-if="(pagesLength / 12 - currentPage) > 1"
+          class="cursor-pointer text-gray-900"
+          @click="goToPage(currentPage + 1 )"
+        >
+          {{ currentPage + 2 }} &nbsp;
+        </p>
+        <p
+          v-if="(pagesLength / 12 - currentPage) > 2"
+          class="cursor-pointer text-gray-900"
+          @click="goToPage(currentPage + 2)"
+        >
+          {{ currentPage + 3 }} &nbsp;
+        </p>
+        <p
+          v-if="(pagesLength / 12 - currentPage) > 3"
+          class="cursor-pointer text-gray-900"
+          @click="goToPage(Math.floor(pagesLength / 12))"
+        >
+          {{ "..." + Math.ceil(pageLength / 12) }}
+        </p>
+      </div>
+    </div>
+    <div class="px-2 mt-2">
+      <CVChevronRight
+        :is-end="currentPage == Math.floor(pagesLength / 12)"
+        :class="{'cursor-pointer': currentPage + 1 !== Math.ceil(pagesLength / 12)}"
+        class="text-gray-900 size-4 h-2"
+        @click="nextPage"
+      />
+    </div>
+  </div>
 </template>

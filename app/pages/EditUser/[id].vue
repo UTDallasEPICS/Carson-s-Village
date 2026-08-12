@@ -199,120 +199,263 @@ const reactivateUser = async () => {
 
 </script>
 
-<template lang="pug">
-CVContainer
-    div(class="p-3 rounded bg-gray-50")
-        TitleComp User Account Entry 
-        br
-        div(class="information rounded-md mx-9 my-2 text-center sm:text-start text-white bg-blue-999")
-            CVLegend Family Information
-        div(class="py-4 grid sm:grid-cols-3")
-            CVLabel(for="user_role") User Role
-            div(class="mx-9 sm:col-span-2 sm:mr-11")
-                select(id="user_role" v-model='data_user.role' class="rounded-md outline-0 border-box w-full p-2 bg-white border border-[#c4c4c4]") Select User Role
-                    option family
-                    option advocate
-                    option(v-if="isAdmin") admin
-        div(v-if="addingFamily" class="py-4 grid sm:grid-cols-3")
-            CVLabel(for="Family") Family
-            div(class="mx-9 sm:col-span-2 sm:mr-11")
-                Listbox(id="Family" as='div' v-model="data_user.familyId" class="shadow-sm border border-1 rounded-lg")
-                    div(class="relative")
-                        Transition(
-                    leave-active-class='transition ease-in duration-100'
-                    leave-from-class='opacity-100'
-                    leave-to-class='opacity-0'
-                )
-                            ListboxOptions(as='div' class='w-full absolute z-10 mt-10 bg-white shadow-lg max-h-60 rounded-md px-2 py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm' )
-                                ListboxOption(as='div' v-for="family in data_all_families" :key="family.id" :value="family.id" class="px-2 border border-grey-500 py-1 my-1") {{ family.family_name }}
-                    ListboxButton(class='text-left bg-white relative rounded-md pl-2 pr-10 py-2 sm:text-sm w-96') {{ data_user.familyId ? currentFamily.family_name : 'Select family to add the user to' }}
+<template>
+  <CVContainer>
+    <div class="p-3 rounded bg-gray-50">
+      <TitleComp>
+        User Account Entry
+      </TitleComp>
+      <br>
+      <div class="information rounded-md mx-9 my-2 text-center sm:text-start text-white bg-blue-999">
+        <CVLegend>Family Information</CVLegend>
+      </div>
+      <div class="py-4 grid sm:grid-cols-3">
+        <CVLabel for="user_role">
+          User Role
+        </CVLabel>
+        <div class="mx-9 mt-6 sm:col-span-2 sm:mr-11">
+          <select
+            id="user_role"
+            v-model="data_user.role"
+            class="rounded-md outline-0 border-box w-full p-2 bg-white border border-[#c4c4c4]"
+          >
+            Select User Role
+            <option>family</option>
+            <option>advocate</option>
+            <option v-if="isAdmin">
+              admin
+            </option>
+          </select>
+        </div>
+      </div>
+      <div
+        v-if="addingFamily"
+        class="py-4 grid sm:grid-cols-3"
+      >
+        <CVLabel for="Family">
+          Family
+        </CVLabel>
+        <div class="mx-9 mt-6 sm:col-span-2 sm:mr-11">
+          <Listbox
+            id="Family"
+            v-model="data_user.familyId"
+            as="div"
+            class="shadow-sm border border-1 rounded-lg"
+          >
+            <div class="relative">
+              <Transition
+                leave-active-class="transition ease-in duration-100"
+                leave-from-class="opacity-100"
+                leave-to-class="opacity-0"
+              />
+              <ListboxOptions as="div" class="w-full absolute z-10 mt-10 bg-white shadow-lg max-h-60 rounded-md px-2 py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm">
+                <ListboxOption
+                  v-for="family in data_all_families"
+                  :key="family.id"
+                  :value="family.id"
+                  as="div"
+                  class="px-2 border border-grey-500 py-1 my-1"
+                >
+                  {{ family.family_name }}
+                </ListboxOption>
+              </ListboxOptions>
+              <ListboxButton class="text-left bg-white relative rounded-md pl-2 pr-10 py-2 sm:text-sm w-96">
+                {{ data_user.familyId ? currentFamily.family_name : 'Select family to add the user to' }}
+              </ListboxButton>
+            </div>
+          </Listbox>
+        </div>
+      </div>
 
-        // User Information
-
-        div(class="information rounded-md mx-9 my-2 text-center sm:text-start text-white bg-blue-999")
-            CVLegend User Information
-
-        // Assign Families
-
-        CVForm(ref="formRef" @submit="save")
-          div(class="py-4 grid sm:grid-cols-3")
-              CVLabel(for="email") Email
-              div(id="email" class="mx-9 sm:col-span-2 sm:mr-11")
-                  CVEmailInput(id="email" v-model='data_user.email' placeholder="(user defined)" required)
-          div(class="py-4 grid sm:grid-cols-3")
-              CVLabel(for="first_name") Name
-              div(class="mx-9 sm:col-span-2 sm:mr-11")
-                  CVInput(id="first_name" type="text" v-model='data_user.name' placeholder="(user-defined" required="required")
-          div(class="py-4 grid sm:grid-cols-3")
-              CVLabel(for="phone") Phone
-              div(class="mx-9 sm:col-span-2 sm:mr-11")
-                  CVPhoneInput(id="phone" v-model='data_user.phone' placeholder="(user defined, optional)")
-        div(v-if="isAdmin && id !== '0'" class="py-4 grid sm:grid-cols-3")
-            CVLabel Account Status
-            div(class="mx-9 sm:col-span-2 sm:mr-11 flex items-center gap-4")
-                span(class="font-poppins mt-6 font-bold" :class="isActive ? 'text-green-700' : 'text-red-600'") {{ isActive ? 'Active' : 'Deactivated' }}
-        div(class="flex justify-between mx-10 py-2")
-            ActionButton(text="Save" @click="submitForm" :disabled="disableCriteria" class="transition duration-300 bg-orange-999 hover:bg-green-600 disabled:bg-orange-800 disabled:cursor-not-allowed")
-            ActionButton(
-              v-if="isActive"
-              text="Deactivate User"
-              type="button"
-              @click="deactivateUser"
-              class="transition duration-300 bg-red-600 hover:bg-red-700"
-            )
-            ActionButton(
-              v-else
-              text="Reactivate User"
-              type="button"
-              @click="reactivateUser"
-              class="transition duration-300 bg-green-600 hover:bg-green-700"
-            )
-        div(v-if="data_user.role === 'advocate' && isAdmin" class="information rounded-md mx-9 my-2 text-center sm:text-start text-white bg-blue-999")
-            CVLegend Advocate Families
-        div(v-if="data_user.role === 'advocate' && isAdmin" class="py-4 grid sm:grid-cols-3")
-            CVLabel Current Families
-            div(class="mx-9 sm:col-span-2 sm:mr-11")
-                div(v-if="advocateFamilies.length === 0" class="text-sm text-gray-700") This advocate currently has no families assigned.
-                ul(v-else class="space-y-2")
-                    li(v-for="family in advocateFamilies" :key="getFamilyId(family)" class="flex items-center justify-between")
-                        span {{ family.family_name }}
-                        ActionButton(
-                          text="Remove"
-                          class="ml-4 bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded text-xs"
-                          @click="updateFamilyAdvocate(getFamilyId(family), null, family.family_name)"
-                        )
-        div(v-if="data_user.role === 'advocate' && isAdmin" class="py-4 grid sm:grid-cols-3")
-            CVLabel Assign Family
-            div(class="mx-9 sm:col-span-2 sm:mr-11")
-                Listbox(id="assign_family" as='div' v-model="selectedFamilyForAssignment" class="shadow-sm border border-1 rounded-lg mb-2")
-                    div(class="relative")
-                        Transition(
-                        leave-active-class='transition ease-in duration-100'
-                        leave-from-class='opacity-100'
-                        leave-to-class='opacity-0'
-                        )
-                            ListboxOptions(as='div' class='w-full absolute z-10 mt-10 bg-white shadow-lg max-h-60 rounded-md px-2 py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm')
-                                ListboxOption(
-                                  v-for="family in unassignedFamilies"
-                                  :key="getFamilyId(family)"
-                                  :value="getFamilyId(family)"
-                                  class="px-2 border border-grey-500 py-1 my-1"
-                                ) {{ family.family_name }}
-                    ListboxButton(class='text-left bg-white relative rounded-md pl-2 pr-10 py-2 sm:text-sm w-96') {{ selectedFamilyForAssignment ? (unassignedFamilies.find(f => getFamilyId(f) === selectedFamilyForAssignment)?.family_name || 'Select family') : 'Select family to assign' }}
-            ActionButton(
-              text="Assign Family"
-              class="mt-2 ml-10 transition duration-300 bg-orange-999 hover:bg-green-600 disabled:bg-orange-800 disabled:cursor-not-allowed"
-              :disabled="!selectedFamilyForAssignment"
-              @click="assignSelectedFamily"
-            )   
-        div(v-if="advocateErrorInPage" class="text-red-500 mx-9")    
-            CVLabel(for="advocate_error_label") Error updating advocate family assignment.
-            br
-            CVLabel(for="advocate_dynamic_error") {{ advocateErrorToUser }}
-        div(v-if="errorInPage" class="text-red-500 mx-9")    
-            CVLabel(for="error_label") Error in Creating User in the system. 
-            br
-            CVLabel(for="dynamic_error") {{ errorToUser }}
+      <!-- User Info -->
+      <div class="information rounded-md mx-9 mb-2 mt-6 text-center sm:text-start text-white bg-blue-999">
+        <CVLegend>User Information</CVLegend>
+      </div>
+      <CVForm
+        ref="formRef"
+        @submit="save"
+      >
+        <div class="py-4 grid sm:grid-cols-3">
+          <CVLabel for="email">
+            Email
+          </CVLabel>
+          <div
+            id="email"
+            class="mx-9 sm:col-span-2 sm:mr-11"
+          >
+            <CVEmailInput
+              id="email"
+              v-model="data_user.email"
+              placeholder="(user defined)"
+              required
+            />
+          </div>
+        </div>
+        <div class="py-4 grid sm:grid-cols-3">
+          <CVLabel for="first_name">
+            Name
+          </CVLabel>
+          <div class="mx-9 sm:col-span-2 sm:mr-11">
+            <CVInput
+              id="first_name"
+              v-model="data_user.name"
+              type="text"
+              placeholder="(user-defined"
+              required="required"
+            />
+          </div>
+        </div>
+        <div class="py-4 grid sm:grid-cols-3">
+          <CVLabel for="phone">
+            Phone
+          </CVLabel>
+          <div class="mx-9 sm:col-span-2 sm:mr-11">
+            <CVPhoneInput
+              id="phone"
+              v-model="data_user.phone"
+              placeholder="(user defined, optional)"
+            />
+          </div>
+        </div>
+      </CVForm>
+      <div
+        v-if="isAdmin && id !== '0'"
+        class="py-4 grid sm:grid-cols-3"
+      >
+        <CVLabel>Account Status</CVLabel>
+        <div class="mx-9 sm:col-span-2 sm:mr-11 flex items-center gap-4">
+          <span
+            class="font-poppins mt-6 font-bold"
+            :class="isActive ? 'text-green-700' : 'text-red-600'"
+          >{{ isActive ? 'Active' : 'Deactivated' }}</span>
+        </div>
+      </div>
+      <div class="flex justify-between mx-10 py-2">
+        <ActionButton
+          text="Save"
+          :disabled="disableCriteria"
+          class="transition duration-300 bg-orange-999 hover:bg-green-600 disabled:bg-orange-800 disabled:cursor-not-allowed"
+          @click="submitForm"
+        />
+        <ActionButton
+          v-if="isActive"
+          text="Deactivate User"
+          type="button"
+          class="transition duration-300 bg-red-600 hover:bg-red-700"
+          @click="deactivateUser"
+        />
+        <ActionButton
+          v-else
+          text="Reactivate User"
+          type="button"
+          class="transition duration-300 bg-green-600 hover:bg-green-700"
+          @click="reactivateUser"
+        />
+      </div>
+      <div
+        v-if="data_user.role === 'advocate' && isAdmin"
+        class="information rounded-md mx-9 my-2 text-center sm:text-start text-white bg-blue-999"
+      >
+        <CVLegend>Advocate Families</CVLegend>
+      </div>
+      <div
+        v-if="data_user.role === 'advocate' && isAdmin"
+        class="py-4 grid sm:grid-cols-3"
+      >
+        <CVLabel>Current Families</CVLabel>
+        <div class="mx-9 sm:col-span-2 sm:mr-11">
+          <div
+            v-if="advocateFamilies.length === 0"
+            class="text-sm text-gray-700"
+          >
+            This advocate currently has no families assigned.
+          </div>
+          <ul
+            v-else
+            class="space-y-2"
+          >
+            <li
+              v-for="family in advocateFamilies"
+              :key="getFamilyId(family)"
+              class="flex items-center justify-between"
+            >
+              <span>{{ family.family_name }}</span>
+              <ActionButton
+                text="Remove"
+                class="ml-4 bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded text-xs"
+                @click="updateFamilyAdvocate(getFamilyId(family), null, family.family_name)"
+              />
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div
+        v-if="data_user.role === 'advocate' && isAdmin"
+        class="py-4 grid sm:grid-cols-3"
+      >
+        <CVLabel>Assign Family</CVLabel>
+        <div class="mx-9 sm:col-span-2 sm:mr-11">
+          <Listbox
+            id="assign_family"
+            v-model="selectedFamilyForAssignment"
+            as="div"
+            class="shadow-sm border border-1 rounded-lg mb-2"
+          >
+            <div class="relative">
+              <Transition
+                leave-active-class="transition ease-in duration-100"
+                leave-from-class="opacity-100"
+                leave-to-class="opacity-0"
+              />
+              <ListboxOptions as="div" class="w-full absolute z-10 mt-10 bg-white shadow-lg max-h-60 rounded-md px-2 py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm">
+                <ListboxOption
+                  v-for="family in unassignedFamilies"
+                  :key="getFamilyId(family)"
+                  :value="getFamilyId(family)"
+                  class="px-2 border border-grey-500 py-1 my-1"
+                >
+                  {{ family.family_name }}
+                </ListboxOption>
+              </ListboxOptions>
+              <ListboxButton class="text-left bg-white relative rounded-md pl-2 pr-10 py-2 sm:text-sm w-96">
+                {{ selectedFamilyForAssignment ? (unassignedFamilies.find(f => getFamilyId(f) === selectedFamilyForAssignment)?.family_name || 'Select family') : 'Select family to assign' }}
+              </ListboxButton>
+            </div>
+          </Listbox>
+        </div>
+        <ActionButton
+          text="Assign Family"
+          class="mt-2 ml-10 transition duration-300 bg-orange-999 hover:bg-green-600 disabled:bg-orange-800 disabled:cursor-not-allowed"
+          :disabled="!selectedFamilyForAssignment"
+          @click="assignSelectedFamily"
+        />
+      </div>
+      <div
+        v-if="advocateErrorInPage"
+        class="text-red-500 mx-9"
+      >
+        <CVLabel for="advocate_error_label">
+          Error updating advocate family assignment.
+        </CVLabel>
+        <br>
+        <CVLabel for="advocate_dynamic_error">
+          {{ advocateErrorToUser }}
+        </CVLabel>
+      </div>
+      <div
+        v-if="errorInPage"
+        class="text-red-500 mx-9"
+      >
+        <CVLabel for="error_label">
+          Error in Creating User in the system.
+        </CVLabel>
+        <br>
+        <CVLabel for="dynamic_error">
+          {{ errorToUser }}
+        </CVLabel>
+      </div>
+    </div>
+  </CVContainer>
 </template>
 
 <style scoped></style>
