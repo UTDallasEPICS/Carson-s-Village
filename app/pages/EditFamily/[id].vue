@@ -45,6 +45,7 @@ const router = useRoute()
 const id = computed(() => router.params.id as string);
 const isAuthorized = computed(() => user.value?.role == "advocate" || user.value?.role == "admin")
 const errorInPage = ref(false);
+const errorToUser = ref('');
 
 const advocates = ref<User[]>([])
 const selectedAdvocateId = ref<string | null>(null)
@@ -89,38 +90,50 @@ const createFamily = async () => {
       if (!confirmChange) {
         return
       }
-      const result = await $fetch('/api/family', {
-        method: 'PUT',
-        body: {
-          family_name: data_family.value.family_name,
-          familyCuid: id.value,
-          advocateCuid: selectedAdvocateId.value
-        }
-      })
+      try {
+        const result = await $fetch('/api/family', {
+          method: 'PUT',
+          body: {
+            family_name: data_family.value.family_name,
+            familyCuid: id.value,
+            advocateCuid: selectedAdvocateId.value
+          }
+        })
 
-      if (result) {
-        errorInPage.value = false;
-        await navigateTo('/Families')
-      } else {
+        if (result) {
+          errorInPage.value = false;
+          await navigateTo('/Families')
+        } else {
+          errorInPage.value = true;
+          errorToUser.value = 'Failed to update family';
+        }
+      } catch (error: any) {
         errorInPage.value = true;
+        errorToUser.value = error?.data?.message ?? 'Failed to update family';
       }
     } else {
-      const result = await $fetch('/api/family', {
-        method: 'POST',
-        body: ({
-          family_name: data_family.value.family_name,
-          name: data_user.value.name,
-          email: data_user.value.email,
-          phone: data_user.value.phone,
-          address: data_user.value.address
+      try {
+        const result = await $fetch('/api/family', {
+          method: 'POST',
+          body: ({
+            family_name: data_family.value.family_name,
+            name: data_user.value.name,
+            email: data_user.value.email,
+            phone: data_user.value.phone,
+            address: data_user.value.address
+          })
         })
-      })
 
-      if (result) {
-          errorInPage.value = false;
-          await navigateTo('/Users')
-      } else {
+        if (result) {
+            errorInPage.value = false;
+            await navigateTo('/Users')
+        } else {
           errorInPage.value = true;
+          errorToUser.value = 'Failed to create family'; 
+        }
+      } catch (error: any) {
+        errorInPage.value = true;
+        errorToUser.value = error?.data?.message ?? 'Failed to create family';
       }
     }
   } 
@@ -226,7 +239,7 @@ const createFamily = async () => {
           />
         </div>
       </div>
-      <div class="py-4 grid sm:grid-cols-3">
+      <div class="pt-4 grid sm:grid-cols-3">
         <CVLabel for="phone">
           Phone
         </CVLabel>
@@ -237,22 +250,24 @@ const createFamily = async () => {
             placeholder="(user defined, optional)"
           />
         </div>
-        <div class="py-2">
-          <ActionButton
-            text="Save"
-            class="transition duration-300 bg-orange-999 hover:bg-green-600"
-            @click="createFamily()"
-          />
-        </div>
       </div>
+
+      <!-- Error Display -->
       <div
         v-if="errorInPage"
-        class="py-4 grid sm:grid-cols-3 text-red-500"
+        class="grid sm:grid-cols-3 text-red-500"
       >
         <CVLabel for="error_label">
-          Error Creating Family and First Family Member in the System.
+          {{ errorToUser }}
         </CVLabel>
       </div>
+
+      <!-- Save Button -->
+      <ActionButton
+        text="Save"
+        class="transition duration-300 ml-9 mt-4 bg-orange-999 hover:bg-green-600"
+        @click="createFamily()"
+      />
     </form>
   </CVContainer>
 </template>

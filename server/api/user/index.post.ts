@@ -3,7 +3,9 @@
 *	  submit user account details to database
 */
 
+import { Prisma } from "~~/prisma/generated/client";
 const runtime = useRuntimeConfig()
+
 export default defineEventHandler(async event => {
   const session = await auth.api.getSession({
     headers: event.headers
@@ -19,19 +21,20 @@ export default defineEventHandler(async event => {
   const body = await readBody(event)
 
   if(user.role === "advocate" || user.role === "admin") {
-    try{
+    try {
       // creates a new user entry in the user model/table.
       if(body.role === "advocate" || (body.role === "admin" && user.role === "admin")) {
         delete body.Pages
         delete body.AdvocateFamily
+
         const queryRes = await prisma.user.create({
           data: {
             ...body, id: undefined, familyId: undefined
-            }
-          });
+          }
+        });
         
-          await sendEmail(body.email, "invitation", "Invitation to Carson's village", ({...body, url: `${runtime.BASEURL}login`}))
-          return { success: true, result: queryRes }
+        await sendEmail(body.email, "invitation", "Invitation to Carson's village", ({...body, url: `${runtime.BASEURL}login`}))
+        return { success: true, result: queryRes }
       } 
       else if (body.role === "family") {
         delete body.Pages
@@ -57,14 +60,24 @@ export default defineEventHandler(async event => {
         await sendEmail(body.email, "invitation", "Invitation to Carson's village", ({...body, url: `${runtime.BASEURL}login`}))
         return { success: true, result: queryRes }
       }
-         
-      } catch(e: any){
-        let error = e as string || undefined
-        throw createError({
-          statusCode: 500,
-          message: e.message as unknown as string,
-        })
+    } catch(e: any){
+      console.error(e.message)
+
+      if (e instanceof Prisma.PrismaClientKnownRequestError) {
+        if (e.code === "P2002") {
+          throw createError({
+            statusCode: 400,
+            message: 'User already exists'
+          })
+        }
       }
+
+      let error = e as string || undefined
+      throw createError({
+        statusCode: 500,
+        message: e.message as unknown as string,
+      })
+    }
   } else{
     throw createError({
       statusCode: 401,

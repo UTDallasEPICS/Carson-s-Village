@@ -3,6 +3,7 @@
 *	  submit family and first user account details to database
 */
 
+import { Prisma } from "~~/prisma/generated/client";
 const runtime = useRuntimeConfig()
 
 export default defineEventHandler(async event => {
@@ -52,6 +53,16 @@ export default defineEventHandler(async event => {
       return queryRes
     } catch (e) {
       console.error("An error occured while trying to create family:\n", e)
+
+      if (e instanceof Prisma.PrismaClientKnownRequestError) {
+        if (e.code === "P2002") {
+          throw createError({
+            statusCode: 400,
+            message: 'User already exists'
+          })
+        }
+      }
+
       throw createError({
         statusCode: 500,
         statusMessage: 'Something went wrong',
