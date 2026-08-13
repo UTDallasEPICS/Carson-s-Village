@@ -50,12 +50,46 @@ const errorToUser = ref('');
 const advocates = ref<User[]>([])
 const selectedAdvocateId = ref<string | null>(null)
 
-const { data: data_family } = await useFetch(
+const { data: data_family, refresh: refreshFamily } = await useFetch(
   `/api/family/${id.value}`,
   {
     default: () => ({} as any)
   }
 )
+
+const deactivateMember = async (member: User) => {
+  if (!confirm('Deactivate this user? They will be unable to sign in.')) return
+  errorInPage.value = false
+  errorToUser.value = ''
+
+  try {
+    await $fetch('/api/user/deactivate', {
+      method: 'PUT',
+      body: { id: member.id },
+    })
+    await refreshFamily()
+  } catch (error: any) {
+    errorInPage.value = true
+    errorToUser.value = error?.data?.message ?? 'Failed to deactivate user'
+  }
+}
+
+const reactivateMember = async (member: User) => {
+  if (!confirm('Reactivate this user? They will be able to sign in again.')) return
+  errorInPage.value = false
+  errorToUser.value = ''
+
+  try {
+    await $fetch('/api/user/reactivate', {
+      method: 'PUT',
+      body: { id: member.id },
+    })
+    await refreshFamily()
+  } catch (error: any) {
+    errorInPage.value = true
+    errorToUser.value = error?.data?.message || 'Failed to reactivate user'
+  }
+}
 
 if (data_family.value && data_family.value.advocateCuid) {
   selectedAdvocateId.value = data_family.value.advocateCuid as string
@@ -91,13 +125,29 @@ const createFamily = async () => {
         return
       }
       try {
+        const body: {
+          family_name: string
+          familyCuid: string
+          advocateCuid: string | null
+          name?: string
+          email?: string
+          phone?: string
+          address?: string
+        } = {
+          family_name: data_family.value.family_name,
+          familyCuid: id.value,
+          advocateCuid: selectedAdvocateId.value
+        }
+
+        if (data_user.value.email && data_user.value.name) {
+          body.name = data_user.value.name
+          body.email = data_user.value.email
+          body.phone = data_user.value.phone
+          body.address = data_user.value.address
+        }
         const result = await $fetch('/api/family', {
           method: 'PUT',
-          body: {
-            family_name: data_family.value.family_name,
-            familyCuid: id.value,
-            advocateCuid: selectedAdvocateId.value
-          }
+          body
         })
 
         if (result) {
@@ -209,6 +259,38 @@ const createFamily = async () => {
           </Listbox>
         </div>
       </div>
+
+      <!-- Family Members Section -->
+      <div v-if="id !== '0' && data_family.FamilyMembers && data_family.FamilyMembers.length > 0">
+        <div class="information rounded-md mx-9 my-2 text-center sm:text-start text-white bg-blue-999">
+          <CVLegend>Family Members</CVLegend>
+        </div>
+        <div class="mx-9 sm:col-span-2 sm:mr-11 py-4">
+          
+          <!-- Active Family Member List -->
+          <ul v-if="data_family.FamilyMembers.filter((member) => !!isActive).length > 0" class="space-y-2">
+            <li v-for="member in data_family.FamilyMembers.filter((member) => !!member.isActive)" :key="member.id" class="flex items-center justify-between">
+              <div>
+                <span :class="{ 'text-red-600': !member.isActive }">{{ member.name }} ({{ member.email }})</span>
+              </div>
+              <div v-if="isAuthorized">
+                <ActionButton
+                  v-if="member.isActive"
+                  text="Deactivate"
+                  class="ml-4 bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded text-xs"
+                  @click="deactivateMember(member)"
+                />
+              </div>
+            </li>
+          </ul>
+
+          <!-- Fallback if no active member -->
+          <div v-else class="pl-2">
+            No Active Family Members
+          </div>
+        </div>
+      </div>
+
       <div class="information rounded-md mx-9 my-2 text-center sm:text-start text-white bg-blue-999">
         <CVLegend>New User Information</CVLegend>
       </div>
