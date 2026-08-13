@@ -33,8 +33,6 @@ const isAdmin = computed(() => user.value?.role === "admin")
 const id = computed(() => router.params.id as string);
 const errorInPage = ref(false);
 const errorToUser = ref("")
-const advocateErrorInPage = ref(false)
-const advocateErrorToUser = ref("")
 const isActive = ref(true)
 
 const data_user = ref<User>({
@@ -67,22 +65,44 @@ function submitForm() {
 }
 async function save() {
   if(isAuthorized.value){
-    const data = await $fetch('/api/user', {
-      method: (id.value as string) !== "0" ? 'PUT' : 'POST',
-      body: ({ ...data_user.value })
-    }).catch((error) => {
-        errorInPage.value = true 
-        console.error(error.data.message);
-        errorToUser.value = error.data.message
-    });
+    // --- Create User ------------------------
+    if ((id.value as string) === "0") {
+      try {
+        const data = await $fetch('/api/user', {
+          method: 'POST',
+          body: ({ ...data_user.value })
+        })
 
-    if(data?.success){
-        errorInPage.value = false;
-        errorToUser.value = ""
-        await navigateTo('/Users')
+        if(data?.success){
+          errorInPage.value = false;
+          errorToUser.value = ""
+          await navigateTo('/Users')
+        }
+      } catch (error: any) {
+        errorInPage.value = true 
+        errorToUser.value = error?.data?.message ?? 'Failed to create user';
+      }
+    }
+
+    // --- Update User ------------------------
+    else {
+      try {
+        const data = await $fetch('/api/user', {
+          method: 'PUT',
+          body: ({ ...data_user.value })
+        })
+
+        if(data?.success){
+            errorInPage.value = false;
+            errorToUser.value = ""
+            await navigateTo('/Users')
+        }
+      } catch (error: any) {
+        errorInPage.value = true 
+        errorToUser.value = error?.data?.message ?? 'Failed to update user';
+      }
     }
   }
-
 }
 
 const currentFamily = computed(() => data_all_families.value?.find((f: Family) => getFamilyId(f) == data_user.value?.familyId) || {});
@@ -141,16 +161,14 @@ const updateFamilyAdvocate = async (familyId: string, advocateId: string | null,
 
     errorInPage.value = false
     errorToUser.value = ""
-    advocateErrorInPage.value = false
-    advocateErrorToUser.value = ""
 
     await getUsers()
     if ((id.value as string) !== "0") {
       await getData();
     }
   } catch (error: any) {
-    advocateErrorInPage.value = true
-    advocateErrorToUser.value = error?.data?.statusMessage || error?.message || 'Failed to update family advocate assignment'
+    errorInPage.value = true
+    errorToUser.value = error?.message || 'Failed to update family'
     console.error(error)
   }
 }
@@ -176,7 +194,7 @@ const deactivateUser = async () => {
     isActive.value = false
   } catch (error: any) {
     errorInPage.value = true
-    errorToUser.value = error?.data?.statusMessage || error?.data?.message || 'Failed to deactivate user'
+    errorToUser.value = error?.data?.message ?? 'Failed to deactivate user'
   }
 }
 
@@ -193,7 +211,7 @@ const reactivateUser = async () => {
     isActive.value = true
   } catch (error: any) {
     errorInPage.value = true
-    errorToUser.value = error?.data?.statusMessage || error?.data?.message || 'Failed to reactivate user'
+    errorToUser.value = error?.data?.message || 'Failed to reactivate user'
   }
 }
 
@@ -330,6 +348,18 @@ const reactivateUser = async () => {
           >{{ isActive ? 'Active' : 'Deactivated' }}</span>
         </div>
       </div>
+
+      <!-- Error display -->
+      <div
+        v-if="errorInPage"
+        class="text-red-500 my-2"
+      >
+        <CVLabel for="dynamic_error">
+          {{ errorToUser }}
+        </CVLabel>
+      </div>
+
+      <!-- Action Buttons -->
       <div class="flex justify-between mx-10 py-2">
         <ActionButton
           text="Save"
@@ -429,30 +459,6 @@ const reactivateUser = async () => {
           :disabled="!selectedFamilyForAssignment"
           @click="assignSelectedFamily"
         />
-      </div>
-      <div
-        v-if="advocateErrorInPage"
-        class="text-red-500 mx-9"
-      >
-        <CVLabel for="advocate_error_label">
-          Error updating advocate family assignment.
-        </CVLabel>
-        <br>
-        <CVLabel for="advocate_dynamic_error">
-          {{ advocateErrorToUser }}
-        </CVLabel>
-      </div>
-      <div
-        v-if="errorInPage"
-        class="text-red-500 mx-9"
-      >
-        <CVLabel for="error_label">
-          Error in Creating User in the system.
-        </CVLabel>
-        <br>
-        <CVLabel for="dynamic_error">
-          {{ errorToUser }}
-        </CVLabel>
       </div>
     </div>
   </CVContainer>

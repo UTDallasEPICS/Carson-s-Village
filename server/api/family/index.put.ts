@@ -2,6 +2,7 @@
 *	  function:	PUT
 *	  submit updated family details to database
 */
+import { Prisma } from "~~/prisma/generated/client";
 
 export default defineEventHandler(async event => {
   const session = await auth.api.getSession({
@@ -33,6 +34,26 @@ export default defineEventHandler(async event => {
       return result;
     } catch (e: any) {
       console.error(`Failed to update family ${familyCuid}:`, e)
+
+      if (e instanceof Prisma.PrismaClientKnownRequestError) {
+        
+        // Failed to find advocate id
+        if (e.code === "P2003") {
+          throw createError({
+            statusCode: 400,
+            message: 'Failed to connect Advocate'
+          })
+        }
+
+        // Failed to find advocate or family id
+        else if (e.code === "P2025") {
+          throw createError({
+            statusCode: 400,
+            message: `Failed to find ${e.meta?.target || 'Family or Advocate'}`
+          })
+        }
+      }
+
       throw createError({
         statusCode: 500,
         statusMessage: e?.message
