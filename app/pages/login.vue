@@ -1,6 +1,10 @@
 <script setup lang="ts">
 import { authClient } from '~~/app/utils/auth-client';
 
+definePageMeta({
+  middleware: "auth-guard"
+})
+
 const step = ref<'request'| 'verify'>('request')
 const email = ref('')
 const otp = ref('')
