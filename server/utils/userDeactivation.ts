@@ -3,14 +3,24 @@ import type { Prisma } from '../../prisma/generated/client'
 type TransactionClient = Prisma.TransactionClient
 
 export async function deactivateFamily(familyId: string, tx: TransactionClient) {
-  await tx.family.update({
-    where: { id: familyId },
-    data: { isActive: false, deactivatedAt: new Date() },
-  })
+  
+  // Deactivate family and all users
+  await prisma.$transaction([
+    tx.family.update({
+      where: { id: familyId },
+      data:  { isActive: false, deactivatedAt: new Date() },
+    })
 
+    tx.user.updateMany({
+      where: { familyId: familyId, isActive: true },
+      data:  { isActive: false, deactivatedAt: new Date() }
+    })
+  ])
+
+  // Archive all pages for that family
   await tx.page.updateMany({
     where: { familyCuid: familyId, status: 'active' },
-    data: { status: 'inactive' },
+    data:  { status: 'inactive' },
   })
 }
 
