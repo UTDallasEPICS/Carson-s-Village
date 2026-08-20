@@ -4,7 +4,6 @@
 *	Deactivate a family and all it's family users
 */
 
-import { deactivateFamily } from '~~/server/utils/userDeactivation'
 import { Prisma } from "~~/prisma/generated/client";
 
 export default defineEventHandler(async event => {
@@ -51,24 +50,19 @@ export default defineEventHandler(async event => {
     })
   }
 
-  //------ Deactivate Family and Users ----------
+  //------ Reactivate Family --------------------
   try {
-    deactivateFamily(familyId, prisma)
+
+    await prisma.family.update({
+      where: { id: familyId },
+      data:  { isActive: true, deactivatedAt: null }
+    })
   } catch (err: any) {
 
-    if (err instanceof Prisma.PrismaClientKnownRequestError && err.code === "P2025") {
-      console.log(`Failed to find ${err.meta?.target ?? 'some unknown field'}`)
-      throw createError({
-        statusCode: 400,
-        message: `Failed to find ${err.meta?.target ?? 'some unknown field'}`
-      })   
-    }
-
-    console.log(`Error deactivating family ${familyId}:`, err.message)
-      throw createError({
-        statusCode: 400,
-        message: `Error deactivating family ${familyId}:`
-      })   
+    console.log(`Error reactivating family ${familyId}:`, err.message)
+    throw createError({
+      statusCode: 500,
+      message: 'Failed to reacitivate family'
+    })
   }
-  
 })
