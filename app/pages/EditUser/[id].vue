@@ -33,13 +33,13 @@ const isAdmin = computed(() => user.value?.role === "admin")
 const id = computed(() => router.params.id as string);
 const errorInPage = ref(false);
 const errorToUser = ref("")
-const isActive = ref(true)
 
 const data_user = ref<User>({
     id: id.value,
     name: "",
     email: "",
     role: "family",
+    isActive: true,
     phone: "",
     address: "",
     familyId: "",
@@ -191,7 +191,7 @@ const deactivateUser = async () => {
       method: 'PUT',
       body: { id: id.value },
     })
-    isActive.value = false
+    getData()
   } catch (error: any) {
     errorInPage.value = true
     errorToUser.value = error?.data?.message ?? 'Failed to deactivate user'
@@ -208,7 +208,7 @@ const reactivateUser = async () => {
       method: 'PUT',
       body: { id: id.value },
     })
-    isActive.value = true
+    getData()
   } catch (error: any) {
     errorInPage.value = true
     errorToUser.value = error?.data?.message || 'Failed to reactivate user'
@@ -344,8 +344,8 @@ const reactivateUser = async () => {
         <div class="mx-9 sm:col-span-2 sm:mr-11 flex items-center gap-4">
           <span
             class="font-poppins mt-6 font-bold"
-            :class="isActive ? 'text-green-700' : 'text-red-600'"
-          >{{ isActive ? 'Active' : 'Deactivated' }}</span>
+            :class="data_user.isActive ? 'text-green-700' : 'text-red-600'"
+          >{{ data_user.isActive ? 'Active' : 'Deactivated' }}</span>
         </div>
       </div>
 
@@ -368,7 +368,7 @@ const reactivateUser = async () => {
           @click="submitForm"
         />
         <ActionButton
-          v-if="isActive"
+          v-if="data_user.isActive"
           text="Deactivate User"
           type="button"
           class="transition duration-300 bg-red-600 hover:bg-red-700"
