@@ -44,6 +44,7 @@ const userCuid = ref("")
 const router = useRoute()
 const id = computed(() => router.params.id as string);
 const isAuthorized = computed(() => user.value?.role == "advocate" || user.value?.role == "admin")
+const canManageFamily = computed(() => user.value && data_family.value && (user.value.role === 'admin' || (user.value.role === 'advocate' && user.value.id === data_family.value.advocateCuid)))
 const errorInPage = ref(false);
 const errorToUser = ref('');
 
@@ -189,6 +190,38 @@ const createFamily = async () => {
   } 
 }
 
+const deactivateFamily = async () => {
+  if (!confirm('Deactivate this family? All associated users will be unable to sign in.')) return
+  errorInPage.value = false
+  errorToUser.value = ''
+
+  try {
+    await $fetch(`/api/family/${id.value}`, {
+      method: 'DELETE',
+    })
+    await refreshFamily()
+  } catch (error: any) {
+    errorInPage.value = true
+    errorToUser.value = error?.data?.message ?? 'Failed to deactivate family'
+  }
+}
+
+const reactivateFamily = async () => {
+  if (!confirm('Reactivate this family?')) return
+  errorInPage.value = false
+  errorToUser.value = ''
+
+  try {
+    await $fetch(`/api/family/reactivate/${id.value}`, {
+      method: 'PUT',
+    })
+    await refreshFamily()
+  } catch (error: any) {
+    errorInPage.value = true
+    errorToUser.value = error?.data?.message || 'Failed to reactivate family'
+  }
+}
+
 </script>
 
 <template>
@@ -259,6 +292,20 @@ const createFamily = async () => {
           </Listbox>
         </div>
       </div>
+      <div
+        v-if="canManageFamily && id !== '0'"
+        class="py-4 grid sm:grid-cols-3"
+      >
+        <CVLabel>Family Status</CVLabel>
+        <div class="mx-9 sm:col-span-2 sm:mr-11 flex items-center gap-4">
+          <span
+            class="font-poppins mt-6 font-bold"
+            :class="data_family.isActive ? 'text-green-700' : 'text-red-600'"
+          >
+            {{ data_family.isActive ? 'Active' : 'Deactivated' }}
+          </span>
+        </div>
+      </div>
 
       <!-- Family Members Section -->
       <div v-if="id !== '0' && data_family.FamilyMembers && data_family.FamilyMembers.length > 0">
@@ -268,7 +315,7 @@ const createFamily = async () => {
         <div class="mx-9 sm:col-span-2 sm:mr-11 py-4">
           
           <!-- Active Family Member List -->
-          <ul v-if="data_family.FamilyMembers.filter((member) => !!isActive).length > 0" class="space-y-2">
+          <ul v-if="data_family.FamilyMembers.filter((member) => !!member.isActive).length > 0" class="space-y-2">
             <li v-for="member in data_family.FamilyMembers.filter((member) => !!member.isActive)" :key="member.id" class="flex items-center justify-between">
               <div>
                 <span :class="{ 'text-red-600': !member.isActive }">{{ member.name }} ({{ member.email }})</span>
@@ -344,14 +391,30 @@ const createFamily = async () => {
         </CVLabel>
       </div>
 
-      <!-- Save Button -->
-      <ActionButton
-        text="Save"
-        class="transition duration-300 ml-9 mt-4 bg-orange-999 hover:bg-green-600"
-        @click="createFamily()"
-      />
+      <!-- Action Buttons -->
+      <div class="flex justify-between ml-9 mr-10 mt-6">
+        <ActionButton
+          text="Save"
+          class="transition duration-300 bg-orange-999 hover:bg-green-600"
+          @click="createFamily()"
+        />
+        <template v-if="canManageFamily && id !== '0'">
+          <ActionButton
+            v-if="data_family.isActive"
+            text="Deactivate Family"
+            type="button"
+            class="transition duration-300 bg-red-600 hover:bg-red-700"
+            @click="deactivateFamily"
+          />
+          <ActionButton
+            v-else
+            text="Reactivate Family"
+            type="button"
+            class="transition duration-300 bg-green-600 hover:bg-green-700"
+            @click="reactivateFamily"
+          />
+        </template>
+      </div>
     </form>
   </CVContainer>
 </template>
-
-<style scoped></style>
