@@ -372,7 +372,7 @@ setImageAutoSlide()
           </div>
         </div>
       </div>
-      <div class="flex flex-col pb-5">
+      <div v-if="pageDataDB?.Family?.acceptingDonations" class="flex flex-col pb-5">
         <div class="text-gray-dark font-poppins text-3xl text-left font-bold leading-9 text-shadow-[3px_3px_4px_rgba(0,0,0,0.25)]">
           Donations
         </div>

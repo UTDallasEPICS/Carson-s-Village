@@ -17,7 +17,7 @@ export default defineEventHandler(async event => {
   const user = session.user
 
   const body = await readBody(event);
-  const { family_name, familyCuid, advocateCuid } = body
+  const { family_name, familyCuid, advocateCuid, acceptingDonations } = body
 
   if(user.role === "advocate" || user.role === "admin") {
     try {
@@ -41,7 +41,8 @@ export default defineEventHandler(async event => {
           },
           data: {
             family_name: family_name,
-            advocateCuid: advocateCuid
+            advocateCuid: advocateCuid,
+            acceptingDonations: acceptingDonations
           }
         });
         

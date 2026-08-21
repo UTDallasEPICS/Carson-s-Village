@@ -85,6 +85,7 @@ model Family {
   id                    String          @id @default(uuid())
   family_name           String
   stripe_account_id     String?
+  acceptingDonations    Boolean         @default(true)
   created_at            DateTime        @default(now())
   updated_at            DateTime        @updatedAt
   advocateCuid          String?         @map("advocate_cuid")

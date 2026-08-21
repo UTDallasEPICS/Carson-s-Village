@@ -25,7 +25,8 @@ export default defineEventHandler(async event => {
     name,
     email,
     phone, 
-    address 
+    address,
+    acceptingDonations
   } = body
 
   if(user.role === "advocate" || user.role === "admin") {
@@ -33,6 +34,7 @@ export default defineEventHandler(async event => {
       const queryRes = await prisma.family.create({
         data: {
           family_name: family_name,
+          acceptingDonations: acceptingDonations ?? true,
           AdvocateResponsible: {
             connect: {
               id: user.id

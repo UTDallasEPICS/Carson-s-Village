@@ -8,12 +8,12 @@
 *	Located under "/index"
 */
 
+import { formatPhoneForDisplay } from '~/utils/formatters';
+import { authClient } from '~/utils/auth-client';
+
 definePageMeta({
   middleware: ["family-guard"]
 })
-
-import { formatPhoneForDisplay } from '~/utils/formatters';
-import { authClient } from '~/utils/auth-client';
 
 const { data } = await authClient.useSession(useFetch);
 const user = computed(() => data.value?.user || null)

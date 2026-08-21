@@ -28,6 +28,5 @@
 import { authClient } from '~/utils/auth-client';
 const { data: session } = await authClient.useSession(useFetch);
 
-const runtime = useRuntimeConfig()
 const hamburgerOpen = ref(false)
 </script>
