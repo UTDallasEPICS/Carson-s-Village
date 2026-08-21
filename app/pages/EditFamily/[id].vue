@@ -130,6 +130,7 @@ const createFamily = async () => {
           family_name: string
           familyCuid: string
           advocateCuid: string | null
+          acceptingDonations: boolean
           name?: string
           email?: string
           phone?: string
@@ -137,7 +138,8 @@ const createFamily = async () => {
         } = {
           family_name: data_family.value.family_name,
           familyCuid: id.value,
-          advocateCuid: selectedAdvocateId.value
+          advocateCuid: selectedAdvocateId.value,
+          acceptingDonations: data_family.value.acceptingDonations
         }
 
         if (data_user.value.email && data_user.value.name) {
@@ -171,7 +173,8 @@ const createFamily = async () => {
             name: data_user.value.name,
             email: data_user.value.email,
             phone: data_user.value.phone,
-            address: data_user.value.address
+            address: data_user.value.address,
+            acceptingDonations: !!data_family.value.acceptingDonations
           })
         })
 
@@ -304,6 +307,27 @@ const reactivateFamily = async () => {
           >
             {{ data_family.isActive ? 'Active' : 'Deactivated' }}
           </span>
+        </div>
+      </div>
+
+      <!-- Donation Settings -->
+      <div class="information rounded-md mx-9 mt-6 text-center sm:text-start text-white bg-blue-999">
+        <CVLegend>Donation Settings</CVLegend>
+      </div>
+      <div class="mt-2 mb-6 grid sm:grid-cols-3">
+        <CVLabel for="accepting_donations">
+          Accepting Donations
+        </CVLabel>
+        <div class="mx-9 mt-6 sm:col-span-2 sm:mr-11">
+          <label class="relative inline-flex items-center cursor-pointer">
+            <input
+              id="accepting_donations"
+              v-model="data_family.acceptingDonations"
+              type="checkbox"
+              class="sr-only peer"
+            >
+            <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600" />
+          </label>
         </div>
       </div>
 
