@@ -3,7 +3,6 @@
   //import { Family } from '@prisma/client'; 
   import type { Family, User } from '@/types.d.ts'
   import type { Page } from '~~/prisma/generated/models'
-  import { ref } from 'vue';
   import { ChevronUpIcon, ChevronDownIcon, ChevronUpDownIcon } from '@heroicons/vue/24/solid'
   import { authClient } from '~/utils/auth-client';
 
@@ -202,65 +201,23 @@
     const formatedDay = parseInt(day) >= 10 ? day : 0 + "" + day
     return year + "-" + formatedMonth + "-" + formatedDay 
   }
-  
-  
-  // method activated by Advocate or Admin to manual remove the ability to donate to a family page after about a week of the donation deadline.
-  // an advocate or admin can also re-enable a page to set its status from 'inactive' to 'active'
-  const togglePageStatus = async(page: Page) => {
-    if(isAdminAdvocate.value) {
-      let booleanChanged = false 
-      if(page.status == "active") {
-        const confirmDeactivate = confirm('Are you sure you want to deactivate this page?')
-          if(confirmDeactivate) {
-            page.status = "inactive"
-            booleanChanged = true
-          } else if(!confirmDeactivate){
-            return ""
-          }
-      } else if(page.status == "inactive" && !booleanChanged) {
-        const confirmReactivate = confirm('Are you sure you want to reactivate this page?')
-        if(confirmReactivate) {
-          page.status = "active"
 
-          booleanChanged = true
-        } else if(!confirmReactivate){
-        return ""
-        }
-    } else if(page.status == "inactive" && !booleanChanged) {
-      const confirmReactivate = confirm('Are you sure you want to reactivate this page?')
-      if(confirmReactivate) {
-        page.status = "active"
-        booleanChanged = true
-      } else if(!confirmReactivate) {
-      return ""
-      }
-     }
-        booleanChanged = false          
-        const toggledStatus = await $fetch('api/page', {
-
-          method: "PUT",
-          body: { ...page }
-        })
+  const nextPage = async () => {
+    if(currentPage.value < ((totalLength.value / dimensions.value) - 1)) {
+      currentPage.value++
+      awaitloadReports()
     }
   }
-    
 
-// Pagination control, move the page counter forwards and backwards and searches
-const nextPage = async () => { 
-  if(currentPage.value < ((totalLength.value / dimensions.value) - 1)){
-    currentPage.value++
-    awaitloadReports()
-  } 
-}
-const prevPage = async () => {
-  if(currentPage.value != 0) {
-    currentPage.value--
-    await loadReports()
-  } 
-}
+  const prevPage = async () => {
+    if(currentPage.value != 0) {
+      currentPage.value--
+      await loadReports()
+    }
+  }
 
-// Invoke the initial data loading
-await loadReports();
+  // Invoke the initial data loading
+  await loadReports();
 </script>
 
 <template>
@@ -495,11 +452,8 @@ await loadReports();
             >
               Goal Date
             </th>
-            <th style="padding: 1rem; background-color: #6eabbf; width: 7%">
-              Status
-            </th>
             <th style="padding: 1rem; background-color: #6eabbf; border-radius: 0 60px 0 0; width: 9%;">
-              Toggle Status
+              Status
             </th>
           </tr>
         </thead>
@@ -566,31 +520,26 @@ await loadReports();
             <td style="text-align: center;">
               {{ page.status }}
             </td>
-            <td style="text-align: center;">
-              <ActionButton
-                text="X"
-                style="color: white; background-color: red;"
-                @click="togglePageStatus(page)"
-              />
-            </td>
           </tr>
         </tbody>
       </table>
     </div>
   </div>
+  
+  <!-- Pagination Controls -->
   <div class="mb-9 py-7 flex flex-wrap gap-2 place-content-center">
-    <div class="col-md-10 px-2 mt-2">
-      <button @click="prevPage">
-        &lt;
-      </button>
-    </div>
-    <div class="col-md-10 px-2 mt-2">
-      <p>{{ currentPage + 1 }}</p>
-    </div>
-    <div class="col-md-10 px-2 mt-2">
-      <button @click="nextPage">
-        >
-      </button>
-    </div>
-  </div>
+    <div class="col-md-10 px-2 mt-2">                    
+      <button @click="prevPage">                         
+        &lt;                                             
+      </button>                                          
+    </div>                                               
+    <div class="col-md-10 px-2 mt-2">                    
+      <p>{{ currentPage + 1 }}</p>                       
+    </div>                                               
+    <div class="col-md-10 px-2 mt-2">                    
+      <button @click="nextPage">                         
+        >                                                
+      </button>                                          
+    </div>                                               
+  </div>                                                 
 </template>
