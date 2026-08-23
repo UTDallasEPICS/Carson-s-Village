@@ -3,6 +3,8 @@
  * Admin-only: deactivate a user and apply cascade rules
  */
 
+import { Prisma } from "~~/prisma/generated/client";
+
 export default defineEventHandler(async (event) => {
   const session = await auth.api.getSession({
     headers: event.headers,

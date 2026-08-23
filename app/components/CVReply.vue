@@ -1,8 +1,18 @@
 
-<template lang="pug">
-div(v-if="r.reply?.length > 0", class="reply-box p-4 text-left border-b border-black")
-div(class="reply-header text-base font-bold mb-10 ml-4") {{ r.name }}
-div(class="reply-body text-base text-[#666666] mb-10") {{ r.reply }}
+<template>
+  <div
+    v-if="r.reply?.length > 0"
+    class="reply-box p-4 text-left border-b border-black"
+  >
+  </div>
+
+  <div class="reply-header text-base font-bold mb-10 ml-4">
+    {{ r.name }}
+  </div>
+
+  <div class="reply-body text-base text-[#666666] mb-10">
+    {{ r.reply }}
+  </div>
 </template>
   
 <script setup lang="ts">

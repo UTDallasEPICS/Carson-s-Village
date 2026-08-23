@@ -17,12 +17,13 @@ const actualBarWidth = computed(() => {
 })
 </script>
 
-<template lang="pug">
-div(
+<template>
+  <div
     :style="{ width: `${actualBarWidth}%` }"
     class="h-7 rounded-full text-white flex items-center justify-center bg-[linear-gradient(90deg,rgba(15,200,0,1),rgba(133,233,0,1)_35%)] shadow-[0_3px_3px_-5px_#1ba710,0_2px_5px_#1ba710]"
-)
-    slot(v-if="actualBarWidth")
+  >
+    <slot v-if="actualBarWidth" />
+  </div>
 </template>
 
 <style scoped></style>

@@ -138,92 +138,178 @@ if( (isAuthorized.value as boolean) == true )
   
 </script>
 
-<template lang = "pug">
-div(class="container bg-white mx-auto mt-1 max-w-[1100px]")
-    div(class="flex items-center gap-4 px-2 py-3")
-        button(
-          type="button"
-          class="text-white px-4 py-2 rounded-full transition duration-300 bg-orange-999 hover:bg-green-600"
-          @click="toggleDeactivatedFilter"
-        ) {{ showDeactivated ? "Show active users" : "Show deactivated users" }}
-        p(v-if="actionError" class="text-red-600 text-sm") {{ actionError }}
-    table(class="table-auto border-separate border-spacing-0 rounded-t-xl border border-[#5aadc2] overflow-hidden")
-        thead
-            tr
-                th(class="font-poppins font-bold font-bold p-2 text-white bg-[#5aadc2] w-[25%]")
-                    button(@click="SortCV(users, 'name')") User Name &nbsp;
-                    span(v-if="order === 'asc' && OrderField==='last_name'" class="pr-[3px] pt-[3px]")
-                        ChevronUpIcon(class="h-6 inline-flex")
-                    span(v-else-if="order === 'desc' && OrderField==='last_name'" class="pr-[3px] pt-[3px]")
-                        ChevronDownIcon(class="h-6 inline-flex")
-                    span(v-else class="pr-[3px] pt-[3px]")
-                        ChevronUpDownIcon(class="h-6 inline-flex")
-                th(class="font-poppins font-bold text-white w-[25%] bg-[#5aadc2]")
-                    button(@click="SortCV(users, 'family_name')") Family Name &nbsp;
-                    span(v-if="order === 'asc' && OrderField==='family_name'" class="pr-[3px] pt-[3px]")
-                        ChevronUpIcon(class="h-6 inline-flex")
-                    span(v-else-if="order === 'desc' && OrderField==='family_name'" class="pr-[3px] pt-[3px]")
-                        ChevronDownIcon(class="h-6 inline-flex")
-                    span(v-else class="pr-[3px] pt-[3px]")
-                        ChevronUpDownIcon(class="h-6 inline-flex")
-                th(class="font-poppins font-bold text-white w-[12.5%] bg-[#5aadc2]")
-                    button(@click="SortCV(users, 'role')") User Role &nbsp;
-                    span(v-if="order === 'asc' && OrderField==='user_role'" class="pr-[3px] pt-[3px]")
-                        ChevronUpIcon(class="h-6 inline-flex")
-                    span(v-else-if="order === 'desc' && OrderField==='user_role'" class="pr-[3px] pt-[3px]")
-                        ChevronDownIcon(class="h-6 inline-flex")
-                    span(v-else class="pr-[3px] pt-[3px]")
-                        ChevronUpDownIcon(class="h-6 inline-flex")
-                th(class="font-poppins font-bold text-white bg-[#5aadc2]")
-                    button(@click="SortCV(users, 'email')") User Email &nbsp;
-                    span(v-if="order === 'asc' && OrderField==='email'" class="pr-[3px] pt-[3px]")
-                        ChevronUpIcon(class="h-6 inline-flex")
-                    span(v-else-if="order === 'desc' && OrderField==='email'" class="pr-[3px] pt-[3px]")
-                        ChevronDownIcon(class="h-6 inline-flex")
-                    span(v-else class="pr-[3px] pt-[3px]")
-                        ChevronUpDownIcon(class="h-6 inline-flex")
-                th(class="font-poppins font-bold w-[25%] bg-[#5aadc2] text-white") User Editor
-                th(class="font-poppins font-bold w-[25%] bg-[#5aadc2] text-white") User Pages
-                th(v-if="isAdmin" class="font-poppins font-bold w-[25%] bg-[#5aadc2] text-white") Status
-        tbody
-            tr(v-for="(item, i) in users" 
-                :key="item.id"
-                :class="{'bg-gray-200': (i+1) % 2, 'opacity-60': !item.isActive}" 
-            )
-                td(class="font-poppins text-gray-dark font-bold text-center") {{ item.name }}
-                td(class="font-poppins text-gray-dark font-bold text-center") {{ item.Family?.family_name }}
-                td(class="font-poppins text-gray-dark font-bold text-center") {{ item.role }}
-                td(class="font-poppins text-gray-dark font-bold text-center") {{ item.email }}
-                td
-                    LinkButton(
-                      class="sm:my-2 transition duration-300 bg-orange-999 hover:bg-green-600 whitespace-nowrap flex flex-row py-[14px] px-[24px] gap-[10px]"  
-                      :to="`/EditUser/${item.id}`"
-                    ) Edit
-                    
-                td
-                    LinkButton(
-                      class="sm:my-2 transition duration-300 bg-orange-999 hover:bg-green-600 whitespace-nowrap flex flex-row py-[14px] px-[24px] gap-[10px]"  
-                      :to="`/PageList/${item.id}?fetch=user`"
-                    ) View
-                td(v-if="isAdmin")
-                    button(
-                      v-if="item.isActive"
-                      type="button"
-                      class="sm:my-2 transition duration-300 bg-red-600 hover:bg-red-700 text-white whitespace-nowrap flex flex-row py-[14px] px-[24px] gap-[10px] rounded-full"
-                      @click="deactivateUser(item.id)"
-                    ) Deactivate
-                    button(
-                      v-else
-                      type="button"
-                      class="sm:my-2 transition duration-300 bg-green-600 hover:bg-green-700 text-white whitespace-nowrap flex flex-row py-[14px] px-[24px] gap-[10px] rounded-full"
-                      @click="reactivateUser(item.id)"
-                    ) Reactivate
-    div(class="border rounded-b-xl border-[#5aadc2] container mx-auto w-full max-w-[1100px] bg-[#5aadc2] h-[50px]")
-div(class="mb-9 py-7 flex flex-wrap gap-2 place-content-center")
-    div(class="px-2 mt-2")
-        button(@click="prevPage") &lt
-    div(class="px-2 mt-2")
-        p {{  currentPage + 1 }}
-    div(class="px-2 mt-2")
-        button(@click="nextPage") >
-</template>)
+<template>
+  <div class="container bg-white mx-auto mt-1 max-w-[1100px]">
+    <div class="flex items-center gap-4 px-2 py-3">
+      <button
+        type="button"
+        class="text-white px-4 py-2 rounded-full transition duration-300 bg-orange-999 hover:bg-green-600"
+        @click="toggleDeactivatedFilter"
+      >
+        {{ showDeactivated ? "Show active users" : "Show deactivated users" }}
+      </button>
+      <p
+        v-if="actionError"
+        class="text-red-600 text-sm"
+      >
+        {{ actionError }}
+      </p>
+    </div>
+    <table class="table-auto border-separate border-spacing-0 rounded-t-xl border border-[#5aadc2] overflow-hidden">
+      <thead>
+        <tr>
+          <th class="font-poppins font-bold font-bold p-2 text-white bg-[#5aadc2] w-[25%]">
+            <button @click="SortCV(users, 'name')">
+              User Name &nbsp;
+            </button>
+            <span
+              v-if="order === 'asc' && OrderField==='last_name'"
+              class="pr-[3px] pt-[3px]"
+            ><ChevronUpIcon class="h-6 inline-flex" /></span>
+            <span
+              v-else-if="order === 'desc' && OrderField==='last_name'"
+              class="pr-[3px] pt-[3px]"
+            ><ChevronDownIcon class="h-6 inline-flex" /></span>
+            <span
+              v-else
+              class="pr-[3px] pt-[3px]"
+            ><ChevronUpDownIcon class="h-6 inline-flex" /></span>
+          </th>
+          <th class="font-poppins font-bold text-white w-[25%] bg-[#5aadc2]">
+            <button @click="SortCV(users, 'family_name')">
+              Family Name &nbsp;
+            </button>
+            <span
+              v-if="order === 'asc' && OrderField==='family_name'"
+              class="pr-[3px] pt-[3px]"
+            ><ChevronUpIcon class="h-6 inline-flex" /></span>
+            <span
+              v-else-if="order === 'desc' && OrderField==='family_name'"
+              class="pr-[3px] pt-[3px]"
+            ><ChevronDownIcon class="h-6 inline-flex" /></span>
+            <span
+              v-else
+              class="pr-[3px] pt-[3px]"
+            ><ChevronUpDownIcon class="h-6 inline-flex" /></span>
+          </th>
+          <th class="font-poppins font-bold text-white w-[12.5%] bg-[#5aadc2]">
+            <button @click="SortCV(users, 'role')">
+              User Role &nbsp;
+            </button>
+            <span
+              v-if="order === 'asc' && OrderField==='user_role'"
+              class="pr-[3px] pt-[3px]"
+            ><ChevronUpIcon class="h-6 inline-flex" /></span>
+            <span
+              v-else-if="order === 'desc' && OrderField==='user_role'"
+              class="pr-[3px] pt-[3px]"
+            ><ChevronDownIcon class="h-6 inline-flex" /></span>
+            <span
+              v-else
+              class="pr-[3px] pt-[3px]"
+            ><ChevronUpDownIcon class="h-6 inline-flex" /></span>
+          </th>
+          <th class="font-poppins font-bold text-white bg-[#5aadc2]">
+            <button @click="SortCV(users, 'email')">
+              User Email &nbsp;
+            </button>
+            <span
+              v-if="order === 'asc' && OrderField==='email'"
+              class="pr-[3px] pt-[3px]"
+            ><ChevronUpIcon class="h-6 inline-flex" /></span>
+            <span
+              v-else-if="order === 'desc' && OrderField==='email'"
+              class="pr-[3px] pt-[3px]"
+            ><ChevronDownIcon class="h-6 inline-flex" /></span>
+            <span
+              v-else
+              class="pr-[3px] pt-[3px]"
+            ><ChevronUpDownIcon class="h-6 inline-flex" /></span>
+          </th>
+          <th class="font-poppins font-bold w-[25%] bg-[#5aadc2] text-white">
+            User Editor
+          </th>
+          <th class="font-poppins font-bold w-[25%] bg-[#5aadc2] text-white">
+            User Pages
+          </th>
+          <th
+            v-if="isAdmin"
+            class="font-poppins font-bold w-[25%] bg-[#5aadc2] text-white"
+          >
+            Status
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr
+          v-for="(item, i) in users"
+          :key="item.id"
+          :class="{'bg-gray-200': (i+1) % 2, 'opacity-60': !item.isActive}"
+        >
+          <td class="font-poppins text-gray-dark font-bold text-center">
+            {{ item.name }}
+          </td>
+          <td class="font-poppins text-gray-dark font-bold text-center">
+            {{ item.Family?.family_name }}
+          </td>
+          <td class="font-poppins text-gray-dark font-bold text-center">
+            {{ item.role }}
+          </td>
+          <td class="font-poppins text-gray-dark font-bold text-center">
+            {{ item.email }}
+          </td>
+          <td>
+            <LinkButton
+              class="sm:my-2 transition duration-300 bg-orange-999 hover:bg-green-600 whitespace-nowrap flex flex-row py-[14px] px-[24px] gap-[10px]"
+              :to="`/EditUser/${item.id}`"
+            >
+              Edit
+            </LinkButton>
+          </td>
+          <td>
+            <LinkButton
+              class="sm:my-2 transition duration-300 bg-orange-999 hover:bg-green-600 whitespace-nowrap flex flex-row py-[14px] px-[24px] gap-[10px]"
+              :to="`/PageList/${item.id}?fetch=user`"
+            >
+              View
+            </LinkButton>
+          </td>
+          <td v-if="isAdmin">
+            <button
+              v-if="item.isActive"
+              type="button"
+              class="sm:my-2 transition duration-300 bg-red-600 hover:bg-red-700 text-white whitespace-nowrap flex flex-row py-[14px] px-[24px] gap-[10px] rounded-full"
+              @click="deactivateUser(item.id)"
+            >
+              Deactivate
+            </button>
+            <button
+              v-else
+              type="button"
+              class="sm:my-2 transition duration-300 bg-green-600 hover:bg-green-700 text-white whitespace-nowrap flex flex-row py-[14px] px-[24px] gap-[10px] rounded-full"
+              @click="reactivateUser(item.id)"
+            >
+              Reactivate
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="border rounded-b-xl border-[#5aadc2] container mx-auto w-full max-w-[1100px] bg-[#5aadc2] h-[50px]" />
+  </div>
+  <div class="mb-9 py-7 flex flex-wrap gap-2 place-content-center">
+    <div class="px-2 mt-2">
+      <button @click="prevPage">
+        &lt;
+      </button>
+    </div>
+    <div class="px-2 mt-2">
+      <p>{{ currentPage + 1 }}</p>
+    </div>
+    <div class="px-2 mt-2">
+      <button @click="nextPage">
+        >
+      </button>
+    </div>
+  </div>
+</template>

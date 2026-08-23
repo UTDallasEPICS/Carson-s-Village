@@ -47,13 +47,13 @@ const validatePhone: ValidationRule = (val) => {
 const phoneRules = computed(() => [validatePhone]);
 </script>
 
-<template lang="pug">
-CVInput(
-  type="tel"
-  maxlength="14"
-  :rules="phoneRules"
-  v-model="formattedValue"
-  @input="onInput"
-  v-bind="$attrs"
-)
+<template>
+  <CVInput
+    v-model="formattedValue"
+    type="tel"
+    maxlength="14"
+    :rules="phoneRules"
+    v-bind="$attrs"
+    @input="onInput"
+  />
 </template>

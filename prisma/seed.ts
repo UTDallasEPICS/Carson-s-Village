@@ -1,27 +1,42 @@
-import { PrismaBetterSqlite3 } from "@prisma/adapter-better-sqlite3"
-import { PrismaClient } from "./generated/client"
+import fs from 'fs'
+import type { Role } from './generated/client'
+import { PrismaClient } from './generated/client'
+import { PrismaBetterSqlite3 } from '@prisma/adapter-better-sqlite3'
 
-const connectionString = `${process.env.DATABASE_URL}`
-
-const adapter = new PrismaBetterSqlite3({ url: connectionString })
+const adapter = new PrismaBetterSqlite3({
+  url: process.env.DATABASE_URL,
+})
 
 const prisma = new PrismaClient({ adapter })
 
+type RawUser = {
+  name: string
+  email: string
+  role?: Role
+}
+
 async function main() {
-  const adminuser = await prisma.user.upsert({
-    where: {
-      email: 'caleb.beeson@npts.tech'
-    },
-    update: {
-      role: 'admin',
-      name: 'Caleb Beeson'
-    },
-    create: {
-      email: 'caleb.beeson@npts.tech',
-      role: 'admin',
-      name: 'Caleb Beeson'
-    }
-  }) 
+  console.log('Seeding users...')
+  const rawUsers: RawUser[] = JSON.parse(
+    fs.readFileSync('prisma/seed/users.json').toString(),
+  )
+  for (const user of rawUsers) {
+    const userResult = await prisma.user.upsert({
+      where: {
+        email: user.email,
+      },
+      update: {
+        name: user.name,
+        role: user.role ?? 'family',
+      },
+      create: {
+        email: user.email,
+        name: user.name,
+        role: user.role ?? 'family',
+      },
+    })
+    console.log(userResult)
+  }
 }
 
 main()

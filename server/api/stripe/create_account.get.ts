@@ -35,7 +35,8 @@ export default defineEventHandler(async event => {
         Family: {
           select: {
             stripe_account_id: true,
-            Pages: true
+            Pages: true,
+            acceptingDonations: true
           }
         }
       }
@@ -49,6 +50,10 @@ export default defineEventHandler(async event => {
     }
 
     try {
+      // If not accepting donations, then no need to create account
+      if (!dbUser.Family.acceptingDonations) {
+        return '/';
+      }
       // If stripe account already onboarded, then just redirect to landing page
       if (!!dbUser.Family.stripe_account_id && dbUser.Family.Pages?.[0].status !== "Family Stripe Account needs onboarding") {
         return '/';

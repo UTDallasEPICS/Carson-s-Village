@@ -104,59 +104,131 @@ const searchOnEnter = () => {
 
 
 
-<template lang="pug">
-div(v-if="isLoggedIn" class="container mx-auto")
-  h1(class = 'text-2xl indent-8 mt-2') Memorial Page Search
-  
-  br
-  legend(class='text-m indent-8') Search memorial pages
-  input(class="border border-gray-300 py-2 px-4 ml-8 rounded-lg focus:outline-none focus:border-black-500" 
-  type="search" placeholder=" " v-model.trim="searchQueryInput" v-on:keyup.enter="searchOnEnter")
-  button(class='text-m bg-gray-300 p-2 mt-1 mb-2' @click='currentPage=0; pageSearch(searchQueryInput)') SEARCH
-  div(class="container")
-  br
-  b(class="ml-8 text-xl")     Search Results 
-  table(class="w-full")
-      thead
-        tr(class="text-white")
-          th(class="px-8 bg-[#5aadc2] rounded-tl-3xl items-center justify-center w-1/3")
-            button(@click="SortCV(pages, 'page_last_name')") Page &nbsp;
-            span(v-if="order === 'asc' && OrderField==='page_last_name'" class="pr-1 pt-1")
-              ChevronUpIcon(class="h-6 inline-flex")
-            span(v-else-if="order === 'desc' && OrderField==='page_last_name'" class="pr-1 pt-1")
-              ChevronDownIcon(class="h-6 inline-flex")
-            span(v-else class="pr-1 pt-1")
-              ChevronUpDownIcon(class="h-6 inline-flex")
-          th(class="px-8 bg-[#5aadc2] justify-center w-1/3")
-            button(@click="SortCV(pages, 'donation_goal')") Donation Goal &nbsp;
-            span(v-if="order === 'asc' && OrderField==='donation_goal'" class="pr-1 pt-1")
-              ChevronUpIcon(class="h-6 inline-flex")
-            span(v-else-if="order === 'desc' && OrderField==='donation_goal'" class="pr-1 pt-1")
-              ChevronDownIcon(class="h-6 inline-flex")
-            span(v-else class="pr-1 pt-1")
-              ChevronUpDownIcon(class="h-6 inline-flex")
-          th(class="px-8 bg-[#5aadc2] rounded-tr-3xl justify-center w-1/3")
-            button(@click="SortCV(pages, 'deadline')") Deadline &nbsp;
-            span(v-if="order === 'asc' && OrderField==='deadline'" class="pr-1 pt-1")
-              ChevronUpIcon(class="h-6 inline-flex")
-            span(v-else-if="order === 'desc' && OrderField==='deadline'" class="pr-1 pt-1")
-              ChevronDownIcon(class="h-6 inline-flex")
-            span(v-else class="pr-1 pt-1")
-              ChevronUpDownIcon(class="h-6 inline-flex")
-      tbody
-        tr(v-for="(page, i) in pages" :class="{'bg-gray-200': (i+1) % 2}")
-          td(class="text-center")   
-            NuxtLink(:to="`/Page/${page.cuid}`") {{ page.page_first_name + " " + page.page_last_name }}
-          td(class="text-center") {{ donationFormat(page.donation_goal) }}
-          td(class="text-center") {{ dateFormat(page.deadline) }}
-  div(class="ml-9 mb-9 py-7 flex flex-wrap gap-2 place-content-center")
-    div(class="px-2 mt-2")
-        button(@click="prevPage") &lt
-    div(class="px-2 mt-2")
-        p {{  currentPage + 1 }}
-    div(class="px-2 mt-2")
-        button(@click="nextPage") >
-p(v-else class="text-center") Welcome and thank you for supporting one of the families in our Village.
+<template>
+  <div
+    v-if="isLoggedIn"
+    class="container mx-auto"
+  >
+    <h1 class="text-2xl indent-8 mt-2">
+      Memorial Page Search
+    </h1>
+    <br>
+    <legend class="text-m indent-8">
+      Search memorial pages
+    </legend>
+    <input
+      v-model.trim="searchQueryInput"
+      class="border border-gray-300 py-2 px-4 ml-8 rounded-lg focus:outline-none focus:border-black-500"
+      type="search"
+      placeholder=" "
+      @keyup.enter="searchOnEnter"
+    >
+    <button
+      class="text-m bg-gray-300 p-2 mt-1 mb-2"
+      @click="currentPage=0; pageSearch(searchQueryInput)"
+    >
+      SEARCH
+    </button>
+    <div class="container" />
+    <br>
+    <b class="ml-8 text-xl">     Search Results </b>
+    <table class="w-full">
+      <thead>
+        <tr class="text-white">
+          <th class="px-8 bg-[#5aadc2] rounded-tl-3xl items-center justify-center w-1/3">
+            <button @click="SortCV(pages, 'page_last_name')">
+              Page &nbsp;
+            </button>
+            <span
+              v-if="order === 'asc' && OrderField==='page_last_name'"
+              class="pr-1 pt-1"
+            ><ChevronUpIcon class="h-6 inline-flex" /></span>
+            <span
+              v-else-if="order === 'desc' && OrderField==='page_last_name'"
+              class="pr-1 pt-1"
+            ><ChevronDownIcon class="h-6 inline-flex" /></span>
+            <span
+              v-else
+              class="pr-1 pt-1"
+            ><ChevronUpDownIcon class="h-6 inline-flex" /></span>
+          </th>
+          <th class="px-8 bg-[#5aadc2] justify-center w-1/3">
+            <button @click="SortCV(pages, 'donation_goal')">
+              Donation Goal &nbsp;
+            </button>
+            <span
+              v-if="order === 'asc' && OrderField==='donation_goal'"
+              class="pr-1 pt-1"
+            ><ChevronUpIcon class="h-6 inline-flex" /></span>
+            <span
+              v-else-if="order === 'desc' && OrderField==='donation_goal'"
+              class="pr-1 pt-1"
+            ><ChevronDownIcon class="h-6 inline-flex" /></span>
+            <span
+              v-else
+              class="pr-1 pt-1"
+            ><ChevronUpDownIcon class="h-6 inline-flex" /></span>
+          </th>
+          <th class="px-8 bg-[#5aadc2] rounded-tr-3xl justify-center w-1/3">
+            <button @click="SortCV(pages, 'deadline')">
+              Deadline &nbsp;
+            </button>
+            <span
+              v-if="order === 'asc' && OrderField==='deadline'"
+              class="pr-1 pt-1"
+            ><ChevronUpIcon class="h-6 inline-flex" /></span>
+            <span
+              v-else-if="order === 'desc' && OrderField==='deadline'"
+              class="pr-1 pt-1"
+            ><ChevronDownIcon class="h-6 inline-flex" /></span>
+            <span
+              v-else
+              class="pr-1 pt-1"
+            ><ChevronUpDownIcon class="h-6 inline-flex" /></span>
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr
+          v-for="(page, i) in pages"
+          :class="{'bg-gray-200': (i+1) % 2}"
+        >
+          <td class="text-center">
+            <NuxtLink :to="`/Page/${page.cuid}`">
+              {{ page.page_first_name + " " + page.page_last_name }}
+            </NuxtLink>
+          </td>
+          <td class="text-center">
+            {{ donationFormat(page.donation_goal) }}
+          </td>
+          <td class="text-center">
+            {{ dateFormat(page.deadline) }}
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="ml-9 mb-9 py-7 flex flex-wrap gap-2 place-content-center">
+      <div class="px-2 mt-2">
+        <button @click="prevPage">
+          &lt;
+        </button>
+      </div>
+      <div class="px-2 mt-2">
+        <p>{{ currentPage + 1 }}</p>
+      </div>
+      <div class="px-2 mt-2">
+        <button @click="nextPage">
+          >
+        </button>
+      </div>
+    </div>
+  </div>
+  <p
+    v-else
+    class="text-center"
+  >
+    Welcome and thank you for supporting one of the families in our Village.
+  </p>
 </template>
 
 <style scoped>

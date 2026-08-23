@@ -1,6 +1,13 @@
-<template lang="pug">
-VueDatePicker(class="rounded-md p-2" :id="id" type="Date" v-model="value" auto-apply)
-    slot
+<template>
+  <VueDatePicker
+    class="rounded-md p-2"
+    :id="id"
+    type="Date"
+    v-model="value"
+    auto-apply
+  >
+    <slot />
+  </VueDatePicker>
 </template>
         
 <script setup lang="ts">

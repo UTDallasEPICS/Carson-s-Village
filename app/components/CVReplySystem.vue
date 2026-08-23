@@ -60,20 +60,58 @@ const submitComment = async () => {
 
 </script>
 
-<template lang="pug">
-div(v-if="isActive" class="comment-system flex flex-col items-center sm:mx-4 sm:w-full sm:py-2")
-
-      h2(class="text-center mt-4 mb-6 font-bold") Leave a Message
-      div(class="flex justify-center w-2/3")
-        CVTextArea(id="reply" name='reply' v-model="replyData.reply" placeholder='Replies' class="font-normal h-40 w-full")
-      div(class="field-row flex justify-center mt-4 w-2/3")
-          CVInput(id="name" name='name' v-model="replyData.name" placeholder='Name' class="font-normal w-2/3" )     
-      div(class="ml-4 pt-6 pr-5 flex items-center justify-center mt-6")
-          ActionButton(text="Submit" class="mx-auto text-md transition duration-300 bg-orange-999 hover:bg-green-600" @click="submitComment")
-      div(v-if="successMessage && !errorMessage" class="mt-4 text-green-500") {{ successMessage }}
-      div(v-if="errorMessage && !successMessage" class="mt-4 text-red-500") {{ errorMessage }}
-div(v-else class="text-center text-gray-500 mt-4 py-6") This page is archived. New comments are disabled.
-
+<template>
+  <div
+    v-if="isActive"
+    class="comment-system flex flex-col items-center sm:mx-4 sm:w-full sm:py-2"
+  >
+    <h2 class="text-center mt-4 mb-6 font-bold">
+      Leave a Message
+    </h2>
+    <div class="flex justify-center w-2/3">
+      <CVTextArea
+        id="reply"
+        v-model="replyData.reply"
+        name="reply"
+        placeholder="Replies"
+        class="font-normal h-40 w-full"
+      />
+    </div>
+    <div class="field-row flex justify-center mt-4 w-2/3">
+      <CVInput
+        id="name"
+        v-model="replyData.name"
+        name="name"
+        placeholder="Name"
+        class="font-normal w-2/3"
+      />
+    </div>
+    <div class="ml-4 pt-6 pr-5 flex items-center justify-center mt-6">
+      <ActionButton
+        text="Submit"
+        class="mx-auto text-md transition duration-300 bg-orange-999 hover:bg-green-600"
+        @click="submitComment"
+      />
+    </div>
+    <div
+      v-if="successMessage && !errorMessage"
+      class="mt-4 text-green-500"
+    >
+      {{ successMessage }}
+    </div>
+    <div
+      v-if="errorMessage && !successMessage"
+      class="mt-4 text-red-500"
+    >
+      {{ errorMessage }}
+    </div>
+  </div>
+  <div
+    v-else
+    class="text-center text-gray-500 mt-4 py-6"
+  >
+    This page is archived. New comments are disabled.
+  </div>
 </template>
 
 <style scoped></style>

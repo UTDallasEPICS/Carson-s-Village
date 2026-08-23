@@ -10,7 +10,7 @@ datasource db {
 model User {
   id              String    @id @default(uuid())
   name            String
-  email           String
+  email           String    @unique
   emailVerified   Boolean   @default(false)
   image           String?
   createdAt       DateTime  @default(now())
@@ -30,7 +30,6 @@ model User {
   sessions        Session[]
   accounts        Account[]
 
-  @@unique([email])
   @@map("user")
 }
 
@@ -86,6 +85,7 @@ model Family {
   id                    String          @id @default(uuid())
   family_name           String
   stripe_account_id     String?
+  acceptingDonations    Boolean         @default(true)
   created_at            DateTime        @default(now())
   updated_at            DateTime        @updatedAt
   advocateCuid          String?         @map("advocate_cuid")
