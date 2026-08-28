@@ -11,6 +11,14 @@ const otp = ref('')
 const loginError = ref('')
 const requestError = ref('')
 const loading = ref(false)
+const otpInput = ref<HTMLInputElement | null>(null)
+
+watch(step, async (newStep) => {
+  if (newStep === 'verify') {
+    await nextTick()
+    otpInput.value?.focus()
+  }
+})
 
 async function handleRequestOtp() {
   loading.value = true
@@ -133,6 +141,7 @@ function resetFlow() {
           >One-Time Code</label>
           <input
             id="otp"
+            ref="otpInput"
             v-model="otp"
             type="text"
             maxlength="6"
