@@ -14,13 +14,6 @@ const route = useRoute()
 const isNotSearch = computed(() => route.path !== "/Search/")
 const toggle = ref(true);
 
-const onEnter = async() => {
-  // Navigate to the search page with the entered query
-  await navigateTo (`/Search/?search=${searchQuery.value}&isPageList=0`);
-  
-}
-
-
 </script>
 
 <template>
