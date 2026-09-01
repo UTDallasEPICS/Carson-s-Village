@@ -6,8 +6,6 @@ import { authClient } from '~/utils/auth-client';
 const { data } = await authClient.useSession(useFetch);
 const user = computed(() => data.value?.user )
 
-const props = defineProps<{ hamburgerOpen: boolean }>()
-const emit = defineEmits(["hamburger"])
 const isAdvocateAdmin = computed(() => user.value.role == "admin" || user.value.role == "advocate")
 const isAdmin = computed(() => user.value.role == "admin")
 const pages = ref<Page[]>([])
@@ -20,10 +18,6 @@ const onEnter = async() => {
   // Navigate to the search page with the entered query
   await navigateTo (`/Search/?search=${searchQuery.value}&isPageList=0`);
   
-}
-
-const handleHamburgerClick = () => {
-  emit('hamburger', !props.hamburgerOpen)
 }
 
 async function handleLogout() {
@@ -81,14 +75,6 @@ async function handleLogout() {
         >
           ABOUT&nbsp;US
         </DropdownMenu>
-        <button
-          class="flex items-center px-2 py-2 text-sm font-medium rounded-md text-blue-999 cursor-pointer hover:text-black bg-white lg:hidden mt-3"
-          @click="handleHamburgerClick"
-        >
-          <p class="uppercase white w-max font-bold">
-            |||
-          </p>
-        </button>
       </div>
       <div
         v-else
@@ -135,14 +121,6 @@ async function handleLogout() {
         >
           ABOUT&nbsp;US
         </DropdownMenu>
-        <button
-          class="flex items-center px-2 text-sm font-medium rounded-md text-blue-999 cursor-pointer hover:text-black bg-white lg:hidden"
-          @click="handleHamburgerClick"
-        >
-          <p class="uppercase white w-max font-bold pl-2">
-            |||
-          </p>
-        </button>
       </div>
       <div
         v-if="isNotSearch"

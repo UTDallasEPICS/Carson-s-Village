@@ -19,7 +19,7 @@ This document provides essential, non-obvious guidance for AI agents working in 
     pnpm install
     ```
 
-2.  **Environment Variables**: Create a `.env` file from `.env.example`. This is critical and requires secrets for AWS, Auth0, Stripe, and other services.
+2.  **Environment Variables**: Create a `.env` file from `.env.example`. This is critical and requires secrets for AWS, Better-Auth, Stripe, and other services.
 
 3.  **Initialize and Seed Database**:
     ```bash

@@ -2,9 +2,12 @@
 import type { User, Page } from "@/types.d.ts"
 import { donationFormat, dateFormat } from '@/utils'
 import { authClient } from '~/utils/auth-client';
+import { ExclamationTriangleIcon } from '@heroicons/vue/24/outline';
 
 const { data } = await authClient.useSession(useFetch);
 const user = computed(() => data.value?.user || null)
+
+const props = defineProps<{ requireOnboarding: boolean }>();
 
 const isAdvocateAdmin = computed(() => user.value?.role == "admin" || user.value?.role == "advocate")
 const isAdmin = computed(() => user.value?.role == "admin")
@@ -14,12 +17,17 @@ const route = useRoute()
 const isNotSearch = computed(() => route.path !== "/Search/")
 const toggle = ref(true);
 
-const onEnter = async() => {
-  // Navigate to the search page with the entered query
-  await navigateTo (`/Search/?search=${searchQuery.value}&isPageList=0`);
-  
-}
-
+const stripeOnboardingUrl = ref('');
+watchEffect(async () => {
+  if (props.requireOnboarding) {
+    const { data: url, error } = await useFetch('/api/stripe/create_account');
+    if (error.value) {
+      console.error('Failed to fetch Stripe onboarding URL', error.value);
+    } else if (url.value) {
+      stripeOnboardingUrl.value = url.value as string;
+    }
+  }
+});
 
 </script>
 
@@ -27,7 +35,7 @@ const onEnter = async() => {
   <div class="text-center p-2 pt-32 pr-12 rounded-md border-grey-600 border-r">
     <div
       v-if="user && toggle"
-      class="gap-2"
+      class="min-w-[116px] gap-2"
     >
       <NavLinkButtonVNav
         :to="`/PageList`"
@@ -115,6 +123,14 @@ const onEnter = async() => {
           Family Reports
         </p>
       </NavLinkButtonVNav>
+    </div>
+    <div v-if="requireOnboarding && stripeOnboardingUrl" class="mt-4 w-[116px]">
+      <div class="p-2 bg-red-100 border border-red-400 text-red-700 rounded-lg flex flex-col items-start">
+        <ExclamationTriangleIcon class="h-5 w-5 mr-2 shrink-0" />
+        <div class="text-left">
+          <p class="text-sm">You need to setup Stripe <a :href="stripeOnboardingUrl" class="underline font-bold">Click here to continue</a>.</p>
+        </div>
+      </div>
     </div>
   </div>
 </template>
