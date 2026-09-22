@@ -17,6 +17,12 @@ export default defineEventHandler(async event => {
   const user = session.user
 
   const family_cuid = getRouterParam(event, 'id')
+  if (!family_cuid || family_cuid === "0") {  // 0 Is sent if user makes a request but has not familyId
+    throw createError({
+      statusCode: 400,
+      message: 'Failed to provide familyId'
+    });
+  }
 
   if(user.role == "advocate" || user.role == "admin" || user.familyId === family_cuid as string) {
     const queryRes = await prisma.family.findFirst({

@@ -11,6 +11,14 @@ const otp = ref('')
 const loginError = ref('')
 const requestError = ref('')
 const loading = ref(false)
+const otpInput = ref<HTMLInputElement | null>(null)
+
+watch(step, async (newStep) => {
+  if (newStep === 'verify') {
+    await nextTick()
+    otpInput.value?.focus()
+  }
+})
 
 async function handleRequestOtp() {
   loading.value = true
@@ -51,17 +59,6 @@ async function handleVerifyOtp() {
       throw Error(loginError.value)
     }
 
-    // Handle onboarding to stripe if necessary after login
-    try {
-      const redirectUrl = await $fetch('api/stripe/create_account', {
-        method: 'GET'
-      })
-
-      window.location.href = redirectUrl
-    } catch (e: any) {
-      console.error("An error occured while onboarding user to stripe:", e)
-      await navigateTo("/")
-    }
     await navigateTo("/")
   } catch (e) {
     console.error(e)
@@ -133,6 +130,7 @@ function resetFlow() {
           >One-Time Code</label>
           <input
             id="otp"
+            ref="otpInput"
             v-model="otp"
             type="text"
             maxlength="6"

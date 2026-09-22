@@ -23,5 +23,6 @@ RUN pnpm run build
 FROM node:lts-alpine AS deployment
 WORKDIR /app
 COPY --from=builder /app/.output ./
+COPY --from=builder /app/emails ./emails
 EXPOSE 3000
 CMD ["node", "./server/index.mjs"]

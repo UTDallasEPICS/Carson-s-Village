@@ -22,7 +22,6 @@ export default defineEventHandler(async event => {
   const stripe = new Stripe(runtime.STRIPE_SECRET)
   const stripeAccountFull = await stripe.accounts.retrieve(stripe_account_id as string)
   
-  // if the user backed out of the onboard, they will be redirected back to the onboard
   if(stripeAccountFull.details_submitted) {  
     const queryRes = await prisma.page.updateMany({
       where: {
