@@ -15,14 +15,8 @@ export default defineNuxtConfig({
   },
   */
   runtimeConfig: {
-    AUTH0_CLIENTID: '',
-    AUTH0_SECRET: '',
-    CONSTANT_CONTACTS_CLIENTID: '',
-    CONSTANT_CONTACTS_SECRET: '',
-    CONSTANT_CONTACTS_LIST_MEMBERSHIP: '',
     BASEURL: '',
     ISSUER: '',
-    STRIPE_PUBLIC: '',
     STRIPE_SECRET: '',
     STRIPE_WEBHOOK_SECRET: '',
     AWS_S3_BUCKET_NAME: '',
