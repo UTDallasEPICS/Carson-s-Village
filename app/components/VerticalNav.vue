@@ -64,15 +64,6 @@ watchEffect(async () => {
       </NavLinkButtonVNav>
       <NavLinkButtonVNav
         v-if="isAdvocateAdmin"
-        to="/EmailList"
-        :class="{'!text-black border-green-999 bg-white': route.path.includes('/EmailList')}"
-      >
-        <p class="uppercase white mb-2 w-max">
-          Email List
-        </p>
-      </NavLinkButtonVNav>
-      <NavLinkButtonVNav
-        v-if="isAdvocateAdmin"
         to="/EditUser/0"
         :class="{'!text-black border-green-999 bg-white': route.path.includes('/EditUser')}"
       >
