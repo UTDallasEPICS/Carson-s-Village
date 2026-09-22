@@ -43,15 +43,6 @@ export default defineEventHandler(async (event) => {
       });
       donationCuid = donation.id;
 
-      // Handle email newsletter subscriptions, metadata only stores strings
-      if (metadata.isSubscribing === "true") {
-        await subscribeToEmailList({
-          email: metadata.donor_email,
-          first_name: metadata.donor_first_name,
-          last_name: metadata.donor_last_name
-        });
-      }
-
       // find and update page
       const page = await prisma.page.findFirst({
         where: {
@@ -104,34 +95,3 @@ export default defineEventHandler(async (event) => {
   }
 });
 
-type args = {email: string, first_name: string, last_name: string};
-async function subscribeToEmailList({email, first_name, last_name}: args) {
-  const token = await prisma?.CC_Token.findUnique({
-    where: {
-      id: "0"
-    }
-  })
-
-  if(email && first_name && last_name) { 
-      const response = await fetch(`https://api.cc.email/v3/contacts/sign_up_form`, {
-        method: 'POST',
-        body: JSON.stringify({
-            "email_address": email,
-            "first_name": first_name,
-            "last_name": last_name,
-            "list_memberships": [
-                `${runtime.CONSTANT_CONTACTS_LIST_MEMBERSHIP}`
-            ]
-        }),
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token.token}`
-        },
-    })
-
-    const respBody = await response.json()
-    return response.status === 200 
-  }
-
-  return false
-}

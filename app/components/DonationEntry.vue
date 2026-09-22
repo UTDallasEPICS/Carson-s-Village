@@ -19,7 +19,6 @@ const props = defineProps({
 
 const feeRecovery = ref(false)
 const anonymous = ref(false)
-const subscribing = ref(true)
 const displayAmount = ref(5)
 
 const donationData = ref<PageDonation>({
@@ -58,7 +57,6 @@ const create_checkout_session = async () => {
         method: 'POST',
         body: {
           ...donationData.value, 
-          subscribed: subscribing.value
         }
     });
     await navigateTo(sessionUrl as string,  { external: true } )
@@ -95,19 +93,6 @@ const create_checkout_session = async () => {
         type="email"
         placeholder="Email"
       />
-    </div>
-    <div class="col-md-8 ml-4 pt-4 pr-5 flex">
-      <input
-        id="subscribing"
-        v-model="subscribing"
-        type="checkbox"
-        class="sm:ml-1"
-        name="subscribing"
-      >
-      <label
-        for="subscribing"
-        class="sm:mt-0 tracking-[0.35px] mt-4 ml-4 text-md"
-      >  Subscribe to our email list</label>
     </div>
     <div class="col-md-8 ml-4 pt-4 pr-5 flex">
       <input
