@@ -72,6 +72,7 @@ const submitComment = async () => {
       <CVTextArea
         id="reply"
         v-model="replyData.reply"
+        :maxlength="1000"
         name="reply"
         placeholder="Replies"
         class="font-normal h-40 w-full"

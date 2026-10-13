@@ -108,10 +108,10 @@ const create_checkout_session = async () => {
       >  Make this an anonymous donation</label>
     </div>
     <div class="col-md-8 ml-4 pt-4 pr-5 flex sm:mx-4 sm:w-full sm:py-2">
-      <textarea
+      <CVTextArea
         id="comments"
         v-model="donationData.comments"
-        class="rounded-md outline-0 border-box w-full p-2 border border-[#c4c4c4]"
+        :maxlength="500"
         name="comments"
         rows="3"
         placeholder="Comments"

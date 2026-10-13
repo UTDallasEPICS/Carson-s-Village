@@ -451,6 +451,7 @@ const onResize = ({ width, height }: { width: number, height: number }) => {
           <CVTextArea
             id="visitation_description"
             v-model="page.visitation_description"
+            :maxlength="1000"
             placeholder="optional"
           />
         </div>
@@ -501,6 +502,7 @@ const onResize = ({ width, height }: { width: number, height: number }) => {
           <CVTextArea
             id="funeral_description"
             v-model="page.funeral_description"
+            :maxlength="1000"
             placeholder="optional"
           />
         </div>
@@ -513,6 +515,7 @@ const onResize = ({ width, height }: { width: number, height: number }) => {
           <CVTextArea
             id="obituary"
             v-model="page.obituary"
+            :maxlength="5000"
             placeholder="optional"
           />
         </div>
@@ -558,6 +561,7 @@ const onResize = ({ width, height }: { width: number, height: number }) => {
           <CVTextArea
             id="donation_description"
             v-model="page.donation_description"
+            :maxlength="1500"
             placeholder="optional"
           />
         </div>
