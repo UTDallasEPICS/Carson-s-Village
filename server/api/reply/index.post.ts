@@ -1,7 +1,10 @@
 import type { Reply } from "~/types.d.ts"
+import { TEXT_LIMITS } from "#shared/utils/textLimits"
+import { assertTextLimits } from "~~/server/utils/textLimits"
 
 export default defineEventHandler(async (event) => {
   const data = await readBody(event)
+  assertTextLimits(data, TEXT_LIMITS.reply)
 
   const page = await prisma.page.findUnique({ where: { id: data.pageCuid } })
   if (!page || page.status !== 'active') {

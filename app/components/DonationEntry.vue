@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import type { Page, PageDonation, User } from '@/types.d.ts'
 import { authClient } from '~/utils/auth-client';
+import { TEXT_LIMITS } from '#shared/utils/textLimits'
 
 const { data } = await authClient.useSession(useFetch);
 const user = computed(() => data.value?.user || null)
@@ -111,7 +112,7 @@ const create_checkout_session = async () => {
       <CVTextArea
         id="comments"
         v-model="donationData.comments"
-        :maxlength="500"
+        :maxlength="TEXT_LIMITS.donation.comments"
         name="comments"
         rows="3"
         placeholder="Comments"
