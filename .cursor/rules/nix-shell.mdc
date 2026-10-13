@@ -1,0 +1,15 @@
+---
+description: Initializes the Nix development shell so the agent can use pnpm and npx
+globs: *
+alwaysApply: true
+---
+# NixOS Environment Initialization
+
+This project relies on a Nix development shell to provide core tools like `pnpm`, `node`, and `npx`. They are not installed globally on this system.
+
+Whenever you need to execute a terminal command for the first time in a session, you MUST first enter the development shell by running:
+`source ~/.bashrc && dev carsons`
+
+Wait for the shell prompt to change or load. Once you are inside the `dev carsons` shell, you can execute `pnpm`, `npx`, and other build commands normally. 
+
+If a command fails with "command not found: pnpm", you forgot to enter the Nix shell.
