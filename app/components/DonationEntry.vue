@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import type { Page, PageDonation, User } from '@/types.d.ts'
 import { authClient } from '~/utils/auth-client';
+import { TEXT_LIMITS } from '#shared/utils/textLimits'
 
 const { data } = await authClient.useSession(useFetch);
 const user = computed(() => data.value?.user || null)
@@ -108,10 +109,10 @@ const create_checkout_session = async () => {
       >  Make this an anonymous donation</label>
     </div>
     <div class="col-md-8 ml-4 pt-4 pr-5 flex sm:mx-4 sm:w-full sm:py-2">
-      <textarea
+      <CVTextArea
         id="comments"
         v-model="donationData.comments"
-        class="rounded-md outline-0 border-box w-full p-2 border border-[#c4c4c4]"
+        :maxlength="TEXT_LIMITS.donation.comments"
         name="comments"
         rows="3"
         placeholder="Comments"

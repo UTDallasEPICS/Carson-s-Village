@@ -1,4 +1,6 @@
 import type { Image } from "@/types.d.ts"
+import { TEXT_LIMITS } from "#shared/utils/textLimits"
+import { assertTextLimits } from "~~/server/utils/textLimits"
 
 /*
 *	/EditPage/cuid
@@ -22,6 +24,7 @@ export default defineEventHandler(async event => {
 
   if(user.role === "advocate" || user.role == "admin" || user.id == userCuid || user.familyId == familyCuid ) {
     delete data.Family // Not sure why this is needed to fix an error
+    assertTextLimits(data, TEXT_LIMITS.page)
     try {
       // Removes comma parses the whole decimal number and converts it to cents to be stored in DB
       if(typeof data.donation_goal == 'string') {

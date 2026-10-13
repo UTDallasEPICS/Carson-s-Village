@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import type {Reply} from '@/types.d.ts'
+import { TEXT_LIMITS } from '#shared/utils/textLimits'
 
 const emit = defineEmits(["displayReply"]);
 
@@ -72,6 +73,7 @@ const submitComment = async () => {
       <CVTextArea
         id="reply"
         v-model="replyData.reply"
+        :maxlength="TEXT_LIMITS.reply.reply"
         name="reply"
         placeholder="Replies"
         class="font-normal h-40 w-full"

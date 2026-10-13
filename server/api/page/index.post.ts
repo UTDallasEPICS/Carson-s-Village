@@ -1,4 +1,6 @@
 import type { Image } from "@/types.d.ts"
+import { TEXT_LIMITS } from "#shared/utils/textLimits"
+import { assertTextLimits } from "~~/server/utils/textLimits"
 
 
 /*
@@ -23,6 +25,7 @@ export default defineEventHandler(async event => {
   const {Images, Reply, PageDonations, userCuid, familyCuid, ...data} = await readBody(event)
 
   if(user.role === "advocate" || user.role == 'admin'|| user.id === userCuid ) {
+    assertTextLimits(data, TEXT_LIMITS.page)
     data.donation_goal = Math.trunc(data.donation_goal * 100);
     data.amount_raised = Math.trunc(data.amount_raised * 100);
     try {

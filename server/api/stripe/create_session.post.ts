@@ -1,5 +1,7 @@
 import Stripe from "stripe"
 import { isEmail } from 'class-validator';
+import { TEXT_LIMITS } from '#shared/utils/textLimits'
+import { assertTextLimits } from '~~/server/utils/textLimits'
 
 const runtime = useRuntimeConfig()
 
@@ -11,6 +13,7 @@ const runtime = useRuntimeConfig()
 export default defineEventHandler(async event => {
   const stripe = new Stripe(runtime.STRIPE_SECRET)
   const body = await readBody(event)
+  assertTextLimits(body, TEXT_LIMITS.donation)
 
   try {
       
