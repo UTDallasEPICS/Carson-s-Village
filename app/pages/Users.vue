@@ -163,11 +163,11 @@ if( (isAuthorized.value as boolean) == true )
               User Name &nbsp;
             </button>
             <span
-              v-if="order === 'asc' && OrderField==='last_name'"
+              v-if="order === 'asc' && OrderField==='name'"
               class="pr-[3px] pt-[3px]"
             ><ChevronUpIcon class="h-6 inline-flex" /></span>
             <span
-              v-else-if="order === 'desc' && OrderField==='last_name'"
+              v-else-if="order === 'desc' && OrderField==='name'"
               class="pr-[3px] pt-[3px]"
             ><ChevronDownIcon class="h-6 inline-flex" /></span>
             <span

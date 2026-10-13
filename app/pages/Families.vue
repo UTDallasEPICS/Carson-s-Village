@@ -187,7 +187,7 @@ const prevPage = () => {
             {{ item.family_name }}
           </td>
           <td class="font-poppins text-gray-dark font-bold text-center">
-            {{ item?.AdvocateResponsible ? item?.AdvocateResponsible?.first_name + " " + item?.AdvocateResponsible?.last_name : "Not assigned" }}
+            {{ item?.AdvocateResponsible?.name || "Not assigned" }}
           </td>
           <td class="font-poppins text-gray-dark font-bold text-center">
             {{ item.FamilyMembers.length }}

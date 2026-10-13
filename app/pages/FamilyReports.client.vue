@@ -467,7 +467,7 @@
               {{ page.page_first_name + " " + page.page_last_name }}
             </td>
             <td style="text-align: center;">
-              {{ page.Family.AdvocateResponsible ? (page.Family?.AdvocateResponsible?.first_name + " " + page.Family?.AdvocateResponsible?.last_name) : "No Advocate Assigned" }}
+              {{ page.Family?.AdvocateResponsible?.name || "No Advocate Assigned" }}
             </td>
             <td
               v-if="display.duration"

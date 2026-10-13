@@ -264,7 +264,7 @@ await getDataAdminAdvocate()
             {{ item.User?.name }}
           </td>
           <td class="font-poppins text-gray-dark font-bold text-center">
-            {{ item.Family?.AdvocateResponsible ? (item.Family?.AdvocateResponsible?.first_name + " " + item.Family?.AdvocateResponsible?.last_name) : 'No Advocate assigned' }}
+            {{ item.Family?.AdvocateResponsible?.name || 'No Advocate assigned' }}
           </td>
           <td class="font-poppins text-gray-dark font-bold text-center">
             {{ item.Family?.family_name }}
