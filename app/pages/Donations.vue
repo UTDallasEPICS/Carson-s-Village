@@ -248,10 +248,10 @@ function formatReportDate(date: string) {
             {{ item?.page_first_name + " " + item?.page_last_name }}
           </td>
           <td class="font-poppins text-gray-dark font-bold text-center">
-            {{ dateFormat(item?.start_date) }}
+            {{ dateFormat(item?.start_date, true) }}
           </td>
           <td class="font-poppins text-gray-dark font-bold text-center">
-            {{ item.last_donation_date ? dateFormat(item?.last_donation_date) : "No Donations" }}
+            {{ item.last_donation_date ? dateFormat(item?.last_donation_date, true) : "No Donations" }}
           </td>
           <td class="font-poppins text-gray-dark font-bold text-center">
             {{ item?.donation_status }}
@@ -353,7 +353,7 @@ function formatReportDate(date: string) {
             {{ item.donorEmail }}
           </td>
           <td class="font-poppins text-gray-dark font-bold text-center">
-            {{ dateFormat(item.donationInitiated) }}
+            {{ dateFormat(item.donationInitiated, true) }}
           </td>
           <td class="font-poppins text-gray-dark font-bold text-center">
             {{ donationFormat(item.amount) }}

@@ -273,10 +273,10 @@ await getDataAdminAdvocate()
             {{ donationFormat(item.amount_raised) }}
           </td>
           <td class="font-poppins text-gray-dark font-bold text-center">
-            {{ dateFormat(item.start_date) }}
+            {{ dateFormat(item.start_date, true) }}
           </td>
           <td class="font-poppins text-gray-dark font-bold text-center">
-            {{ dateFormat(item.deadline) }}
+            {{ dateFormat(item.deadline, true) }}
           </td>
           <td class="font-poppins text-gray-dark font-bold text-center">
             {{ donationFormat(item.donation_goal) }}
