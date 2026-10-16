@@ -69,7 +69,7 @@ export default defineEventHandler(async event => {
           comments: body.comments,
         },
       },
-      success_url: `${runtime.BASEURL}Page/${body.pageCuid}`,
+      success_url: `${runtime.BASEURL}Page/${body.pageCuid}?donation=success`,
       cancel_url: `${runtime.BASEURL}Page/${body.pageCuid}`,
     },
     {

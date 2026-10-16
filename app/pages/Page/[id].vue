@@ -21,6 +21,8 @@ const router = useRoute();
 const pageId = computed(() => router.params.id);
 const commentModalOpen = ref(false)
 const currentComment = ref('')
+const showDonationSuccessNote = computed(() => router.query.donation === 'success')
+const dismissDonationSuccessNote = () => navigateTo({ path: router.path, query: {} }, { replace: true })
 
 // Method to populate the page with data based on the cuid in the url
 const { data : pageDataDB, refresh: pageRefresh } = await useFetch<Page>(`/api/page/${pageId.value}`, {
@@ -198,6 +200,30 @@ setImageAutoSlide()
       <p class="my-auto font-bold text-5xl">
         {{ pageDataDB?.page_first_name + " " + pageDataDB?.page_last_name }}
       </p>
+    </div>
+  </div>
+  <div
+    v-if="showDonationSuccessNote"
+    class="fixed bottom-4 right-4 z-50 w-[min(24rem,calc(100vw-2rem))] max-w-sm rounded-lg border border-teal-500/40 bg-teal-50 px-4 py-3 text-gray-dark shadow-lg"
+    role="status"
+  >
+    <div class="flex items-start justify-between gap-3">
+      <div>
+        <p class="font-poppins font-bold text-teal-700">
+          Thank you for your donation!
+        </p>
+        <p class="mt-1 font-outfit text-sm">
+          Your donation is being processed and may take a couple days to appear on this page. You do not need to donate again.
+        </p>
+      </div>
+      <button
+        type="button"
+        class="shrink-0 text-teal-700 transition hover:text-orange-999 font-bold text-xl leading-none"
+        aria-label="Dismiss"
+        @click="dismissDonationSuccessNote"
+      >
+        ×
+      </button>
     </div>
   </div>
   <div class="grid grid-cols-1 sm:grid-cols-2 justify-center px-2">
