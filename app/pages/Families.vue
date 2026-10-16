@@ -169,7 +169,7 @@ const prevPage = () => {
             class="font-poppins font-bold cursor-pointer w-[12%] bg-[#5aadc2]"
             @click="SortCV(all_families, 'stripe_account_id')"
           >
-            <label>Onboarded &nbsp;</label>
+            <label>Stripe &nbsp;</label>
           </th>
           <th class="font-poppins font-bold w-1/4 bg-[#5aadc2]" :class="{'rounded-tr-3xl': !isAdmin}">
             {{ "Editor" }}
