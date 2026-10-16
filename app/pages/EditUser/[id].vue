@@ -50,6 +50,13 @@ const data_user = ref<User>({
 const disableCriteria = computed(() => !data_user.value?.email || !data_user.value?.name || (addingFamily.value && !data_user.value?.familyId))
 
 const advocateFamilies = computed(() => data_user.value.AdvocateFamily || [])
+const familyFilter = ref<'all' | 'active' | 'inactive'>('active')
+const filteredAdvocateFamilies = computed(() => {
+  const families = advocateFamilies.value
+  if (familyFilter.value === 'all') return families
+  if (familyFilter.value === 'active') return families.filter((f: Family) => f.isActive)
+  return families.filter((f: Family) => !f.isActive)
+})
 const unassignedFamilies = computed(() => {
   return data_all_families.value.filter((family: Family) => {
     return !family.advocateCuid || family.advocateCuid !== data_user.value.id
@@ -394,18 +401,42 @@ const reactivateUser = async () => {
       >
         <CVLabel>Current Families</CVLabel>
         <div class="mx-9 sm:col-span-2 sm:mr-11">
+          <div class="flex pl-3 gap-8 font-bold mt-6 cursor-pointer">
+            <div
+              :class="{'text-orange-999 underline underline-offset-2 decoration-2': familyFilter === 'all'}"
+              @click="familyFilter = 'all'"
+            >
+              All
+            </div>
+            <div
+              :class="{'text-orange-999 underline underline-offset-2 decoration-2': familyFilter === 'active'}"
+              @click="familyFilter = 'active'"
+            >
+              Active
+            </div>
+            <div
+              :class="{'text-orange-999 underline underline-offset-2 decoration-2': familyFilter === 'inactive'}"
+              @click="familyFilter = 'inactive'"
+            >
+              Inactive
+            </div>
+          </div>
           <div
-            v-if="advocateFamilies.length === 0"
+            v-if="filteredAdvocateFamilies.length === 0"
             class="text-sm text-gray-700 mt-6"
           >
-            {{ `This ${data_user.role === 'advocate' ? 'advocate' : 'admin'} currently has no families assigned.` }}
+            {{
+              advocateFamilies.length === 0
+                ? `This ${data_user.role === 'advocate' ? 'advocate' : 'admin'} currently has no families assigned.`
+                : `No ${familyFilter === 'all' ? '' : familyFilter + ' '}families to show.`
+            }}
           </div>
           <ul
             v-else
             class="mt-4 space-y-2"
           >
             <li
-              v-for="family in advocateFamilies"
+              v-for="family in filteredAdvocateFamilies"
               :key="getFamilyId(family)"
               class="flex items-center justify-between"
             >
