@@ -376,6 +376,14 @@ setImageAutoSlide()
         <div class="text-gray-dark font-poppins text-3xl text-left font-bold leading-9 text-shadow-[3px_3px_4px_rgba(0,0,0,0.25)]">
           Donations
         </div>
+        <div
+          v-if="pageDataDB?.donation_description"
+          class="flex row gap-2 pr-10"
+        >
+          <div class="font-outfit whitespace-normal">
+            {{ pageDataDB.donation_description }}
+          </div>
+        </div>
         <div class="text-gray-dark font-poppins text-1xl text-left font-bold leading-9 text-shadow-[3px_3px_4px_rgba(0,0,0,0.25)]">
           <div class="ml-1 pt-9 pr-5 flex items-center justify-center">
             <ActionButton
