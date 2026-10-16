@@ -96,7 +96,7 @@ if (data_family.value && data_family.value.advocateCuid) {
   selectedAdvocateId.value = data_family.value.advocateCuid as string
 }
 
-const { data: advocatesData } = await useFetch<User[]>('/api/advocates')
+const { data: advocatesData } = await useFetch<User[]>('/api/advocates_admin')
 if (advocatesData.value) {
   advocates.value = advocatesData.value
 }
@@ -104,7 +104,7 @@ if (advocatesData.value) {
 const currentAdvocateName = computed(() => {
   if (data_family.value?.AdvocateResponsible) {
     const adv = data_family.value.AdvocateResponsible as any
-    return `${adv.name ?? `${adv.first_name ?? ''} ${adv.last_name ?? ''}`}`.trim()
+    return `${adv.name}`.trim()
   }
   return 'Not assigned'
 })

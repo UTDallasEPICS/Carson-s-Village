@@ -1,7 +1,7 @@
 /*
-*	/advocates
+*	/advocates_admin
 *	function:	GET
-*	retrieve details of all advocates from database
+*	retrieve details of all advocates and admins from database
 */
 
 export default defineEventHandler(async event => {
@@ -19,7 +19,7 @@ export default defineEventHandler(async event => {
   if (user.role === "advocate" || user.role === "admin") {
     const advocates = await prisma.user.findMany({
       where: {
-        role: "advocate"
+        role: { in: ["advocate", "admin"] }
       },
       orderBy: {
         name: "asc"
@@ -34,4 +34,3 @@ export default defineEventHandler(async event => {
     });
   }
 })
-

@@ -389,20 +389,20 @@ const reactivateUser = async () => {
         <CVLegend>Advocate Families</CVLegend>
       </div>
       <div
-        v-if="data_user.role === 'advocate' && isAdmin"
+        v-if="data_user.role === 'advocate' || data_user.role === 'admin' && isAdmin"
         class="py-4 grid sm:grid-cols-3"
       >
         <CVLabel>Current Families</CVLabel>
         <div class="mx-9 sm:col-span-2 sm:mr-11">
           <div
             v-if="advocateFamilies.length === 0"
-            class="text-sm text-gray-700"
+            class="text-sm text-gray-700 mt-6"
           >
-            This advocate currently has no families assigned.
+            {{ `This ${data_user.role === 'advocate' ? 'advocate' : 'admin'} currently has no families assigned.` }}
           </div>
           <ul
             v-else
-            class="space-y-2"
+            class="mt-4 space-y-2"
           >
             <li
               v-for="family in advocateFamilies"
@@ -420,11 +420,11 @@ const reactivateUser = async () => {
         </div>
       </div>
       <div
-        v-if="data_user.role === 'advocate' && isAdmin"
+        v-if="data_user.role === 'advocate' || data_user.role === 'admin' && isAdmin"
         class="py-4 grid sm:grid-cols-3"
       >
         <CVLabel>Assign Family</CVLabel>
-        <div class="mx-9 sm:col-span-2 sm:mr-11">
+        <div class="mt-4 mx-9 sm:col-span-2 sm:mr-11">
           <Listbox
             id="assign_family"
             v-model="selectedFamilyForAssignment"
