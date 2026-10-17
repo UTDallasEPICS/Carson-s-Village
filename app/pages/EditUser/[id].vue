@@ -451,7 +451,7 @@ const reactivateUser = async () => {
         </div>
       </div>
       <div
-        v-if="data_user.role === 'advocate' || data_user.role === 'admin' && isAdmin"
+        v-if="data_user.isActive && (data_user.role === 'advocate' || data_user.role === 'admin' && isAdmin)"
         class="py-4 grid sm:grid-cols-3"
       >
         <CVLabel>Assign Family</CVLabel>

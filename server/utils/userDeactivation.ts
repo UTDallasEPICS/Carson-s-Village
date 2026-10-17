@@ -24,7 +24,6 @@ export async function deactivateFamily(familyId: string, tx: TransactionClient) 
 export async function deactivateUser(userId: string) {
   const target = await prisma.user.findUnique({
     where: { id: userId },
-    include: { AdvocateFamily: true },
   })
 
   if (!target) {
@@ -66,12 +65,8 @@ export async function deactivateUser(userId: string) {
 
     await tx.session.deleteMany({ where: { userId } })
 
-    if (target.role === 'advocate') {
-      await tx.family.updateMany({
-        where: { advocateCuid: userId },
-        data: { advocateCuid: null },
-      })
-    }
+    // Keep deactivated advocates on record for assigned families.
+    // UI surfaces deactivated status; staff can reassign later.
 
     if (shouldDeactivateFamily && target.familyId) {
       await deactivateFamily(target.familyId, tx)

@@ -20,6 +20,30 @@ export default defineEventHandler(async event => {
   const { family_name, familyCuid, advocateCuid, acceptingDonations } = body
 
   if(user.role === "advocate" || user.role === "admin") {
+    if (advocateCuid) {
+      const existingFamily = await prisma.family.findUnique({
+        where: { id: familyCuid as string },
+        select: { advocateCuid: true },
+      })
+      const advocate = await prisma.user.findUnique({
+        where: { id: advocateCuid as string },
+        select: { id: true, isActive: true, role: true },
+      })
+      if (!advocate || (advocate.role !== 'advocate' && advocate.role !== 'admin')) {
+        throw createError({
+          statusCode: 400,
+          message: 'Selected advocate not found',
+        })
+      }
+      // Allow keeping a deactivated advocate already on record; block new inactive assignments.
+      if (!advocate.isActive && existingFamily?.advocateCuid !== advocateCuid) {
+        throw createError({
+          statusCode: 400,
+          message: 'Cannot assign a deactivated advocate',
+        })
+      }
+    }
+
     try {
       const result = await prisma.$transaction(async (prisma) => {
         if (body.name && body.email) {

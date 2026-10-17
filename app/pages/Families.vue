@@ -187,7 +187,10 @@ const prevPage = () => {
             {{ item.family_name }}
           </td>
           <td class="font-poppins text-gray-dark font-bold text-center">
-            {{ item?.AdvocateResponsible?.name || "Not assigned" }}
+            <AdvocateName
+              :name="item?.AdvocateResponsible?.name"
+              :is-active="item?.AdvocateResponsible?.isActive"
+            />
           </td>
           <td class="font-poppins text-gray-dark font-bold text-center">
             {{ item.FamilyMembers.length }}

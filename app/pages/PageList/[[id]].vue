@@ -264,7 +264,11 @@ await getDataAdminAdvocate()
             {{ item.User?.name }}
           </td>
           <td class="font-poppins text-gray-dark font-bold text-center">
-            {{ item.Family?.AdvocateResponsible?.name || 'No Advocate assigned' }}
+            <AdvocateName
+              :name="item.Family?.AdvocateResponsible?.name"
+              :is-active="item.Family?.AdvocateResponsible?.isActive"
+              empty-label="No Advocate assigned"
+            />
           </td>
           <td class="font-poppins text-gray-dark font-bold text-center">
             {{ item.Family?.family_name }}
