@@ -9,7 +9,7 @@
 *	Located under "/EditFamily/"
 */
 definePageMeta({
-  middleware: ["family-guard"]
+  middleware: ["advocate-guard"]
 })
 
 import CVPhoneInput from '@/components/CVPhoneInput.vue';
