@@ -467,7 +467,11 @@
               {{ page.page_first_name + " " + page.page_last_name }}
             </td>
             <td style="text-align: center;">
-              {{ page.Family?.AdvocateResponsible?.name || "No Advocate Assigned" }}
+              <AdvocateName
+                :name="page.Family?.AdvocateResponsible?.name"
+                :is-active="page.Family?.AdvocateResponsible?.isActive"
+                empty-label="No Advocate Assigned"
+              />
             </td>
             <td
               v-if="display.duration"
@@ -515,7 +519,7 @@
               v-if="display.goal_date"
               style="text-align: center;"
             >
-              {{ dateFormat(page.deadline) }}
+              {{ dateFormat(page.deadline, true) }}
             </td>
             <td style="text-align: center;">
               {{ page.status }}

@@ -51,6 +51,13 @@ const errorToUser = ref('');
 const advocates = ref<User[]>([])
 const selectedAdvocateId = ref<string | null>(null)
 
+/** Active advocates, plus currently selected deactivated advocate (on-record only). */
+const advocatesForSelect = computed(() =>
+  advocates.value.filter(
+    (a) => a.isActive !== false || a.id === selectedAdvocateId.value
+  )
+)
+
 const { data: data_family, refresh: refreshFamily } = await useFetch(
   `/api/family/${id.value}`,
   {
@@ -101,12 +108,8 @@ if (advocatesData.value) {
   advocates.value = advocatesData.value
 }
 
-const currentAdvocateName = computed(() => {
-  if (data_family.value?.AdvocateResponsible) {
-    const adv = data_family.value.AdvocateResponsible as any
-    return `${adv.name}`.trim()
-  }
-  return 'Not assigned'
+const currentAdvocate = computed(() => {
+  return (data_family.value?.AdvocateResponsible as User | null | undefined) ?? null
 })
 
 const selectedAdvocateLabel = computed(() => {
@@ -114,7 +117,14 @@ const selectedAdvocateLabel = computed(() => {
     return 'None'
   }
   const adv = advocates.value.find(a => a.id === selectedAdvocateId.value)
-  return adv?.name || 'None'
+  if (!adv) {
+    return currentAdvocate.value?.name
+      ? (currentAdvocate.value.isActive === false
+        ? `${currentAdvocate.value.name} (Deactivated)`
+        : currentAdvocate.value.name)
+      : 'None'
+  }
+  return adv.isActive === false ? `${adv.name} (Deactivated)` : adv.name
 })
 
 // Method creates a new family on the backend and adds the first user
@@ -256,8 +266,12 @@ const reactivateFamily = async () => {
           Advocate Responsible
         </CVLabel>
         <div class="mx-9 sm:col-span-2 sm:mr-11">
-          <p class="mb-2 text-sm text-gray-700">
-            Current advocate: {{ currentAdvocateName }}
+          <p class="mb-2 text-sm text-gray-700 flex items-center gap-2 flex-wrap">
+            <span>Current advocate:</span>
+            <AdvocateName
+              :name="currentAdvocate?.name"
+              :is-active="currentAdvocate?.isActive"
+            />
           </p>
           <Listbox
             id="advocate"
@@ -280,12 +294,13 @@ const reactivateFamily = async () => {
                   {{ !selectedAdvocateId ? "None" : "Remove Advocate" }}
                 </ListboxOption>
                 <ListboxOption
-                  v-for="advocate in advocates"
+                  v-for="advocate in advocatesForSelect"
                   :key="advocate.id"
                   :value="advocate.id"
                   class="px-2 border border-grey-500 py-1 my-1"
+                  :class="{ 'text-gray-500': advocate.isActive === false }"
                 >
-                  {{ advocate.name }}
+                  {{ advocate.name }}{{ advocate.isActive === false ? ' (Deactivated)' : '' }}
                 </ListboxOption>
               </ListboxOptions>
               <ListboxButton class="text-left bg-white relative rounded-md pl-2 pr-10 py-2 sm:text-sm w-96">
