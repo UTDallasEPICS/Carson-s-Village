@@ -1,27 +1,31 @@
+import InviteTemplate from '~~/emails/invite.vue';
+import { render } from '@vue-email/render';
 import { SESv2Client, SendEmailCommand } from "@aws-sdk/client-sesv2"
-const sesClient = new SESv2Client({ region: "us-east-2" });
-import emailTemplates from "email-templates"
-const EmailTemplates = new emailTemplates({
-  views: {
-    root: "./emails",
-  },
-  juice: true,
-  juiceResources: {
-    preserveImportant: true,
-    webResources: {
-      relativeTo: "./emails",
-    },
-  },
-})
 
+const sesClient = new SESv2Client({ region: "us-east-2" });
 const runtime = useRuntimeConfig();
 
-export const sendEmail = async (to: string, template: string, subject: string, data: string) => {
-  const { html, text } = await EmailTemplates.renderAll(template, data)
+const url = runtime.BETTER_AUTH_URL;
+const subject = "You're Invited to Carson's Village";
+
+export async function sendInvite(email: String, name: String): void  {
+
+  const html = await render(InviteTemplate, {
+    name,
+    url
+  });
+
+  const text = await render(InviteTemplate, {
+    name,
+    url,
+  }, {
+      plainText: true,
+  });
+
   const sendEmailCommand = new SendEmailCommand({
       FromEmailAddress: runtime.EMAIL_SOURCE_ADDRESS,
       Destination: { 
-        ToAddresses: [to] 
+        ToAddresses: [email] 
       }, 
       Content: {
         Simple: {
@@ -43,4 +47,4 @@ export const sendEmail = async (to: string, template: string, subject: string, d
       }
   });
   const res = await sesClient.send(sendEmailCommand)
-};
+}
