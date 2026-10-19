@@ -6,7 +6,7 @@ const sesClient = new SESv2Client({ region: "us-east-2" });
 const runtime = useRuntimeConfig();
 
 const url = runtime.BETTER_AUTH_URL;
-const subject = "You're Invited to Carson's Village";
+const subject = "Here's your login passcode";
 
 export async function sendLogin(email: String, otp: String): void  {
 
