@@ -1,6 +1,6 @@
 <template>
   <div class="group overflow-visible relative">
-    <p class="invisible group-hover:visible absolute bg-white w-64 p-4 shadow-lg">
+    <p class="z-50 invisible group-hover:visible absolute bg-white w-64 p-4 shadow-lg">
       {{ description }}
     </p>
     <svg
