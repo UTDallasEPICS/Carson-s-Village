@@ -1,19 +1,7 @@
-// https://nuxt.com/docs/api/configuration/nuxt-config
+import vue from '@vitejs/plugin-vue'
+
 export default defineNuxtConfig({
   devtools: { enabled: true },
-  /*  Disable Nitro tasks until Constant Contacts can be revisited
-  nitro: {
-    experimental: {
-      tasks: true
-    },
-    scheduledTasks: {
-      // Run `Refresh:token` task every at 10 am and 10 pm
-      '0 10,22 * * *': ['token:refresh'],
-      // Run `Generate:data` task every day at 9 pm
-      '0 21 * * *': ['family_reports:generate_data'],
-    }
-  },
-  */
   runtimeConfig: {
     BASEURL: '',
     ISSUER: '',
@@ -21,12 +9,20 @@ export default defineNuxtConfig({
     STRIPE_WEBHOOK_SECRET: '',
     AWS_S3_BUCKET_NAME: '',
     EMAIL_SOURCE_ADDRESS: '',
+    BETTER_AUTH_URL: '',
   },
   build: {
     transpile: ['@vuepic/vue-datepicker']
 },
   modules: 
     ['@nuxtjs/tailwindcss', '@nuxt/eslint'],
+
+  // Need this so that server reads vue template emails
+  nitro: {
+    rollupConfig: {
+      plugins: [vue()]
+    },
+  },
 
   vite: {
     resolve: {

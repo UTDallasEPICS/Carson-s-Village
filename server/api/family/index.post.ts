@@ -4,6 +4,7 @@
 */
 
 import { Prisma } from "~~/prisma/generated/client";
+import { sendInvite } from "#server/utils/emails/sendInvite.ts";
 const runtime = useRuntimeConfig()
 
 export default defineEventHandler(async event => {
@@ -51,7 +52,7 @@ export default defineEventHandler(async event => {
         }
       })
 
-      await sendEmail(body.email, "invitation", "Invitation to Carson's village", ({...body, url: `${runtime.BASEURL}login`}))
+      await sendInvite(body.email, body.name);
       return queryRes
     } catch (e) {
       console.error("An error occured while trying to create family:\n", e)
