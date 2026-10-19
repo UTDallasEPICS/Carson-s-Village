@@ -89,19 +89,31 @@ export async function reactivateUser(userId: string) {
     return { success: true, alreadyActive: true }
   }
 
-  await prisma.user.update({
-    where: { id: userId },
-    data: {
-      isActive: true,
-      deactivatedAt: null,
+  if (target.role === "family") {
+    await prisma.user.update({
+      where: { id: userId },
+      data: {
+        isActive: true,
+        deactivatedAt: null,
 
-      Family: {
-        update: {
-          isActive: true,
+        Family: {
+          update: {
+            isActive: true,
+          },
         },
       },
-    },
-  })
+    })
+
+  } else {
+    await prisma.user.update({
+      where: { id: userId },
+      data: {
+        isActive: true,
+        deactivatedAt: null,
+      },
+    })
+  }
+
 
   return { success: true }
 }
