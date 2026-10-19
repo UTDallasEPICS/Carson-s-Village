@@ -1,16 +1,8 @@
-import { betterAuth } from 'better-auth'
-import { APIError, createAuthMiddleware } from 'better-auth/api'
-import { prismaAdapter } from 'better-auth/adapters/prisma'
-import { emailOTP } from 'better-auth/plugins/email-otp'
-import nodemailer from 'nodemailer'
-import { SESv2Client, SendEmailCommand } from "@aws-sdk/client-sesv2"
-
-const runtime = useRuntimeConfig()
-
-const sesClient = new SESv2Client({ region: "us-east-2" });
-const transporter = nodemailer.createTransport({
-  SES: { sesClient, SendEmailCommand },
-});
+import { betterAuth } from 'better-auth';
+import { APIError, createAuthMiddleware } from 'better-auth/api';
+import { prismaAdapter } from 'better-auth/adapters/prisma';
+import { emailOTP } from 'better-auth/plugins/email-otp';
+import { sendLogin } from '#server/utils/emails/sendLogin';
 
 export const auth = betterAuth({
   database: prismaAdapter(prisma, {
@@ -85,12 +77,7 @@ export const auth = betterAuth({
     emailOTP({
       async sendVerificationOTP({ email, otp, type }) {
         // Clean send function - error check is handled by middleware above
-        await transporter.sendMail({
-          from: runtime.EMAIL_SOURCE_ADDRESS,
-          to: email,
-          subject: 'Your OTP Code',
-          html: `<p>Your OTP code is: <strong>${otp}</strong></p>`,
-        });
+        sendLogin(email, otp);
       },
       disableSignUp: true,
     }),
