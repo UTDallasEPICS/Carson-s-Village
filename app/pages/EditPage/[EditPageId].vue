@@ -90,25 +90,6 @@ const page = ref<Page>({
     } 
 })
 
-// Adapter that ensures VueDatePicker in range mode updates day_of_birth and day_of_passing when updated by user
-const dateRange = computed({
-  get() {
-    if (page.value.day_of_birth && page.value.day_of_passing) {
-      return [page.value.day_of_birth, page.value.day_of_passing]
-    }
-    return null
-  },
-  set(newValue) {
-    if (newValue && newValue[0] && newValue[1]) {
-      page.value.day_of_birth = newValue[0]
-      page.value.day_of_passing = newValue[1]
-    } else {
-      page.value.day_of_birth = null
-      page.value.day_of_passing = null
-    }
-  }
-})
-
 const isAdvocate = computed(() => user.value?.role == "advocate" || user.value?.role == "admin")
 const replies = ref<Reply[]>([])
 const profile_image = ref("")
@@ -391,6 +372,31 @@ const onResize = ({ width, height }: { width: number, height: number }) => {
       </div>
 
       <!-- Day of Birth - Day of Passing -->
+
+      <div class="py-4 grid sm:grid-cols-3">
+        <CVLabel for="visitation_date">
+          Date of Birth
+        </CVLabel>
+        <div class="mx-9 sm:col-span-2 sm:mr-11">
+          <CVDatepicker
+            id="visitation_date"
+            v-model="page.day_of_birth"
+          />
+        </div>
+      </div>
+      <div class="py-4 grid sm:grid-cols-3">
+        <CVLabel for="visitation_date">
+          Date of Passing
+        </CVLabel>
+        <div class="mx-9 sm:col-span-2 sm:mr-11">
+          <CVDatepicker
+            id="visitation_date"
+            v-model="page.day_of_passing"
+          />
+        </div>
+      </div>
+
+      <!--
       <div class="py-4 grid sm:grid-cols-3">
         <CVLabel for="birth-passing">
           Dates of Life
@@ -405,6 +411,7 @@ const onResize = ({ width, height }: { width: number, height: number }) => {
           />
         </div>
       </div>
+-->
 
       <div class="information rounded-md mx-9 my-2 text-center sm:text-start text-white bg-blue-999">
         <CVLegend>Visitation Information</CVLegend>
