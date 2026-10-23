@@ -81,14 +81,15 @@ async function handleLogout() {
         v-else
         class="max-w-min mx-auto flex items-center gap-2"
       >
-        <a
+        <NuxtLink
           class="w-20 flex items-center px-2 py-2 text-sm font-medium rounded-md text-blue-999 cursor-pointer hover:text-black bg-white"
-          target="blank"
-          href="https://carsonsvillage.org"
-        ><img
+          to="/"
+        >
+          <img
           class="w-20 h-14"
           src="/CVLogo.png"
-        ></a>
+          >
+        </NuxtLink>
         <a
           class="flex items-center pt-5 px-2 py-2 text-sm font-medium rounded-md text-blue-999 cursor-pointer hover:!text-black bg-white"
           href="/login"
