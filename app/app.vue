@@ -1,11 +1,14 @@
 <template>
   <CVHeader/>
-  <VerticalNav v-if="session" />
   <div
-    class="flex mr-2 min-h-screen"
-    :class="session ? 'lg:pl-14 ml-0' : 'ml-4'"
+    class="flex items-stretch"
+    :class="session ? 'min-h-[calc(100vh-100px)]' : 'ml-4 mr-2'"
   >
-    <div class="flex flex-col gap-5 min-h-screen grow">
+    <VerticalNav v-if="session" />
+    <div
+      class="flex min-w-0 flex-col gap-5 grow"
+      :class="session ? 'mr-2' : ''"
+    >
       <NuxtPage />
     </div>
   </div>
