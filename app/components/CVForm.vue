@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { ref, provide } from 'vue';
 
 const props = defineProps<{
   id?: string;
