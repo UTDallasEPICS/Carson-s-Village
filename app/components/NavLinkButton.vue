@@ -1,6 +1,6 @@
 <template>
   <NuxtLink
-    class="items-center pt-5 px-2 py-2 text-sm font-medium rounded-md cursor-pointer no-border relative text-center text-gray-999 hover:text-black transition duration-300"
+    class="nav-trigger items-center px-2 py-1 text-base font-semibold uppercase rounded-md cursor-pointer no-border relative text-center text-gray-999 hover:text-black transition duration-300"
     :to="to"
     active-class="active"
   >
@@ -11,33 +11,42 @@
 </template>
         
 <script setup lang="ts">
-const props = defineProps<{ to: string }>()
+defineProps<{ to: string }>()
 </script>
         
 <style scoped>
-  .no-border {
-    border: none;
-  }
+.nav-trigger {
+  display: inline-flex;
+}
 
-  .relative {
-    position: relative;
-  }
+.no-border {
+  border: none;
+}
 
-  .button-content::before {
-    content: '';
-    position: absolute;
-    left: 0;
-    top: 55%;
-    transform: translateY(-10px);
-    width: 2px;
-    height: 25px;
-    background-color: transparent;
-    transition: background-color 0.3s;
-  }
+.relative {
+  position: relative;
+}
 
-  .no-border:hover .button-content::before,
-  .active .button-content::before {
-    background-color: rgb(70, 184, 67);
-  }
+.button-content {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.button-content::before {
+  content: '';
+  position: absolute;
+  left: -6px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 2px;
+  height: 16px;
+  background-color: transparent;
+  transition: background-color 0.3s;
+}
+
+.no-border:hover .button-content::before,
+.active .button-content::before {
+  background-color: rgb(70, 184, 67);
+}
 </style>
-        

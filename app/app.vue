@@ -1,4 +1,5 @@
 <template>
+  <CVHeader/>
   <div class="flex gap-10 ml-4 mr-2">
     <VerticalNav
       v-if="session"
@@ -6,7 +7,6 @@
       :requireOnboarding="requireOnboarding"
     />
     <div class="flex flex-col gap-5 min-h-screen grow">
-      <CVHeader/>
       <NuxtPage />
     </div>
   </div>

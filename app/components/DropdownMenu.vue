@@ -6,18 +6,19 @@
   >
     <NuxtLink
       v-if="to && !submenus"
-      class="items-center pt-5 px-2 py-2 text-sm font-medium rounded-md cursor-pointer relative no-border text-gray-999"
+      class="nav-trigger items-center px-2 py-1 text-base font-semibold uppercase rounded-md cursor-pointer relative no-border text-gray-999"
       :class="buttonClasses"
-      to="to"
-      target="blank"
+      :to="to"
+      target="_blank"
       active-class="active"
     >
       <span class="button-content">
         <slot />
-        <span
+        <ChevronDownIcon
           v-if="hasSubmenus"
           class="caret"
-        >⌄</span>
+          aria-hidden="true"
+        />
       </span>
       <div
         v-if="isDropdownVisible"
@@ -29,10 +30,10 @@
           :key="index"
         >
           <NuxtLink
-            v-if="submenu.to"
+            v-if="submenu.to && !hasNested(submenu)"
             class="submenu-item"
             :to="submenu.to"
-            target="blank"
+            target="_blank"
             @mouseover="highlightSubmenu(index)"
             @mouseleave="resetHighlight"
           >
@@ -40,31 +41,31 @@
           </NuxtLink>
           <div
             v-else
-            class="submenu-item"
-            target="blank"
+            class="submenu-item has-children"
             @mouseover="highlightSubmenu(index)"
             @mouseleave="resetHighlight"
           >
-            {{ submenu.title }}
+            <span class="submenu-label">{{ submenu.title }}</span>
+            <ChevronRightIcon
+              class="submenu-caret"
+              aria-hidden="true"
+            />
             <div
-              v-if="submenu.submenus && submenu.submenus.length > 0"
+              v-if="hasNested(submenu)"
               class="nested-dropdown-content"
-              :style="{ minWidth: nestedDropdownMinWidth + 'px', left: '100%', top: '0' }"
-              target="blank"
+              :style="{ minWidth: nestedDropdownMinWidth + 'px' }"
               @mouseover="showNestedDropdown(index)"
               @mouseleave="hideNestedDropdown(index)"
             >
-              <template
+              <NuxtLink
                 v-for="(nestedSubmenu, nestedIndex) in submenu.submenus"
                 :key="nestedIndex"
+                class="submenu-item"
+                :to="nestedSubmenu.to"
+                target="_blank"
               >
-                <NuxtLink
-                  class="submenu-item"
-                  :to="nestedSubmenu.to"
-                >
-                  {{ nestedSubmenu.title }}
-                </NuxtLink>
-              </template>
+                {{ nestedSubmenu.title }}
+              </NuxtLink>
             </div>
           </div>
         </template>
@@ -72,18 +73,18 @@
     </NuxtLink>
     <div
       v-else
-      class="items-center pt-5 px-2 py-2 text-sm font-medium rounded-md cursor-pointer relative no-border text-gray-999"
+      class="nav-trigger items-center px-2 py-1 text-base font-semibold uppercase rounded-md cursor-pointer relative no-border text-gray-999"
       :class="buttonClasses"
-      target="blank"
       @mouseover="showDropdown"
       @mouseleave="hideDropdown"
     >
-      <span class="button-content">
+      <span class="button-content text-nowrap">
         <slot />
-        <span
+        <ChevronDownIcon
           v-if="hasSubmenus"
           class="caret"
-        >⌄</span>
+          aria-hidden="true"
+        />
       </span>
       <div
         v-if="isDropdownVisible"
@@ -95,10 +96,10 @@
           :key="index"
         >
           <NuxtLink
-            v-if="submenu.to"
+            v-if="submenu.to && !hasNested(submenu)"
             class="submenu-item"
             :to="submenu.to"
-            target="blank"
+            target="_blank"
             @mouseover="highlightSubmenu(index)"
             @mouseleave="resetHighlight"
           >
@@ -106,32 +107,31 @@
           </NuxtLink>
           <div
             v-else
-            class="submenu-item"
-            target="blank"
+            class="submenu-item has-children"
             @mouseover="highlightSubmenu(index)"
             @mouseleave="resetHighlight"
           >
-            {{ submenu.title }}
+            <span class="submenu-label">{{ submenu.title }}</span>
+            <ChevronRightIcon
+              class="submenu-caret"
+              aria-hidden="true"
+            />
             <div
-              v-if="submenu.submenus && submenu.submenus.length > 0"
+              v-if="hasNested(submenu)"
               class="nested-dropdown-content"
-              :style="{ minWidth: nestedDropdownMinWidth + 'px', left: '100%', top: '0' }"
-              target="blank"
+              :style="{ minWidth: nestedDropdownMinWidth + 'px' }"
               @mouseover="showNestedDropdown(index)"
               @mouseleave="hideNestedDropdown(index)"
             >
-              <template
+              <NuxtLink
                 v-for="(nestedSubmenu, nestedIndex) in submenu.submenus"
                 :key="nestedIndex"
+                class="submenu-item"
+                :to="nestedSubmenu.to"
+                target="_blank"
               >
-                <NuxtLink
-                  class="submenu-item"
-                  :to="nestedSubmenu.to"
-                  target="blank"
-                >
-                  {{ nestedSubmenu.title }}
-                </NuxtLink>
-              </template>
+                {{ nestedSubmenu.title }}
+              </NuxtLink>
             </div>
           </div>
         </template>
@@ -141,6 +141,7 @@
 </template>
 
 <script setup>
+import { ChevronDownIcon, ChevronRightIcon } from '@heroicons/vue/24/solid'
 
 const props = defineProps({
   to: String,
@@ -154,6 +155,8 @@ const props = defineProps({
 const buttonClasses = ref('text-gray-999 hover:text-black transition duration-300');
 const isDropdownVisible = ref(false);
 const highlightedSubmenu = ref(null);
+
+const hasNested = (submenu) => Array.isArray(submenu?.submenus) && submenu.submenus.length > 0;
 
 const showDropdown = () => {
   if (props.hasSubmenus) {
@@ -186,36 +189,66 @@ const hideNestedDropdown = (index) => {
 </script>
 
 <style scoped>
-/* Scoped styles for component */
+.nav-trigger {
+  display: inline-flex;
+}
 
 .dropdown-content, .nested-dropdown-content {
   position: absolute;
   font-size: 12px;
-  text-align: justify;
+  text-align: left;
+  text-transform: none;
+  font-weight: 400;
   background-color: #f1f1f1;
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-  z-index: 1;
+  z-index: 50;
   border: 1px solid #ccc;
-  display: none; /* Hide initially */
+  display: none;
+  top: 100%;
+  left: 0;
 }
 
-.dropdown-content > *, .nested-dropdown-content > * {
-  padding: 12px 16px;
+.dropdown-content > .submenu-item,
+.nested-dropdown-content > .submenu-item {
+  padding: 10px 14px;
   cursor: pointer;
   display: block;
+  color: #333;
   transition: background-color 0.3s, color 0.3s;
 }
 
-.dropdown-content > *.submenu-item, .nested-dropdown-content > *.submenu-item {
-  color: #333;
+.dropdown-content > .submenu-item.has-children {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
 }
 
-.dropdown-content > *.submenu-item:hover, .nested-dropdown-content > *.submenu-item:hover {
+.submenu-label {
+  flex: 1;
+  min-width: 0;
+}
+
+.submenu-caret {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+  color: #666;
+  transition: color 0.3s;
+}
+
+.dropdown-content > .submenu-item:hover,
+.nested-dropdown-content > .submenu-item:hover {
   background-color: #d3d3d3;
   color: rgb(70, 184, 67);
 }
 
-.dropdown-content > *:not(:last-child), .nested-dropdown-content > *:not(:last-child) {
+.dropdown-content > .submenu-item:hover .submenu-caret {
+  color: rgb(70, 184, 67);
+}
+
+.dropdown-content > .submenu-item:not(:last-child),
+.nested-dropdown-content > .submenu-item:not(:last-child) {
   border-bottom: 1px solid #ccc;
 }
 
@@ -224,20 +257,22 @@ const hideNestedDropdown = (index) => {
 }
 
 .submenu-item {
-  position: relative; /* Ensure submenu item is positioned relative */
+  position: relative;
 }
 
 .caret {
-  position: absolute;
-  top: 16px; 
-  right: -5px;
+  width: 1em;
+  height: 1em;
+  margin-left: 4px;
+  flex-shrink: 0;
 }
 
-.submenu-item:hover .nested-dropdown-content {
+.submenu-item:hover > .nested-dropdown-content {
   display: block;
   position: absolute;
-  left: 100%; 
-  top: 0; 
+  left: 100%;
+  top: 0;
+  margin-left: -1px;
 }
 
 .highlighted {
@@ -245,16 +280,22 @@ const hideNestedDropdown = (index) => {
   color: rgb(70, 184, 67);
 }
 
+.button-content {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
 .button-content::before {
-    content: '';
-    position: absolute;
-    left: 0;
-    top: 55%;
-    transform: translateY(-6px);
-    width: 2px;
-    height: 25px;
-    background-color: transparent;
-    transition: background-color 0.3s;
+  content: '';
+  position: absolute;
+  left: -6px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 2px;
+  height: 16px;
+  background-color: transparent;
+  transition: background-color 0.3s;
 }
 
 .no-border:hover .button-content::before,
