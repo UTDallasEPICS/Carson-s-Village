@@ -223,12 +223,13 @@ const searchOnEnter = () => {
       </div>
     </div>
   </div>
-  <p
-    v-else
-    class="text-center"
-  >
-    Welcome and thank you for supporting one of the families in our Village.
-  </p>
+  <div v-else class="flex items-center justify-center w-full h-[60vh] text-3xl">
+    <p
+      class="text-center w-shrink"
+    >
+      Welcome and thank you for supporting one of the families in our Village.
+    </p>
+  </div>
 </template>
 
 <style scoped>
