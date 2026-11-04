@@ -100,14 +100,14 @@ function resetFlow() {
             v-model="email"
             type="email"
             required
-            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-999 focus:border-orange-999 sm:text-sm"
             placeholder="you@example.com"
           >
         </div>
         <button
           type="submit"
           :disabled="loading"
-          class="w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50"
+          class="w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-orange-999 hover:bg-[#b8572c] disabled:opacity-50"
         >
           {{ loading ? 'Sending...' : 'Send Code' }}
         </button>
@@ -135,7 +135,7 @@ function resetFlow() {
             type="text"
             maxlength="6"
             required
-            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm text-center tracking-widest font-mono text-lg"
+            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-999 focus:border-orange-999 sm:text-sm text-center tracking-widest font-mono text-lg"
             placeholder="000000"
           >
         </div>
@@ -150,14 +150,14 @@ function resetFlow() {
           <button
             type="submit"
             :disabled="loading"
-            class="w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50"
+            class="w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white  bg-orange-999 hover:bg-[#b8572c] disabled:opacity-50"
           >
             {{ loading ? 'Verifying...' : 'Verify & Login' }}
           </button>
         </div>
         <button
           type="button"
-          class="text-sm text-indigo-600 hover:text-indigo-500"
+          class="text-sm text-orange-999 hover:text-[#b8572c]"
           @click="resetFlow"
         >
           Back to email
