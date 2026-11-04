@@ -1,9 +1,9 @@
 export const TEXT_LIMITS = {
   page: {
-    visitation_description: 1000,
-    funeral_description: 1000,
+    visitation_description: 500,
+    funeral_description: 500,
     obituary: 5000,
-    donation_description: 1500,
+    donation_description: 500,
   },
   reply: {
     reply: 1000,

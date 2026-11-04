@@ -64,7 +64,7 @@ const submitComment = async () => {
 <template>
   <div
     v-if="isActive"
-    class="comment-system flex flex-col items-center sm:mx-4 sm:w-full sm:py-2"
+    class="flex flex-col items-center sm:mx-4 sm:w-full sm:py-2"
   >
     <h2 class="text-center mt-4 mb-6 font-bold">
       Leave a Message

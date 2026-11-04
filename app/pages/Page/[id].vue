@@ -239,190 +239,202 @@ setImageAutoSlide()
         </div>
       </div>
     </div>
-    <div class="col-span-1 justify-self-end pr-5 pt-5">
-      <div
-        v-if="imageData.length != 0"
-        class="relative w-96 p-1"
-      >
-        <button
-          class="absolute left-4 top-64 bg-black text-white opacity-70 w-[46px] h-[46px] rounded-full items-center justify-center leading-loose text-center text-white"
-          @click="prevImage"
-        >
-          &#60;
-        </button>
-        <button
-          class="absolute right-8 top-64 bg-black text-white opacity-70 w-[46px] h-[46px] rounded-full items-center justify-center leading-loose text-center text-white"
-          @click="nextImage"
-        >
-          &#62;
-        </button>
-        <img
-          :src="imageData[currentImage].url"
-          class="w-96 cursor-pointer z-[-1] object-cover"
-          @click="showPreview(profileImage)"
-        >
+    <!-- Row: scrolling images | donations -->
+    <div class="col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-4 px-2 pt-5">
+      <div class="justify-self-center sm:justify-self-end pr-5">
         <div
-          v-if="previewImage"
-          class="w-full h-full overflow-auto block fixed left-0 top-0 z-[1000] bg-black/80"
-          @click.self="closePreview"
+          v-if="imageData.length != 0"
+          class="relative w-96 p-1"
         >
-          <img
-            v-for="(image, index) in imageData"
-            :key="index"
-            :src="image.url"
-            class="py-2 block max-w-[80%] max-h-[80%] m-auto"
+          <button
+            class="absolute left-4 top-64 bg-black text-white opacity-70 w-[46px] h-[46px] rounded-full items-center justify-center leading-loose text-center text-white"
+            @click="prevImage"
           >
-          <span
-            class="absolute cursor-pointer top-[15px] right-[35px] text-[30px] transition duration-300 text-gray-400 hover:text-white focus:text-white cursor-pointer"
-            @click="closePreview"
-          >&times;</span>
+            &#60;
+          </button>
+          <button
+            class="absolute right-8 top-64 bg-black text-white opacity-70 w-[46px] h-[46px] rounded-full items-center justify-center leading-loose text-center text-white"
+            @click="nextImage"
+          >
+            &#62;
+          </button>
+          <img
+            :src="imageData[currentImage].url"
+            class="w-96 cursor-pointer z-[-1] object-cover"
+            @click="showPreview(profileImage)"
+          >
+          <div
+            v-if="previewImage"
+            class="w-full h-full overflow-auto block fixed left-0 top-0 z-[1000] bg-black/80"
+            @click.self="closePreview"
+          >
+            <img
+              v-for="(image, index) in imageData"
+              :key="index"
+              :src="image.url"
+              class="py-2 block max-w-[80%] max-h-[80%] m-auto"
+            >
+            <span
+              class="absolute cursor-pointer top-[15px] right-[35px] text-[30px] transition duration-300 text-gray-400 hover:text-white focus:text-white cursor-pointer"
+              @click="closePreview"
+            >&times;</span>
+          </div>
+        </div>
+      </div>
+      <div
+        v-if="pageDataDB?.Family?.acceptingDonations"
+        class="pl-5 pr-5 min-w-0"
+      >
+        <div class="flex flex-col pb-5">
+          <div class="text-gray-dark font-poppins text-3xl text-left font-bold leading-9 text-shadow-[3px_3px_4px_rgba(0,0,0,0.25)]">
+            Donations
+          </div>
+          <div
+            v-if="pageDataDB?.donation_description"
+            class="flex flex-col gap-1 pr-10 min-w-0"
+          >
+            <div class="font-outfit whitespace-normal min-w-0 break-words">
+              {{ pageDataDB.donation_description }}
+            </div>
+          </div>
+          <div class="text-gray-dark font-poppins text-1xl text-left font-bold leading-9 text-shadow-[3px_3px_4px_rgba(0,0,0,0.25)]">
+            <div class="ml-1 pt-9 pr-5 flex items-center justify-center">
+              <ActionButton
+                text="DONATE NOW"
+                name="submit"
+                class="mx-auto text-md transition duration-300 bg-orange-999 hover:bg-green-600"
+                @click="displayDonationPopup=true"
+              />
+            </div>
+          </div>
         </div>
       </div>
     </div>
 
-    <!-- services list -->
-    <div class="col-span-1 sm:grid-cols-2 pt-5 pl-5 pr-15">
-      <div
-        v-if="pageDataDB?.visitation_date"
-        class="flex flex-col pb-5 pr-15"
-      >
-        <div class="text-gray-dark font-poppins text-3xl text-left font-bold leading-10 justify-start text-shadow-[3px_3px_4px_rgba(0,0,0,0.25)]">
-          Visitation
-        </div>
-        <div class="flex row gap-2 pt-2">
-          <div class="font-outfit flex-col font-bold">
-            {{ "Date:" }}
+    <!-- Row: visitation | funeral -->
+    <div class="col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-4 px-2 pt-5">
+      <div class="pl-5 pr-5 min-w-0">
+        <div
+          v-if="pageDataDB?.visitation_date"
+          class="flex flex-col pb-5"
+        >
+          <div class="text-gray-dark font-poppins text-3xl text-left font-bold leading-10 justify-start text-shadow-[3px_3px_4px_rgba(0,0,0,0.25)]">
+            Visitation
           </div>
-          <div class="font-outfit">
-            {{ longDateFormat(pageDataDB?.visitation_date) }}
+          <div class="flex row gap-2 pt-2">
+            <div class="font-outfit flex-col font-bold">
+              {{ "Date:" }}
+            </div>
+            <div class="font-outfit">
+              {{ longDateFormat(pageDataDB?.visitation_date) }}
+            </div>
           </div>
-        </div>
-        <div class="flex row gap-2">
-          <div class="font-outfit font-bold">
-            {{ "Time:" }}
+          <div class="flex row gap-2">
+            <div class="font-outfit font-bold">
+              {{ "Time:" }}
+            </div>
+            <div class="font-outfit gap-y-5">
+              {{ longDateFormat(pageDataDB?.visitation_date, true) }}
+            </div>
           </div>
-          <div class="font-outfit gap-y-5">
-            {{ longDateFormat(pageDataDB?.visitation_date, true) }}
+          <div class="flex row gap-2">
+            <div class="font-outfit font-bold">
+              {{ "Location:" }}
+            </div>
+            <div class="font-outfit whitespace-normal">
+              {{ pageDataDB?.visitation_location ? pageDataDB?.visitation_location : "TBD" }}
+            </div>
           </div>
-        </div>
-        <div class="flex row gap-2">
-          <div class="font-outfit font-bold">
-            {{ "Location:" }}
+          <div class="flex row gap-2">
+            <div class="font-outfit gap-y-5">
+              {{ pageDataDB?.visitation_address }}
+            </div>
           </div>
-          <div class="font-outfit whitespace-normal">
-            {{ pageDataDB?.visitation_location ? pageDataDB?.visitation_location : "TBD" }}
+          <div class="flex flex-col gap-1 pr-10 min-w-0">
+            <div class="font-outfit font-bold">
+              {{ "Description:" }}
+            </div>
+            <div class="font-outfit whitespace-normal min-w-0 break-words">
+              {{ pageDataDB?.visitation_description }}
+            </div>
           </div>
-        </div>
-        <div class="flex row gap-2">
-          <div class="font-outfit gap-y-5">
-            {{ pageDataDB?.visitation_address }}
-          </div>
-        </div>
-        <div class="flex row gap-2 pr-10">
-          <div class="font-outfit font-bold">
-            {{ "Description:" }}
-          </div>
-          <div class="font-outfit whitespace-normal">
-            {{ pageDataDB?.visitation_description }}
-          </div>
-        </div>
-      </div>
-      <div
-        v-else
-        class="flex flex-col pb-5 pr-15"
-      >
-        <div class="text-gray-dark font-poppins text-3xl text-left font-bold leading-9 text-shadow-[3px_3px_4px_rgba(0,0,0,0.25)]">
-          Visitation
-        </div>
-        <div class="flex row gap-2">
-          <div class="font-outfit">
-            {{ "There is no visitation information available at this time." }}
-          </div>
-        </div>
-      </div>
-      <div
-        v-if="pageDataDB?.funeral_date"
-        class="flex flex-col pb-5 pr-15"
-      >
-        <div class="text-gray-dark font-poppins text-3xl text-left font-bold leading-9 text-shadow-[3px_3px_4px_rgba(0,0,0,0.25)]">
-          Funeral Service
-        </div>
-        <div class="flex row gap-2">
-          <div class="font-outfit font-bold">
-            {{ "Date:" }}
-          </div>
-          <div class="font-outfit gap-2">
-            {{ longDateFormat(pageDataDB?.funeral_date) }}
-          </div>
-        </div>
-        <div class="flex row gap-2">
-          <div class="font-outfit font-bold">
-            {{ "Time:" }}
-          </div>
-          <div class="font-outfit gap-y-5">
-            {{ longDateFormat(pageDataDB?.funeral_date, true) }}
-          </div>
-        </div>
-        <div class="flex row gap-2">
-          <div class="font-outfit font-bold">
-            {{ "Location:" }}
-          </div>
-          <div class="font-outfit whitespace-normal">
-            {{ pageDataDB?.funeral_location }}
-          </div>
-        </div>
-        <div class="flex row gap-2">
-          <div class="font-outfit whitespace-normal">
-            {{ pageDataDB?.funeral_address }}
-          </div>
-        </div>
-        <div class="flex row gap-2 pr-10">
-          <div class="font-outfit font-bold">
-            {{ "Description:" }}
-          </div>
-          <div class="font-outfit">
-            {{ pageDataDB?.funeral_description }}
-          </div>
-        </div>
-      </div>
-      <div
-        v-else
-        class="flex flex-col pb-5"
-      >
-        <div class="text-gray-dark font-poppins text-3xl text-left font-bold leading-9 text-shadow-[3px_3px_4px_rgba(0,0,0,0.25)]">
-          Funeral Service
-        </div>
-        <div class="flex row gap-2">
-          <div class="font-outfit gap-y-5">
-            {{ "There is no funeral information avilable at this time" }}
-          </div>
-        </div>
-      </div>
-      <div v-if="pageDataDB?.Family?.acceptingDonations" class="flex flex-col pb-5">
-        <div class="text-gray-dark font-poppins text-3xl text-left font-bold leading-9 text-shadow-[3px_3px_4px_rgba(0,0,0,0.25)]">
-          Donations
         </div>
         <div
-          v-if="pageDataDB?.donation_description"
-          class="flex row gap-2 pr-10"
+          v-else
+          class="flex flex-col pb-5"
         >
-          <div class="font-outfit whitespace-normal">
-            {{ pageDataDB.donation_description }}
+          <div class="text-gray-dark font-poppins text-3xl text-left font-bold leading-9 text-shadow-[3px_3px_4px_rgba(0,0,0,0.25)]">
+            Visitation
+          </div>
+          <div class="flex row gap-2">
+            <div class="font-outfit">
+              {{ "There is no visitation information available at this time." }}
+            </div>
           </div>
         </div>
-        <div class="text-gray-dark font-poppins text-1xl text-left font-bold leading-9 text-shadow-[3px_3px_4px_rgba(0,0,0,0.25)]">
-          <div class="ml-1 pt-9 pr-5 flex items-center justify-center">
-            <ActionButton
-              text="DONATE NOW"
-              name="submit"
-              class="mx-auto text-md transition duration-300 bg-orange-999 hover:bg-green-600"
-              @click="displayDonationPopup=true"
-            />
+      </div>
+      <div class="pl-5 pr-5 min-w-0">
+        <div
+          v-if="pageDataDB?.funeral_date"
+          class="flex flex-col pb-5"
+        >
+          <div class="text-gray-dark font-poppins text-3xl text-left font-bold leading-9 text-shadow-[3px_3px_4px_rgba(0,0,0,0.25)]">
+            Funeral Service
+          </div>
+          <div class="flex row gap-2">
+            <div class="font-outfit font-bold">
+              {{ "Date:" }}
+            </div>
+            <div class="font-outfit gap-2">
+              {{ longDateFormat(pageDataDB?.funeral_date) }}
+            </div>
+          </div>
+          <div class="flex row gap-2">
+            <div class="font-outfit font-bold">
+              {{ "Time:" }}
+            </div>
+            <div class="font-outfit gap-y-5">
+              {{ longDateFormat(pageDataDB?.funeral_date, true) }}
+            </div>
+          </div>
+          <div class="flex row gap-2">
+            <div class="font-outfit font-bold">
+              {{ "Location:" }}
+            </div>
+            <div class="font-outfit whitespace-normal">
+              {{ pageDataDB?.funeral_location }}
+            </div>
+          </div>
+          <div class="flex row gap-2">
+            <div class="font-outfit whitespace-normal">
+              {{ pageDataDB?.funeral_address }}
+            </div>
+          </div>
+          <div class="flex flex-col gap-1 pr-10 min-w-0">
+            <div class="font-outfit font-bold">
+              {{ "Description:" }}
+            </div>
+            <div class="font-outfit min-w-0 break-words">
+              {{ pageDataDB?.funeral_description }}
+            </div>
+          </div>
+        </div>
+        <div
+          v-else
+          class="flex flex-col pb-5"
+        >
+          <div class="text-gray-dark font-poppins text-3xl text-left font-bold leading-9 text-shadow-[3px_3px_4px_rgba(0,0,0,0.25)]">
+            Funeral Service
+          </div>
+          <div class="flex row gap-2">
+            <div class="font-outfit gap-y-5">
+              {{ "There is no funeral information avilable at this time" }}
+            </div>
           </div>
         </div>
       </div>
     </div>
-    <div class="col-span-2">
+    <div class="mt-6 col-span-2">
       <div class="mx-9 sm:col-span-1 sm:mr-11">
         <div
           id="obituary"
@@ -433,15 +445,15 @@ setImageAutoSlide()
       </div>
     </div>
   </div>
-  <div class="py-4 grid gap-1 text-left">
+  <div class="px-4 py-4 flex flex-col gap-1 text-left">
     <div
       v-if="comments?.length"
-      class="py-4 grid gap-4 w-full justify-center grid-cols-[repeat(3,30rem)]"
+      class="py-4 flex flex-wrap gap-4 w-full justify-start"
     >
       <div
         v-for="(comment, i) in comments"
         :key="i"
-        class="flex flex-col gap-4 h-full min-w-44 p-4 rounded-lg bg-white border-border-gray-300 shadow-md py-4 transition duration-300 hover:shadow-xl"
+        class="flex flex-col gap-4 h-full w-full max-w-[30rem] min-w-44 p-4 rounded-lg bg-white border-border-gray-300 shadow-md py-4 transition duration-300 hover:shadow-xl"
       >
         <div class="flex justify-between gap-5">
           <div class="text-xl font-bold">
