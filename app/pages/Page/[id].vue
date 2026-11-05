@@ -438,7 +438,7 @@ setImageAutoSlide()
       <div class="mx-9 sm:col-span-1 sm:mr-11">
         <div
           id="obituary"
-          class="px-10 py-4 text-[#6E6E6E] font-medium text-lg leading-7 tracking-[-0.078px] break-words"
+          class="w-3/4 mx-auto py-4 text-[#6E6E6E] text-center font-medium text-lg leading-7 tracking-[-0.078px] break-words"
         >
           {{ pageDataDB?.obituary }}
         </div>
