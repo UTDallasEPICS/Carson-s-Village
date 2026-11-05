@@ -12,7 +12,7 @@ definePageMeta({
   middleware: ['family-guard']
 })
 
-import { dateFormat, donationFormat } from '@/utils'
+import { dateFormat, donationFormat, donationGoalFormat } from '@/utils'
 import type { Page, User, Image, PageDonation, Reply } from '@/types.d.ts'
 import type { Family } from '~~/prisma/generated/models'
 import {
@@ -283,7 +283,7 @@ await getDataAdminAdvocate()
             {{ dateFormat(item.deadline, true) }}
           </td>
           <td class="font-poppins text-gray-dark font-bold text-center">
-            {{ donationFormat(item.donation_goal) }}
+            {{ donationGoalFormat(item.donation_goal) }}
           </td>
           <td>
             <LinkButton

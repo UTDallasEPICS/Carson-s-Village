@@ -54,8 +54,13 @@ export default defineEventHandler(async (event) => {
       }
 
       // if goal_met is undefined, prisma will do nothing with it in the query
+      // donation_goal of 0 means no goal — never mark goal met
       let goal_met: Date | undefined = undefined
-      if (!page.goal_met_date && page.amount_raised + netAmount >= page.donation_goal) {
+      if (
+        page.donation_goal > 0 &&
+        !page.goal_met_date &&
+        page.amount_raised + netAmount >= page.donation_goal
+      ) {
         goal_met = new Date();
       }
       

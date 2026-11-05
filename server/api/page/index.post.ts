@@ -1,6 +1,7 @@
 import type { Image } from "@/types.d.ts"
 import { TEXT_LIMITS } from "#shared/utils/textLimits"
 import { assertTextLimits } from "~~/server/utils/textLimits"
+import { dollarsToCents } from "~~/server/utils/money"
 
 
 /*
@@ -26,8 +27,12 @@ export default defineEventHandler(async event => {
 
   if(user.role === "advocate" || user.role == 'admin'|| user.id === userCuid ) {
     assertTextLimits(data, TEXT_LIMITS.page)
-    data.donation_goal = Math.trunc(data.donation_goal * 100);
-    data.amount_raised = Math.trunc(data.amount_raised * 100);
+    // donation_goal is optional: empty/missing/0 means no goal (progress bar hidden)
+    data.donation_goal = dollarsToCents(data.donation_goal)
+    data.amount_raised = dollarsToCents(data.amount_raised)
+    if (data.donation_goal === 0) {
+      data.goal_met_date = null
+    }
     try {
       const family = await prisma.family.findFirst({
         where: {

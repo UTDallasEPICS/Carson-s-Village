@@ -199,7 +199,7 @@ const searchOnEnter = () => {
             </NuxtLink>
           </td>
           <td class="text-center">
-            {{ donationFormat(page.donation_goal) }}
+            {{ donationGoalFormat(page.donation_goal) }}
           </td>
           <td class="text-center">
             {{ dateFormat(page.deadline) }}

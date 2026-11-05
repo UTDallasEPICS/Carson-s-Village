@@ -50,10 +50,15 @@ const shareMail = () => {
 }
 
 const familyCuid = computed(() => pageDataDB.value?.familyCuid)
-const donated_percentage = computed<Number>(() => 
-  (((pageDataDB.value?.amount_raised as number) / (pageDataDB.value?.donation_goal as number )) * 100).toFixed(1)
-);
-const donation_goal_provided = computed(() => pageDataDB.value?.donation_goal as number > 0)
+const donation_goal_provided = computed(() => (pageDataDB.value?.donation_goal as number) > 0)
+const donated_percentage = computed(() => {
+  const goal = pageDataDB.value?.donation_goal as number
+  const raised = pageDataDB.value?.amount_raised as number
+  if (!goal || goal <= 0) {
+    return 0
+  }
+  return Number(((raised / goal) * 100).toFixed(1))
+})
 const comments = computed(() => pageDataDB.value?.PageDonations)
 const imageData = computed(() => pageDataDB.value?.Images || [])
 const profileImage = computed(() => imageData.value?.find((image: Image) => 

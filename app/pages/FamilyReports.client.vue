@@ -129,9 +129,16 @@
     arr.forEach((d) => {
         const owedCents: number | undefined = (d?.amount_raised as number) - (d?.amount_distributed as number)
         const owed: string | undefined = donationFormat(owedCents)
-        const goal = (d?.donation_goal as number)
+        const goal = (d?.donation_goal as number) || 0
         const owedPercent: number | undefined = goal != 0 ? ((100 * owedCents) / goal) : 0
-        currentArr.value.push({...d, ['owed']: owedCents/100.0 | 0} )
+        const row = {
+          ...d,
+          donation_goal: goal > 0 ? goal : 'No Goal',
+          goal_met_date: goal > 0 ? d?.goal_met_date : 'No Goal',
+          donation_status: goal > 0 ? d?.donation_status : 'No Goal',
+          owed: owedCents/100.0 | 0,
+        }
+        currentArr.value.push(row)
         //currentArr.value.push({...d, ['owedPercent']: owedPercent | 0} )
     });
 
@@ -483,13 +490,15 @@
               v-if="display.goal_met"
               style="text-align: center;"
             >
-              {{ page.donation_status }}
+              {{ page.donation_goal > 0 ? page.donation_status : "No Goal" }}
             </td>
             <td
               v-if="display.goal_met_date"
               style="text-align: center;"
             >
-              {{ (page.goal_met_date) ? dateFormat(page.goal_met_date, true) : "Goal Not Reached" }}
+              {{ page.donation_goal > 0
+                ? (page.goal_met_date ? dateFormat(page.goal_met_date, true) : "Goal Not Reached")
+                : "No Goal" }}
             </td>
             <td
               v-if="display.start_date"
@@ -513,7 +522,7 @@
               v-if="display.donation_goal"
               style="text-align: center;"
             >
-              {{ donationFormat(page.donation_goal) }}
+              {{ donationGoalFormat(page.donation_goal) }}
             </td>
             <td
               v-if="display.goal_date"

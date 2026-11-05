@@ -51,7 +51,7 @@ const page = ref<Page>({
     funeral_address: "",
     obituary: "",
     deadline: null,
-    donation_goal: 0,
+    donation_goal: "",
     donation_description: "",
     amount_raised: 0,
     amount_distributed: 0,
@@ -153,10 +153,13 @@ const getData = async (id: string) => {
   /* 
   * Checking if donation_goal and conversly amount raised is of type number in order to prevent
   * donation_goal and amount_raised from becoming NaN due to applying the donationFormat function to a string. 
+  * Goal of 0 means no goal — show blank so the field reads as optional.
   */
   if (typeof page.value.donation_goal === 'number') {
     page.value.amount_raised = donationFormat(page.value.amount_raised as unknown as number).replace("$", "");
-    page.value.donation_goal = donationFormat(page.value.donation_goal as unknown as number).replace("$", "");
+    page.value.donation_goal = page.value.donation_goal > 0
+      ? donationFormat(page.value.donation_goal as unknown as number).replace("$", "")
+      : "";
   }
   replies.value = page.value?.Reply
 }
@@ -534,11 +537,11 @@ const onResize = ({ width, height }: { width: number, height: number }) => {
       <div class="py-4 grid sm:grid-cols-3">
         <div class="flex">
           <CVLabel for="donation_goal">
-            Goal
+            Goal (optional)
           </CVLabel>
           <CVHelpButton
             class="inline-block"
-            description="If the Donation Goal is 0, it will be assumed that you do not wish to display your donation progress bar and current amount raised."
+            description="Leave blank or 0 to skip a donation goal. The progress bar and raised-of-goal text will not display."
           />
         </div>
         <div class="flex mx-9 sm:col-span-2 sm:mr-11">
@@ -546,6 +549,9 @@ const onResize = ({ width, height }: { width: number, height: number }) => {
           <input
             id="donation_goal"
             v-model="page.donation_goal"
+            type="text"
+            inputmode="decimal"
+            placeholder="optional"
             class="outline-0 rounded-r-md border-box w-full p-2 border border-[#c4c4c4]"
           >
         </div>
