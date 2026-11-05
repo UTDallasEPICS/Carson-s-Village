@@ -23,6 +23,10 @@ import {
 } from '@headlessui/vue'
 import { vElementSize } from '@vueuse/components'
 import { authClient } from '~/utils/auth-client';
+import {
+  FAMILY_MEMBER_LIMIT_MESSAGE,
+  MAX_FAMILY_MEMBERS,
+} from '#shared/utils/familyLimits'
 
 const { data } = await authClient.useSession(useFetch);
 const user = computed(() => data.value?.user || null)
@@ -45,6 +49,10 @@ const router = useRoute()
 const id = computed(() => router.params.id as string);
 const isAuthorized = computed(() => user.value?.role == "advocate" || user.value?.role == "admin")
 const canManageFamily = computed(() => user.value && data_family.value && (user.value.role === 'admin' || (user.value.role === 'advocate' && user.value.id === data_family.value.advocateCuid)))
+const familyMemberCount = computed(() => data_family.value?.FamilyMembers?.length ?? 0)
+const atFamilyMemberLimit = computed(() =>
+  id.value !== '0' && familyMemberCount.value >= MAX_FAMILY_MEMBERS
+)
 const errorInPage = ref(false);
 const errorToUser = ref('');
 
@@ -152,7 +160,7 @@ const createFamily = async () => {
           acceptingDonations: data_family.value.acceptingDonations
         }
 
-        if (data_user.value.email && data_user.value.name) {
+        if (!atFamilyMemberLimit.value && data_user.value.email && data_user.value.name) {
           body.name = data_user.value.name
           body.email = data_user.value.email
           body.phone = data_user.value.phone
@@ -380,45 +388,53 @@ const reactivateFamily = async () => {
       <div class="information rounded-md mx-9 my-2 text-center sm:text-start text-white bg-blue-999">
         <CVLegend>New User Information</CVLegend>
       </div>
-      <div class="py-4 grid sm:grid-cols-3">
-        <CVLabel for="email">
-          Email
-        </CVLabel>
-        <div class="mx-9 sm:col-span-2 sm:mr-11">
-          <CVInput
-            id="email"
-            v-model="data_user.email"
-            type="email"
-            placeholder="(user defined)"
-            required="required"
-          />
+      <p
+        v-if="atFamilyMemberLimit"
+        class="mx-9 mb-4 text-sm text-red-600"
+      >
+        {{ FAMILY_MEMBER_LIMIT_MESSAGE }}
+      </p>
+      <template v-else>
+        <div class="py-4 grid sm:grid-cols-3">
+          <CVLabel for="email">
+            Email
+          </CVLabel>
+          <div class="mx-9 sm:col-span-2 sm:mr-11">
+            <CVInput
+              id="email"
+              v-model="data_user.email"
+              type="email"
+              placeholder="(user defined)"
+              required="required"
+            />
+          </div>
         </div>
-      </div>
-      <div class="py-4 grid sm:grid-cols-3">
-        <CVLabel for="first_name">
-          Name
-        </CVLabel>
-        <div class="mx-9 sm:col-span-2 sm:mr-11">
-          <CVInput
-            id="first_name"
-            v-model="data_user.name"
-            placeholder="(user-defined)"
-            required="required"
-          />
+        <div class="py-4 grid sm:grid-cols-3">
+          <CVLabel for="first_name">
+            Name
+          </CVLabel>
+          <div class="mx-9 sm:col-span-2 sm:mr-11">
+            <CVInput
+              id="first_name"
+              v-model="data_user.name"
+              placeholder="(user-defined)"
+              required="required"
+            />
+          </div>
         </div>
-      </div>
-      <div class="pt-4 grid sm:grid-cols-3">
-        <CVLabel for="phone">
-          Phone
-        </CVLabel>
-        <div class="mx-9 sm:col-span-2 sm:mr-11">
-          <CVPhoneInput
-            id="phone"
-            v-model="data_user.phone"
-            placeholder="(user defined, optional)"
-          />
+        <div class="pt-4 grid sm:grid-cols-3">
+          <CVLabel for="phone">
+            Phone
+          </CVLabel>
+          <div class="mx-9 sm:col-span-2 sm:mr-11">
+            <CVPhoneInput
+              id="phone"
+              v-model="data_user.phone"
+              placeholder="(user defined, optional)"
+            />
+          </div>
         </div>
-      </div>
+      </template>
 
       <!-- Error Display -->
       <div

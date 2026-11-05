@@ -21,6 +21,7 @@ import {
     ListboxOption,
 } from '@headlessui/vue'
 import { authClient } from '~/utils/auth-client';
+import { MAX_FAMILY_MEMBERS } from '#shared/utils/familyLimits'
 
 const { data } = await authClient.useSession(useFetch);
 const user = computed(() => data.value?.user || null)
@@ -28,9 +29,14 @@ const user = computed(() => data.value?.user || null)
 
 const data_all_families = ref<Family[]>([])
 const router = useRoute()
-const isAuthorized = computed(() => user.value?.role === "advocate" || user.value?.role === "admin")
+const isAdvocateAdmin = computed(() => user.value?.role === "advocate" || user.value?.role === "admin")
+const isFamilyInviter = computed(() => user.value?.role === "family" && !!user.value?.familyId)
 const isAdmin = computed(() => user.value?.role === "admin")
 const id = computed(() => router.params.id as string);
+const isCreating = computed(() => (id.value as string) === "0")
+const isAuthorized = computed(() =>
+  isAdvocateAdmin.value || (isFamilyInviter.value && isCreating.value)
+)
 const errorInPage = ref(false);
 const errorToUser = ref("")
 
@@ -42,12 +48,16 @@ const data_user = ref<User>({
     isActive: true,
     phone: "",
     address: "",
-    familyId: "",
+    familyId: isFamilyInviter.value ? (user.value?.familyId as string) : "",
     Pages: [],
     AdvocateFamily: []
 })
 
-const disableCriteria = computed(() => !data_user.value?.email || !data_user.value?.name || (addingFamily.value && !data_user.value?.familyId))
+const disableCriteria = computed(() =>
+  !data_user.value?.email
+  || !data_user.value?.name
+  || (addingFamily.value && !isFamilyInviter.value && !data_user.value?.familyId)
+)
 
 const advocateFamilies = computed(() => data_user.value.AdvocateFamily || [])
 const familyFilter = ref<'all' | 'active' | 'inactive'>('active')
@@ -73,26 +83,36 @@ function submitForm() {
 async function save() {
   if(isAuthorized.value){
     // --- Create User ------------------------
-    if ((id.value as string) === "0") {
+    if (isCreating.value) {
       try {
+        const payload = isFamilyInviter.value
+          ? {
+              name: data_user.value.name,
+              email: data_user.value.email,
+              phone: data_user.value.phone,
+              address: data_user.value.address,
+              role: "family" as const,
+            }
+          : { ...data_user.value }
+
         const data = await $fetch('/api/user', {
           method: 'POST',
-          body: ({ ...data_user.value })
+          body: payload
         })
 
         if(data?.success){
           errorInPage.value = false;
           errorToUser.value = ""
-          await navigateTo('/Users')
+          await navigateTo(isFamilyInviter.value ? '/' : '/Users')
         }
       } catch (error: any) {
         errorInPage.value = true 
-        errorToUser.value = error?.data?.message ?? 'Failed to create user';
+        errorToUser.value = error?.data?.message ?? 'Failed to create user'
       }
     }
 
     // --- Update User ------------------------
-    else {
+    else if (isAdvocateAdmin.value) {
       try {
         const data = await $fetch('/api/user', {
           method: 'PUT',
@@ -106,7 +126,7 @@ async function save() {
         }
       } catch (error: any) {
         errorInPage.value = true 
-        errorToUser.value = error?.data?.message ?? 'Failed to update user';
+        errorToUser.value = error?.data?.message ?? 'Failed to update user'
       }
     }
   }
@@ -128,7 +148,9 @@ const getData = async () => {
 // boolean indicating that we need the family selection listbox
 const addingFamily = computed(() => data_user.value.role == "family")
 
-const { data: _families, refresh: getUsers } = await useFetch<Family[]>('/api/family')
+const { data: _families, refresh: getUsers } = isAdvocateAdmin.value
+  ? await useFetch<Family[]>('/api/family')
+  : { data: ref<Family[] | null>(null), refresh: async () => {} }
 
 watch(_families, (families) => {
   if (families) {
@@ -136,8 +158,17 @@ watch(_families, (families) => {
   }
 }, { immediate: true })
 
-if ((id.value as string) !== "0") {
-  await getData();
+if (!isCreating.value) {
+  if (isFamilyInviter.value) {
+    await navigateTo('/')
+  } else {
+    await getData();
+  }
+}
+
+if (isFamilyInviter.value && isCreating.value) {
+  data_user.value.role = "family"
+  data_user.value.familyId = user.value?.familyId as string
 }
 
 const updateFamilyAdvocate = async (familyId: string, advocateId: string | null, familyName?: string) => {
@@ -228,69 +259,77 @@ const reactivateUser = async () => {
   <CVContainer>
     <div class="p-3 rounded bg-gray-50">
       <TitleComp>
-        User Account Entry
+        {{ isFamilyInviter ? 'Invite Family Member' : 'User Account Entry' }}
       </TitleComp>
       <br>
-      <div class="information rounded-md mx-9 my-2 text-center sm:text-start text-white bg-blue-999">
-        <CVLegend>Family Information</CVLegend>
-      </div>
-      <div class="py-4 grid sm:grid-cols-3">
-        <CVLabel for="user_role">
-          User Role
-        </CVLabel>
-        <div class="mx-9 mt-6 sm:col-span-2 sm:mr-11">
-          <select
-            id="user_role"
-            v-model="data_user.role"
-            class="rounded-md outline-0 border-box w-full p-2 bg-white border border-[#c4c4c4]"
-          >
-            Select User Role
-            <option>family</option>
-            <option>advocate</option>
-            <option v-if="isAdmin">
-              admin
-            </option>
-          </select>
-        </div>
-      </div>
-      <div
-        v-if="addingFamily"
-        class="py-4 grid sm:grid-cols-3"
+      <p
+        v-if="isFamilyInviter"
+        class="mx-9 mb-4 text-sm text-gray-700"
       >
-        <CVLabel for="Family">
-          Family
-        </CVLabel>
-        <div class="mx-9 mt-6 sm:col-span-2 sm:mr-11">
-          <Listbox
-            id="Family"
-            v-model="data_user.familyId"
-            as="div"
-            class="shadow-sm border border-1 rounded-lg"
-          >
-            <div class="relative">
-              <Transition
-                leave-active-class="transition ease-in duration-100"
-                leave-from-class="opacity-100"
-                leave-to-class="opacity-0"
-              />
-              <ListboxOptions as="div" class="w-full absolute z-10 mt-10 bg-white shadow-lg max-h-60 rounded-md px-2 py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm">
-                <ListboxOption
-                  v-for="family in data_all_families"
-                  :key="family.id"
-                  :value="family.id"
-                  as="div"
-                  class="px-2 border border-grey-500 py-1 my-1"
-                >
-                  {{ family.family_name }}
-                </ListboxOption>
-              </ListboxOptions>
-              <ListboxButton class="text-left bg-white relative rounded-md pl-2 pr-10 py-2 sm:text-sm w-96">
-                {{ data_user.familyId ? currentFamily.family_name : 'Select family to add the user to' }}
-              </ListboxButton>
-            </div>
-          </Listbox>
+        Invite another family user to your family. Maximum of {{ MAX_FAMILY_MEMBERS }} family users per family.
+      </p>
+      <template v-if="isAdvocateAdmin">
+        <div class="information rounded-md mx-9 my-2 text-center sm:text-start text-white bg-blue-999">
+          <CVLegend>Family Information</CVLegend>
         </div>
-      </div>
+        <div class="py-4 grid sm:grid-cols-3">
+          <CVLabel for="user_role">
+            User Role
+          </CVLabel>
+          <div class="mx-9 mt-6 sm:col-span-2 sm:mr-11">
+            <select
+              id="user_role"
+              v-model="data_user.role"
+              class="rounded-md outline-0 border-box w-full p-2 bg-white border border-[#c4c4c4]"
+            >
+              Select User Role
+              <option>family</option>
+              <option>advocate</option>
+              <option v-if="isAdmin">
+                admin
+              </option>
+            </select>
+          </div>
+        </div>
+        <div
+          v-if="addingFamily"
+          class="py-4 grid sm:grid-cols-3"
+        >
+          <CVLabel for="Family">
+            Family
+          </CVLabel>
+          <div class="mx-9 mt-6 sm:col-span-2 sm:mr-11">
+            <Listbox
+              id="Family"
+              v-model="data_user.familyId"
+              as="div"
+              class="shadow-sm border border-1 rounded-lg"
+            >
+              <div class="relative">
+                <Transition
+                  leave-active-class="transition ease-in duration-100"
+                  leave-from-class="opacity-100"
+                  leave-to-class="opacity-0"
+                />
+                <ListboxOptions as="div" class="w-full absolute z-10 mt-10 bg-white shadow-lg max-h-60 rounded-md px-2 py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm">
+                  <ListboxOption
+                    v-for="family in data_all_families"
+                    :key="family.id"
+                    :value="family.id"
+                    as="div"
+                    class="px-2 border border-grey-500 py-1 my-1"
+                  >
+                    {{ family.family_name }}
+                  </ListboxOption>
+                </ListboxOptions>
+                <ListboxButton class="text-left bg-white relative rounded-md pl-2 pr-10 py-2 sm:text-sm w-96">
+                  {{ data_user.familyId ? currentFamily.family_name : 'Select family to add the user to' }}
+                </ListboxButton>
+              </div>
+            </Listbox>
+          </div>
+        </div>
+      </template>
 
       <!-- User Info -->
       <div class="information rounded-md mx-9 mb-2 mt-6 text-center sm:text-start text-white bg-blue-999">
@@ -369,20 +408,20 @@ const reactivateUser = async () => {
       <!-- Action Buttons -->
       <div class="flex justify-between mx-10 py-2">
         <ActionButton
-          text="Save"
-          :disabled="disableCriteria"
+          :text="isFamilyInviter ? 'Send Invite' : 'Save'"
+          :disabled="disableCriteria || !isAuthorized"
           class="transition duration-300 bg-orange-999 hover:bg-green-600 disabled:bg-orange-800 disabled:cursor-not-allowed"
           @click="submitForm"
         />
         <ActionButton
-          v-if="data_user.isActive"
+          v-if="isAdvocateAdmin && !isCreating && data_user.isActive"
           text="Deactivate User"
           type="button"
           class="transition duration-300 bg-red-600 hover:bg-red-700"
           @click="deactivateUser"
         />
         <ActionButton
-          v-else
+          v-else-if="isAdvocateAdmin && !isCreating && !data_user.isActive"
           text="Reactivate User"
           type="button"
           class="transition duration-300 bg-green-600 hover:bg-green-700"

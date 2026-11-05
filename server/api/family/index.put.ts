@@ -3,6 +3,7 @@
 *	  submit updated family details to database
 */
 import { Prisma } from "~~/prisma/generated/client";
+import { assertCanAddFamilyMember } from "~~/server/utils/familyMemberLimit";
 
 export default defineEventHandler(async event => {
   const session = await auth.api.getSession({
@@ -45,6 +46,10 @@ export default defineEventHandler(async event => {
     }
 
     try {
+      if (body.name && body.email) {
+        await assertCanAddFamilyMember(familyCuid as string)
+      }
+
       const result = await prisma.$transaction(async (prisma) => {
         if (body.name && body.email) {
           await prisma.user.create({
@@ -75,6 +80,9 @@ export default defineEventHandler(async event => {
 
       return result;
     } catch (e: any) {
+      if (e?.statusCode) {
+        throw e
+      }
       console.error(`Failed to update family ${familyCuid}:`, e)
 
       if (e instanceof Prisma.PrismaClientKnownRequestError) {
