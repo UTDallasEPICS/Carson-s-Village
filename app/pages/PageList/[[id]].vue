@@ -161,7 +161,7 @@ await getDataAdminAdvocate()
 </script>
 
 <template>
-  <div class="flex pl-3 gap-8 font-bold">
+  <div class="flex mt-5 pl-3 gap-8 font-bold">
     <div
       :class="{'text-orange-999 underline underline-offset-2 decoration-2': pageFilter === 'active'}"
       @click="pageFilter = 'active'"
@@ -216,7 +216,7 @@ await getDataAdminAdvocate()
       </Listbox>
     </div>
   </div>
-  <div class="mx-auto mt-1 sm:w-[1200px]">
+  <div class="mx-auto sm:w-[1200px]">
     <table class="table-auto">
       <thead>
         <tr>
