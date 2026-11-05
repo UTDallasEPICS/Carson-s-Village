@@ -16,6 +16,9 @@ const { data } = await authClient.useSession(useFetch)
 const user = computed(() => data.value?.user || null)
 
 const isAdvocateAdmin = computed(() => user.value?.role == 'admin' || user.value?.role == 'advocate')
+const canInviteUser = computed(() =>
+  isAdvocateAdmin.value || (user.value?.role == 'family' && !!user.value?.familyId)
+)
 const route = useRoute()
 const expanded = ref(false)
 
@@ -53,7 +56,7 @@ const items = computed<NavItem[]>(() => {
       to: '/EditUser/0',
       label: 'Invite user',
       icon: UserPlusIcon,
-      show: isAdvocateAdmin.value,
+      show: canInviteUser.value,
       active: path.includes('/EditUser'),
     },
     {
