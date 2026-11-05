@@ -40,6 +40,9 @@ const saveImage = async (theImage: Image) => {
         :page-cuid="props.pageCuid"
         @imageUploaded="saveImage"
       />
+      <p class="mt-1 text-sm text-gray-700">
+        Tip: Ctrl-click (Cmd-click on Mac) to select multiple images.
+      </p>
     </a>
   </div>
   <div
