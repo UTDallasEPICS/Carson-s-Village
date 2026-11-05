@@ -171,6 +171,16 @@ if (isFamilyInviter.value && isCreating.value) {
   data_user.value.familyId = user.value?.familyId as string
 }
 
+const { data: inviterFamily } = isFamilyInviter.value && isCreating.value
+  ? await useFetch<Family>(() => `/api/family/${user.value?.familyId}`)
+  : { data: ref<Family | null>(null) }
+
+const currentFamilyMembers = computed(() => inviterFamily.value?.FamilyMembers ?? [])
+const currentFamilyMemberCount = computed(() => currentFamilyMembers.value.length)
+const atFamilyMemberLimit = computed(() =>
+  isFamilyInviter.value && currentFamilyMemberCount.value >= MAX_FAMILY_MEMBERS
+)
+
 const updateFamilyAdvocate = async (familyId: string, advocateId: string | null, familyName?: string) => {
   if (!isAdmin.value) {
     return
@@ -268,6 +278,49 @@ const reactivateUser = async () => {
       >
         Invite another family user to your family. Maximum of {{ MAX_FAMILY_MEMBERS }} family users per family.
       </p>
+      <template v-if="isFamilyInviter">
+        <div class="information rounded-md mx-9 my-2 text-center sm:text-start text-white bg-blue-999">
+          <CVLegend>
+            Current Family Members ({{ currentFamilyMemberCount }}/{{ MAX_FAMILY_MEMBERS }})
+          </CVLegend>
+        </div>
+        <div class="mx-9 py-4">
+          <ul
+            v-if="currentFamilyMembers.length > 0"
+            class="space-y-2"
+          >
+            <li
+              v-for="member in currentFamilyMembers"
+              :key="member.id"
+              class="flex items-center justify-between"
+            >
+              <span :class="{ 'text-red-600': member.isActive === false }">
+                {{ member.name }} ({{ member.email }})
+                <span
+                  v-if="member.id === user?.id"
+                  class="text-gray-500"
+                > — you</span>
+                <span
+                  v-if="member.isActive === false"
+                  class="text-red-600"
+                > — deactivated</span>
+              </span>
+            </li>
+          </ul>
+          <p
+            v-else
+            class="text-sm text-gray-700"
+          >
+            No family members found.
+          </p>
+          <p
+            v-if="atFamilyMemberLimit"
+            class="mt-3 text-sm text-red-600"
+          >
+            Your family already has the maximum of {{ MAX_FAMILY_MEMBERS }} family users.
+          </p>
+        </div>
+      </template>
       <template v-if="isAdvocateAdmin">
         <div class="information rounded-md mx-9 my-2 text-center sm:text-start text-white bg-blue-999">
           <CVLegend>Family Information</CVLegend>
@@ -332,56 +385,58 @@ const reactivateUser = async () => {
       </template>
 
       <!-- User Info -->
-      <div class="information rounded-md mx-9 mb-2 mt-6 text-center sm:text-start text-white bg-blue-999">
-        <CVLegend>User Information</CVLegend>
-      </div>
-      <CVForm
-        ref="formRef"
-        @submit="save"
-      >
-        <div class="py-4 grid sm:grid-cols-3">
-          <CVLabel for="email">
-            Email
-          </CVLabel>
-          <div
-            id="email"
-            class="mx-9 sm:col-span-2 sm:mr-11"
-          >
-            <CVEmailInput
+      <template v-if="!atFamilyMemberLimit">
+        <div class="information rounded-md mx-9 mb-2 mt-6 text-center sm:text-start text-white bg-blue-999">
+          <CVLegend>{{ isFamilyInviter ? 'New Family Member' : 'User Information' }}</CVLegend>
+        </div>
+        <CVForm
+          ref="formRef"
+          @submit="save"
+        >
+          <div class="py-4 grid sm:grid-cols-3">
+            <CVLabel for="email">
+              Email
+            </CVLabel>
+            <div
               id="email"
-              v-model="data_user.email"
-              placeholder="(user defined)"
-              required
-            />
+              class="mx-9 sm:col-span-2 sm:mr-11"
+            >
+              <CVEmailInput
+                id="email"
+                v-model="data_user.email"
+                placeholder="(user defined)"
+                required
+              />
+            </div>
           </div>
-        </div>
-        <div class="py-4 grid sm:grid-cols-3">
-          <CVLabel for="first_name">
-            Name
-          </CVLabel>
-          <div class="mx-9 sm:col-span-2 sm:mr-11">
-            <CVInput
-              id="first_name"
-              v-model="data_user.name"
-              type="text"
-              placeholder="(user-defined"
-              required="required"
-            />
+          <div class="py-4 grid sm:grid-cols-3">
+            <CVLabel for="first_name">
+              Name
+            </CVLabel>
+            <div class="mx-9 sm:col-span-2 sm:mr-11">
+              <CVInput
+                id="first_name"
+                v-model="data_user.name"
+                type="text"
+                placeholder="(user-defined"
+                required="required"
+              />
+            </div>
           </div>
-        </div>
-        <div class="py-4 grid sm:grid-cols-3">
-          <CVLabel for="phone">
-            Phone
-          </CVLabel>
-          <div class="mx-9 sm:col-span-2 sm:mr-11">
-            <CVPhoneInput
-              id="phone"
-              v-model="data_user.phone"
-              placeholder="(user defined, optional)"
-            />
+          <div class="py-4 grid sm:grid-cols-3">
+            <CVLabel for="phone">
+              Phone
+            </CVLabel>
+            <div class="mx-9 sm:col-span-2 sm:mr-11">
+              <CVPhoneInput
+                id="phone"
+                v-model="data_user.phone"
+                placeholder="(user defined, optional)"
+              />
+            </div>
           </div>
-        </div>
-      </CVForm>
+        </CVForm>
+      </template>
       <div
         v-if="isAdmin && id !== '0'"
         class="py-4 grid sm:grid-cols-3"
@@ -408,6 +463,7 @@ const reactivateUser = async () => {
       <!-- Action Buttons -->
       <div class="flex justify-between mx-10 py-2">
         <ActionButton
+          v-if="!atFamilyMemberLimit"
           :text="isFamilyInviter ? 'Send Invite' : 'Save'"
           :disabled="disableCriteria || !isAuthorized"
           class="transition duration-300 bg-orange-999 hover:bg-green-600 disabled:bg-orange-800 disabled:cursor-not-allowed"
