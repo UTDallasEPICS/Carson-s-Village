@@ -1,6 +1,7 @@
 import type { Image } from "@/types.d.ts"
 import { TEXT_LIMITS } from "#shared/utils/textLimits"
 import { assertTextLimits } from "~~/server/utils/textLimits"
+import { dollarsToCents } from "~~/server/utils/money"
 
 /*
 *	/EditPage/cuid
@@ -26,12 +27,16 @@ export default defineEventHandler(async event => {
     delete data.Family // Not sure why this is needed to fix an error
     assertTextLimits(data, TEXT_LIMITS.page)
     try {
-      // Removes comma parses the whole decimal number and converts it to cents to be stored in DB
-      if(typeof data.donation_goal == 'string') {
-        data.donation_goal = Math.trunc(parseFloat(data.donation_goal.replace(",","")) * 100);
+      // Only convert when present — archive/reactivate PUTs omit money fields.
+      // Empty string / 0 means no goal. Missing fields must stay untouched.
+      if (data.donation_goal !== undefined && data.donation_goal !== null) {
+        data.donation_goal = dollarsToCents(data.donation_goal)
+        if (data.donation_goal === 0) {
+          data.goal_met_date = null
+        }
       }
-      if(typeof data.amount_raised == 'string') {
-        data.amount_raised = Math.trunc(parseFloat(data.amount_raised.replace(",","")) * 100);
+      if (data.amount_raised !== undefined && data.amount_raised !== null) {
+        data.amount_raised = dollarsToCents(data.amount_raised)
       }
       // updates a pre-existing page
       const queryRes = await prisma.page.update({

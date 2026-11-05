@@ -30,6 +30,15 @@ export function donationFormat(amount = 0){
   })
 }
 
+/** Format a page donation goal; 0 / missing means no goal was set. */
+export function donationGoalFormat(amount: number | string | null | undefined) {
+  const cents = typeof amount === 'number' ? amount : Number(amount)
+  if (!cents || isNaN(cents) || cents <= 0) {
+    return 'No Goal'
+  }
+  return donationFormat(cents)
+}
+
 export function longDateFormat(date: string, justTime = false) {
   if(date === "") {
     return ""
