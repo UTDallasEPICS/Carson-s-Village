@@ -12,4 +12,7 @@ export const TEXT_LIMITS = {
   donation: {
     comments: 500,
   },
+  family: {
+    invite_note: 500,
+  },
 } as const

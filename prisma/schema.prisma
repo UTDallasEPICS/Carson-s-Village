@@ -29,6 +29,8 @@ model User {
   Pages           Page[]
   sessions        Session[]
   accounts        Account[]
+  FamilyReferralsRequested FamilyReferralRequest[] @relation("family_referral_requester")
+  FamilyReferralsReviewed  FamilyReferralRequest[] @relation("family_referral_reviewer")
 
   @@map("user")
 }
@@ -193,8 +195,32 @@ model Image {
   @@map("images")
 }
 
+model FamilyReferralRequest {
+  id           String                @id @default(uuid())
+  inviteeName  String
+  inviteeEmail String                @unique
+  note         String                @default("")
+  status       FamilyReferralStatus  @default(pending)
+  requesterId  String
+  reviewedById String?
+  reviewedAt   DateTime?
+  createdAt    DateTime              @default(now())
+  updatedAt    DateTime              @updatedAt
+
+  Requester    User                  @relation("family_referral_requester", fields: [requesterId], references: [id])
+  ReviewedBy   User?                 @relation("family_referral_reviewer", fields: [reviewedById], references: [id])
+
+  @@map("family_referral_request")
+}
+
 enum Role {
   admin
   advocate
   family
+}
+
+enum FamilyReferralStatus {
+  pending
+  approved
+  rejected
 }
