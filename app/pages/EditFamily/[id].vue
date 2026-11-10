@@ -9,7 +9,7 @@
 *	Located under "/EditFamily/"
 */
 definePageMeta({
-  middleware: ["advocate-guard"]
+  middleware: ["family-guard"]
 })
 
 import CVPhoneInput from '@/components/CVPhoneInput.vue';
@@ -27,9 +27,62 @@ import {
   FAMILY_MEMBER_LIMIT_MESSAGE,
   MAX_FAMILY_MEMBERS,
 } from '#shared/utils/familyLimits'
+import { TEXT_LIMITS } from '#shared/utils/textLimits'
 
 const { data } = await authClient.useSession(useFetch);
 const user = computed(() => data.value?.user || null)
+const isFamilyUser = computed(() => user.value?.role === 'family')
+
+const referralForm = ref({
+  inviteeName: '',
+  inviteeEmail: '',
+  note: '',
+})
+const referralError = ref('')
+const referralSuccess = ref('')
+const referralSubmitting = ref(false)
+
+type FamilyReferralRequest = {
+  id: string
+  inviteeName: string
+  inviteeEmail: string
+  note: string
+  status: 'pending' | 'approved' | 'rejected'
+  createdAt: string
+}
+
+const { data: myReferrals, refresh: refreshReferrals } = await useFetch<FamilyReferralRequest[]>(
+  '/api/family-referral',
+  {
+    immediate: isFamilyUser.value,
+    default: () => [],
+  }
+)
+
+const submitReferral = async () => {
+  if (referralSubmitting.value) return
+  referralError.value = ''
+  referralSuccess.value = ''
+  referralSubmitting.value = true
+  try {
+    await $fetch('/api/family-referral', {
+      method: 'POST',
+      body: {
+        inviteeName: referralForm.value.inviteeName,
+        inviteeEmail: referralForm.value.inviteeEmail,
+        note: referralForm.value.note,
+      },
+    })
+    referralForm.value = { inviteeName: '', inviteeEmail: '', note: '' }
+    referralSuccess.value = 'Referral submitted.'
+    await refreshReferrals()
+  } catch (error: any) {
+    referralError.value =
+      error?.data?.statusMessage || error?.data?.message || 'Failed to submit referral'
+  } finally {
+    referralSubmitting.value = false
+  }
+}
 
 
 const data_user = ref<User>({
@@ -69,6 +122,7 @@ const advocatesForSelect = computed(() =>
 const { data: data_family, refresh: refreshFamily } = await useFetch(
   `/api/family/${id.value}`,
   {
+    immediate: !isFamilyUser.value && id.value !== '0',
     default: () => ({} as any)
   }
 )
@@ -111,7 +165,9 @@ if (data_family.value && data_family.value.advocateCuid) {
   selectedAdvocateId.value = data_family.value.advocateCuid as string
 }
 
-const { data: advocatesData } = await useFetch<User[]>('/api/advocates_admin')
+const { data: advocatesData } = await useFetch<User[]>('/api/advocates_admin', {
+  immediate: !isFamilyUser.value,
+})
 if (advocatesData.value) {
   advocates.value = advocatesData.value
 }
@@ -246,7 +302,130 @@ const reactivateFamily = async () => {
 </script>
 
 <template>
-  <CVContainer>
+  <CVContainer v-if="isFamilyUser">
+    <form class="p-3 rounded bg-gray-50">
+      <TitleComp>Invite Family</TitleComp>
+      <br>
+      <div class="information rounded-md mx-9 my-2 text-center sm:text-start text-white bg-blue-999">
+        <CVLegend>Referral Information</CVLegend>
+      </div>
+      <div class="py-4 grid sm:grid-cols-3">
+        <CVLabel for="invitee_email">
+          Invitee Email
+        </CVLabel>
+        <div class="mx-9 sm:col-span-2 sm:mr-11">
+          <CVInput
+            id="invitee_email"
+            v-model="referralForm.inviteeEmail"
+            type="email"
+            placeholder="(required)"
+            required="required"
+          />
+        </div>
+      </div>
+      <div class="py-4 grid sm:grid-cols-3">
+        <CVLabel for="invitee_name">
+          Invitee Name
+        </CVLabel>
+        <div class="mx-9 sm:col-span-2 sm:mr-11">
+          <CVInput
+            id="invitee_name"
+            v-model="referralForm.inviteeName"
+            placeholder="(required)"
+            required="required"
+          />
+        </div>
+      </div>
+      <div class="py-4 grid sm:grid-cols-3">
+        <CVLabel for="referral_note">
+          Note (optional)
+        </CVLabel>
+        <div class="mx-9 sm:col-span-2 sm:mr-11">
+          <CVTextArea
+            id="referral_note"
+            v-model="referralForm.note"
+            :maxlength="TEXT_LIMITS.family.invite_note"
+            rows="4"
+            placeholder="optional"
+          />
+        </div>
+      </div>
+      <div
+        v-if="referralError"
+        class="mx-9 text-red-600"
+      >
+        {{ referralError }}
+      </div>
+      <div
+        v-if="referralSuccess"
+        class="mx-9 text-green-700"
+      >
+        {{ referralSuccess }}
+      </div>
+      <div class="flex justify-between ml-9 mr-10 mt-6">
+        <ActionButton
+          text="Submit Referral"
+          class="transition duration-300 bg-orange-999 hover:bg-green-600"
+          @click="submitReferral"
+        />
+      </div>
+
+      <div class="information rounded-md mx-9 mt-10 my-2 text-center sm:text-start text-white bg-blue-999">
+        <CVLegend>Your Referral Requests</CVLegend>
+      </div>
+      <div class="mx-9 sm:mr-11 py-4 overflow-x-auto">
+        <table
+          v-if="myReferrals?.length"
+          class="table-auto w-full"
+        >
+          <thead>
+            <tr class="text-white">
+              <th class="font-poppins font-bold p-2 bg-[#5aadc2] rounded-tl-3xl">
+                Invitee
+              </th>
+              <th class="font-poppins font-bold p-2 bg-[#5aadc2]">
+                Email
+              </th>
+              <th class="font-poppins font-bold p-2 bg-[#5aadc2]">
+                Status
+              </th>
+              <th class="font-poppins font-bold p-2 bg-[#5aadc2] rounded-tr-3xl">
+                Submitted
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              v-for="(item, i) in myReferrals"
+              :key="item.id"
+              :class="{ 'bg-gray-200': (i + 1) % 2 }"
+            >
+              <td class="font-poppins text-center p-2">
+                {{ item.inviteeName }}
+              </td>
+              <td class="font-poppins text-center p-2">
+                {{ item.inviteeEmail }}
+              </td>
+              <td class="font-poppins text-center p-2 capitalize">
+                {{ item.status }}
+              </td>
+              <td class="font-poppins text-center p-2">
+                {{ new Date(item.createdAt).toLocaleDateString() }}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <p
+          v-else
+          class="text-gray-700"
+        >
+          No referral requests yet.
+        </p>
+      </div>
+    </form>
+  </CVContainer>
+
+  <CVContainer v-else>
     <form class="p-3 rounded bg-gray-50">
       <TitleComp>Family Creation</TitleComp>
       <br>

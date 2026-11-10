@@ -61,9 +61,9 @@ const items = computed<NavItem[]>(() => {
     },
     {
       to: '/EditFamily/0',
-      label: 'Edit Family',
+      label: 'Invite Family',
       icon: HomeIcon,
-      show: isAdvocateAdmin.value,
+      show: isAdvocateAdmin.value || user.value?.role === 'family',
       active: path.includes('/EditFamily'),
     },
     {
