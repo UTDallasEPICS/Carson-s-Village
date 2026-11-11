@@ -117,36 +117,6 @@ async function handleArchive() {
   }
 }
 
-const currentImage = ref(0)
-const nextImage = () => { 
-  if(currentImage.value === imageData.value?.length - 1){
-    currentImage.value = 0
-  } else {
-    currentImage.value++
-  } 
-}
-const prevImage = () => {
-  if(currentImage.value === 0){
-    currentImage.value = imageData.value?.length - 1
-  } else {
-    currentImage.value--
-  }
-}
-
-const previewImage = ref("")
-const showPreview = (image: Image) => {
-  previewImage.value = image.url
-}
-
-const closePreview = () => {
-  previewImage.value = ''
-}
-// Recursively moves to the next image every 5 seconds
-const setImageAutoSlide = () => {
-  nextImage()
-  setTimeout(setImageAutoSlide, 5000)
-}
-
 const exitCommentPopup = () => {
   commentModalOpen.value = false
 }
@@ -154,8 +124,6 @@ const openCommentPopup = (comment: string) => {
   commentModalOpen.value = !commentModalOpen.value; 
   currentComment.value = comment;
 }
-
-setImageAutoSlide()
 </script>
 
 <template>
@@ -237,7 +205,7 @@ setImageAutoSlide()
         <img
           v-if="profileImage?.url"
           :src="`${profileImage?.url}`"
-          class="mx-auto w-[122px] h-[122px] rounded-[8px]"
+          class="mx-auto h-[122px] w-[122px] rounded-[8px] object-cover"
         >
         <div class="text-gray-dark mx-auto w-max font-poppins text-md">
           {{ (pageDataDB?.day_of_birth && pageDataDB?.day_of_passing) ? dateFormat(pageDataDB?.day_of_birth, true) + ' - ' + dateFormat(pageDataDB?.day_of_passing, true) : '' }}
@@ -245,46 +213,12 @@ setImageAutoSlide()
       </div>
     </div>
     <!-- Row: scrolling images | donations -->
-    <div class="col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-4 px-2 pt-5">
+    <div class="col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-4 pl-10 pr-2 pt-5">
       <div class="justify-self-center sm:justify-self-end pr-5">
-        <div
-          v-if="imageData.length != 0"
-          class="relative w-96 p-1"
-        >
-          <button
-            class="absolute left-4 top-64 bg-black text-white opacity-70 w-[46px] h-[46px] rounded-full items-center justify-center leading-loose text-center text-white"
-            @click="prevImage"
-          >
-            &#60;
-          </button>
-          <button
-            class="absolute right-8 top-64 bg-black text-white opacity-70 w-[46px] h-[46px] rounded-full items-center justify-center leading-loose text-center text-white"
-            @click="nextImage"
-          >
-            &#62;
-          </button>
-          <img
-            :src="imageData[currentImage].url"
-            class="w-96 cursor-pointer z-[-1] object-cover"
-            @click="showPreview(profileImage)"
-          >
-          <div
-            v-if="previewImage"
-            class="w-full h-full overflow-auto block fixed left-0 top-0 z-[1000] bg-black/80"
-            @click.self="closePreview"
-          >
-            <img
-              v-for="(image, index) in imageData"
-              :key="index"
-              :src="image.url"
-              class="py-2 block max-w-[80%] max-h-[80%] m-auto"
-            >
-            <span
-              class="absolute cursor-pointer top-[15px] right-[35px] text-[30px] transition duration-300 text-gray-400 hover:text-white focus:text-white cursor-pointer"
-              @click="closePreview"
-            >&times;</span>
-          </div>
-        </div>
+        <ImageCarousel
+          v-if="imageData.length > 0"
+          :images="imageData"
+        />
       </div>
       <div
         v-if="pageDataDB?.Family?.acceptingDonations"

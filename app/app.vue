@@ -2,12 +2,14 @@
   <CVHeader/>
   <div
     class="flex items-stretch"
-    :class="session ? 'min-h-[calc(100vh-100px)]' : 'ml-4 mr-2'"
+    :class="layoutLoggedIn ? 'min-h-[calc(100vh-100px)]' : 'ml-4 mr-2'"
   >
-    <VerticalNav v-if="session" />
+    <ClientOnly>
+      <VerticalNav v-if="session" />
+    </ClientOnly>
     <div
       class="flex min-w-0 flex-col gap-5 grow"
-      :class="session ? 'mr-2' : ''"
+      :class="layoutLoggedIn ? 'mr-2' : ''"
     >
       <UApp>
         <NuxtPage />
@@ -54,6 +56,13 @@ import { authClient } from '~/utils/auth-client'
 import { ExclamationTriangleIcon } from '@heroicons/vue/24/outline'
 
 const { data: session } = await authClient.useSession(useFetch)
+
+// Session can differ SSR vs client; defer layout until mount to avoid hydration mismatch.
+const isHydrated = ref(false)
+onMounted(() => {
+  isHydrated.value = true
+})
+const layoutLoggedIn = computed(() => isHydrated.value && !!session.value)
 
 const requireOnboarding = ref(false)
 const showStripeToast = ref(true)
