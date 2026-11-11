@@ -55,7 +55,7 @@ export function longDateFormat(date: string, justTime = false) {
   }; 
   
   const dateObj = new Date(date);
-  if(justTime) return dateObj.toLocaleTimeString()
+  if(justTime) return dateObj.toLocaleTimeString("en-US", { timeStyle: 'short' })
   return dateObj.toLocaleDateString(undefined, options);
 }
 

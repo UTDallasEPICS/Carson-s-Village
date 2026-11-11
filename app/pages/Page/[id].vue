@@ -60,6 +60,7 @@ const donated_percentage = computed(() => {
   return Number(((raised / goal) * 100).toFixed(1))
 })
 const comments = computed(() => pageDataDB.value?.PageDonations)
+const hasDonationDescription = computed(() => Boolean(pageDataDB.value?.donation_description?.trim()))
 const imageData = computed(() => pageDataDB.value?.Images || [])
 const profileImage = computed(() => imageData.value?.find((image: Image) => 
   image.id === pageDataDB.value?.profileImageCuid
@@ -213,24 +214,27 @@ const openCommentPopup = (comment: string) => {
       </div>
     </div>
     <!-- Row: scrolling images | donations -->
-    <div class="col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-4 pl-10 pr-2 pt-5">
-      <div class="justify-self-center sm:justify-self-end pr-5">
+    <div
+      class="col-span-2 grid gap-4 pt-5"
+      :class="hasDonationDescription ? 'grid-cols-1 sm:grid-cols-2 pl-10 pr-2' : 'grid-cols-1 px-2'"
+    >
+      <div :class="hasDonationDescription ? 'justify-self-center sm:justify-self-end pr-5' : 'justify-self-center w-2/5'">
         <ImageCarousel
           v-if="imageData.length > 0"
           :images="imageData"
         />
       </div>
       <div
-        v-if="pageDataDB?.Family?.acceptingDonations"
+        v-if="pageDataDB?.Family?.acceptingDonations && hasDonationDescription"
         class="pl-5 pr-5 min-w-0"
       >
         <div class="flex flex-col pb-5">
-          <div class="text-gray-dark font-poppins text-3xl text-left font-bold leading-9 text-shadow-[3px_3px_4px_rgba(0,0,0,0.25)]">
+          <div class="text-gray-dark font-poppins text-3xl text-left font-bold leading-9 text-shadow-[3px_3px_4px_rgba(0,0,0,0.25)] pb-2">
             Donations
           </div>
           <div
             v-if="pageDataDB?.donation_description"
-            class="flex flex-col gap-1 pr-10 min-w-0"
+            class="flex flex-col gap-1 min-w-0"
           >
             <div class="font-outfit whitespace-normal min-w-0 break-words">
               {{ pageDataDB.donation_description }}
@@ -257,7 +261,7 @@ const openCommentPopup = (comment: string) => {
           v-if="pageDataDB?.visitation_date"
           class="flex flex-col pb-5"
         >
-          <div class="text-gray-dark font-poppins text-3xl text-left font-bold leading-10 justify-start text-shadow-[3px_3px_4px_rgba(0,0,0,0.25)]">
+          <div class="text-gray-dark font-poppins text-3xl text-center font-bold leading-10 justify-start text-shadow-[3px_3px_4px_rgba(0,0,0,0.25)]">
             Visitation
           </div>
           <div class="flex row gap-2 pt-2">
@@ -302,7 +306,7 @@ const openCommentPopup = (comment: string) => {
           v-else
           class="flex flex-col pb-5"
         >
-          <div class="text-gray-dark font-poppins text-3xl text-left font-bold leading-9 text-shadow-[3px_3px_4px_rgba(0,0,0,0.25)]">
+          <div class="text-gray-dark font-poppins text-3xl text-left font-bold leading-9 text-shadow-[3px_3px_4px_rgba(0,0,0,0.25)] pb-2">
             Visitation
           </div>
           <div class="flex row gap-2">
@@ -317,7 +321,7 @@ const openCommentPopup = (comment: string) => {
           v-if="pageDataDB?.funeral_date"
           class="flex flex-col pb-5"
         >
-          <div class="text-gray-dark font-poppins text-3xl text-left font-bold leading-9 text-shadow-[3px_3px_4px_rgba(0,0,0,0.25)]">
+          <div class="text-gray-dark font-poppins text-3xl text-center font-bold leading-9 text-shadow-[3px_3px_4px_rgba(0,0,0,0.25)] pb-2">
             Funeral Service
           </div>
           <div class="flex row gap-2">
@@ -382,6 +386,17 @@ const openCommentPopup = (comment: string) => {
           {{ pageDataDB?.obituary }}
         </div>
       </div>
+    </div>
+    <div
+      v-if="pageDataDB?.Family?.acceptingDonations && !hasDonationDescription"
+      class="col-span-2 flex justify-center pt-2 pb-5"
+    >
+      <ActionButton
+        text="DONATE NOW"
+        name="submit"
+        class="mx-auto text-md transition duration-300 bg-orange-999 hover:bg-green-600"
+        @click="displayDonationPopup=true"
+      />
     </div>
   </div>
   <div class="px-4 py-4 flex flex-col gap-1 text-left">
