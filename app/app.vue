@@ -9,7 +9,9 @@
       class="flex min-w-0 flex-col gap-5 grow"
       :class="session ? 'mr-2' : ''"
     >
-      <NuxtPage />
+      <UApp>
+        <NuxtPage />
+      </UApp>
     </div>
   </div>
   <CVFooter />
