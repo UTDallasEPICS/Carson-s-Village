@@ -60,7 +60,7 @@ watch(() => props.displayDonationPopup, (isOpen) => {
     class="flex z-10 items-center justify-center fixed inset-0 bg-black/70 p-4"
     @click.self="$emit('update:displayDonationPopup', false)"
   >
-    <div class="container m-4 place-content-center font-poppins w-1/2 sm:m-auto sm:py-3 bg-white rounded-lg shadow-lg max-h-full overflow-y-auto">
+    <div class="m-0 w-full max-w-3xl place-content-center overflow-y-auto rounded-lg bg-white font-poppins shadow-lg max-h-[90vh] sm:py-3">
       <div class="relative">
         <button
           class="absolute top-2.5 right-2.5 z-10 flex items-center justify-center text-gray-600 hover:text-gray-800 font-light text-2xl w-[60px] h-[60px] rounded-full"

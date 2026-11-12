@@ -64,12 +64,12 @@ const submitComment = async () => {
 <template>
   <div
     v-if="isActive"
-    class="flex flex-col items-center sm:mx-4 sm:w-full sm:py-2"
+    class="flex w-full flex-col items-center px-4 sm:py-2"
   >
     <h2 class="text-center mt-4 mb-6 font-bold">
       Leave a Message
     </h2>
-    <div class="flex justify-center w-2/3">
+    <div class="flex w-full max-w-2xl justify-center">
       <CVTextArea
         id="reply"
         v-model="replyData.reply"
@@ -79,13 +79,13 @@ const submitComment = async () => {
         class="font-normal h-40 w-full"
       />
     </div>
-    <div class="field-row flex justify-center mt-4 w-2/3">
+    <div class="field-row mt-4 flex w-full max-w-2xl justify-center">
       <CVInput
         id="name"
         v-model="replyData.name"
         name="name"
         placeholder="Name"
-        class="font-normal w-2/3"
+        class="font-normal w-full"
       />
     </div>
     <div class="ml-4 pt-6 pr-5 flex items-center justify-center mt-6">
