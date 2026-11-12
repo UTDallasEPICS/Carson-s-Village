@@ -47,7 +47,8 @@
     "vite": "^4.1.4",
     "vue": "^3.3.4",
     "vue-multiselect": "^3.1.0",
-    "vue-router": "^4.1.6"
+    "vue-router": "^4.1.6",
+    "xlsx": "^0.18.5"
   },
   "engines": {
     "node": ">=24.0.0",
