@@ -285,7 +285,7 @@ const openCommentPopup = (comment: string) => {
               {{ "Location:" }}
             </div>
             <div class="font-outfit whitespace-normal">
-              {{ pageDataDB?.visitation_location ? pageDataDB?.visitation_location : "TBD" }}
+              {{ pageDataDB?.visitation_location || "TBD" }}
             </div>
           </div>
           <div class="flex row gap-2">
@@ -294,10 +294,10 @@ const openCommentPopup = (comment: string) => {
             </div>
           </div>
           <div class="flex flex-col gap-1 pr-10 min-w-0">
-            <div class="font-outfit font-bold">
-              {{ "Description:" }}
+            <div class="font-outfit">
+              <b>Description:</b> {{ pageDataDB?.visitation_description ? '' : 'No Description' }}
             </div>
-            <div class="font-outfit whitespace-normal min-w-0 break-words">
+            <div v-if="pageDataDB?.visitation_description" class="font-outfit whitespace-normal min-w-0 break-words">
               {{ pageDataDB?.visitation_description }}
             </div>
           </div>
@@ -345,7 +345,7 @@ const openCommentPopup = (comment: string) => {
               {{ "Location:" }}
             </div>
             <div class="font-outfit whitespace-normal">
-              {{ pageDataDB?.funeral_location }}
+              {{ pageDataDB?.funeral_location || 'TBD' }}
             </div>
           </div>
           <div class="flex row gap-2">
@@ -354,10 +354,10 @@ const openCommentPopup = (comment: string) => {
             </div>
           </div>
           <div class="flex flex-col gap-1 pr-10 min-w-0">
-            <div class="font-outfit font-bold">
-              {{ "Description:" }}
+            <div class="font-outfit">
+              <b>Description: </b>{{ pageDataDB?.funeral_description ? '' : 'No Description' }}
             </div>
-            <div class="font-outfit min-w-0 break-words">
+            <div v-if="pageDataDB?.funeral_description" class="font-outfit min-w-0 break-words">
               {{ pageDataDB?.funeral_description }}
             </div>
           </div>
@@ -377,7 +377,7 @@ const openCommentPopup = (comment: string) => {
         </div>
       </div>
     </div>
-    <div class="mt-6 col-span-2">
+    <div v-if="pageDataDB?.obituary" class="mt-6 col-span-2">
       <div class="mx-9 sm:col-span-1 sm:mr-11">
         <div
           id="obituary"
