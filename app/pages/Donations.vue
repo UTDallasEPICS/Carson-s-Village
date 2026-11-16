@@ -80,7 +80,7 @@ const pageDonationsList = computed<pageDonationsItem[]>(() => {
   const pageItems = familyPages.value?.raw_data.map((page: Page) => {
     return {
       id: page.id,
-      name: page.page_first_name || page.page_last_name,
+      name: `${page.page_first_name} ${page.page_last_name}`,
       itemDisplay: `${page.page_first_name}${page.page_last_name ? " " + page.page_last_name : ""} | ${donationFormat(page.amount_raised)}`
     } as pageDonationsItem
   })
@@ -93,6 +93,17 @@ const pageDonationsList = computed<pageDonationsItem[]>(() => {
 })
 const currentPageDonationItem = computed<pageDonationsItem>(() => pageDonationsList.value.find((item: pageDonationsItem) => item.id === currentPageCuid.value))
 
+const pageNameForReport = computed<string>(() => {
+  if (currentPageCuid.value === "0") {
+    return "all"
+  }
+  else {
+    return currentPageDonationItem.value?.name
+      .trim()
+      .replaceAll(' ', '_');
+  }
+})
+
 const pageDonations = computed(() => {
   if (currentPageCuid.value === "0") {
     return donations.value
@@ -100,6 +111,7 @@ const pageDonations = computed(() => {
     return donations.value.filter((donation: PageDonation) => donation.pageCuid === currentPageCuid.value) || [] as PageDonation[]
   }
 })
+
 
 // ------------------ Family Pagination -------------
 watch(currentFamilyCuid, () => {
@@ -301,7 +313,7 @@ const prevPage = () => {
     <button
       type="button"
       class="transition h-[50px] w-[140px] text-white font-bold rounded-[100px] duration-300 bg-orange-999 hover:bg-green-600 mr-9 mt-16 p-6 px-6 pr-6 pt-3 pb-3 cursor-pointer border-0 bg-orange-999"
-      @click="downloadDonationReport(donations)"
+      @click="downloadDonationReport(pageDonations, pageNameForReport)"
     >
       Download
     </button>

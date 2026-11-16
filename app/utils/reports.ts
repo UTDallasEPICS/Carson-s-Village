@@ -19,9 +19,10 @@ function toExcelDate(value: unknown): Date | null {
 /** Download the family donation report. Amounts are dollars. */
 export async function downloadDonationReport(
   donations: readonly PageDonation[] | null | undefined,
+  pageName: string,
 ): Promise<void> {
   await downloadExcelSheet({
-    filename: `donation_report_${reportFilenameDate()}`,
+    filename: `donation_report_${pageName}_${reportFilenameDate()}`,
     sheetName: 'Donations',
     columns: [
       { header: 'ID', key: 'id' },
