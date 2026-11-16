@@ -54,7 +54,6 @@ const page = ref<Page>({
     donation_goal: "",
     donation_description: "",
     amount_raised: 0,
-    amount_distributed: 0,
     profileImageCuid: "",
     Images: [], 
     familyCuid: "",

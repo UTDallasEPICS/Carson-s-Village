@@ -120,7 +120,6 @@ model Page {
   amount_raised          Int              @default(0)
   deadline               DateTime?
   userCuid               String           @map("user_cuid")
-  amount_distributed     Int              @default(0)
   profileImageCuid       String           @map("profile_image_cuid")
   familyCuid             String?          @map("family_cuid")
   status                 String           @default("active")

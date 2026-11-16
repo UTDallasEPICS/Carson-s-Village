@@ -13,6 +13,7 @@ definePageMeta({
 })
 
 import { dateFormat, donationFormat } from '@/utils'
+import { downloadDonationReport } from '@/utils/reports'
 import '@vuepic/vue-datepicker/dist/main.css';
 import {
     Listbox,
@@ -80,7 +81,7 @@ const pageDonationsList = computed<pageDonationsItem[]>(() => {
     return {
       id: page.id,
       name: page.page_first_name || page.page_last_name,
-      itemDisplay: `${page.page_first_name}${page.page_last_name ? " " + page.page_last_name : ""} | ${donationFormat(page.amount_raised - page.amount_distributed)}`
+      itemDisplay: `${page.page_first_name}${page.page_last_name ? " " + page.page_last_name : ""} | ${donationFormat(page.amount_raised)}`
     } as pageDonationsItem
   })
 
@@ -117,64 +118,6 @@ const prevPage = () => {
   } 
 }
 
-// ------------------ CSV Download ------------------
-const filedownloadlink = ref("")
-const dataset = ref("")
-const downloadName = ref("")
-onMounted(() => {
-  const createCsvDownloadLink = (csv: string) => {
-      const csvFile = new File([csv], "file", {
-      type: "text/csv" } )
-
-      // unique filename based on current time
-      const filename = "donation_report_" + formatReportDate(dateFormat(new Date().toString(), true).replaceAll("/", "-")) + ".csv"
-
-      filedownloadlink.value = window.URL.createObjectURL(csvFile);
-      dataset.value = ["text/csv", filename, filedownloadlink.value].join(':');
-      downloadName.value = filename
-  }
-
-  watch(donations, (newDonations) => {
-    if (!newDonations || newDonations.length === 0) return
-
-    const headers = [
-      "ID", 
-      "Donor Name", 
-      "Email", 
-      "Amount ($)", 
-      "Date Processed", 
-      "Comments"
-    ]
-
-    // Map the data into rows
-    const rows = newDonations.map(donation => {
-      return [
-        donation.id,
-        `${donation.donorFirstName} ${donation.donorLastName}`.trim(),
-        donation.donorEmail,
-        (donation.amount / 100).toFixed(2), // Convert cents to dollars
-        new Date(donation.donationProcessed).toLocaleDateString(),
-        donation.comments
-      ].map(value => `"${String(value).replace(/"/g, '""')}"`) // Escape quotes and wrap in quotes
-       .join(",")
-    })
-
-    // Combine headers and rows and update link
-    const csvContent = [headers.join(","), ...rows].join("\n")
-    createCsvDownloadLink(csvContent)
-  }, { immediate: true })
-})
-
-// Formats report date to the format 'yyyy-mm-dd'
-function formatReportDate(date: string) {
-  const dates = date.split("-")
-  const month = dates[0]
-  const day = dates[1]
-  const year = dates[2]
-  const formatedMonth = parseInt(month) >= 10 ? month : 0 + "" + month
-  const formatedDay = parseInt(day) >= 10 ? day : 0 + "" + day
-  return year + "-" + formatedMonth + "-" + formatedDay 
-}
 </script>
 
 <template>
@@ -232,11 +175,8 @@ function formatReportDate(date: string) {
           <th class="px-8 bg-[#5aadc2]">
             Goal Met
           </th>
-          <th class="px-8 bg-[#5aadc2]">
+          <th class="font-poppins font-bold rounded-tr-3xl px-8 bg-[#5aadc2] w-[33.33%]">
             Raised
-          </th>
-          <th class="font-poppins font-bold rounded-tr-3xl bg-[#5aadc2] w-[33.33%]">
-            Remaining
           </th>
         </tr>
         <tr
@@ -258,9 +198,6 @@ function formatReportDate(date: string) {
           </td>
           <td class="font-poppins text-gray-dark font-bold text-center">
             {{ donationFormat(item.amount_raised) }}
-          </td>
-          <td class="font-poppins text-gray-dark font-bold text-center">
-            {{ donationFormat(item.amount_raised - item.amount_distributed) }}
           </td>
         </tr>
       </thead>
@@ -361,14 +298,13 @@ function formatReportDate(date: string) {
         </tr>
       </thead>
     </table>
-    <a
-      class="transition h-[50px] w-[140px] text-white font-bold rounded-[100px] duration-300 bg-orange-999 hover:bg-green-600 mr-9 mt-16 p-6 px-6 pr-6 pt-3 pb-3 cursor-pointer bg-orange-999"
-      :href="filedownloadlink"
-      :download="downloadName"
-      :dataset.downloadurl="dataset"
+    <button
+      type="button"
+      class="transition h-[50px] w-[140px] text-white font-bold rounded-[100px] duration-300 bg-orange-999 hover:bg-green-600 mr-9 mt-16 p-6 px-6 pr-6 pt-3 pb-3 cursor-pointer border-0 bg-orange-999"
+      @click="downloadDonationReport(donations)"
     >
       Download
-    </a>
+    </button>
     <div class="pb-10" />
   </div>
 </template>

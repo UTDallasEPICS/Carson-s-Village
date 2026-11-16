@@ -15,7 +15,7 @@ export type ExcelSheet = {
   /** Worksheet tab name. Defaults to Sheet1. Max 31 characters. */
   sheetName?: string
   columns: ExcelColumn[]
-  rows: Record<ExcelCell | undefined>[]
+  rows: Record<string, ExcelCell | undefined>[]
 }
 
 const SHEET_NAME_MAX = 31
@@ -55,7 +55,7 @@ export async function downloadExcelSheet(sheet: ExcelSheet): Promise<void> {
   }
 
   const XLSX = await import('xlsx')
-  const worksheet = XLSX.utils.aoa_to_sheet(excelSheetRows(sheet))
+  const worksheet = XLSX.utils.aoa_to_sheet(excelSheetRows(sheet), { dateNF: 'mm/dd/yyyy' })
   const columnWidths: ({ wch: number } | undefined)[] = []
   sheet.columns.forEach((column, index) => {
     if (column.width === undefined) return

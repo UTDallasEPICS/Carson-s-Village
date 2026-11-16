@@ -3,8 +3,9 @@
   //import { Family } from '@prisma/client'; 
   import type { Family, User } from '@/types.d.ts'
   import type { Page } from '~~/prisma/generated/models'
-  import { ChevronUpIcon, ChevronDownIcon, ChevronUpDownIcon } from '@heroicons/vue/24/solid'
+  import { Popover, PopoverButton, PopoverPanel } from '@headlessui/vue'
   import { authClient } from '~/utils/auth-client';
+  import { downloadFamilyReport } from '~/utils/reports';
 
   const { data } = await authClient.useSession(useFetch);
   const user = computed(() => data.value?.user || null)
@@ -25,11 +26,20 @@
   const endDate = new Date();
   const startDate = new Date(new Date().setDate(endDate.getDate() - 31));
   
-  const listOfTags = ref(["donation_goal", "amount_raised", "deadline", "amount_distributed", "donation_status", "duration", "start_date", "goal_met_date", "page_first_name", "page_last_name", "first_name", "middle_name", "last_name", "owed"])
+  const listOfTags = ref(["donation_goal", "amount_raised", "deadline", "donation_status", "duration", "start_date", "goal_met_date", "page_first_name", "page_last_name", "first_name", "middle_name", "last_name"])
   // computed variable used as a key for each element of the table so that the striping of the table re-renders when the table is resized.
   const listOfTagsLen = computed(() => listOfTags.value?.length)
-  // number of family pages in the family reports table per page with @default=12 pages
-  const dimensions = ref(12)
+  const rowCountOptions = [20, 50, 100]
+  const dimensions = ref(20)
+  const columnOptions = [
+    { key: 'duration', label: 'Duration' },
+    { key: 'goal_met', label: 'Goal Met' },
+    { key: 'goal_met_date', label: 'Goal Met Date' },
+    { key: 'start_date', label: 'Start Date' },
+    { key: 'donated', label: 'Amount Donated' },
+    { key: 'goal_date', label: 'Goal Date' },
+    { key: 'donation_goal', label: 'Donation Goal' },
+  ] as const
   const date_ranged = ref(false)
   const date = ref([startDate, endDate])
   date.value = [startDate, endDate]
@@ -39,8 +49,7 @@
     goal_date: boolean,
     goal_met: boolean,
     goal_met_date: boolean,
-    owed: boolean,
-    paid: boolean,
+    donated: boolean,
     donation_goal: boolean,
     start_date: boolean,
   }
@@ -51,22 +60,20 @@
     goal_met_date: true,
     goal_date: true,
     start_date: true,
-    owed: true,
-    paid: true,
+    donated: true,
     donation_goal: true
   })
 
   // todo: improve performance (we do not want to rebuild the list everytime).
-  // selects the list of tags to show in the report csv
-  watch(display, async() => {
+  // selects the list of tags to show in the report
+  watch(display, () => {
     listOfTags.value = []
     if(display.value.donation_goal) {
       listOfTags.value.push("donation_goal")
     }
-    if(display.value.paid) {
+    if(display.value.donated) {
       listOfTags.value.push("amount_raised")
     }
-    listOfTags.value.push("amount_distributed")
     if(display.value.goal_date) {
       listOfTags.value.push("deadline")
     }
@@ -87,14 +94,7 @@
     listOfTags.value.push("first_name")
     listOfTags.value.push("middle_name") 
     listOfTags.value.push("last_name")
-    if(display.value.owed) {
-      listOfTags.value.push("owed")
-    }
-    //listOfTags.value.push("Amount Owed / Goal Percentage")
     console.log(listOfTagsLen.value)
-    const familyPagesArr = [...familyPages.value]
-    const csv = convertToCSV(familyPagesArr, listOfTags.value)
-    createCsvDownloadLink(csv)
   },  { deep: true })
   
   // The next three watches respond to changing the top input, date field, and date range and reload reports accordingly
@@ -107,67 +107,7 @@
     await loadReports()
   })
 
-  // converts array of family pages and their advocate responsible for the family into a csv
-  function convertToCSV(arr: Partial<Page[]>, listOfTags: string[]) {
-    // todo: clean up and remove usages of any, idea for this is to use the pick type from typescript
-    //const listOfTags = ["page_name", "donation_goal", "amount_raised", "deadline", "amount_distributed", "donation_status", "duration", "start_date", "goal_met_date", "first_name", "middle_name", "last_name", "Amount Owed / Goal Percentage" ]
-    // removes every column not in list of tags
-    Object.keys(arr[0] || "").forEach((element: string) => {
-      const currentArr = ref<Partial<Page[]>>([])
-      if(!listOfTags.includes(element)) {
-        arr.forEach((d: any) => {
-        const { [element]: removedSeries , ...newObject  } = d
-        currentArr.value.push(newObject)
-    });
-      arr = currentArr.value 
-      }
-    })
-
-    //adds owed and calculates owed percent (which we may want to depreciate)
-    type pageReport = Partial<Page> & { owed: number | undefined}
-    const currentArr = ref<pageReport[]>([])
-    arr.forEach((d) => {
-        const owedCents: number | undefined = (d?.amount_raised as number) - (d?.amount_distributed as number)
-        const owed: string | undefined = donationFormat(owedCents)
-        const goal = (d?.donation_goal as number) || 0
-        const owedPercent: number | undefined = goal != 0 ? ((100 * owedCents) / goal) : 0
-        const row = {
-          ...d,
-          donation_goal: goal > 0 ? goal : 'No Goal',
-          goal_met_date: goal > 0 ? d?.goal_met_date : 'No Goal',
-          donation_status: goal > 0 ? d?.donation_status : 'No Goal',
-          owed: owedCents/100.0 | 0,
-        }
-        currentArr.value.push(row)
-        //currentArr.value.push({...d, ['owedPercent']: owedPercent | 0} )
-    });
-
-    const array = [listOfTags].concat(currentArr.value as unknown as string[])
-  
-    // creates CSV
-    return array.map(it => {
-      return Object.values(it).toString()
-    }).join('\n')
-  }
-
-
-  // creates download link to csv of family reports table
-  const filedownloadlink = ref("")
-  const dataset = ref("")
-  const downloadName = ref("")
-  const createCsvDownloadLink = (csv: string) => {
-      const csvFile = new File([csv], "file", {
-      type: "text/csv" } )
-
-      // unique filename based on current time
-      const filename = "family_report_" + formatReportDate(dateFormat(new Date().toString(), true).replaceAll("/", "-")) + ".csv"
-
-      filedownloadlink.value = window.URL.createObjectURL(csvFile);
-      dataset.value = ["text/csv", filename, filedownloadlink.value].join(':');
-      downloadName.value = filename
-  }
-  
-  // loads family report data from the families database table and joins and creates a download link for the file
+  // loads family report data from the families database table and joins pages to the advocate responsible
   // Additionally, if the user presses display date ranged, the UI table filters by a cirtain date range specified by start_date and end_date on the date_field
   const loadReports = async () => {
     if(isAdminAdvocate) { 
@@ -188,31 +128,16 @@
         // gathering the family data into an array of family pages and their advocate responsible
         familiesRaw.value = familiesData.value?.all_families as unknown as Family[]
 
+        familyPages.value = []
         // loading every single family in the database into the report. This has to be different than families because families is paginated and thus lacks records
-        familiesRaw.value.forEach((family: Family)  => { family.Pages?.forEach((pages) => {familyPages.value.push( { ...pages as unknown as Page[], ...family.AdvocateResponsible as any }) })}) //page_first_name: pages.first_name, page_last_name: pages.last_name
-
-        const familyPagesArr = [...familyPages.value]
-        const csv = convertToCSV(familyPagesArr, listOfTags.value)
-        createCsvDownloadLink(csv)
+        familiesRaw.value?.forEach((family: Family)  => { family.Pages?.forEach((pages) => {familyPages.value.push( { ...pages as unknown as Page[], ...family.AdvocateResponsible as any }) })}) //page_first_name: pages.first_name, page_last_name: pages.last_name
     }
-  }
-
-
-  // Formats report date to the format 'yyyy-mm-dd'
-  function formatReportDate(date: string) {
-    const dates = date.split("-")
-    const month = dates[0]
-    const day = dates[1]
-    const year = dates[2]
-    const formatedMonth = parseInt(month) >= 10 ? month : 0 + "" + month
-    const formatedDay = parseInt(day) >= 10 ? day : 0 + "" + day
-    return year + "-" + formatedMonth + "-" + formatedDay 
   }
 
   const nextPage = async () => {
     if(currentPage.value < ((totalLength.value / dimensions.value) - 1)) {
       currentPage.value++
-      awaitloadReports()
+      await loadReports()
     }
   }
 
@@ -229,10 +154,6 @@
 
 <template>
   <div>
-    <TitleComp class="border-1 border-black">
-      Family Reports
-    </TitleComp>
-    <br>
     <div
       v-if="date_ranged"
       class="sm:grid-cols-3 py-4 grid"
@@ -262,105 +183,7 @@
         @update:model-value="currentPage=0; loadReports();"
       />
     </div>
-    <h2 class="mt-4 ml-10 border-1 text-[23px] border-black underline">
-      Table Dimensions
-      <div class="flex flex-box flex-wrap gap-10 w-[450px]">
-        <h1 class="ml-1 text-[18px]">
-          Number of Table Rows
-          <CVInputNumerical v-model="dimensions" />
-        </h1>
-      </div>
-    </h2>
-    <h2 class="mt-4 ml-10 text-[18px] underline">
-      Fields to Show
-    </h2>
-    <div class="w-[700px] sm:grid-cols-3 flex flex-box flex-wrap gap-10 stretch grid ml-2">
-      <label class="sm:mt-0 mt-4 ml-10 text-md tracking-[0.35px]">
-        Duration
-        <div class="w-full">
-          <input
-            v-model="display.duration"
-            type="checkbox"
-          >
-        </div>
-      </label>
-      <label
-        class="sm:mt-0 mt-4 ml-10 text-md"
-        style="letter-spacing: 0.35px;"
-      >
-        Goal Met
-        <div>
-          <input
-            v-model="display.goal_met"
-            type="checkbox"
-          >
-        </div>
-      </label>
-      <label
-        class="sm:mt-0 mt-4 ml-10 text-md"
-        style="letter-spacing: 0.35px;"
-      >
-        Goal Met Date
-        <div>
-          <input
-            v-model="display.goal_met_date"
-            type="checkbox"
-          >
-        </div>
-      </label>
-      <label
-        class="sm:mt-0 mt-4 ml-10 text-md"
-        style="letter-spacing: 0.35px;"
-      >
-        Start Date
-        <div>
-          <input
-            v-model="display.start_date"
-            type="checkbox"
-          >
-        </div>
-      </label>
-      <label
-        class="sm:mt-0 mt-4 ml-10 text-md"
-        style="letter-spacing: 0.35px;"
-      >
-        Amount Owed
-        <div>
-          <input
-            v-model="display.owed"
-            type="checkbox"
-          >
-        </div>
-      </label>
-      <label class="sm:mt-0 mt-4 ml-10 text-md tracking-[0.35px]">
-        Amount Paid Out
-        <div>
-          <input
-            v-model="display.paid"
-            type="checkbox"
-          >
-        </div>
-      </label>
-      <label class="sm:mt-0 mt-4 ml-10 text-md tracking-[0.35px]">
-        Goal Date
-        <div>
-          <input
-            v-model="display.goal_date"
-            type="checkbox"
-          >
-        </div>
-      </label>
-      <label class="sm:mt-0 mt-4 ml-10 text-md tracking-[0.35px]">
-        Donation Goal
-        <div>
-          <input
-            v-model="display.donation_goal"
-            type="checkbox"
-          >
-        </div>
-      </label>
-    </div>
-    <div class="gap-2 justify-center cols-2 mt-16 ml-10 mr-6">
+    <div class="gap-2 justify-center cols-2 mt-6 ml-10 mr-6">
       <div class="flex justify-between">
         <div class="flex items-end pl-3 gap-8 font-bold">
           <div
@@ -382,26 +205,46 @@
             All
           </div>
         </div>
-        <div class="flex justify-end gap-8 mr-16">
+        <div class="flex justify-end items-center gap-4 mr-16">
+          <Popover class="relative">
+            <PopoverButton class="rounded-md border border-[#c4c4c4] bg-white px-3 py-2 text-sm font-bold">
+              Columns
+            </PopoverButton>
+            <PopoverPanel class="absolute right-0 z-20 mt-2 w-56 rounded-md bg-white p-3 shadow-lg ring-1 ring-black/5">
+              <label
+                v-for="option in columnOptions"
+                :key="option.key"
+                class="flex items-center gap-2 py-1 text-sm"
+              >
+                <input
+                  v-model="display[option.key]"
+                  type="checkbox"
+                >
+                {{ option.label }}
+              </label>
+            </PopoverPanel>
+          </Popover>
           <button
-            class="transition h-[50px] text-white font-bold rounded-[125px] duration-300 bg-orange-999 hover:bg-green-600 p-6 px-6 pr-6 pt-3 pb-3 cursor-pointer bg-orange-999"
+            class="transition text-white font-bold rounded-[125px] duration-300 bg-orange-999 hover:bg-green-600 px-6 py-2 cursor-pointer bg-orange-999"
             @click="date_ranged=!date_ranged; currentPage=0; loadReports()"
           >
-            {{ "Display In Date Range" }}
+            Date Range
           </button>
-          <a
-            class="transition h-[50px] text-white font-bold rounded-[100px] duration-300 bg-orange-999 hover:bg-green-600 p-6 px-6 pr-6 pt-3 pb-3 cursor-pointer bg-orange-999"
-            :href="filedownloadlink"
-            :download="downloadName"
-            :dataset.downloadurl="dataset"
+          <button
+            type="button"
+            class="transition text-white font-bold rounded-[100px] duration-300 bg-orange-999 hover:bg-green-600 px-6 py-2 cursor-pointer border-0 bg-orange-999"
+            @click="downloadFamilyReport(familyPages)"
           >
             Download
-          </a>
+          </button>
         </div>
       </div>
-      <table
+      <div
         v-if="isAdminAdvocate"
-        class="mt-[1.25rem] w-full border-spacing-[0] border-collapse"
+        class="report-scroll mt-[1.25rem]"
+      >
+      <table
+        class="w-full border-spacing-[0] border-collapse"
       >
         <thead style="color: white;">
           <tr>
@@ -436,16 +279,10 @@
               Start Date
             </th>
             <th
-              v-if="display.owed"
+              v-if="display.donated"
               style="padding: 1rem; background-color: #6eabbf; width: 5%;"
             >
-              Owed
-            </th>
-            <th
-              v-if="display.paid"
-              style="padding: 1rem; background-color: #6eabbf; width: 5%"
-            >
-              Paid
+              Donated
             </th>
             <th
               v-if="display.donation_goal"
@@ -466,7 +303,7 @@
         </thead>
         <tbody>
           <tr
-            v-for="(page, i) in (pageFilter === 'all' ? families : families.filter(page => pageFilter === 'active' ? page.status === 'active' : page.status !== 'active'))"
+            v-for="(page, i) in (pageFilter === 'all' ? families : families?.filter(page => pageFilter === 'active' ? page.status === 'active' : page.status !== 'active'))"
             :key="listOfTagsLen"
             :class="{'bg-gray-200': (i+1) % 2}"
           >
@@ -497,7 +334,7 @@
               style="text-align: center;"
             >
               {{ page.donation_goal > 0
-                ? (page.goal_met_date ? dateFormat(page.goal_met_date, true) : "Goal Not Reached")
+                ? (page.goal_met_date ? dateFormat(page.goal_met_date, true) : "Not Met")
                 : "No Goal" }}
             </td>
             <td
@@ -507,16 +344,10 @@
               {{ dateFormat(page.start_date, true) }}
             </td>
             <td
-              v-if="display.owed"
+              v-if="display.donated"
               style="text-align: center;"
             >
-              {{ donationFormat((page.amount_raised - page.amount_distributed)) }}
-            </td>
-            <td
-              v-if="display.paid"
-              style="text-align: center;"
-            >
-              {{ donationFormat(page.amount_distributed) }}
+              {{ donationFormat(page.amount_raised) }}
             </td>
             <td
               v-if="display.donation_goal"
@@ -536,11 +367,27 @@
           </tr>
         </tbody>
       </table>
+      </div>
     </div>
   </div>
   
   <!-- Pagination Controls -->
-  <div class="mb-9 py-7 flex flex-wrap gap-2 place-content-center">
+  <div class="mb-9 py-7 flex flex-wrap items-center gap-4 place-content-center">
+    <label class="flex items-center gap-2 text-sm">
+      Rows
+      <select
+        v-model.number="dimensions"
+        class="rounded-md border border-[#c4c4c4] bg-white px-2 py-1"
+      >
+        <option
+          v-for="count in rowCountOptions"
+          :key="count"
+          :value="count"
+        >
+          {{ count }}
+        </option>
+      </select>
+    </label>
     <div class="col-md-10 px-2 mt-2">                    
       <button @click="prevPage">                         
         &lt;                                             
@@ -554,5 +401,18 @@
         >                                                
       </button>                                          
     </div>                                               
-  </div>                                                 
+  </div>
 </template>
+
+<style scoped>
+.report-scroll {
+  max-height: 32rem;
+  overflow: auto;
+}
+
+.report-scroll thead th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+</style>
