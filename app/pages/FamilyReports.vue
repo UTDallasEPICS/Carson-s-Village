@@ -3,7 +3,16 @@
   //import { Family } from '@prisma/client'; 
   import type { Family, User } from '@/types.d.ts'
   import type { Page } from '~~/prisma/generated/models'
-  import { Popover, PopoverButton, PopoverPanel } from '@headlessui/vue'
+  import {
+    Listbox,
+    ListboxButton,
+    ListboxOption,
+    ListboxOptions,
+    Popover,
+    PopoverButton,
+    PopoverPanel,
+  } from '@headlessui/vue'
+  import { FunnelIcon } from '@heroicons/vue/24/outline'
   import { authClient } from '~/utils/auth-client';
   import { downloadFamilyReport } from '~/utils/reports';
 
@@ -15,6 +24,25 @@
   })
   
   const isAdminAdvocate = computed(() => user.value?.role == "advocate" || user.value?.role == "admin" )
+  const ALL_FAMILIES_ID = '0'
+  const { data: Families } = await useFetch<Family[]>('/api/family', {
+    method: 'GET',
+    default: () => [],
+    transform: (input) => Array.isArray(input) ? input : [input],
+  })
+  const currentFamilyCuid = ref(ALL_FAMILIES_ID)
+  const familyOptions = computed(() => [
+    { id: ALL_FAMILIES_ID, family_name: 'All Families' },
+    ...(Families.value ?? []),
+  ])
+  const currentFamilyLabel = computed(() =>
+    familyOptions.value.find((family) => family.id === currentFamilyCuid.value)?.family_name ?? 'All Families'
+  )
+  const familyNameForReport = computed(() => {
+    if (currentFamilyCuid.value === ALL_FAMILIES_ID) return 'all'
+    const name = currentFamilyLabel.value.trim().replaceAll(/[\s/\\]+/g, '_')
+    return name || 'family'
+  })
   const families = ref<Family[]>([]);
   const familyPages = ref<Partial<Page[]>>([])
   const familiesRaw = ref<Family[]>([])
@@ -106,15 +134,25 @@
     currentPage.value = 0
     await loadReports()
   })
+  watch(currentFamilyCuid, async () => {
+    currentPage.value = 0
+    await loadReports()
+  })
+
+  const setDateRange = (event: Event) => {
+    date_ranged.value = (event.target as HTMLInputElement).checked
+    currentPage.value = 0
+    loadReports()
+  }
 
   // loads family report data from the families database table and joins pages to the advocate responsible
-  // Additionally, if the user presses display date ranged, the UI table filters by a cirtain date range specified by start_date and end_date on the date_field
+  // Additionally, if the user presses display date ranged, the UI table filters by a certain date range specified by start_date and end_date on the date_field
   const loadReports = async () => {
     if(isAdminAdvocate) { 
         const { data: familiesData } = await useFetch('/api/familiesReports', {
         method: 'GET', 
-        query: { page_number: currentPage, dimensions, start_date: date.value[0].toISOString(), end_date: date.value[1].toISOString(), date_field: date_field.value },
-        watch: [currentPage, date, date_field]
+        query: { page_number: currentPage, dimensions, start_date: date.value[0].toISOString(), end_date: date.value[1].toISOString(), date_field: date_field.value, family_cuid: currentFamilyCuid.value },
+        watch: [currentPage, date, date_field, currentFamilyCuid]
         });
         
         if(date_ranged.value) {
@@ -154,38 +192,9 @@
 
 <template>
   <div>
-    <div
-      v-if="date_ranged"
-      class="sm:grid-cols-3 py-4 grid"
-    >
-      <CVLabel>Date Field</CVLabel>
-      <div class="sm:col-span-2 sm:mr-11 col-md-8 mx-9">
-        <select
-          v-model="date_field"
-          class="rounded-md outline-0 border-box w-full p-2 bg-white"
-          style="border: 1px solid #c4c4c4;"
-        >
-          Select User Role
-          <option>deadline</option>
-          <option>start_date</option>
-          <option>goal_met_date</option>
-        </select>
-      </div>
-    </div>
-    <div
-      v-if="date_ranged"
-      class="flex gap-5 align-center justify-center"
-    >
-      <CVLabel>Date Range</CVLabel>
-      <CVDatepicker
-        v-model="date"
-        range
-        @update:model-value="currentPage=0; loadReports();"
-      />
-    </div>
     <div class="gap-2 justify-center cols-2 mt-6 ml-10 mr-6">
-      <div class="flex justify-between">
-        <div class="flex items-end pl-3 gap-8 font-bold">
+      <div class="flex items-center justify-between gap-4">
+        <div class="flex items-center pl-3 gap-8 font-bold">
           <div
             :class="{'text-orange-999 underline underline-offset-2 decoration-2': pageFilter === 'active'}"
             @click="pageFilter = 'active'"
@@ -205,12 +214,71 @@
             All
           </div>
         </div>
-        <div class="flex justify-end items-center gap-4 mr-16">
+        <div class="flex shrink-0 items-center gap-4 mr-16">
+          <p class="font-bold">
+            Family
+          </p>
+          <Listbox
+            v-model="currentFamilyCuid"
+            as="div"
+            class="rounded-lg border border-1 shadow-sm"
+          >
+            <div class="relative">
+              <ListboxOptions
+                as="div"
+                class="absolute z-10 mt-10 max-h-60 w-full overflow-auto rounded-md bg-white px-2 py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm"
+              >
+                <ListboxOption
+                  v-for="family in familyOptions"
+                  :key="family.id"
+                  :value="family.id"
+                  as="div"
+                  class="my-1 border border-grey-500 px-2 py-1"
+                >
+                  {{ family.family_name }}
+                </ListboxOption>
+              </ListboxOptions>
+            </div>
+            <ListboxButton class="relative w-96 rounded-md bg-white py-2 pl-2 pr-10 text-left sm:text-sm">
+              {{ currentFamilyLabel }}
+            </ListboxButton>
+          </Listbox>
           <Popover class="relative">
-            <PopoverButton class="rounded-md border border-[#c4c4c4] bg-white px-3 py-2 text-sm font-bold">
-              Columns
+            <PopoverButton
+              class="inline-flex h-10 w-10 items-center justify-center rounded-md border border-[#c4c4c4] bg-white text-gray-700"
+              aria-label="Filters"
+            >
+              <FunnelIcon class="h-5 w-5" />
             </PopoverButton>
-            <PopoverPanel class="absolute right-0 z-20 mt-2 w-56 rounded-md bg-white p-3 shadow-lg ring-1 ring-black/5">
+            <PopoverPanel class="absolute right-0 z-30 mt-2 w-72 rounded-md bg-white p-3 shadow-lg ring-1 ring-black/5">
+              <p class="text-xs font-semibold uppercase tracking-wide text-gray-500">
+                Date
+              </p>
+              <label class="mt-2 flex items-center gap-2 py-1 text-sm">
+                <input
+                  :checked="date_ranged"
+                  type="checkbox"
+                  @change="setDateRange"
+                >
+                Apply date range
+              </label>
+              <select
+                v-model="date_field"
+                class="mt-1 w-full rounded-md border border-[#c4c4c4] bg-white p-2 text-sm outline-0"
+              >
+                <option value="deadline">Goal Date</option>
+                <option value="start_date">Start Date</option>
+                <option value="goal_met_date">Goal Met Date</option>
+              </select>
+              <CVDatepicker
+                v-model="date"
+                range
+                :teleport="false"
+                @update:model-value="date_ranged = true; currentPage = 0; loadReports()"
+              />
+              <p class="mt-3 text-xs font-semibold uppercase tracking-wide text-gray-500">
+                Column filtering
+              </p>
               <label
                 v-for="option in columnOptions"
                 :key="option.key"
@@ -224,19 +292,6 @@
               </label>
             </PopoverPanel>
           </Popover>
-          <button
-            class="transition text-white font-bold rounded-[125px] duration-300 bg-orange-999 hover:bg-green-600 px-6 py-2 cursor-pointer bg-orange-999"
-            @click="date_ranged=!date_ranged; currentPage=0; loadReports()"
-          >
-            Date Range
-          </button>
-          <button
-            type="button"
-            class="transition text-white font-bold rounded-[100px] duration-300 bg-orange-999 hover:bg-green-600 px-6 py-2 cursor-pointer border-0 bg-orange-999"
-            @click="downloadFamilyReport(familyPages)"
-          >
-            Download
-          </button>
         </div>
       </div>
       <div
@@ -372,7 +427,17 @@
   </div>
   
   <!-- Pagination Controls -->
-  <div class="mb-9 py-7 flex flex-wrap items-center gap-4 place-content-center">
+  <div class="mb-9 py-7 grid grid-cols-[1fr_auto_1fr] items-center">
+    <div class="ml-10">
+      <button
+        type="button"
+        class="transition text-white font-bold rounded-[100px] duration-300 bg-orange-999 hover:bg-green-600 px-6 py-2 cursor-pointer border-0 bg-orange-999"
+        @click="downloadFamilyReport(familyPages, familyNameForReport)"
+      >
+        Download
+      </button>
+    </div>
+    <div class="flex flex-wrap items-center gap-4">
     <label class="flex items-center gap-2 text-sm">
       Rows
       <select
@@ -400,7 +465,9 @@
       <button @click="nextPage">                         
         >                                                
       </button>                                          
-    </div>                                               
+    </div>
+    </div>
+    <div />
   </div>
 </template>
 

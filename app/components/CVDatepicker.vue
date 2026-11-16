@@ -1,6 +1,6 @@
 <template>
   <VueDatePicker
-    class="rounded-md p-2"
+    class="rounded-md mt-2"
     :id="id"
     type="Date"
     v-model="value"

@@ -62,12 +62,13 @@ function reportDollars(cents: unknown): string {
   return (value / 100).toFixed(2)
 }
 
-/** Download the advocate family report. */
+/** Download the advocate family report. Amounts are dollars. */
 export async function downloadFamilyReport(
   pages: readonly FamilyReportPage[] | null | undefined,
+  familyName: string,
 ): Promise<void> {
   await downloadExcelSheet({
-    filename: `family_report_${reportFilenameDate()}`,
+    filename: `family_report_${familyName}_${reportFilenameDate()}`,
     sheetName: 'Family Reports',
     columns: [
       { header: 'Donation Goal', key: 'donationGoal', width: 15 },

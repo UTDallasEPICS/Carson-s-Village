@@ -18,22 +18,32 @@ export default defineEventHandler(async event => {
   }
   const user = session.user
 
-  const { page_number, dimensions, start_date, end_date, date_field  } = getQuery(event)
-  const start_date_date = start_date as Date
-  const end_date_date = end_date as Date
+  const { page_number, dimensions, start_date, end_date, date_field, family_cuid } = getQuery(event)
+  const familyId = Array.isArray(family_cuid) ? family_cuid[0] : family_cuid
+  const scopedFamilyId = typeof familyId === 'string' && familyId !== '' && familyId !== '0'
+    ? familyId
+    : undefined
+  const familyFilter = scopedFamilyId ? { familyCuid: scopedFamilyId } : {}
+  const dateFilter = {
+    [date_field as string]: {
+      gte: new Date(start_date as string),
+      lte: new Date(end_date as string)
+    }
+  }
 
   if(user.role === "advocate"  || user.role === "admin") {
     const [ count, count_date_ranged, all_families, paginated_pages, date_ranged_pages ] = await prisma.$transaction([
-      prisma.page.count(),
-      prisma.page.count({ 
+      prisma.page.count({
+        where: familyFilter
+      }),
+      prisma.page.count({
         where: {
-          [date_field as string]: {
-            gte: new Date(start_date as string),
-            lte: new Date(end_date as string)
-          } 
+          ...familyFilter,
+          ...dateFilter
         }
       }),
       prisma.family.findMany({
+        where: scopedFamilyId ? { id: scopedFamilyId } : undefined,
         include: {
           Pages: true,
           FamilyMembers: true,
@@ -41,6 +51,7 @@ export default defineEventHandler(async event => {
         }
       }),
       prisma.page.findMany({
+        where: familyFilter,
         include: {
           Family: {
             include: {
@@ -53,10 +64,8 @@ export default defineEventHandler(async event => {
       }),
       prisma.page.findMany({
         where: {
-          [date_field as string]: {
-            gte: new Date(start_date as string),
-            lte: new Date(end_date as string)
-          }
+          ...familyFilter,
+          ...dateFilter
         },
         include: {
           Family: {
