@@ -71,26 +71,26 @@ export async function downloadFamilyReport(
     filename: `family_report_${familyName}_${reportFilenameDate()}`,
     sheetName: 'Family Reports',
     columns: [
-      { header: 'Donation Goal', key: 'donationGoal', width: 15 },
-      { header: 'Amount Raised', key: 'amountRaised', width: 15 },
-      { header: 'Deadline', key: 'deadline', width: 14 },
-      { header: 'Donation Status', key: 'donationStatus', width: 15 },
-      { header: 'Start Date', key: 'startDate', width: 14 },
-      { header: 'Goal Met Date', key: 'goalMetDate', width: 14 },
       { header: 'Page Name', key: 'pageName', width: 15  },
       { header: 'Advocate Name', key: 'advocateName', width: 15  },
+      { header: 'Start Date', key: 'startDate', width: 14 },
+      { header: 'Deadline', key: 'deadline', width: 14 },
+      { header: 'Amount Raised', key: 'amountRaised', width: 15 },
+      { header: 'Donation Goal', key: 'donationGoal', width: 15 },
+      { header: 'Donation Status', key: 'donationStatus', width: 15 },
+      { header: 'Goal Met Date', key: 'goalMetDate', width: 14 },
     ],
     rows: (pages ?? []).filter((page) => page != null).map((page) => {
       const goalCents = Number(page.donation_goal) || 0
       return {
-        donationGoal: goalCents > 0 ? reportDollars(goalCents) : 'No Goal',
-        amountRaised: reportDollars(page.amount_raised),
-        deadline: toExcelDate(page.deadline),
-        donationStatus: goalCents > 0 ? (page.donation_status ?? '') : 'No Goal',
-        startDate: toExcelDate(page.start_date),
-        goalMetDate: goalCents > 0 ? toExcelDate(page.goal_met_date) : 'No Goal',
         pageName: `${page.page_first_name ?? ''} ${page.page_last_name ?? ''}`.trim(),
         advocateName: (page.name ?? '').trim(),
+        startDate: toExcelDate(page.start_date),
+        deadline: toExcelDate(page.deadline),
+        amountRaised: reportDollars(page.amount_raised),
+        donationGoal: goalCents > 0 ? reportDollars(goalCents) : 'No Goal',
+        donationStatus: goalCents > 0 ? (page.donation_status ?? '') : 'No Goal',
+        goalMetDate: goalCents > 0 ? toExcelDate(page.goal_met_date) : 'No Goal',
       }
     }),
   })
