@@ -16,30 +16,51 @@ function toExcelDate(value: unknown): Date | null {
   return Number.isNaN(date.getTime()) ? null : date
 }
 
-/** Download the family donation report. Amounts are dollars. */
+type DonationReportRow = PageDonation & {
+  Page?: {
+    page_first_name?: string | null
+    page_last_name?: string | null
+  } | null
+}
+
+function donationPageName(donation: DonationReportRow): string {
+  return `${donation.Page?.page_first_name ?? ''} ${donation.Page?.page_last_name ?? ''}`.trim()
+}
+
+/** Download the family donation report. Amounts are dollars. `allPages` adds a Page Name column. */
 export async function downloadDonationReport(
-  donations: readonly PageDonation[] | null | undefined,
+  donations: readonly DonationReportRow[] | null | undefined,
   pageName: string,
+  allPages = false,
 ): Promise<void> {
+  const columns = [
+    { header: 'ID', key: 'id' },
+    { header: 'Donor Name', key: 'donorName', width: 15 },
+    { header: 'Email', key: 'email', width: 20 },
+    { header: 'Amount ($)', key: 'amount', width: 10 },
+    { header: 'Date Processed', key: 'dateProcessed', width: 14 },
+    { header: 'Comments', key: 'comments', width: 10 },
+  ]
+  if (allPages) {
+    columns.splice(2, 0, { header: 'Page Name', key: 'pageName', width: 15 })
+  }
+
   await downloadExcelSheet({
     filename: `donation_report_${pageName}_${reportFilenameDate()}`,
     sheetName: 'Donations',
-    columns: [
-      { header: 'ID', key: 'id' },
-      { header: 'Donor Name', key: 'donorName', width: 15 },
-      { header: 'Email', key: 'email', width: 20 },
-      { header: 'Amount ($)', key: 'amount', width: 10 },
-      { header: 'Date Processed', key: 'dateProcessed', width: 14 },
-      { header: 'Comments', key: 'comments', width: 10 },
-    ],
+    columns,
     rows: (donations ?? []).map((donation) => ({
       id: donation.id,
       donorName: `${donation.donorFirstName} ${donation.donorLastName}`.trim(),
       email: donation.donorEmail,
-      amount: (donation.amount / 100).toFixed(2),
+      amount: (donation.amount / 100),
       dateProcessed: toExcelDate(donation.donationProcessed),
       comments: donation.comments,
+      ...(allPages ? { pageName: donationPageName(donation) } : {}),
     })),
+    sumColumns: [
+      "amount"
+    ],
   })
 }
 
