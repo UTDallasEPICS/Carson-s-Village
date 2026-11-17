@@ -313,7 +313,7 @@ const prevPage = () => {
     <button
       type="button"
       class="transition h-[50px] w-[140px] text-white font-bold rounded-[100px] duration-300 bg-orange-999 hover:bg-green-600 mr-9 mt-16 p-6 px-6 pr-6 pt-3 pb-3 cursor-pointer border-0 bg-orange-999"
-      @click="downloadDonationReport(pageDonations, pageNameForReport)"
+      @click="downloadDonationReport(pageDonations, pageNameForReport, currentPageCuid === '0')"
     >
       Download
     </button>

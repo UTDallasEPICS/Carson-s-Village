@@ -40,6 +40,7 @@
     "@vueuse/components": "^13.1.0",
     "better-auth": "^1.6.3",
     "class-validator": "^0.14.2",
+    "exceljs": "^4.4.0",
     "nanoid": "^4.0.0",
     "nodemailer": "^8.0.5",
     "s3": "^2.0.0",
@@ -47,8 +48,7 @@
     "vite": "^4.1.4",
     "vue": "^3.3.4",
     "vue-multiselect": "^3.1.0",
-    "vue-router": "^4.1.6",
-    "xlsx": "^0.18.5"
+    "vue-router": "^4.1.6"
   },
   "engines": {
     "node": ">=24.0.0",

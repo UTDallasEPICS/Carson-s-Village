@@ -16,30 +16,51 @@ function toExcelDate(value: unknown): Date | null {
   return Number.isNaN(date.getTime()) ? null : date
 }
 
-/** Download the family donation report. Amounts are dollars. */
+type DonationReportRow = PageDonation & {
+  Page?: {
+    page_first_name?: string | null
+    page_last_name?: string | null
+  } | null
+}
+
+function donationPageName(donation: DonationReportRow): string {
+  return `${donation.Page?.page_first_name ?? ''} ${donation.Page?.page_last_name ?? ''}`.trim()
+}
+
+/** Download the family donation report. Amounts are dollars. `allPages` adds a Page Name column. */
 export async function downloadDonationReport(
-  donations: readonly PageDonation[] | null | undefined,
+  donations: readonly DonationReportRow[] | null | undefined,
   pageName: string,
+  allPages = false,
 ): Promise<void> {
+  const columns = [
+    { header: 'ID', key: 'id' },
+    { header: 'Donor Name', key: 'donorName', width: 15 },
+    { header: 'Email', key: 'email', width: 20 },
+    { header: 'Amount ($)', key: 'amount', width: 10 },
+    { header: 'Date Processed', key: 'dateProcessed', width: 14 },
+    { header: 'Comments', key: 'comments', width: 10 },
+  ]
+  if (allPages) {
+    columns.splice(2, 0, { header: 'Page Name', key: 'pageName', width: 15 })
+  }
+
   await downloadExcelSheet({
     filename: `donation_report_${pageName}_${reportFilenameDate()}`,
     sheetName: 'Donations',
-    columns: [
-      { header: 'ID', key: 'id' },
-      { header: 'Donor Name', key: 'donorName', width: 15 },
-      { header: 'Email', key: 'email', width: 20 },
-      { header: 'Amount ($)', key: 'amount', width: 10 },
-      { header: 'Date Processed', key: 'dateProcessed', width: 14 },
-      { header: 'Comments', key: 'comments', width: 10 },
-    ],
+    columns,
     rows: (donations ?? []).map((donation) => ({
       id: donation.id,
       donorName: `${donation.donorFirstName} ${donation.donorLastName}`.trim(),
       email: donation.donorEmail,
-      amount: (donation.amount / 100).toFixed(2),
+      amount: (donation.amount / 100),
       dateProcessed: toExcelDate(donation.donationProcessed),
       comments: donation.comments,
+      ...(allPages ? { pageName: donationPageName(donation) } : {}),
     })),
+    sumColumns: [
+      "amount"
+    ],
   })
 }
 
@@ -71,26 +92,26 @@ export async function downloadFamilyReport(
     filename: `family_report_${familyName}_${reportFilenameDate()}`,
     sheetName: 'Family Reports',
     columns: [
-      { header: 'Donation Goal', key: 'donationGoal', width: 15 },
-      { header: 'Amount Raised', key: 'amountRaised', width: 15 },
-      { header: 'Deadline', key: 'deadline', width: 14 },
-      { header: 'Donation Status', key: 'donationStatus', width: 15 },
-      { header: 'Start Date', key: 'startDate', width: 14 },
-      { header: 'Goal Met Date', key: 'goalMetDate', width: 14 },
       { header: 'Page Name', key: 'pageName', width: 15  },
       { header: 'Advocate Name', key: 'advocateName', width: 15  },
+      { header: 'Start Date', key: 'startDate', width: 14 },
+      { header: 'Deadline', key: 'deadline', width: 14 },
+      { header: 'Amount Raised', key: 'amountRaised', width: 15 },
+      { header: 'Donation Goal', key: 'donationGoal', width: 15 },
+      { header: 'Donation Status', key: 'donationStatus', width: 15 },
+      { header: 'Goal Met Date', key: 'goalMetDate', width: 14 },
     ],
     rows: (pages ?? []).filter((page) => page != null).map((page) => {
       const goalCents = Number(page.donation_goal) || 0
       return {
-        donationGoal: goalCents > 0 ? reportDollars(goalCents) : 'No Goal',
-        amountRaised: reportDollars(page.amount_raised),
-        deadline: toExcelDate(page.deadline),
-        donationStatus: goalCents > 0 ? (page.donation_status ?? '') : 'No Goal',
-        startDate: toExcelDate(page.start_date),
-        goalMetDate: goalCents > 0 ? toExcelDate(page.goal_met_date) : 'No Goal',
         pageName: `${page.page_first_name ?? ''} ${page.page_last_name ?? ''}`.trim(),
         advocateName: (page.name ?? '').trim(),
+        startDate: toExcelDate(page.start_date),
+        deadline: toExcelDate(page.deadline),
+        amountRaised: reportDollars(page.amount_raised),
+        donationGoal: goalCents > 0 ? reportDollars(goalCents) : 'No Goal',
+        donationStatus: goalCents > 0 ? (page.donation_status ?? '') : 'No Goal',
+        goalMetDate: goalCents > 0 ? toExcelDate(page.goal_met_date) : 'No Goal',
       }
     }),
   })
